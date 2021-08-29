@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "commonjs",
+        "lib": [
+            "ES2020"
+        ],
+        "allowJs": true,
+        "sourceMap": true,
+        "strict": true,
+        "composite": true,
+        "rootDir": "src",
+        "outDir": "dist",
+        "importHelpers": true,
+        "downlevelIteration": true,
+        "resolveJsonModule": true,
+        "jsx": "react-jsx",
+    },
+    "include": ["src"]
+}
