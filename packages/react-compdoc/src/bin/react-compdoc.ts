@@ -34,7 +34,6 @@ yargs
   .help().argv;
 
 function spawnScript(scriptName: string, argv: ReadonlyArray<string> = []) {
-  console.log('spawning script');
   const result = spawn.sync(
     process.execPath,
     [require.resolve(`../scripts/${scriptName}`)].concat(argv),

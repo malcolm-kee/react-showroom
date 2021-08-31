@@ -1,12 +1,33 @@
-import * as ReactDOM from 'react-dom';
-import { compileCode } from './lib/compile-code';
+import { MDXProvider, MDXProviderComponentsProp } from '@mdx-js/react';
+import 'react-compdoc-app-components';
 import Data from 'react-compdoc-components';
+import * as ReactDOM from 'react-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { App } from './app';
+import { Code, Pre } from './components/code-block';
 
-console.log({ Data });
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 0,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      staleTime: Infinity,
+      cacheTime: 5000,
+    },
+  },
+});
 
-compileCode(`import fs from 'fs';
-let x: number = 6;
-fs.readFile('./hello.txt')`).then((result) => console.log({ result }));
+const components: MDXProviderComponentsProp = {
+  pre: Pre,
+  code: Code,
+};
 
-ReactDOM.render(<App data={Data} />, document.getElementById('target'));
+ReactDOM.render(
+  <QueryClientProvider client={queryClient}>
+    <MDXProvider components={components}>
+      <App data={Data} />
+    </MDXProvider>
+  </QueryClientProvider>,
+  document.getElementById('target')
+);

@@ -4,9 +4,14 @@ import type { ComponentType } from 'react';
 
 export interface ReactCompdocConfiguration {
   components?: string;
+  imports: Array<{
+    name: string;
+    path: string;
+  }>;
 }
 
-export interface NormalizedReactCompdocConfiguration {
+export interface NormalizedReactCompdocConfiguration
+  extends ReactCompdocConfiguration {
   components: string;
 }
 

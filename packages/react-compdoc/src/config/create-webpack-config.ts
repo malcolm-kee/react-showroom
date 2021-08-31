@@ -1,23 +1,35 @@
-import * as webpack from 'webpack';
-import { moduleFileExtensions, resolveApp, resolveCompdoc } from '../lib/paths';
-import VirtualModulesPlugin = require('webpack-virtual-modules');
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
+import { omit } from 'lodash';
+import * as webpack from 'webpack';
+import {
+  generateCompdocData,
+  getImportsAttach,
+} from '../lib/generate-compdoc-data';
+import { getClientImportMap } from '../lib/get-client-import-map';
+import { moduleFileExtensions, resolveApp, resolveCompdoc } from '../lib/paths';
 import { createBabelConfig } from './babel-config';
-import { generateCompdocData } from '../lib/generate-compdoc-data';
+import VirtualModulesPlugin = require('webpack-virtual-modules');
 
-export const createWebpackConfig = (
+export const createWebpackConfig = async (
   mode: 'development' | 'production',
   { outDir = 'compdoc' } = {}
-): webpack.Configuration => {
+): Promise<webpack.Configuration> => {
   const isProd = mode === 'production';
 
   const babelConfig = createBabelConfig(mode);
 
-  // create a virtual module that consists of parsed component data and examples
-  // so we can import it inside our client
+  const clientImportMap = getClientImportMap();
+
+  const importAttach = getImportsAttach();
+
   const virtualModules = new VirtualModulesPlugin({
+    // create a virtual module that consists of parsed component data and examples
+    // so we can import it inside our client
     [resolveCompdoc('node_modules/react-compdoc-components.js')]:
-      generateCompdocData(),
+      await generateCompdocData(),
+    // a virtual module that imports the components provided by app and attach it to window object
+    [resolveCompdoc('node_modules/react-compdoc-app-components.js')]:
+      importAttach,
   });
 
   return {
@@ -76,6 +88,17 @@ export const createWebpackConfig = (
     },
     devtool: isProd ? 'source-map' : 'cheap-module-source-map',
     plugins: [
+      new webpack.EnvironmentPlugin({
+        serverData: JSON.stringify({
+          packages: Object.entries(clientImportMap).reduce(
+            (result, [key, value]) => ({
+              ...result,
+              [key]: omit(value, ['path']),
+            }),
+            {}
+          ),
+        }),
+      }),
       new HtmlWebpackPlugin({
         template: resolveCompdoc('client/index.html'),
       }),
