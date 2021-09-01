@@ -5,20 +5,13 @@ process.env.NODE_ENV = 'development';
 import webpack from 'webpack';
 import { argv } from 'yargs';
 import { createWebpackConfig } from '../config/create-webpack-config';
-import { getConfig } from '../lib/get-config';
-import { mergeWebpackConfig } from '../lib/merge-webpack-config';
 
 const webpackDevServer = require('webpack-dev-server');
 
 (async function startDevServer() {
   const PORT = Number((argv as any).port ?? process.env.PORT ?? 6969);
 
-  const baseWebpackConfig = await createWebpackConfig('development');
-  const webpackConfig = mergeWebpackConfig(
-    baseWebpackConfig,
-    getConfig().webpackConfig,
-    'development'
-  );
+  const webpackConfig = await createWebpackConfig('development');
 
   const devServerOptions = {
     port: PORT,

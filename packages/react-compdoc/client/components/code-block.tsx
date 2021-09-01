@@ -8,7 +8,7 @@ const IsBlockCodeContext = React.createContext(false);
 IsBlockCodeContext.displayName = 'IsBlockCodeContext';
 
 export const Pre = (props: { children: React.ReactNode }) => (
-  <div>
+  <div className="mb-5">
     <IsBlockCodeContext.Provider value={true}>
       {props.children}
     </IsBlockCodeContext.Provider>
@@ -47,8 +47,14 @@ const CodeLiveEditor = (
 
   return (
     <div>
-      <div>{isCompiling && 'Compiling...'}</div>
-      {data && <CodePreview code={data} />}
+      <div className="relative">
+        {data && <CodePreview code={data} />}
+        {isCompiling && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-400 bg-opacity-25 animate-pulse">
+            Compiling...
+          </div>
+        )}
+      </div>
       <CodeEditor code={code} onChange={setCode} language={props.language} />
     </div>
   );

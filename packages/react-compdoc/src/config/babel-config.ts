@@ -22,6 +22,7 @@ export const createBabelConfig = (env: 'development' | 'production') => {
       require.resolve('@babel/preset-typescript'),
     ],
     plugins: [
+      require.resolve('babel-plugin-macros'),
       [
         require.resolve('@babel/plugin-transform-runtime'),
         {

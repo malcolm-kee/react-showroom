@@ -6,17 +6,19 @@ import {
   getImportsAttach,
 } from '../lib/generate-compdoc-data';
 import { getClientImportMap } from '../lib/get-client-import-map';
+import { getConfig } from '../lib/get-config';
+import { mergeWebpackConfig } from '../lib/merge-webpack-config';
 import { moduleFileExtensions, resolveApp, resolveCompdoc } from '../lib/paths';
 import { createBabelConfig } from './babel-config';
 import VirtualModulesPlugin = require('webpack-virtual-modules');
+
+const userConfig = getConfig().webpackConfig;
 
 export const createWebpackConfig = async (
   mode: 'development' | 'production',
   { outDir = 'compdoc' } = {}
 ): Promise<webpack.Configuration> => {
   const isProd = mode === 'production';
-
-  const babelConfig = createBabelConfig(mode);
 
   const clientImportMap = getClientImportMap();
 
@@ -32,67 +34,72 @@ export const createWebpackConfig = async (
       importAttach,
   });
 
-  return {
-    mode,
-    entry: resolveCompdoc('client/index.tsx'),
-    resolve: {
-      extensions: moduleFileExtensions.map((ext) => `.${ext}`),
-    },
-    output: {
-      path: resolveApp(outDir),
-      publicPath: 'auto',
-    },
-    module: {
-      rules: [
-        {
-          test: /\.(js|jsx|ts|tsx)$/,
-          include: resolveCompdoc('client'),
-          loader: require.resolve('babel-loader'),
-          options: {
-            presets: [() => babelConfig],
-            babelrc: false,
-            configFile: false,
+  return mergeWebpackConfig(
+    {
+      mode,
+      entry: resolveCompdoc('client/index.tsx'),
+      resolve: {
+        extensions: moduleFileExtensions.map((ext) => `.${ext}`),
+      },
+      output: {
+        path: resolveApp(outDir),
+        publicPath: 'auto',
+      },
+      module: {
+        rules: [
+          {
+            test: /\.(js|jsx|ts|tsx)$/,
+            include: resolveCompdoc('client'),
+            loader: require.resolve('babel-loader'),
+            options: {
+              presets: [() => createBabelConfig(mode)],
+              babelrc: false,
+              configFile: false,
+            },
           },
-        },
-        {
-          test: /\.mdx?$/,
-          use: [
-            {
-              loader: require.resolve('babel-loader'),
-              options: {
-                presets: [() => babelConfig],
-                babelrc: false,
-                configFile: false,
+          {
+            test: /\.mdx?$/,
+            use: [
+              {
+                loader: require.resolve('babel-loader'),
+                options: {
+                  presets: [() => createBabelConfig(mode)],
+                  babelrc: false,
+                  configFile: false,
+                },
               },
-            },
-            {
-              loader: require.resolve('@mdx-js/loader'),
-            },
-          ],
-        },
-        {
-          test: /\.wasm$/,
-          type: 'asset/resource',
-        },
+              {
+                loader: require.resolve('xdm/webpack.cjs'),
+                options: {},
+              },
+            ],
+          },
+          {
+            test: /\.wasm$/,
+            type: 'asset/resource',
+          },
+        ],
+      },
+      devtool: isProd ? 'source-map' : 'cheap-module-source-map',
+      plugins: [
+        new webpack.EnvironmentPlugin({
+          serverData: JSON.stringify({
+            packages: Object.entries(clientImportMap).reduce(
+              (result, [key, value]) => ({
+                ...result,
+                [key]: omit(value, ['path']),
+              }),
+              {}
+            ),
+          }),
+        }),
+        new HtmlWebpackPlugin({
+          template: resolveCompdoc('client/index.html'),
+        }),
+        virtualModules,
       ],
     },
-    devtool: isProd ? 'source-map' : 'cheap-module-source-map',
-    plugins: [
-      new webpack.EnvironmentPlugin({
-        serverData: JSON.stringify({
-          packages: Object.entries(clientImportMap).reduce(
-            (result, [key, value]) => ({
-              ...result,
-              [key]: omit(value, ['path']),
-            }),
-            {}
-          ),
-        }),
-      }),
-      new HtmlWebpackPlugin({
-        template: resolveCompdoc('client/index.html'),
-      }),
-      virtualModules,
-    ],
-  };
+    userConfig,
+    mode
+  );
 };

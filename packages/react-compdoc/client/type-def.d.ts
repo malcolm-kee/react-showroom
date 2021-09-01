@@ -9,7 +9,7 @@ declare module 'react-compdoc-components' {
 
   interface ComponentDocItem {
     component: DocgenComponentDoc;
-    doc: null | ComponentType<{}>;
+    doc: null | ComponentType<any>;
   }
 
   interface ReactCompdocData {

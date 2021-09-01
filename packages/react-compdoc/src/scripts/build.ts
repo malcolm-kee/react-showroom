@@ -4,16 +4,9 @@ process.env.NODE_ENV = 'production';
 
 import webpack from 'webpack';
 import { createWebpackConfig } from '../config/create-webpack-config';
-import { getConfig } from '../lib/get-config';
-import { mergeWebpackConfig } from '../lib/merge-webpack-config';
 
 (async function buildStaticSite() {
-  const baseWebpackConfig = await createWebpackConfig('production');
-  const webpackConfig = mergeWebpackConfig(
-    baseWebpackConfig,
-    getConfig().webpackConfig,
-    'production'
-  );
+  const webpackConfig = await createWebpackConfig('production');
 
   const compiler = webpack(webpackConfig);
 

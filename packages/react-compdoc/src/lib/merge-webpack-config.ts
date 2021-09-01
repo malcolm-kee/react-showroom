@@ -49,7 +49,7 @@ type MetaConfig = Configuration | ((env: Environment) => Configuration);
  * - Ignores plugins that shouldn’t be used twice or may cause issues.
  */
 export function mergeWebpackConfig(
-  baseConfig: MetaConfig,
+  baseConfig: Configuration,
   userConfig?: MetaConfig,
   env: Environment = 'production'
 ) {
