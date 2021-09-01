@@ -1,4 +1,4 @@
-import * as HtmlWebpackPlugin from 'html-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { omit } from 'lodash';
 import * as webpack from 'webpack';
 import {
@@ -47,16 +47,6 @@ export const createWebpackConfig = async (
         {
           test: /\.(js|jsx|ts|tsx)$/,
           include: resolveCompdoc('client'),
-          loader: require.resolve('babel-loader'),
-          options: {
-            presets: [() => babelConfig],
-            babelrc: false,
-            configFile: false,
-          },
-        },
-        {
-          test: /\.(js|jsx|ts|tsx)$/,
-          include: resolveApp('src'),
           loader: require.resolve('babel-loader'),
           options: {
             presets: [() => babelConfig],

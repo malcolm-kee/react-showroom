@@ -32,6 +32,7 @@
     "tslib": "^2.3.1",
     "webpack": "^5.51.1",
     "webpack-dev-server": "^4.0.0",
+    "webpack-merge": "^5.8.0",
     "webpack-virtual-modules": "^0.4.3",
     "yargs": "^17.1.1"
   },

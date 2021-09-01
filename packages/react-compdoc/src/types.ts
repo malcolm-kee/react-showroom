@@ -1,13 +1,16 @@
-import type { LoaderContext } from 'webpack';
-import type { ComponentDoc as DocgenComponentDoc } from 'react-docgen-typescript';
 import type { ComponentType } from 'react';
+import type { ComponentDoc as DocgenComponentDoc } from 'react-docgen-typescript';
+import type { Configuration, LoaderContext } from 'webpack';
+
+export type Environment = 'development' | 'production';
 
 export interface ReactCompdocConfiguration {
-  components?: string;
   imports: Array<{
     name: string;
     path: string;
   }>;
+  webpackConfig?: Configuration | ((env: Environment) => Configuration);
+  components?: string;
 }
 
 export interface NormalizedReactCompdocConfiguration

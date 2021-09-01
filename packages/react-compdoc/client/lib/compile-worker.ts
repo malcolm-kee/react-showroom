@@ -176,7 +176,7 @@ const transformImports = (importDec: ImportDeclarationNode) => {
     return defaultImports
       .map(
         ({ local }) =>
-          `const ${local.name} = window.__compdoc__.helpers.importDefault(window.__compdoc__.moduleMap.${pkgConfig.varName}).default;\n`
+          `const ${local.name} = tslib.__importDefault(window.__compdoc__.moduleMap.${pkgConfig.varName}).default;\n`
       )
       .join('');
   })();
