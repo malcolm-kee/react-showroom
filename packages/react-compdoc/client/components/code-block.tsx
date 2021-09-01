@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useQuery } from 'react-query';
 import { compileCode } from '../lib/compile-code';
+import { Div } from './base';
 import { CodeEditor, CodeEditorProps } from './code-editor';
 import { CodePreview } from './code-preview';
 
@@ -8,11 +9,15 @@ const IsBlockCodeContext = React.createContext(false);
 IsBlockCodeContext.displayName = 'IsBlockCodeContext';
 
 export const Pre = (props: { children: React.ReactNode }) => (
-  <div className="mb-5">
+  <Div
+    css={{
+      marginBottom: '$4',
+    }}
+  >
     <IsBlockCodeContext.Provider value={true}>
       {props.children}
     </IsBlockCodeContext.Provider>
-  </div>
+  </Div>
 );
 
 export const Code = (props: {
@@ -47,14 +52,33 @@ const CodeLiveEditor = (
 
   return (
     <div>
-      <div className="relative">
+      <Div
+        css={{
+          position: 'relative',
+          minHeight: 48,
+          border: '1px solid',
+          borderColor: '$gray-300',
+          px: 12,
+          py: 4,
+        }}
+      >
         {data && <CodePreview code={data} />}
         {isCompiling && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-400 bg-opacity-25 animate-pulse">
+          <Div
+            css={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: '$gray-200',
+              opacity: 0.5,
+            }}
+          >
             Compiling...
-          </div>
+          </Div>
         )}
-      </div>
+      </Div>
       <CodeEditor code={code} onChange={setCode} language={props.language} />
     </div>
   );
