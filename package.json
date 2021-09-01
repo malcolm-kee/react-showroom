@@ -24,6 +24,7 @@
   },
   "scripts": {
     "example": "yarn workspace react-example doc",
+    "example:build": "yarn workspace react-example build:doc",
     "dev": "yarn workspace react-compdoc dev"
   }
 }

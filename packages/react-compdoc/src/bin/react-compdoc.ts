@@ -31,6 +31,9 @@ yargs
     },
     () => spawnScript('dev', process.argv.slice(3))
   )
+  .command('build', 'Build compdoc static site', {}, () =>
+    spawnScript('build', process.argv.slice(3))
+  )
   .help().argv;
 
 function spawnScript(scriptName: string, argv: ReadonlyArray<string> = []) {

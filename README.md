@@ -6,6 +6,7 @@ TODO
 - [x] live example that is editable
 - [x] load custom CSS
 - [x] customize webpack plugin
+- [x] build static output
 - [ ] tweak design
 - [ ] show all components in sidebar
 - [ ] configure sidebar structure

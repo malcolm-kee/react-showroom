@@ -4,7 +4,8 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "doc": "react-compdoc dev"
+    "doc": "react-compdoc dev",
+    "build:doc": "react-compdoc build"
   },
   "dependencies": {
     "mini-css-extract-plugin": "^2.2.1",
@@ -23,6 +24,7 @@
     "postcss": "^8.3.6",
     "postcss-loader": "^6.1.1",
     "style-loader": "^3.2.1",
-    "tailwindcss": "^2.2.9"
+    "tailwindcss": "^2.2.9",
+    "webpack": "^5.51.1"
   }
 }
