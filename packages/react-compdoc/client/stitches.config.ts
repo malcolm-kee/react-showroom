@@ -1,3 +1,4 @@
+import type * as Stitches from '@stitches/react';
 import { createStitches } from '@stitches/react';
 
 const SPACE_UNIT = 4;
@@ -76,23 +77,23 @@ export const {
     },
   },
   utils: {
-    marginX: (value: number | string) => ({
+    marginX: (value: Stitches.PropertyValue<'margin'>) => ({
       marginLeft: value,
       marginRight: value,
     }),
-    marginY: (value: number | string) => ({
+    marginY: (value: Stitches.PropertyValue<'margin'>) => ({
       marginTop: value,
       marginBottom: value,
     }),
-    px: (value: number | string) => ({
+    px: (value: Stitches.PropertyValue<'padding'>) => ({
       paddingLeft: value,
       paddingRight: value,
     }),
-    py: (value: number | string) => ({
+    py: (value: Stitches.PropertyValue<'padding'>) => ({
       paddingTop: value,
       paddingBottom: value,
     }),
-    inset: (value: number | string) => ({
+    inset: (value: Stitches.PropertyValue<'top'>) => ({
       top: value,
       left: value,
       right: value,

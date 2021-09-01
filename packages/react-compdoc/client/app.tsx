@@ -9,22 +9,20 @@ const components = {
 };
 
 export const App = (props: { data: typeof Data }) => (
-  <div>
-    <main>
-      <Div
-        css={{
-          maxWidth: '$screenXl',
-          marginX: 'auto',
-          padding: '$6',
-        }}
-      >
-        {props.data.items.map(({ component, doc: Doc }, i) => (
-          <article key={i}>
-            <ComponentMeta doc={component} />
-            {Doc && <Doc components={components} />}
-          </article>
-        ))}
-      </Div>
-    </main>
-  </div>
+  <main>
+    <Div
+      css={{
+        maxWidth: '$screenXl',
+        marginX: 'auto',
+        padding: '$6',
+      }}
+    >
+      {props.data.items.map(({ component, doc: Doc }, i) => (
+        <article key={i}>
+          <ComponentMeta doc={component} />
+          {Doc && <Doc components={components} />}
+        </article>
+      ))}
+    </Div>
+  </main>
 );

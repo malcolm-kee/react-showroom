@@ -58,8 +58,8 @@ const CodeLiveEditor = (
           minHeight: 48,
           border: '1px solid',
           borderColor: '$gray-300',
-          px: 12,
-          py: 4,
+          px: '$3',
+          py: '$1',
         }}
       >
         {data && <CodePreview code={data} />}
