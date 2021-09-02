@@ -1,31 +1,47 @@
 import type { ComponentDoc } from 'react-docgen-typescript';
-import slugify from 'slugify';
 import snarkdown from 'snarkdown';
-import { text, Div } from './base';
+import { getComponentSlug } from '../lib/get-component-slug';
 import { styled } from '../stitches.config';
+import { A, Div, text } from './base';
 import * as Collapsible from './collapsible';
 
-export const ComponentMeta = ({ doc }: { doc: ComponentDoc }) => {
-  const slug = slugify(doc.displayName);
+export const ComponentMeta = ({
+  doc,
+  propsDefaultOpen,
+}: {
+  doc: ComponentDoc;
+  propsDefaultOpen?: boolean;
+}) => {
+  const slug = getComponentSlug(doc);
   return (
     <>
       <Div
         as="h2"
         id={slug}
-        css={{ marginBottom: '$3' }}
+        css={{ marginBottom: '$5', fontWeight: 700 }}
         className={text({ variant: '5xl' })}
       >
-        <a href={`#${slug}`}>{doc.displayName}</a>
+        <A
+          href={`#${slug}`}
+          css={{
+            display: 'inline-block',
+            px: '$2',
+            marginX: '-$2',
+            color: '$gray-500',
+          }}
+        >
+          {doc.displayName}
+        </A>
       </Div>
       {doc.description && (
-        <div
+        <Div
           dangerouslySetInnerHTML={{
             __html: snarkdown(doc.description),
           }}
         />
       )}
       {doc.props && Object.keys(doc.props).length > 0 && (
-        <Collapsible.Root>
+        <Collapsible.Root defaultOpen={propsDefaultOpen}>
           <Div css={{ padding: '$1' }}>
             <Collapsible.Button>View Props</Collapsible.Button>
           </Div>

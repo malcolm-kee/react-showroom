@@ -101,6 +101,10 @@ export const createWebpackConfig = async (
         }),
         virtualModules,
       ],
+      performance: {
+        hints: false,
+      },
+      stats: 'none',
     },
     userConfig,
     mode

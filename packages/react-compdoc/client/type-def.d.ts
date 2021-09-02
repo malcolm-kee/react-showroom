@@ -7,7 +7,7 @@ declare module 'react-compdoc-components' {
   import type { ComponentDoc as DocgenComponentDoc } from 'react-docgen-typescript';
   import type { ComponentType } from 'react';
 
-  interface ComponentDocItem {
+  export interface ComponentDocItem {
     component: DocgenComponentDoc;
     doc: null | ComponentType<any>;
   }

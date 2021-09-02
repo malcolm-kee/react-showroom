@@ -28,4 +28,6 @@ const webpackDevServer = require('webpack-dev-server');
   const server = new webpackDevServer(devServerOptions, compiler);
 
   await server.start();
+
+  console.log(`Starting the development server on http://localhost:${PORT}`);
 })();

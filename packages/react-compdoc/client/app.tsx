@@ -1,32 +1,33 @@
 import type Data from 'react-compdoc-components';
 import { Div } from './components/base';
-import { Code, Pre } from './components/code-block';
-import { ComponentMeta } from './components/component-meta';
-import { styled } from './stitches.config';
-
-const components = {
-  pre: Pre,
-  code: Code,
-  p: styled('p', {
-    marginY: '$3',
-  }),
-};
+import { ComponentDocArticle } from './components/component-doc-article';
+import { Sidebar } from './components/sidebar';
 
 export const App = (props: { data: typeof Data }) => (
-  <main>
+  <Div
+    css={{
+      display: 'flex',
+      minHeight: '100%',
+    }}
+  >
+    <Sidebar items={props.data.items} />
     <Div
+      as="main"
       css={{
-        maxWidth: '$screenXl',
-        marginX: 'auto',
-        padding: '$6',
+        flex: '1',
       }}
     >
-      {props.data.items.map(({ component, doc: Doc }, i) => (
-        <article key={i}>
-          <ComponentMeta doc={component} />
-          {Doc && <Doc components={components} />}
-        </article>
-      ))}
+      <Div
+        css={{
+          maxWidth: '$screenXl',
+          marginX: 'auto',
+          padding: '$6',
+        }}
+      >
+        {props.data.items.map((item, i) => (
+          <ComponentDocArticle doc={item} key={i} />
+        ))}
+      </Div>
     </Div>
-  </main>
+  </Div>
 );

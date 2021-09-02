@@ -23,7 +23,7 @@
     "@types/glob": "^7.1.4"
   },
   "scripts": {
-    "example": "yarn workspace react-example doc",
+    "example": "yarn workspace react-example",
     "example:build": "yarn workspace react-example build:doc",
     "dev": "yarn workspace react-compdoc dev"
   }
