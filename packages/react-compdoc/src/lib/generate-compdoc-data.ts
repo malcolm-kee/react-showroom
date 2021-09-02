@@ -16,7 +16,14 @@ export const generateCompdocData = async () => {
 
   const componentDocItems = componentPaths.map((compPath) => {
     const component = docgen
-      .withCustomConfig(paths.appTsConfig, {})
+      .withCustomConfig(paths.appTsConfig, {
+        propFilter: (prop) => {
+          if (prop.parent) {
+            return !prop.parent.fileName.includes('@types/react');
+          }
+          return true;
+        },
+      })
       .parse(compPath)[0];
 
     const componentPathInfo = path.parse(compPath);

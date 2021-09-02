@@ -2,10 +2,14 @@ import type Data from 'react-compdoc-components';
 import { Div } from './components/base';
 import { Code, Pre } from './components/code-block';
 import { ComponentMeta } from './components/component-meta';
+import { styled } from './stitches.config';
 
 const components = {
   pre: Pre,
   code: Code,
+  p: styled('p', {
+    marginY: '$3',
+  }),
 };
 
 export const App = (props: { data: typeof Data }) => (

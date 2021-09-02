@@ -1,9 +1,13 @@
+import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
 import * as React from 'react';
 import { useQuery } from 'react-query';
 import { compileCode } from '../lib/compile-code';
+import { css } from '../stitches.config';
 import { Div } from './base';
 import { CodeEditor, CodeEditorProps } from './code-editor';
+import { CodeHighlight } from './code-highlight';
 import { CodePreview } from './code-preview';
+import * as Collapsible from './collapsible';
 
 const IsBlockCodeContext = React.createContext(false);
 IsBlockCodeContext.displayName = 'IsBlockCodeContext';
@@ -23,6 +27,7 @@ export const Pre = (props: { children: React.ReactNode }) => (
 export const Code = (props: {
   children: React.ReactNode;
   className?: string;
+  static?: boolean;
 }) => {
   const isBlockCode = React.useContext(IsBlockCodeContext);
 
@@ -30,11 +35,34 @@ export const Code = (props: {
     return <code {...props} />;
   }
 
-  const lang = props.className && props.className.split('-').pop();
+  const lang: any = props.className && props.className.split('-').pop();
 
-  return (
-    <CodeLiveEditor code={props.children as string} language={lang as any} />
-  );
+  if (props.static) {
+    const theme = nightOwlTheme;
+
+    return (
+      <Div
+        style={{
+          ...(typeof theme.plain === 'object' ? (theme.plain as any) : {}),
+        }}
+        css={{
+          padding: 10,
+          fontSize: 13,
+          borderRadius: '$base',
+          whiteSpace: 'pre',
+          fontFamily: 'monospace',
+        }}
+      >
+        <CodeHighlight
+          code={props.children as string}
+          language={lang}
+          theme={theme}
+        />
+      </Div>
+    );
+  }
+
+  return <CodeLiveEditor code={props.children as string} language={lang} />;
 };
 
 const CodeLiveEditor = (
@@ -58,8 +86,8 @@ const CodeLiveEditor = (
           minHeight: 48,
           border: '1px solid',
           borderColor: '$gray-300',
-          px: '$3',
-          py: '$1',
+          padding: '$1',
+          roundedT: '$base',
         }}
       >
         {data && <CodePreview code={data} />}
@@ -79,7 +107,28 @@ const CodeLiveEditor = (
           </Div>
         )}
       </Div>
-      <CodeEditor code={code} onChange={setCode} language={props.language} />
+      <Collapsible.Root>
+        <Div
+          css={{
+            px: '$2',
+            py: '$1',
+          }}
+        >
+          <Collapsible.Button>View/Edit Code</Collapsible.Button>
+        </Div>
+        <Collapsible.Content>
+          <CodeEditor
+            code={code}
+            onChange={setCode}
+            language={props.language}
+            className={editorBottom()}
+          />
+        </Collapsible.Content>
+      </Collapsible.Root>
     </div>
   );
 };
+
+const editorBottom = css({
+  borderRadius: '$base',
+});

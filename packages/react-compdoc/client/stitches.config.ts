@@ -75,6 +75,14 @@ export const {
       'gray-800': '#1F2937',
       'gray-900': '#111827',
     },
+    radii: {
+      none: '0px',
+      sm: '0.125rem',
+      base: '0.25rem',
+      md: '0.375rem',
+      lg: '0.5rem',
+      xl: '0.75rem',
+    },
   },
   utils: {
     marginX: (value: Stitches.PropertyValue<'margin'>) => ({
@@ -98,6 +106,14 @@ export const {
       left: value,
       right: value,
       bottom: value,
+    }),
+    roundedT: (value: Stitches.PropertyValue<'borderRadius'>) => ({
+      borderTopLeftRadius: value,
+      borderTopRightRadius: value,
+    }),
+    roundedB: (value: Stitches.PropertyValue<'borderRadius'>) => ({
+      borderBottomLeftRadius: value,
+      borderBottomRightRadius: value,
     }),
   },
 });

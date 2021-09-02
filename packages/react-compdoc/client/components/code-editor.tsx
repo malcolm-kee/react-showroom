@@ -1,7 +1,8 @@
-import Highlight, { Language, Prism, PrismTheme } from 'prism-react-renderer';
+import { Language, PrismTheme } from 'prism-react-renderer';
 import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
-import { CSSProperties, Fragment, useEffect, useState } from 'react';
+import { CSSProperties, useEffect, useState } from 'react';
 import Editor from 'react-simple-code-editor';
+import { CodeHighlight } from './code-highlight';
 
 export interface CodeEditorProps {
   code: string;
@@ -10,6 +11,7 @@ export interface CodeEditorProps {
   onChange?: (newCode: string) => void;
   style?: CSSProperties;
   theme?: PrismTheme;
+  className?: string;
 }
 
 export const CodeEditor = (props: CodeEditorProps) => {
@@ -39,26 +41,7 @@ export const CodeEditor = (props: CodeEditorProps) => {
   }, [state.code]);
 
   const highlightCode = (code: string) => (
-    <Highlight
-      Prism={Prism}
-      code={code}
-      theme={theme}
-      language={props.language}
-    >
-      {({ tokens, getLineProps, getTokenProps }) => (
-        <Fragment>
-          {tokens.map((line, i) => (
-            // eslint-disable-next-line react/jsx-key
-            <div {...getLineProps({ line, key: i })}>
-              {line.map((token, key) => (
-                // eslint-disable-next-line react/jsx-key
-                <span {...getTokenProps({ token, key })} />
-              ))}
-            </div>
-          ))}
-        </Fragment>
-      )}
-    </Highlight>
+    <CodeHighlight code={code} theme={theme} language={props.language} />
   );
 
   // eslint-disable-next-line no-unused-vars

@@ -8,6 +8,7 @@
     "build:doc": "react-compdoc build"
   },
   "dependencies": {
+    "classnames": "^2.3.1",
     "mini-css-extract-plugin": "^2.2.1",
     "react": "^17.0.2",
     "react-compdoc": "^0.0.1",

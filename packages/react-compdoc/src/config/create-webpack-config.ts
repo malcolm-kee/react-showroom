@@ -9,6 +9,7 @@ import { getClientImportMap } from '../lib/get-client-import-map';
 import { getConfig } from '../lib/get-config';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
 import { moduleFileExtensions, resolveApp, resolveCompdoc } from '../lib/paths';
+import { rehypeMetaAsAttribute } from '../lib/rehype-meta-as-attribute';
 import { createBabelConfig } from './babel-config';
 import VirtualModulesPlugin = require('webpack-virtual-modules');
 
@@ -70,7 +71,9 @@ export const createWebpackConfig = async (
               },
               {
                 loader: require.resolve('xdm/webpack.cjs'),
-                options: {},
+                options: {
+                  rehypePlugins: [rehypeMetaAsAttribute],
+                },
               },
             ],
           },
