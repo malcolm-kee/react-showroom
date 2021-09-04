@@ -1,6 +1,8 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { omit } from 'lodash';
+import * as path from 'path';
 import * as webpack from 'webpack';
+import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import {
   generateCompdocData,
   getImportsAttach,
@@ -83,8 +85,12 @@ export const createWebpackConfig = async (
           },
         ],
       },
+      resolveLoader: {
+        modules: ['node_modules', path.resolve(__dirname, '../loaders')],
+      },
       devtool: isProd ? 'source-map' : 'cheap-module-source-map',
       plugins: [
+        isProd ? undefined : new ReactRefreshWebpackPlugin(),
         new webpack.EnvironmentPlugin({
           serverData: JSON.stringify({
             packages: Object.entries(clientImportMap).reduce(
@@ -100,7 +106,7 @@ export const createWebpackConfig = async (
           template: resolveCompdoc('client/index.html'),
         }),
         virtualModules,
-      ],
+      ].filter(isDefined),
       performance: {
         hints: false,
       },
@@ -110,3 +116,6 @@ export const createWebpackConfig = async (
     mode
   );
 };
+
+const isDefined = <Value>(value: Value | undefined): value is Value =>
+  typeof value !== 'undefined';

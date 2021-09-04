@@ -1,4 +1,6 @@
 export const createBabelConfig = (env: 'development' | 'production') => {
+  const isDev = env === 'development';
+
   return {
     presets: [
       [
@@ -23,6 +25,7 @@ export const createBabelConfig = (env: 'development' | 'production') => {
     ],
     plugins: [
       require.resolve('babel-plugin-macros'),
+      isDev ? require.resolve('react-refresh/babel') : undefined,
       [
         require.resolve('@babel/plugin-transform-runtime'),
         {
@@ -31,6 +34,6 @@ export const createBabelConfig = (env: 'development' | 'production') => {
           regenerator: true,
         },
       ],
-    ],
+    ].filter(Boolean),
   };
 };
