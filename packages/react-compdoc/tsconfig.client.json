@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "ESNext",
+        "target": "ES2015",
+        "moduleResolution": "node",
+        "lib": ["DOM", "ESNext"],
+        "declaration": true,
+        "sourceMap": true,
+        "strict": true,
+        "jsx": "react-jsx",
+        "isolatedModules": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "outDir": "client-dist",
+        "skipLibCheck": true
+    },
+    "include": ["client"]
+}

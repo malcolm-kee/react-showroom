@@ -4,7 +4,11 @@ import type { Node } from 'acorn';
 import * as walk from 'acorn-walk';
 import * as esbuild from 'esbuild-wasm';
 import wasmPath from 'esbuild-wasm/esbuild.wasm';
-import type { CompileResult, RequestCompileData } from '../types';
+import type {
+  CompilationError,
+  CompileResult,
+  RequestCompileData,
+} from '../types';
 import { serverData } from './server-data';
 const acorn = require('acorn');
 
@@ -17,10 +21,22 @@ self.onmessage = (ev) => {
   const data: RequestCompileData = ev.data;
 
   const handleError = (err: unknown) => {
+    const errString = err instanceof Error ? err.message : String(err);
+
+    const match = errString.match(errorRegex);
+
+    const meta: CompilationError | undefined = match
+      ? {
+          type: 'compilationError',
+          line: Number(match[1]),
+        }
+      : undefined;
+
     const errorResult: CompileResult = {
       type: 'error',
       error: String(err),
       messageId: data.messageId,
+      meta,
     };
     self.postMessage(errorResult);
   };
@@ -183,3 +199,5 @@ const transformImports = (importDec: ImportDeclarationNode) => {
 
   return `${starImportsOutput}${defaultImportsOutput}${namedImportsOutput}`;
 };
+
+const errorRegex = /Transform failed with \d+ error:\s+<stdin>:(\d+):(\d+):/;

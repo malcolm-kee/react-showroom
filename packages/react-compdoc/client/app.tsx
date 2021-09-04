@@ -7,7 +7,8 @@ export const App = (props: { data: typeof Data }) => (
   <Div
     css={{
       display: 'flex',
-      minHeight: '100%',
+      height: '100vh',
+      overflow: 'hidden',
     }}
   >
     <Sidebar items={props.data.items} />
@@ -15,6 +16,7 @@ export const App = (props: { data: typeof Data }) => (
       as="main"
       css={{
         flex: '1',
+        overflowY: 'auto',
       }}
     >
       <Div

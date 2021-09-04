@@ -3,6 +3,11 @@ export interface RequestCompileData {
   messageId: number;
 }
 
+export interface CompilationError {
+  type: 'compilationError';
+  line: number;
+}
+
 export type CompileResult =
   | {
       type: 'success';
@@ -13,4 +18,5 @@ export type CompileResult =
       type: 'error';
       error: string;
       messageId: number;
+      meta?: CompilationError;
     };

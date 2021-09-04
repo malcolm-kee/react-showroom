@@ -1,11 +1,11 @@
 import type { CompileResult, RequestCompileData } from '../types';
 
-const worker = new Worker(new URL('./compile-worker.ts', import.meta.url));
+const worker = new Worker(new URL('./compile-worker.js', import.meta.url));
 
 let id = 0;
 
 export const compileCode = (code: string) =>
-  new Promise<string>((fulfill, reject) => {
+  new Promise<CompileResult>((fulfill) => {
     const messageId = id++;
 
     const compileEvent: RequestCompileData = {
@@ -17,11 +17,7 @@ export const compileCode = (code: string) =>
     function handleMessage(ev: MessageEvent) {
       const data: CompileResult = ev.data;
       if (messageId === data.messageId) {
-        if (data.type === 'success') {
-          fulfill(data.code);
-        } else {
-          reject(new Error(data.error));
-        }
+        fulfill(data);
         worker.removeEventListener('message', handleMessage);
       }
     }

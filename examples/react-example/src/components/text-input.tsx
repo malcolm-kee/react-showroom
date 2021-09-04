@@ -1,5 +1,6 @@
-import * as React from 'react';
 import cx from 'classnames';
+import * as React from 'react';
+import { callAll } from '../lib/call-all';
 
 export interface TextInputProps
   extends React.ComponentPropsWithoutRef<'input'> {
@@ -15,7 +16,7 @@ export interface TextInputProps
  * It accepts all props `input` element accepts, including `ref`.
  */
 export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
-  function TextInput({ onValue, className, ...inputProps }, ref) {
+  function TextInput({ onValue, className, onChange, ...inputProps }, ref) {
     return (
       <input
         type="text"
@@ -23,6 +24,10 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
           'rounded-md border-gray-300',
           inputProps.disabled && 'bg-gray-200',
           className
+        )}
+        onChange={callAll(
+          onChange,
+          onValue && ((ev) => onValue(ev.target.value))
         )}
         {...inputProps}
         ref={ref}

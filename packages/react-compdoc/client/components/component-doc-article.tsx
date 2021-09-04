@@ -23,7 +23,7 @@ export const ComponentDocArticle = (props: { doc: ComponentDocItem }) => {
 };
 
 const Article = styled('article', {
-  py: '$12',
+  py: '$6',
   marginBottom: '$12',
   borderBottom: '1px solid',
   borderBottomColor: '$gray-200',

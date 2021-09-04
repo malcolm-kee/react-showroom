@@ -12,6 +12,7 @@ export const Sidebar = (props: { items: Array<ComponentDocItem> }) => {
         borderRightColor: '$gray-300',
         minWidth: 240,
         background: '$gray-100',
+        overflowY: 'auto',
       }}
     >
       <Div

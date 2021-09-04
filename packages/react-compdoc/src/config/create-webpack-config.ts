@@ -1,8 +1,8 @@
+import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { omit } from 'lodash';
 import * as path from 'path';
 import * as webpack from 'webpack';
-import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import {
   generateCompdocData,
   getImportsAttach,
@@ -12,7 +12,6 @@ import { getConfig } from '../lib/get-config';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
 import { moduleFileExtensions, resolveApp, resolveCompdoc } from '../lib/paths';
 import { rehypeMetaAsAttribute } from '../lib/rehype-meta-as-attribute';
-import { createBabelConfig } from './babel-config';
 import VirtualModulesPlugin = require('webpack-virtual-modules');
 
 const userConfig = getConfig().webpackConfig;
@@ -40,35 +39,26 @@ export const createWebpackConfig = async (
   return mergeWebpackConfig(
     {
       mode,
-      entry: resolveCompdoc('client/index.tsx'),
+      entry: resolveCompdoc('client-dist/index.js'),
       resolve: {
         extensions: moduleFileExtensions.map((ext) => `.${ext}`),
       },
       output: {
         path: resolveApp(outDir),
         publicPath: 'auto',
+        assetModuleFilename: '[name]-[contenthash][ext][query]',
+        clean: isProd,
       },
       module: {
         rules: [
           {
-            test: /\.(js|jsx|ts|tsx)$/,
-            include: resolveCompdoc('client'),
-            loader: require.resolve('babel-loader'),
-            options: {
-              presets: [() => createBabelConfig(mode)],
-              babelrc: false,
-              configFile: false,
-            },
-          },
-          {
             test: /\.mdx?$/,
             use: [
               {
-                loader: require.resolve('babel-loader'),
+                loader: require.resolve('esbuild-loader'),
                 options: {
-                  presets: [() => createBabelConfig(mode)],
-                  babelrc: false,
-                  configFile: false,
+                  loader: 'jsx',
+                  target: 'es2015',
                 },
               },
               {
@@ -103,7 +93,7 @@ export const createWebpackConfig = async (
           }),
         }),
         new HtmlWebpackPlugin({
-          template: resolveCompdoc('client/index.html'),
+          template: resolveCompdoc('public/index.html'),
         }),
         virtualModules,
       ].filter(isDefined),

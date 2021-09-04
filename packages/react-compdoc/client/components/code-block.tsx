@@ -1,8 +1,11 @@
+import { TerminalIcon } from '@heroicons/react/outline';
 import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
 import * as React from 'react';
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import { useQuery } from 'react-query';
 import { compileCode } from '../lib/compile-code';
 import { css } from '../stitches.config';
+import { Alert } from './alert';
 import { Div } from './base';
 import { CodeEditor, CodeEditorProps } from './code-editor';
 import { CodeHighlight } from './code-highlight';
@@ -15,7 +18,8 @@ IsBlockCodeContext.displayName = 'IsBlockCodeContext';
 export const Pre = (props: { children: React.ReactNode }) => (
   <Div
     css={{
-      marginBottom: '$4',
+      marginTop: '$4',
+      marginBottom: '$8',
     }}
   >
     <IsBlockCodeContext.Provider value={true}>
@@ -70,13 +74,15 @@ const CodeLiveEditor = (
 ) => {
   const [code, setCode] = React.useState(props.code);
 
-  const { data, isFetching, isLoading } = useQuery({
+  const { data, isFetching, isLoading, error, isError } = useQuery({
     queryKey: ['codeCompilation', code],
     queryFn: () => compileCode(code as string),
     keepPreviousData: true,
   });
 
   const isCompiling = isFetching || isLoading;
+
+  const [showCode, setShowCode] = React.useState<boolean | undefined>(false);
 
   return (
     <div>
@@ -90,7 +96,20 @@ const CodeLiveEditor = (
           roundedT: '$base',
         }}
       >
-        {data && <CodePreview code={data} />}
+        {isError ? (
+          <Alert variant="error">
+            {typeof error === 'string' ? error : 'Compilation error'}
+          </Alert>
+        ) : (
+          data &&
+          (data.type === 'success' ? (
+            <ErrorBoundary FallbackComponent={ErrorFallback}>
+              <CodePreview code={data.code} />
+            </ErrorBoundary>
+          ) : (
+            <Alert variant="error">{formatError(data.error)}</Alert>
+          ))
+        )}
         {isCompiling && (
           <Div
             css={{
@@ -100,21 +119,38 @@ const CodeLiveEditor = (
               justifyContent: 'center',
               alignItems: 'center',
               backgroundColor: '$gray-200',
+              gap: '$2',
               opacity: 0.5,
             }}
           >
-            Compiling...
+            <TerminalIcon width="24" height="24" />
+            <span>Compiling...</span>
           </Div>
         )}
       </Div>
-      <Collapsible.Root>
+      <Collapsible.Root open={showCode} onOpenChange={setShowCode}>
         <Div
           css={{
-            px: '$2',
             py: '$1',
           }}
         >
-          <Collapsible.Button>View/Edit Code</Collapsible.Button>
+          <Collapsible.Button
+            css={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '$1',
+              fontSize: '$sm',
+              lineHeight: '$sm',
+            }}
+          >
+            <Collapsible.ToggleIcon
+              hide={showCode}
+              aria-label={showCode ? 'Hide' : 'View'}
+              width="16"
+              height="16"
+            />
+            Code
+          </Collapsible.Button>
         </Div>
         <Collapsible.Content>
           <CodeEditor
@@ -132,3 +168,15 @@ const CodeLiveEditor = (
 const editorBottom = css({
   borderRadius: '$base',
 });
+
+const ErrorFallback = (props: FallbackProps) => {
+  return (
+    <Alert variant="error">
+      {props.error instanceof Error
+        ? props.error.message
+        : JSON.stringify(props.error)}
+    </Alert>
+  );
+};
+
+const formatError = (error: string) => error.replace(/<stdin>:|\"\\x0A\"/g, '');

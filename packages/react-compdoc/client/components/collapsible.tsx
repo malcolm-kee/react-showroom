@@ -1,18 +1,12 @@
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { keyframes, styled } from '../stitches.config';
-
-export { Root } from '@radix-ui/react-collapsible';
+import { ChevronDownIcon } from '@heroicons/react/outline';
 
 export const Button = styled(Collapsible.Trigger, {
   color: '$gray-500',
-  fontSize: '$sm',
-  lineHeight: '$sm',
   position: 'relative',
   fontWeight: '600',
   px: '$1',
-  '&:active': {
-    top: '$px',
-  },
   '&:focus': {
     outline: 'none',
   },
@@ -37,4 +31,18 @@ export const Content = styled(Collapsible.Content, {
   overflow: 'hidden',
   '&[data-state="open"]': { animation: `${open} 300ms ease-out` },
   '&[data-state="closed"]': { animation: `${close} 300ms ease-out` },
+});
+
+export const Root = styled(Collapsible.Root);
+
+export const ToggleIcon = styled(ChevronDownIcon, {
+  transition: 'transform 300ms ease-in-out',
+  transform: 'rotate(0deg)',
+  variants: {
+    hide: {
+      true: {
+        transform: 'rotate(-180deg)',
+      },
+    },
+  },
 });

@@ -4,6 +4,8 @@ import { getComponentSlug } from '../lib/get-component-slug';
 import { styled } from '../stitches.config';
 import { A, Div, text } from './base';
 import * as Collapsible from './collapsible';
+import * as React from 'react';
+import { HashtagIcon } from '@heroicons/react/outline';
 
 export const ComponentMeta = ({
   doc,
@@ -13,6 +15,9 @@ export const ComponentMeta = ({
   propsDefaultOpen?: boolean;
 }) => {
   const slug = getComponentSlug(doc);
+
+  const [propsIsOpen, setPropsIsOpen] = React.useState(propsDefaultOpen);
+
   return (
     <>
       <Div
@@ -21,17 +26,10 @@ export const ComponentMeta = ({
         css={{ marginBottom: '$5', fontWeight: 700 }}
         className={text({ variant: '5xl' })}
       >
-        <A
-          href={`#${slug}`}
-          css={{
-            display: 'inline-block',
-            px: '$2',
-            marginX: '-$2',
-            color: '$gray-500',
-          }}
-        >
+        <Title href={`#${slug}`}>
+          <HashTag />
           {doc.displayName}
-        </A>
+        </Title>
       </Div>
       {doc.description && (
         <Div
@@ -41,9 +39,29 @@ export const ComponentMeta = ({
         />
       )}
       {doc.props && Object.keys(doc.props).length > 0 && (
-        <Collapsible.Root defaultOpen={propsDefaultOpen}>
+        <Collapsible.Root
+          open={propsIsOpen}
+          onOpenChange={setPropsIsOpen}
+          css={{
+            marginY: '$4',
+          }}
+        >
           <Div css={{ padding: '$1' }}>
-            <Collapsible.Button>View Props</Collapsible.Button>
+            <Collapsible.Button
+              css={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '$1',
+              }}
+            >
+              <Collapsible.ToggleIcon
+                hide={propsIsOpen}
+                aria-label={propsIsOpen ? 'Hide' : 'View'}
+                width="16"
+                height="16"
+              />
+              Props
+            </Collapsible.Button>
           </Div>
           <Collapsible.Content>
             <Table>
@@ -97,4 +115,25 @@ const Th = styled('th', {
   color: '$gray-600',
   backgroundColor: '$gray-100',
   textAlign: 'left',
+});
+
+const HashTag = styled(HashtagIcon, {
+  visibility: 'hidden',
+  position: 'absolute',
+  left: '-0.7rem',
+  width: '1rem',
+  height: '1rem',
+  top: '50%',
+  transform: 'translate(0, -50%)',
+});
+
+const Title = styled('a', {
+  display: 'inline-block',
+  px: '$2',
+  marginX: '-$2',
+  color: '$gray-500',
+  position: 'relative',
+  [`&:hover ${HashTag}`]: {
+    visibility: 'visible',
+  },
 });
