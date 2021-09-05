@@ -16,8 +16,10 @@
     "@types/react-dom": "^17.0.9",
     "@types/yargs": "^17.0.2",
     "concurrently": "^6.2.1",
+    "lerna": "^4.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "rimraf": "^3.0.2",
     "type-fest": "^2.1.0"
   },
   "dependencies": {
@@ -25,9 +27,12 @@
     "@types/glob": "^7.1.4"
   },
   "scripts": {
+    "lerna": "lerna",
     "example": "yarn workspace react-example",
     "example:build": "yarn workspace react-example build:doc",
-    "dev": "yarn workspace react-compdoc dev",
-    "compdoc": "yarn workspace react-compdoc"
+    "dev": "lerna run dev --stream --parallel",
+    "compdoc": "yarn workspace react-compdoc",
+    "core": "yarn workspace @compdoc/core",
+    "clean": "lerna run clean"
   }
 }

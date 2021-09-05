@@ -1,14 +1,13 @@
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import { omit } from 'lodash';
 import * as path from 'path';
 import * as webpack from 'webpack';
 import {
   generateCompdocData,
   getImportsAttach,
 } from '../lib/generate-compdoc-data';
-import { getClientImportMap } from '../lib/get-client-import-map';
 import { getConfig } from '../lib/get-config';
+import { getEnvVariables } from '../lib/get-env-variables';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
 import { moduleFileExtensions, resolveApp, resolveCompdoc } from '../lib/paths';
 import { rehypeMetaAsAttribute } from '../lib/rehype-meta-as-attribute';
@@ -21,8 +20,6 @@ export const createWebpackConfig = async (
   { outDir = 'compdoc' } = {}
 ): Promise<webpack.Configuration> => {
   const isProd = mode === 'production';
-
-  const clientImportMap = getClientImportMap();
 
   const importAttach = getImportsAttach();
 
@@ -53,19 +50,31 @@ export const createWebpackConfig = async (
         rules: [
           {
             test: /\.mdx?$/,
-            use: [
+            oneOf: [
               {
-                loader: require.resolve('esbuild-loader'),
-                options: {
-                  loader: 'jsx',
-                  target: 'es2015',
-                },
+                resourceQuery: /compdocRemark/,
+                use: [
+                  {
+                    loader: 'compdoc-remark-loader',
+                  },
+                ],
               },
               {
-                loader: require.resolve('xdm/webpack.cjs'),
-                options: {
-                  rehypePlugins: [rehypeMetaAsAttribute],
-                },
+                use: [
+                  {
+                    loader: require.resolve('esbuild-loader'),
+                    options: {
+                      loader: 'jsx',
+                      target: 'es2015',
+                    },
+                  },
+                  {
+                    loader: require.resolve('xdm/webpack.cjs'),
+                    options: {
+                      rehypePlugins: [rehypeMetaAsAttribute],
+                    },
+                  },
+                ],
               },
             ],
           },
@@ -82,15 +91,7 @@ export const createWebpackConfig = async (
       plugins: [
         isProd ? undefined : new ReactRefreshWebpackPlugin(),
         new webpack.EnvironmentPlugin({
-          serverData: JSON.stringify({
-            packages: Object.entries(clientImportMap).reduce(
-              (result, [key, value]) => ({
-                ...result,
-                [key]: omit(value, ['path']),
-              }),
-              {}
-            ),
-          }),
+          serverData: JSON.stringify(getEnvVariables()),
         }),
         new HtmlWebpackPlugin({
           template: resolveCompdoc('public/index.html'),

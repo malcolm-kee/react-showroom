@@ -1,11 +1,11 @@
+import { HashtagIcon } from '@heroicons/react/outline';
+import * as React from 'react';
 import type { ComponentDoc } from 'react-docgen-typescript';
 import snarkdown from 'snarkdown';
 import { getComponentSlug } from '../lib/get-component-slug';
 import { styled } from '../stitches.config';
-import { A, Div, text } from './base';
+import { Div, text } from './base';
 import * as Collapsible from './collapsible';
-import * as React from 'react';
-import { HashtagIcon } from '@heroicons/react/outline';
 
 export const ComponentMeta = ({
   doc,

@@ -19,6 +19,9 @@ export const generateCompdocData = async () => {
 
     return {
       doc: fs.existsSync(docPath) ? docPath : null,
+      codeBlocks: fs.existsSync(docPath)
+        ? `require('${docPath}?compdocRemark')`
+        : null,
       component: `require('compdoc-loader?modules!${compPath}')`,
     };
   });
@@ -27,9 +30,10 @@ export const generateCompdocData = async () => {
       items: [
           ${componentDocItems
             .map(
-              ({ doc, component }) => `{
+              ({ doc, component, codeBlocks }) => `{
               doc: ${doc ? `require('${doc}').default` : 'null'},
-              component: ${component}
+              codeBlocks: ${codeBlocks || '{}'},
+              component: ${component},
           },`
             )
             .join('')}

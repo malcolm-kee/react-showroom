@@ -129,3 +129,7 @@ export const {
     }),
   },
 });
+
+export const icons = css({
+  color: '$gray-500',
+});

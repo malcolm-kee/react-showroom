@@ -36,6 +36,7 @@ export const Content = styled(Collapsible.Content, {
 export const Root = styled(Collapsible.Root);
 
 export const ToggleIcon = styled(ChevronDownIcon, {
+  color: '$gray-500',
   transition: 'transform 300ms ease-in-out',
   transform: 'rotate(0deg)',
   variants: {

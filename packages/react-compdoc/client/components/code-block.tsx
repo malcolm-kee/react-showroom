@@ -2,11 +2,10 @@ import { TerminalIcon } from '@heroicons/react/outline';
 import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
 import * as React from 'react';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
-import { useQuery } from 'react-query';
-import { compileCode } from '../lib/compile-code';
-import { css } from '../stitches.config';
+import { useCodeCompilation } from '../lib/compile-code';
+import { css, icons } from '../stitches.config';
 import { Alert } from './alert';
-import { Div } from './base';
+import { Div, Span } from './base';
 import { CodeEditor, CodeEditorProps } from './code-editor';
 import { CodeHighlight } from './code-highlight';
 import { CodePreview } from './code-preview';
@@ -74,11 +73,8 @@ const CodeLiveEditor = (
 ) => {
   const [code, setCode] = React.useState(props.code);
 
-  const { data, isFetching, isLoading, error, isError } = useQuery({
-    queryKey: ['codeCompilation', code],
-    queryFn: () => compileCode(code as string),
-    keepPreviousData: true,
-  });
+  const { data, isFetching, isLoading, error, isError } =
+    useCodeCompilation(code);
 
   const isCompiling = isFetching || isLoading;
 
@@ -114,17 +110,25 @@ const CodeLiveEditor = (
           <Div
             css={{
               position: 'absolute',
-              inset: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+              px: '$4',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              backgroundColor: '$gray-200',
+              backgroundColor: 'rgba(229, 231, 235, 0.1)',
               gap: '$2',
-              opacity: 0.5,
             }}
           >
-            <TerminalIcon width="24" height="24" />
-            <span>Compiling...</span>
+            <TerminalIcon width="20" height="20" className={icons()} />
+            <Span
+              css={{
+                color: '$gray-500',
+              }}
+            >
+              Compiling...
+            </Span>
           </Div>
         )}
       </Div>
