@@ -1,6 +1,5 @@
 import type { ComponentDocItem } from 'react-compdoc-components';
 import { styled } from '../stitches.config';
-import { CodeBlocksProvider } from '../lib/compile-code';
 import { Code, Pre } from './code-block';
 import { ComponentMeta } from './component-meta';
 
@@ -18,11 +17,7 @@ export const ComponentDocArticle = (props: { doc: ComponentDocItem }) => {
   return (
     <Article>
       <ComponentMeta doc={component} propsDefaultOpen={!Doc} />
-      {Doc && (
-        <CodeBlocksProvider value={codeBlocks}>
-          <Doc components={components} />
-        </CodeBlocksProvider>
-      )}
+      {Doc && <Doc components={components} />}
     </Article>
   );
 };

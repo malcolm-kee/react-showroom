@@ -6,20 +6,23 @@ import { imports } from 'react-compdoc-imports';
 
 export interface CodePreview {
   /**
-   * Code that should returns a JSX expression
+   * Code that should call `render` to show the UI.
    */
   code: string;
 }
 
 export const CodePreview = (props: CodePreview) => {
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const render = React.useCallback((ui: React.ReactElement) => {
-    if (containerRef.current) {
-      ReactDOM.render(ui, containerRef.current);
+  const [ui, setUi] = React.useState<null | React.ReactElement>(() => {
+    if (!props.code) {
+      return null;
     }
-  }, []);
 
-  React.useEffect(() => {
+    let result: React.ReactElement | null = null;
+
+    const render = (ui: React.ReactElement) => {
+      result = ui;
+    };
+
     safeEval(props.code, {
       React,
       ReactDOM,
@@ -27,7 +30,19 @@ export const CodePreview = (props: CodePreview) => {
       tslib,
       imports,
     });
-  }, [props.code, render]);
 
-  return <div ref={containerRef} />;
+    return result;
+  });
+
+  React.useEffect(() => {
+    safeEval(props.code, {
+      React,
+      ReactDOM,
+      render: setUi,
+      tslib,
+      imports,
+    });
+  }, [props.code]);
+
+  return ui;
 };

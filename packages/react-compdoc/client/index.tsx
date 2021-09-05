@@ -16,6 +16,15 @@ const queryClient = new QueryClient({
   },
 });
 
+Data.items.forEach((item) => {
+  Object.keys(item.codeBlocks).forEach((sourceCode) => {
+    queryClient.setQueryData(
+      ['codeCompilation', sourceCode],
+      item.codeBlocks[sourceCode]
+    );
+  });
+});
+
 ReactDOM.render(
   <>
     <QueryClientProvider client={queryClient}>

@@ -1,9 +1,4 @@
-import type {
-  CodeBlocks,
-  CompileResult,
-  RequestCompileData,
-} from '@compdoc/core';
-import * as React from 'react';
+import type { CompileResult, RequestCompileData } from '@compdoc/core';
 import { useQuery } from 'react-query';
 
 const worker = new Worker(new URL('./compile-worker.js', import.meta.url));
@@ -31,20 +26,12 @@ export const compileCode = (code: string) =>
     worker.addEventListener('message', handleMessage);
   });
 
-const CodeBlocksContext = React.createContext<CodeBlocks>({});
-CodeBlocksContext.displayName = 'CodeBlocksContext';
-
-export const CodeBlocksProvider = CodeBlocksContext.Provider;
-
 export const useCodeCompilation = (providedCode: string) => {
   const code = providedCode.trim();
-
-  const blocks = React.useContext(CodeBlocksContext);
 
   return useQuery({
     queryKey: ['codeCompilation', code],
     queryFn: () => compileCode(code),
-    initialData: blocks[code],
     keepPreviousData: true,
   });
 };
