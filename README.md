@@ -8,7 +8,7 @@
 - [x] tweak design
 - [x] show all components in sidebar
 - [x] precompile snippet example
-- [ ] pre-rendering
+- [x] pre-rendering
 - [ ] configure sidebar structure
 - [ ] allow search components in sidebar
 - [ ] support non-components docgen

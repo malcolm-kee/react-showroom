@@ -11,11 +11,25 @@ export interface ReactCompdocConfiguration {
   }>;
   webpackConfig?: Configuration | ((env: Environment) => Configuration);
   components?: string;
+  /**
+   * output of the generated site.
+   *
+   * @default 'compdoc'
+   */
+  outDir?: string;
+  /**
+   * controls if the build output should be pre-rendered.
+   *
+   * @default true
+   */
+  prerender?: boolean;
 }
 
 export interface NormalizedReactCompdocConfiguration
   extends ReactCompdocConfiguration {
   components: string;
+  outDir: string;
+  prerender: boolean;
 }
 
 export interface ReactCompdocLoaderContext extends LoaderContext<any> {

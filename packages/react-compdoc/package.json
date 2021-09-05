@@ -32,6 +32,7 @@
     "remark-code-blocks": "^2.0.1",
     "remark-parse": "9.0.0",
     "remark-stringify": "^9.0.1",
+    "rimraf": "^3.0.2",
     "slugify": "^1.6.0",
     "snarkdown": "^2.0.0",
     "tslib": "^2.3.1",

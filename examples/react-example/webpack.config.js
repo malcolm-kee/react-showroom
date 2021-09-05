@@ -1,5 +1,6 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 /**
  * @return {import('webpack').Configuration}
@@ -85,6 +86,10 @@ const config = (env) => {
       ],
     },
     plugins: [new MiniCssExtractPlugin()],
+    optimization: {
+      minimize: isProd,
+      minimizer: ['...', new CssMinimizerPlugin()],
+    },
   };
 };
 

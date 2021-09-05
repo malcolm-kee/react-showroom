@@ -2,7 +2,7 @@ import { TerminalIcon } from '@heroicons/react/outline';
 import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
 import * as React from 'react';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
-import { useCodeCompilation } from '../lib/compile-code';
+import { useCodeCompilation } from '../lib/use-code-compilation';
 import { css, icons } from '../stitches.config';
 import { Alert } from './alert';
 import { Div, Span } from './base';

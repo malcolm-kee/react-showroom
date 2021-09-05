@@ -1,5 +1,4 @@
 import type { CompileResult, RequestCompileData } from '@compdoc/core';
-import { useQuery } from 'react-query';
 
 const worker = new Worker(new URL('./compile-worker.js', import.meta.url));
 
@@ -25,13 +24,3 @@ export const compileCode = (code: string) =>
 
     worker.addEventListener('message', handleMessage);
   });
-
-export const useCodeCompilation = (providedCode: string) => {
-  const code = providedCode.trim();
-
-  return useQuery({
-    queryKey: ['codeCompilation', code],
-    queryFn: () => compileCode(code),
-    keepPreviousData: true,
-  });
-};

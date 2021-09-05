@@ -14,6 +14,7 @@
     "@types/mdx-js__react": "^1.5.4",
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",
+    "@types/rimraf": "^3.0.2",
     "@types/yargs": "^17.0.2",
     "concurrently": "^6.2.1",
     "lerna": "^4.0.0",
