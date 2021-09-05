@@ -44,16 +44,12 @@ export const generateCompdocData = async () => {
 export const getImportsAttach = () => {
   const importMap = getClientImportMap();
 
-  return `window.__compdoc__ = {
-    moduleMap: {},
-  };
+  return `export const imports = {};
 ${Object.values(importMap)
   .map(({ varName, path }) => `import * as ${varName} from '${path}';`)
   .join('\n')}
   ${Object.values(importMap)
-    .map(
-      ({ varName }) => `window.__compdoc__.moduleMap.${varName} = ${varName};`
-    )
+    .map(({ varName }) => `imports.${varName} = ${varName};`)
     .join('\n')}
 `;
 };

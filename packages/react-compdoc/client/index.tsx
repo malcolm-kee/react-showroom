@@ -1,4 +1,3 @@
-import 'react-compdoc-app-components';
 import Data from 'react-compdoc-components';
 import * as ReactDOM from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';

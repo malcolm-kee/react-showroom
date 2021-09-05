@@ -26,3 +26,7 @@ declare module 'react-compdoc-components' {
 
   export default data;
 }
+
+declare module 'react-compdoc-imports' {
+  export const imports: Record<string, any>;
+}

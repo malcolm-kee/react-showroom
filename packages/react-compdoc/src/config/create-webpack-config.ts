@@ -21,16 +21,14 @@ export const createWebpackConfig = async (
 ): Promise<webpack.Configuration> => {
   const isProd = mode === 'production';
 
-  const importAttach = getImportsAttach();
-
   const virtualModules = new VirtualModulesPlugin({
     // create a virtual module that consists of parsed component data and examples
     // so we can import it inside our client
     [resolveCompdoc('node_modules/react-compdoc-components.js')]:
       await generateCompdocData(),
-    // a virtual module that imports the components provided by app and attach it to window object
-    [resolveCompdoc('node_modules/react-compdoc-app-components.js')]:
-      importAttach,
+    // a virtual module that exports an `imports` that includes all the imports as configured in `imports` in config file.
+    [resolveCompdoc('node_modules/react-compdoc-imports.js')]:
+      getImportsAttach(),
   });
 
   return mergeWebpackConfig(

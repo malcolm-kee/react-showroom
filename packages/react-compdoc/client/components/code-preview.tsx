@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as tslib from 'tslib';
 import { safeEval } from '../lib/safe-eval';
+import { imports } from 'react-compdoc-imports';
 
 export interface CodePreview {
   /**
@@ -24,6 +25,7 @@ export const CodePreview = (props: CodePreview) => {
       ReactDOM,
       render,
       tslib,
+      imports,
     });
   }, [props.code, render]);
 
