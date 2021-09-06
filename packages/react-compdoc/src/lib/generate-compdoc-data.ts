@@ -10,7 +10,16 @@ export const generateCompdocData = async () => {
 
   return `module.exports = {
       items: [
-          ${components.map(compileComponentSection).join(',')}
+          ${components
+            .map(
+              (comp) =>
+                `{codeBlocks: ${
+                  comp.docPath
+                    ? `require('${comp.docPath}?compdocRemark')`
+                    : '{}'
+                }}`
+            )
+            .join(',')}
       ],
   }`;
 };
@@ -25,9 +34,6 @@ function compileComponentSection(
   return `{
     doc: ${
       component.docPath ? `require('${component.docPath}').default` : 'null'
-    },
-    codeBlocks: ${
-      component.docPath ? `require('${component.docPath}?compdocRemark')` : '{}'
     },
     component: ${compileToComponentMetadata(component)},
   }`;
@@ -68,6 +74,11 @@ export const generateSections = () => {
           return `{
             type: 'component',
             data: ${compileComponentSection(section)},
+            get slug() {
+              return '${section.parentSlugs.join(
+                '/'
+              )}' + '/' + slugify(this.data.component.slug, {lower: true})
+            }
           }`;
         }
 

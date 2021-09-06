@@ -1,13 +1,12 @@
 import { IdProvider } from '@radix-ui/react-id';
-import type Data from 'react-compdoc-components';
+import React from 'react';
 import sections from 'react-compdoc-sections';
 import { Div } from './components/base';
 import { ComponentDocArticle } from './components/component-doc-article';
+import { mdxComponents } from './components/mdx-components';
 import { Sidebar } from './components/sidebar';
 
-console.log({ sections });
-
-export const App = (props: { data: typeof Data }) => (
+export const App = () => (
   <IdProvider>
     <Div
       css={{
@@ -16,7 +15,7 @@ export const App = (props: { data: typeof Data }) => (
         overflow: 'hidden',
       }}
     >
-      <Sidebar items={props.data.items} />
+      <Sidebar sections={sections} />
       <Div
         as="main"
         css={{
@@ -31,9 +30,31 @@ export const App = (props: { data: typeof Data }) => (
             padding: '$6',
           }}
         >
-          {props.data.items.map((item, i) => (
-            <ComponentDocArticle doc={item} key={i} />
-          ))}
+          {sections.map(function mapSection(
+            section,
+            i
+          ): React.ReactElement<any> | null {
+            switch (section.type) {
+              case 'group':
+                return (
+                  <React.Fragment key={i}>
+                    {section.items.map(mapSection)}
+                  </React.Fragment>
+                );
+
+              case 'component':
+                return <ComponentDocArticle doc={section} key={i} />;
+
+              case 'markdown': {
+                const { Component } = section;
+
+                return <Component components={mdxComponents} key={i} />;
+              }
+
+              default:
+                return null;
+            }
+          })}
         </Div>
       </Div>
     </Div>

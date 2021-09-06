@@ -34,11 +34,6 @@ export type CodeBlocks = Record<string, CompilationSuccessResult | undefined>;
 export interface ComponentDocItem {
   component: DocgenComponentDoc & { slug: string };
   doc: null | ComponentType<any>;
-  /**
-   * codeBlocks are [code snippet]: [compiled code] key-value pair
-   * generated at build time to improve initial load UI.
-   */
-  codeBlocks: CodeBlocks;
 }
 
 export type Environment = 'development' | 'production';
@@ -149,6 +144,7 @@ export interface NormalizedReactCompdocConfiguration
 export interface ReactCompdocComponentSection {
   type: 'component';
   data: ComponentDocItem;
+  slug: string;
 }
 
 interface ReactCompdocMarkdownSection {

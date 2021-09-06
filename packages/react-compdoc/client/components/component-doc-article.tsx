@@ -1,23 +1,17 @@
-import type { ComponentDocItem } from '@compdoc/core';
+import type { ReactCompdocComponentSection } from '@compdoc/core';
 import { styled } from '../stitches.config';
-import { Code, Pre } from './code-block';
 import { ComponentMeta } from './component-meta';
+import { mdxComponents } from './mdx-components';
 
-const components = {
-  pre: Pre,
-  code: Code,
-  p: styled('p', {
-    marginY: '$3',
-  }),
-};
-
-export const ComponentDocArticle = (props: { doc: ComponentDocItem }) => {
-  const { component, doc: Doc } = props.doc;
+export const ComponentDocArticle = (props: {
+  doc: ReactCompdocComponentSection;
+}) => {
+  const { doc: Doc } = props.doc.data;
 
   return (
     <Article>
-      <ComponentMeta doc={component} propsDefaultOpen={!Doc} />
-      {Doc && <Doc components={components} />}
+      <ComponentMeta section={props.doc} propsDefaultOpen={!Doc} />
+      {Doc && <Doc components={mdxComponents} />}
     </Article>
   );
 };

@@ -4,12 +4,12 @@ declare module '*.wasm' {
 }
 
 declare module 'react-compdoc-components' {
-  import type { ComponentDoc as DocgenComponentDoc } from 'react-docgen-typescript';
-  import type { ComponentType } from 'react';
-  import type { CodeBlocks, ComponentDocItem } from '@compdoc/core';
+  import type { CodeBlocks } from '@compdoc/core';
 
   interface ReactCompdocData {
-    items: Array<ComponentDocItem>;
+    items: Array<{
+      codeBlocks: CodeBlocks;
+    }>;
   }
 
   var data: ReactCompdocData;

@@ -1,32 +1,33 @@
+import { ReactCompdocComponentSection } from '@compdoc/core';
 import { HashtagIcon } from '@heroicons/react/outline';
 import * as React from 'react';
-import type { ComponentDoc } from 'react-docgen-typescript';
 import snarkdown from 'snarkdown';
-import { getComponentSlug } from '../lib/get-component-slug';
 import { styled } from '../stitches.config';
 import { Div, text } from './base';
 import * as Collapsible from './collapsible';
 
 export const ComponentMeta = ({
-  doc,
+  section,
   propsDefaultOpen,
 }: {
-  doc: ComponentDoc;
+  section: ReactCompdocComponentSection;
   propsDefaultOpen?: boolean;
 }) => {
-  const slug = getComponentSlug(doc);
-
   const [propsIsOpen, setPropsIsOpen] = React.useState(propsDefaultOpen);
+
+  const {
+    data: { component: doc },
+  } = section;
 
   return (
     <>
       <Div
         as="h2"
-        id={slug}
+        id={section.slug}
         css={{ marginBottom: '$5', fontWeight: 700 }}
         className={text({ variant: '5xl' })}
       >
-        <Title href={`#${slug}`}>
+        <Title href={`#${section.slug}`}>
           <HashTag />
           {doc.displayName}
         </Title>

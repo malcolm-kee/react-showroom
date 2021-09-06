@@ -1,4 +1,3 @@
-import Data from 'react-compdoc-components';
 import * as ReactDOM from 'react-dom';
 import { QueryClientProvider } from 'react-query';
 import { App } from './app';
@@ -11,7 +10,7 @@ const render =
 
 render(
   <QueryClientProvider client={queryClient}>
-    <App data={Data} />
+    <App />
   </QueryClientProvider>,
   document.getElementById('target')
 );
