@@ -1,6 +1,7 @@
 import * as docgen from 'react-docgen-typescript';
 import type { LoaderDefinition } from 'webpack';
 import { paths } from '../lib/paths';
+import slugify from 'slugify';
 
 const docGenerator = docgen.withCustomConfig(paths.appTsConfig, {
   propFilter: (prop) => {
@@ -12,9 +13,12 @@ const docGenerator = docgen.withCustomConfig(paths.appTsConfig, {
 });
 
 const compdocLoader: LoaderDefinition = function () {
-  return `module.exports = ${JSON.stringify(
-    docGenerator.parse(this.resourcePath)[0]
-  )};`;
+  const compdoc = docGenerator.parse(this.resourcePath)[0];
+
+  return `module.exports = ${JSON.stringify({
+    ...compdoc,
+    slug: slugify(compdoc.displayName, { lower: true }),
+  })};`;
 };
 
 module.exports = compdocLoader;

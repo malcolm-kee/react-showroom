@@ -1,8 +1,11 @@
+import { IdProvider } from '@radix-ui/react-id';
 import type Data from 'react-compdoc-components';
+import sections from 'react-compdoc-sections';
 import { Div } from './components/base';
 import { ComponentDocArticle } from './components/component-doc-article';
 import { Sidebar } from './components/sidebar';
-import { IdProvider } from '@radix-ui/react-id';
+
+console.log({ sections });
 
 export const App = (props: { data: typeof Data }) => (
   <IdProvider>

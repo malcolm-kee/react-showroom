@@ -1,45 +1,37 @@
-import * as fs from 'fs';
-import * as glob from 'glob';
-import * as path from 'path';
+import {
+  ReactCompdocComponentSectionConfig,
+  ReactCompdocSectionConfig,
+} from '@compdoc/core';
 import { getClientImportMap } from './get-client-import-map';
 import { getConfig } from './get-config';
-import { paths } from './paths';
 
 export const generateCompdocData = async () => {
   const { components } = getConfig();
 
-  const componentPaths = glob.sync(components, {
-    cwd: paths.appPath,
-    absolute: true,
-  });
-
-  const componentDocItems = componentPaths.map((compPath) => {
-    const componentPathInfo = path.parse(compPath);
-    const docPath = `${componentPathInfo.dir}/${componentPathInfo.name}.mdx`;
-
-    return {
-      doc: fs.existsSync(docPath) ? docPath : null,
-      codeBlocks: fs.existsSync(docPath)
-        ? `require('${docPath}?compdocRemark')`
-        : null,
-      component: `require('compdoc-loader?modules!${compPath}')`,
-    };
-  });
-
   return `module.exports = {
       items: [
-          ${componentDocItems
-            .map(
-              ({ doc, component, codeBlocks }) => `{
-              doc: ${doc ? `require('${doc}').default` : 'null'},
-              codeBlocks: ${codeBlocks || '{}'},
-              component: ${component},
-          },`
-            )
-            .join('')}
+          ${components.map(compileComponentSection).join(',')}
       ],
   }`;
 };
+
+const compileToComponentMetadata = (
+  component: ReactCompdocComponentSectionConfig
+) => `require('compdoc-loader?modules!${component.sourcePath}')`;
+
+function compileComponentSection(
+  component: ReactCompdocComponentSectionConfig
+) {
+  return `{
+    doc: ${
+      component.docPath ? `require('${component.docPath}').default` : 'null'
+    },
+    codeBlocks: ${
+      component.docPath ? `require('${component.docPath}?compdocRemark')` : '{}'
+    },
+    component: ${compileToComponentMetadata(component)},
+  }`;
+}
 
 export const getImportsAttach = () => {
   const importMap = getClientImportMap();
@@ -52,4 +44,51 @@ ${Object.values(importMap)
     .map(({ varName }) => `imports.${varName} = ${varName};`)
     .join('\n')}
 `;
+};
+
+export const generateSections = () => {
+  const { sections } = getConfig();
+
+  function mapSections(sectionList: Array<ReactCompdocSectionConfig>): string {
+    return `[${sectionList
+      .map((section) => {
+        if (section.type === 'group') {
+          return `{
+          type: 'group',
+          title: '${section.title}',
+          Component: ${
+            section.docPath ? `require('${section.docPath}').default` : 'null'
+          },
+          items: ${mapSections(section.items)},
+          slug: '${section.parentSlugs.concat(section.slug).join('/')}'
+        }`;
+        }
+
+        if (section.type === 'component') {
+          return `{
+            type: 'component',
+            data: ${compileComponentSection(section)},
+          }`;
+        }
+
+        if (section.type === 'markdown') {
+          return `{
+            type: 'markdown',
+            Component: require('${section.sourcePath}').default,
+            title: require('${section.sourcePath}').title || '${section.title}',
+            get slug() {
+              return '${section.parentSlugs.join(
+                '/'
+              )}' + '/' + slugify(this.title, {lower: true});
+            }
+          }`;
+        }
+
+        return JSON.stringify(section);
+      })
+      .join(', ')}]`;
+  }
+
+  return `import slugify from 'slugify';
+  export default ${mapSections(sections)};`;
 };

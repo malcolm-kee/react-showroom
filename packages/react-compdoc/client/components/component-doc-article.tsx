@@ -1,4 +1,4 @@
-import type { ComponentDocItem } from 'react-compdoc-components';
+import type { ComponentDocItem } from '@compdoc/core';
 import { styled } from '../stitches.config';
 import { Code, Pre } from './code-block';
 import { ComponentMeta } from './component-meta';
@@ -12,7 +12,7 @@ const components = {
 };
 
 export const ComponentDocArticle = (props: { doc: ComponentDocItem }) => {
-  const { component, doc: Doc, codeBlocks } = props.doc;
+  const { component, doc: Doc } = props.doc;
 
   return (
     <Article>

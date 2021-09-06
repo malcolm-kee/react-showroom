@@ -1,4 +1,4 @@
-import type { ComponentDocItem } from 'react-compdoc-components';
+import type { ComponentDocItem } from '@compdoc/core';
 import { getComponentSlug } from '../lib/get-component-slug';
 import { A, Div, text } from './base';
 

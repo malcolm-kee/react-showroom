@@ -6,17 +6,7 @@ declare module '*.wasm' {
 declare module 'react-compdoc-components' {
   import type { ComponentDoc as DocgenComponentDoc } from 'react-docgen-typescript';
   import type { ComponentType } from 'react';
-  import type { CodeBlocks } from '@compdoc/core';
-
-  export interface ComponentDocItem {
-    component: DocgenComponentDoc;
-    doc: null | ComponentType<any>;
-    /**
-     * codeBlocks are [code snippet]: [compiled code] key-value pair
-     * generated at build time to improve initial load UI.
-     */
-    codeBlocks: CodeBlocks;
-  }
+  import type { CodeBlocks, ComponentDocItem } from '@compdoc/core';
 
   interface ReactCompdocData {
     items: Array<ComponentDocItem>;
@@ -29,4 +19,12 @@ declare module 'react-compdoc-components' {
 
 declare module 'react-compdoc-imports' {
   export const imports: Record<string, any>;
+}
+
+declare module 'react-compdoc-sections' {
+  import type { ReactCompdocSection } from '@compdoc/core';
+
+  var sections: Array<ReactCompdocSection>;
+
+  export default sections;
 }

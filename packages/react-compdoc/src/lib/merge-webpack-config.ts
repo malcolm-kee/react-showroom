@@ -1,8 +1,8 @@
+import { Environment } from '@compdoc/core';
 import isFunction from 'lodash/isFunction';
 import omit from 'lodash/omit';
 import { Configuration } from 'webpack';
 import { mergeWithCustomize, unique } from 'webpack-merge';
-import { Environment } from '../types';
 
 const IGNORE_SECTIONS = [
   'entry',
