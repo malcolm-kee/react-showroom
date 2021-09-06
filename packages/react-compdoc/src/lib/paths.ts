@@ -30,5 +30,5 @@ export const paths = {
   appCompdocConfig: resolveApp('react-compdoc.js'),
   appTsConfig: resolveApp('tsconfig.json'),
   appPackageJson: resolveApp('package.json'),
-  compDocClient: resolveCompdoc('client'),
+  compDocClient: resolveCompdoc('client-dist'),
 };

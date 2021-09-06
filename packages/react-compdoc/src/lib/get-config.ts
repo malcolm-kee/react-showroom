@@ -7,6 +7,8 @@ import { paths } from './paths';
 
 const defaultConfig = {
   components: 'src/components/**/*.{js,jsx,ts,tsx}',
+  outDir: 'compdoc',
+  prerender: true,
 };
 
 export const getConfig = (): NormalizedReactCompdocConfiguration => {

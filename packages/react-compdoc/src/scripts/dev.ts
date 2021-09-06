@@ -3,23 +3,22 @@ process.env.BABEL_ENV = 'development';
 process.env.NODE_ENV = 'development';
 
 import webpack from 'webpack';
+import webpackDevServer from 'webpack-dev-server';
 import { argv } from 'yargs';
 import { createWebpackConfig } from '../config/create-webpack-config';
-
-const webpackDevServer = require('webpack-dev-server');
 
 (async function startDevServer() {
   const PORT = Number((argv as any).port ?? process.env.PORT ?? 6969);
 
   const webpackConfig = await createWebpackConfig('development');
 
-  const devServerOptions = {
+  const devServerOptions: webpackDevServer.Configuration = {
     port: PORT,
     host: '0.0.0.0',
     client: {
       logging: 'none',
     },
-    // hot: true, // hot reload replacement not supported for module federation
+    hot: true, // hot reload replacement not supported for module federation
     historyApiFallback: true,
   };
 
@@ -28,4 +27,6 @@ const webpackDevServer = require('webpack-dev-server');
   const server = new webpackDevServer(devServerOptions, compiler);
 
   await server.start();
+
+  console.log(`Starting the development server on http://localhost:${PORT}`);
 })();

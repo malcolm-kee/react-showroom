@@ -1,3 +1,4 @@
+import type * as Stitches from '@stitches/react';
 import { createStitches } from '@stitches/react';
 
 const SPACE_UNIT = 4;
@@ -73,30 +74,62 @@ export const {
       'gray-700': '#374151',
       'gray-800': '#1F2937',
       'gray-900': '#111827',
+      'red-50': '#FEF2F2',
+      'red-400': '#F87171',
+      'red-800': '#991B1B',
+      'green-50': '#ECFDF',
+      'green-400': '#34D399',
+      'green-800': '#065F46',
+      'blue-50': '#EFF6FF',
+      'blue-400': '#60A5FA',
+      'blue-800': '#1E40AF',
+      'yellow-50': '#FFFBEB',
+      'yellow-400': '#FBBF24',
+      'yellow-800': '#92400E',
+    },
+    radii: {
+      none: '0px',
+      sm: '0.125rem',
+      base: '0.25rem',
+      md: '0.375rem',
+      lg: '0.5rem',
+      xl: '0.75rem',
     },
   },
   utils: {
-    marginX: (value: number | string) => ({
+    marginX: (value: Stitches.PropertyValue<'margin'>) => ({
       marginLeft: value,
       marginRight: value,
     }),
-    marginY: (value: number | string) => ({
+    marginY: (value: Stitches.PropertyValue<'margin'>) => ({
       marginTop: value,
       marginBottom: value,
     }),
-    px: (value: number | string) => ({
+    px: (value: Stitches.PropertyValue<'padding'>) => ({
       paddingLeft: value,
       paddingRight: value,
     }),
-    py: (value: number | string) => ({
+    py: (value: Stitches.PropertyValue<'padding'>) => ({
       paddingTop: value,
       paddingBottom: value,
     }),
-    inset: (value: number | string) => ({
+    inset: (value: Stitches.PropertyValue<'top'>) => ({
       top: value,
       left: value,
       right: value,
       bottom: value,
     }),
+    roundedT: (value: Stitches.PropertyValue<'borderRadius'>) => ({
+      borderTopLeftRadius: value,
+      borderTopRightRadius: value,
+    }),
+    roundedB: (value: Stitches.PropertyValue<'borderRadius'>) => ({
+      borderBottomLeftRadius: value,
+      borderBottomRightRadius: value,
+    }),
   },
+});
+
+export const icons = css({
+  color: '$gray-500',
 });

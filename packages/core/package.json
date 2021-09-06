@@ -1,0 +1,20 @@
+{
+  "name": "@compdoc/core",
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b .",
+    "dev": "yarn build --watch",
+    "clean": "rimraf dist *.tsbuildinfo"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.2"
+  },
+  "dependencies": {
+    "acorn": "^8.4.1",
+    "acorn-walk": "^8.1.1",
+    "tslib": "^2.3.1"
+  }
+}

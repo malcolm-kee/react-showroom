@@ -8,6 +8,9 @@
     "build:doc": "react-compdoc build"
   },
   "dependencies": {
+    "@tailwindcss/forms": "^0.3.3",
+    "classnames": "^2.3.1",
+    "css-minimizer-webpack-plugin": "^3.0.2",
     "mini-css-extract-plugin": "^2.2.1",
     "react": "^17.0.2",
     "react-compdoc": "^0.0.1",
@@ -15,6 +18,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
+    "@babel/plugin-transform-runtime": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-react": "^7.14.5",
     "@babel/preset-typescript": "^7.15.0",

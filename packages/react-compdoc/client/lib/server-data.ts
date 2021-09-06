@@ -1,10 +1,7 @@
-interface ImportMapData {
-  name: string;
-  varName: string;
-}
+import type { Packages } from '@compdoc/core';
 
 export interface ServerData {
-  packages: Record<string, ImportMapData>;
+  packages: Packages;
 }
 
 /**

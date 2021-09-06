@@ -1,5 +1,5 @@
 import Data from 'react-compdoc-components';
-import * as ReactDOM from 'react-dom';
+import * as ReactDOMServer from 'react-dom/server';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { App } from './app';
 
@@ -25,9 +25,11 @@ Data.items.forEach((item) => {
   });
 });
 
-ReactDOM.render(
-  <QueryClientProvider client={queryClient}>
-    <App data={Data} />
-  </QueryClientProvider>,
-  document.getElementById('target')
-);
+export const render = () =>
+  ReactDOMServer.renderToString(
+    <QueryClientProvider client={queryClient}>
+      <App data={Data} />
+    </QueryClientProvider>
+  );
+
+export { getCssText } from './stitches.config';
