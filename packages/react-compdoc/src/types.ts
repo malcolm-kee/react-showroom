@@ -20,7 +20,12 @@ export interface ReactCompdocConfiguration {
   /**
    * controls if the build output should be pre-rendered.
    *
-   * @default true
+   * This is useful to ensure your components are SSR-friendly.
+   *
+   * Note that this would increase time to generate the static site because
+   * we will need to generate separate bundle for pre-rendering.
+   *
+   * @default false
    */
   prerender?: boolean;
 }

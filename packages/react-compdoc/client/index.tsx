@@ -1,31 +1,15 @@
 import Data from 'react-compdoc-components';
 import * as ReactDOM from 'react-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from 'react-query';
 import { App } from './app';
+import { createQueryClient } from './lib/create-query-client';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 0,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      staleTime: Infinity,
-      cacheTime: 5000,
-    },
-  },
-});
+const queryClient = createQueryClient();
 
-Data.items.forEach((item) => {
-  Object.keys(item.codeBlocks).forEach((sourceCode) => {
-    queryClient.setQueryData(
-      ['codeCompilation', sourceCode],
-      item.codeBlocks[sourceCode]
-    );
-  });
-});
+const render =
+  process.env.PRERENDER === 'true' ? ReactDOM.hydrate : ReactDOM.render;
 
-ReactDOM.render(
+render(
   <QueryClientProvider client={queryClient}>
     <App data={Data} />
   </QueryClientProvider>,

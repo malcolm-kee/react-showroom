@@ -19,9 +19,9 @@ const userConfig = getConfig().webpackConfig;
 
 export const createWebpackConfig = async (
   mode: Environment,
-  { outDir = 'compdoc' } = {}
+  { outDir = 'compdoc', prerender = false } = {}
 ): Promise<webpack.Configuration> => {
-  const baseConfig = await createBaseWebpackConfig(mode);
+  const baseConfig = await createBaseWebpackConfig(mode, { prerender });
 
   const isProd = mode === 'production';
 
@@ -60,7 +60,7 @@ export const createPrerenderWebpackConfig = async (
   mode: Environment,
   { outDir = 'compdoc' } = {}
 ): Promise<webpack.Configuration> => {
-  const baseConfig = await createBaseWebpackConfig(mode);
+  const baseConfig = await createBaseWebpackConfig(mode, { prerender: true });
 
   return mergeWebpackConfig(
     merge(baseConfig, {
@@ -81,8 +81,6 @@ export const createPrerenderWebpackConfig = async (
           'react-query': 'react-query',
           tslib: 'tslib',
           '@stitches/react': '@stitches/react',
-          '@heroicons/react/outline': '@heroicons/react/outline',
-          '@heroicons/react/solid': '@heroicons/react/solid',
         },
       ],
       target: 'node14.17',
@@ -93,7 +91,8 @@ export const createPrerenderWebpackConfig = async (
 };
 
 const createBaseWebpackConfig = async (
-  mode: Environment
+  mode: Environment,
+  options: { prerender: boolean }
 ): Promise<webpack.Configuration> => {
   const isProd = mode === 'production';
 
@@ -161,6 +160,7 @@ const createBaseWebpackConfig = async (
     plugins: [
       new webpack.EnvironmentPlugin({
         serverData: JSON.stringify(getEnvVariables()),
+        PRERENDER: String(options.prerender),
       }),
       virtualModules,
     ],
