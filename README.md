@@ -9,8 +9,8 @@
 - [x] show all components in sidebar
 - [x] precompile snippet example
 - [x] pre-rendering
-- [ ] configure sidebar structure
+- [ ] configure sidebar structure (including supporting arbitrary mdx file)
 - [ ] allow search components in sidebar
-- [ ] support non-components docgen
+- [ ] focused view
 
 Something like `react-styleguidist`, but use MDX for example and `esbuild` for playground so you can have example in TypeScript.

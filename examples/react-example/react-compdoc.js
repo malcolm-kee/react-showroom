@@ -5,8 +5,22 @@ const webpackConfig = require('./webpack.config');
  * @type {import('react-compdoc').ReactCompdocConfiguration}
  */
 const config = {
-  components: 'src/components/**/*.tsx',
+  sections: [
+    {
+      title: 'Introduction to Example',
+      content: 'README.md',
+    },
+    {
+      title: 'Core',
+      components: 'src/components/**/*.tsx',
+    },
+    {
+      title: 'GitHub',
+      href: 'https://github.com/malcolm-kee/react-compdoc',
+    },
+  ],
   webpackConfig,
+  title: 'React Compdoc Example',
   imports: [
     {
       name: 'components',
@@ -17,6 +31,7 @@ const config = {
       path: 'react',
     },
   ],
+  prerender: true,
 };
 
 module.exports = config;

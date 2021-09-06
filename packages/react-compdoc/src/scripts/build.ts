@@ -15,7 +15,10 @@ import * as rimraf from 'rimraf';
 const { prerender, outDir } = getConfig();
 
 async function buildStaticSite() {
-  const webpackConfig = await createWebpackConfig('production', { outDir });
+  const webpackConfig = await createWebpackConfig('production', {
+    outDir,
+    prerender,
+  });
 
   const compiler = webpack(webpackConfig);
 

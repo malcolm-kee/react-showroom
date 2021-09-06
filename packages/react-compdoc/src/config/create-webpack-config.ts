@@ -1,3 +1,4 @@
+import { Environment } from '@compdoc/core';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
@@ -6,22 +7,24 @@ import { merge } from 'webpack-merge';
 import {
   generateCompdocData,
   getImportsAttach,
+  generateSections,
 } from '../lib/generate-compdoc-data';
 import { getConfig } from '../lib/get-config';
 import { getEnvVariables } from '../lib/get-env-variables';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
 import { moduleFileExtensions, resolveApp, resolveCompdoc } from '../lib/paths';
 import { rehypeMetaAsAttribute } from '../lib/rehype-meta-as-attribute';
-import { Environment } from '../types';
+import remarkFrontmatter from 'remark-frontmatter';
+import { remarkMdxFrontmatter } from 'remark-mdx-frontmatter';
 import VirtualModulesPlugin = require('webpack-virtual-modules');
 
-const userConfig = getConfig().webpackConfig;
+const { webpackConfig: userConfig, title } = getConfig();
 
 export const createWebpackConfig = async (
   mode: Environment,
-  { outDir = 'compdoc' } = {}
+  { outDir = 'compdoc', prerender = false } = {}
 ): Promise<webpack.Configuration> => {
-  const baseConfig = await createBaseWebpackConfig(mode);
+  const baseConfig = await createBaseWebpackConfig(mode, { prerender });
 
   const isProd = mode === 'production';
 
@@ -36,6 +39,9 @@ export const createWebpackConfig = async (
         isProd ? undefined : new ReactRefreshWebpackPlugin(),
         new HtmlWebpackPlugin({
           template: resolveCompdoc('public/index.html'),
+          templateParameters: {
+            title,
+          },
           minify: isProd
             ? {
                 collapseWhitespace: true,
@@ -60,7 +66,7 @@ export const createPrerenderWebpackConfig = async (
   mode: Environment,
   { outDir = 'compdoc' } = {}
 ): Promise<webpack.Configuration> => {
-  const baseConfig = await createBaseWebpackConfig(mode);
+  const baseConfig = await createBaseWebpackConfig(mode, { prerender: true });
 
   return mergeWebpackConfig(
     merge(baseConfig, {
@@ -81,8 +87,6 @@ export const createPrerenderWebpackConfig = async (
           'react-query': 'react-query',
           tslib: 'tslib',
           '@stitches/react': '@stitches/react',
-          '@heroicons/react/outline': '@heroicons/react/outline',
-          '@heroicons/react/solid': '@heroicons/react/solid',
         },
       ],
       target: 'node14.17',
@@ -93,7 +97,8 @@ export const createPrerenderWebpackConfig = async (
 };
 
 const createBaseWebpackConfig = async (
-  mode: Environment
+  mode: Environment,
+  options: { prerender: boolean }
 ): Promise<webpack.Configuration> => {
   const isProd = mode === 'production';
 
@@ -105,6 +110,8 @@ const createBaseWebpackConfig = async (
     // a virtual module that exports an `imports` that includes all the imports as configured in `imports` in config file.
     [resolveCompdoc('node_modules/react-compdoc-imports.js')]:
       getImportsAttach(),
+    [resolveCompdoc('node_modules/react-compdoc-sections.js')]:
+      generateSections(),
   });
 
   return {
@@ -142,6 +149,7 @@ const createBaseWebpackConfig = async (
                   loader: require.resolve('xdm/webpack.cjs'),
                   options: {
                     rehypePlugins: [rehypeMetaAsAttribute],
+                    remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
                   },
                 },
               ],
@@ -161,6 +169,7 @@ const createBaseWebpackConfig = async (
     plugins: [
       new webpack.EnvironmentPlugin({
         serverData: JSON.stringify(getEnvVariables()),
+        PRERENDER: String(options.prerender),
       }),
       virtualModules,
     ],

@@ -1,8 +1,8 @@
-import type { ComponentDocItem } from 'react-compdoc-components';
-import { getComponentSlug } from '../lib/get-component-slug';
+import type { ReactCompdocSection } from '@compdoc/core';
+import { css, styled } from '../stitches.config';
 import { A, Div, text } from './base';
 
-export const Sidebar = (props: { items: Array<ComponentDocItem> }) => {
+export const Sidebar = (props: { sections: Array<ReactCompdocSection> }) => {
   return (
     <Div
       as="nav"
@@ -15,33 +15,72 @@ export const Sidebar = (props: { items: Array<ComponentDocItem> }) => {
         overflowY: 'auto',
       }}
     >
-      <Div
-        as="ul"
-        css={{
-          px: '$2',
-        }}
-      >
-        {props.items.map((item) => (
-          <li key={item.component.filePath}>
-            <A
-              href={`#${getComponentSlug(item.component)}`}
-              css={{
-                display: 'block',
-                color: '$gray-600',
-                px: '$4',
-                py: '$1',
-                borderRadius: '$md',
-                '&:hover': {
-                  backgroundColor: '$gray-200',
-                },
-              }}
-              className={text({ variant: 'lg' })}
-            >
-              {item.component.displayName}
-            </A>
-          </li>
-        ))}
-      </Div>
+      {props.sections.map((section, i) => (
+        <Section section={section} key={i} />
+      ))}
     </Div>
   );
 };
+
+const Section = ({ section }: { section: ReactCompdocSection }) => {
+  switch (section.type) {
+    case 'group':
+      return (
+        <div>
+          {section.Component ? (
+            <A href={section.slug} className={sectionClass()}>
+              {section.title}
+            </A>
+          ) : (
+            <Div className={sectionClass()}>{section.title}</Div>
+          )}
+          <Div
+            css={{
+              px: '$2',
+            }}
+          >
+            {section.items.map((section, i) => (
+              <Section section={section} key={i} />
+            ))}
+          </Div>
+        </div>
+      );
+
+    case 'component':
+      return (
+        <Link href={`#${section.slug}`} className={text({ variant: 'lg' })}>
+          {section.data.component.displayName}
+        </Link>
+      );
+
+    case 'markdown':
+      return (
+        <Link href={`#${section.slug}`} className={text({ variant: 'lg' })}>
+          {section.title}
+        </Link>
+      );
+
+    default:
+      return null;
+  }
+};
+
+const sectionClass = css({
+  px: '$4',
+  py: '$1',
+  fontSize: '$sm',
+  fontWeight: 'bolder',
+  color: '$gray-500',
+  textTransform: 'uppercase',
+});
+
+const Link = styled('a', {
+  display: 'block',
+  color: '$gray-600',
+  px: '$4',
+  py: '$1',
+  borderRadius: '$md',
+  '&:hover': {
+    backgroundColor: '$gray-200',
+  },
+});

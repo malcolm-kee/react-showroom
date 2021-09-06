@@ -1,1 +1,4 @@
-export type { ReactCompdocConfiguration } from './types';
+export type {
+  ReactCompdocConfiguration,
+  SectionConfiguration,
+} from '@compdoc/core';
