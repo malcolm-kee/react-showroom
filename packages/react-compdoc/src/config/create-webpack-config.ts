@@ -48,7 +48,7 @@ export const createWebpackConfig = (
                 collapseWhitespace: true,
                 keepClosingSlash: true,
                 removeComments: true,
-                ignoreCustomComments: [/SSR-/],
+                ignoreCustomComments: prerender ? [/SSR-/] : [],
                 removeRedundantAttributes: true,
                 removeScriptTypeAttributes: true,
                 removeStyleLinkTypeAttributes: true,

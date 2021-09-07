@@ -23,23 +23,27 @@ async function buildStaticSite() {
 
   const compiler = webpack(webpackConfig);
 
-  await new Promise<void>((fulfill, reject) => {
-    compiler.run((err, stats) => {
-      if (err || stats?.hasErrors()) {
-        if (err) {
-          console.error(err);
+  try {
+    await new Promise<void>((fulfill, reject) => {
+      compiler.run((err, stats) => {
+        if (err || stats?.hasErrors()) {
+          if (err) {
+            console.error(err);
+          }
+          compiler.close(() => {
+            console.error('Fix the error and try again.');
+          });
+          reject(err);
         }
-        compiler.close(() => {
-          console.error('Fix the error and try again.');
-        });
-        reject(err);
-      }
 
-      compiler.close(() => {
-        fulfill();
+        compiler.close(() => {
+          fulfill();
+        });
       });
     });
-  });
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 async function prerenderSite(tmpDir: string) {
@@ -55,32 +59,33 @@ async function prerenderSite(tmpDir: string) {
 
   for (const route of routes) {
     console.log(`Prerendering /${route}`);
-    const prerenderContent = render({ pathname: `/${route}` });
+
+    await fs.outputFile(
+      resolveApp(`${outDir}/${route}/index.html`),
+      getHtml(`/${route}`)
+    );
+  }
+
+  console.log(`Prerendering home page`);
+
+  await fs.outputFile(htmlPath, getHtml('/'));
+
+  function getHtml(pathname: string) {
+    const prerenderContent = render({ pathname });
     const helmet = getHelmet();
     const finalHtml = template
-      .replace('/* SSR-style */', getCssText())
+      .replace(
+        '<!--SSR-style-->',
+        `<style id="stitches">${getCssText()}</style>`
+      )
       .replace(
         '<!--SSR-helmet-->',
         `${helmet.title.toString()}${helmet.meta.toString()}${helmet.link.toString()}`
       )
       .replace('<!--SSR-target-->', prerenderContent);
 
-    await fs.outputFile(resolveApp(`${outDir}/${route}/index.html`), finalHtml);
+    return finalHtml;
   }
-
-  console.log(`Prerendering home page`);
-  const prerenderContent = render();
-  const helmet = getHelmet();
-
-  const finalHtml = template
-    .replace('/* SSR-style */', getCssText())
-    .replace(
-      '<!--SSR-helmet-->',
-      `${helmet.title.toString()}${helmet.meta.toString()}${helmet.link.toString()}`
-    )
-    .replace('<!--SSR-target-->', prerenderContent);
-
-  await fs.outputFile(htmlPath, finalHtml);
 }
 
 (async function build() {
