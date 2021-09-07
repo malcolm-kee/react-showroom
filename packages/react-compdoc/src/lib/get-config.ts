@@ -87,17 +87,19 @@ export const getConfig = (): NormalizedReactCompdocConfiguration => {
     parent = sections,
     parentSlugs: Array<string> = []
   ) {
-    sectionConfigs.forEach((sectionConfig) => {
+    sectionConfigs.forEach((sectionConfig, sectionIndex) => {
       const docPath =
         sectionConfig.content &&
         path.resolve(paths.appPath, sectionConfig.content);
 
       if (sectionConfig.components || Array.isArray(sectionConfig.sections)) {
-        const slug = slugify(sectionConfig.title, { lower: true });
+        const sectionTitle = sectionConfig.title || `Section ${sectionIndex}`;
+
+        const slug = slugify(sectionTitle, { lower: true });
 
         const section: ReactCompdocSectionConfig = {
           type: 'group',
-          title: sectionConfig.title,
+          title: sectionTitle,
           slug,
           items: [],
           docPath: docPath && fs.existsSync(docPath) ? docPath : null,
@@ -130,7 +132,7 @@ export const getConfig = (): NormalizedReactCompdocConfiguration => {
         const linkSection: ReactCompdocSectionConfig = {
           type: 'link',
           href: sectionConfig.href,
-          title: sectionConfig.title,
+          title: sectionConfig.title || sectionConfig.href,
         };
         parent.push(linkSection);
       } else if (docPath && fs.existsSync(docPath)) {

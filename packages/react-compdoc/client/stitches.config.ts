@@ -58,6 +58,7 @@ export const {
     },
     sizes: {
       screenXl: '1280px',
+      screen2Xl: '1536px',
     },
     space: {
       px: '1px',
@@ -131,5 +132,5 @@ export const {
 });
 
 export const icons = css({
-  color: '$gray-500',
+  color: '$gray-400',
 });

@@ -1,59 +1,50 @@
 import { IdProvider } from '@radix-ui/react-id';
-import React from 'react';
 import sections from 'react-compdoc-sections';
-import { Div } from './components/base';
+import { Route } from 'react-router-dom';
 import { ComponentDocArticle } from './components/component-doc-article';
 import { MarkdownArticle } from './components/markdown-article';
-import { Sidebar } from './components/sidebar';
+import { HomePage } from './pages/index';
+import { DetailsPageContainer } from './components/details-page-container';
 
 export const App = () => (
   <IdProvider>
-    <Div
-      css={{
-        display: 'flex',
-        height: '100vh',
-        overflow: 'hidden',
-      }}
-    >
-      <Sidebar sections={sections} />
-      <Div
-        as="main"
-        css={{
-          flex: '1',
-          overflowY: 'auto',
-        }}
-      >
-        <Div
-          css={{
-            maxWidth: '$screenXl',
-            marginX: 'auto',
-            padding: '$6',
-          }}
-        >
-          {sections.map(function mapSection(
-            section,
-            i
-          ): React.ReactElement<any> | null {
-            switch (section.type) {
-              case 'group':
-                return (
-                  <React.Fragment key={i}>
-                    {section.items.map(mapSection)}
-                  </React.Fragment>
-                );
+    {sections.map(function SectionRoute(section) {
+      if (section.type === 'link') {
+        return null;
+      }
 
-              case 'component':
-                return <ComponentDocArticle doc={section} key={i} />;
+      if (section.type === 'group') {
+        return (
+          <Route path={`/${section.slug}`} key={section.slug}>
+            {section.items.map((item) => SectionRoute(item))}
+          </Route>
+        );
+      }
 
-              case 'markdown':
-                return <MarkdownArticle section={section} key={i} />;
+      if (section.type === 'component') {
+        return (
+          <Route path={`/${section.slug}`} key={section.slug}>
+            <DetailsPageContainer>
+              <ComponentDocArticle doc={section} />
+            </DetailsPageContainer>
+          </Route>
+        );
+      }
 
-              default:
-                return null;
-            }
-          })}
-        </Div>
-      </Div>
-    </Div>
+      if (section.type === 'markdown') {
+        return (
+          <Route path={`/${section.slug}`} key={section.slug}>
+            <DetailsPageContainer>
+              <MarkdownArticle section={section} />
+            </DetailsPageContainer>
+          </Route>
+        );
+      }
+
+      return null;
+    })}
+    <Route path="/" exact>
+      <HomePage />
+    </Route>
   </IdProvider>
 );

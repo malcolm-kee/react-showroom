@@ -1,10 +1,15 @@
-import { styled, css } from '../stitches.config';
+import { Link } from 'react-router-dom';
+import { css, styled } from '../stitches.config';
 
 export const Div = styled('div');
 
 export const Span = styled('span');
 
 export const A = styled('a');
+
+export const NavLink = styled(Link, {
+  display: 'inline-block',
+});
 
 export const text = css({
   variants: {

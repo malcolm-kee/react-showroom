@@ -75,9 +75,9 @@ export const generateSections = () => {
             type: 'component',
             data: ${compileComponentSection(section)},
             get slug() {
-              return '${section.parentSlugs.join(
-                '/'
-              )}' + '/' + slugify(this.data.component.slug, {lower: true})
+              const parentSlugs = '${section.parentSlugs.join('/')}';
+
+              return (parentSlugs && (parentSlugs + '/')) + slugify(this.data.component.slug, {lower: true})
             }
           }`;
         }
@@ -88,9 +88,9 @@ export const generateSections = () => {
             Component: require('${section.sourcePath}').default,
             title: require('${section.sourcePath}').title || '${section.title}',
             get slug() {
-              return '${section.parentSlugs.join(
-                '/'
-              )}' + '/' + slugify(this.title, {lower: true});
+              const parentSlugs = '${section.parentSlugs.join('/')}';
+
+              return (parentSlugs && (parentSlugs + '/')) + slugify(this.title, {lower: true});
             }
           }`;
         }

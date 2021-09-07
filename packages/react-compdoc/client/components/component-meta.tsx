@@ -1,18 +1,21 @@
 import { ReactCompdocComponentSection } from '@compdoc/core';
-import { HashtagIcon } from '@heroicons/react/outline';
+import { ArrowsExpandIcon } from '@heroicons/react/outline';
 import * as React from 'react';
 import snarkdown from 'snarkdown';
 import { slashToDash } from '../lib/slash-to-dash';
-import { styled } from '../stitches.config';
-import { Div, text } from './base';
+import { icons, styled } from '../stitches.config';
+import { Div, NavLink, text } from './base';
 import * as Collapsible from './collapsible';
+import { HashTag, Title } from './title';
 
 export const ComponentMeta = ({
   section,
   propsDefaultOpen,
+  showLinkToDetails,
 }: {
   section: ReactCompdocComponentSection;
   propsDefaultOpen?: boolean;
+  showLinkToDetails?: boolean;
 }) => {
   const [propsIsOpen, setPropsIsOpen] = React.useState(propsDefaultOpen);
 
@@ -20,18 +23,31 @@ export const ComponentMeta = ({
     data: { component: doc },
   } = section;
 
+  const slug = slashToDash(section.slug);
+
   return (
     <>
       <Div
         as="h2"
-        id={slashToDash(section.slug)}
-        css={{ marginBottom: '$5', fontWeight: 700 }}
-        className={text({ variant: '5xl' })}
+        id={slug}
+        css={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '$5',
+          fontWeight: 700,
+        }}
+        className={text({ variant: '4xl' })}
       >
-        <Title href={`#${slashToDash(section.slug)}`}>
+        <Title href={`#${slug}`}>
           <HashTag />
           {doc.displayName}
         </Title>
+        {showLinkToDetails && (
+          <NavLink to={`/${section.slug}`}>
+            <ArrowsExpandIcon className={icons()} width={20} height={20} />
+          </NavLink>
+        )}
       </Div>
       {doc.description && (
         <Div
@@ -117,25 +133,4 @@ const Th = styled('th', {
   color: '$gray-600',
   backgroundColor: '$gray-100',
   textAlign: 'left',
-});
-
-const HashTag = styled(HashtagIcon, {
-  visibility: 'hidden',
-  position: 'absolute',
-  left: '-0.7rem',
-  width: '1rem',
-  height: '1rem',
-  top: '50%',
-  transform: 'translate(0, -50%)',
-});
-
-const Title = styled('a', {
-  display: 'inline-block',
-  px: '$2',
-  marginX: '-$2',
-  color: '$gray-500',
-  position: 'relative',
-  [`&:hover ${HashTag}`]: {
-    visibility: 'visible',
-  },
 });
