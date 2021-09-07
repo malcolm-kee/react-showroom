@@ -14,8 +14,3 @@
 
   # Default build command.
   command = "yarn example:build"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200

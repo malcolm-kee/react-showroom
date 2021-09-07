@@ -4,4 +4,5 @@ export interface Ssr {
   render: (options?: { pathname?: string }) => string;
   getCssText: () => string;
   getHelmet: () => HelmetData;
+  getRoutes: () => Array<string>;
 }
