@@ -2,6 +2,8 @@ import type { ComponentType } from 'react';
 import type { ComponentDoc as DocgenComponentDoc } from 'react-docgen-typescript';
 import type { Configuration } from 'webpack';
 
+export { flattenArray, NestedArray } from './flatten-array';
+export { Ssr } from './ssr-types';
 export { ImportMapData, Packages, transpileImports } from './transpile-imports';
 
 export interface RequestCompileData {
@@ -147,7 +149,7 @@ export interface ReactCompdocComponentSection {
   slug: string;
 }
 
-interface ReactCompdocMarkdownSection {
+export interface ReactCompdocMarkdownSection {
   type: 'markdown';
   Component: ComponentType<any>;
   title: string;

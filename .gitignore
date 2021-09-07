@@ -1,4 +1,4 @@
 node_modules/
-tsconfig.tsbuildinfo
+*.tsbuildinfo
 
 yarn-error.log

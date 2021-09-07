@@ -11,10 +11,14 @@
     ]
   },
   "devDependencies": {
+    "@types/fs-extra": "^9.0.12",
     "@types/mdx-js__react": "^1.5.4",
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",
+    "@types/react-helmet": "^6.1.2",
+    "@types/react-router-dom": "^5.1.8",
     "@types/rimraf": "^3.0.2",
+    "@types/temp": "^0.9.1",
     "@types/uuid": "^8.3.1",
     "@types/yargs": "^17.0.2",
     "concurrently": "^6.2.1",
@@ -30,6 +34,7 @@
   },
   "scripts": {
     "prepare": "lerna run build",
+    "build": "lerna run build",
     "lerna": "lerna",
     "example": "yarn workspace react-example",
     "example:build": "yarn workspace react-example build:doc",

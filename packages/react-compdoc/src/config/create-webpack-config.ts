@@ -2,29 +2,30 @@ import { Environment } from '@compdoc/core';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
+import { rehypeMdxTitle } from 'rehype-mdx-title';
+import remarkFrontmatter from 'remark-frontmatter';
+import { remarkMdxFrontmatter } from 'remark-mdx-frontmatter';
 import * as webpack from 'webpack';
 import { merge } from 'webpack-merge';
 import {
-  generateCompdocData,
-  getImportsAttach,
+  generateCodeblocksData,
   generateSections,
+  getImportsAttach,
 } from '../lib/generate-compdoc-data';
 import { getConfig } from '../lib/get-config';
 import { getEnvVariables } from '../lib/get-env-variables';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
 import { moduleFileExtensions, resolveApp, resolveCompdoc } from '../lib/paths';
 import { rehypeMetaAsAttribute } from '../lib/rehype-meta-as-attribute';
-import remarkFrontmatter from 'remark-frontmatter';
-import { remarkMdxFrontmatter } from 'remark-mdx-frontmatter';
 import VirtualModulesPlugin = require('webpack-virtual-modules');
 
 const { webpackConfig: userConfig, title } = getConfig();
 
-export const createWebpackConfig = async (
+export const createWebpackConfig = (
   mode: Environment,
   { outDir = 'compdoc', prerender = false } = {}
-): Promise<webpack.Configuration> => {
-  const baseConfig = await createBaseWebpackConfig(mode, { prerender });
+): webpack.Configuration => {
+  const baseConfig = createBaseWebpackConfig(mode, { prerender });
 
   const isProd = mode === 'production';
 
@@ -33,7 +34,7 @@ export const createWebpackConfig = async (
       entry: resolveCompdoc('client-dist/index.js'),
       output: {
         path: resolveApp(outDir),
-        publicPath: 'auto',
+        publicPath: '/',
       },
       plugins: [
         isProd ? undefined : new ReactRefreshWebpackPlugin(),
@@ -62,11 +63,11 @@ export const createWebpackConfig = async (
   );
 };
 
-export const createPrerenderWebpackConfig = async (
+export const createPrerenderWebpackConfig = (
   mode: Environment,
   { outDir = 'compdoc' } = {}
-): Promise<webpack.Configuration> => {
-  const baseConfig = await createBaseWebpackConfig(mode, { prerender: true });
+): webpack.Configuration => {
+  const baseConfig = createBaseWebpackConfig(mode, { prerender: true });
 
   return mergeWebpackConfig(
     merge(baseConfig, {
@@ -79,16 +80,6 @@ export const createPrerenderWebpackConfig = async (
         },
       },
       externalsPresets: { node: true },
-      externals: [
-        {
-          react: 'react',
-          'react-dom': 'react-dom',
-          'react-dom/server': 'react-dom/server',
-          'react-query': 'react-query',
-          tslib: 'tslib',
-          '@stitches/react': '@stitches/react',
-        },
-      ],
       target: 'node14.17',
     }),
     userConfig,
@@ -96,20 +87,21 @@ export const createPrerenderWebpackConfig = async (
   );
 };
 
-const createBaseWebpackConfig = async (
+const createBaseWebpackConfig = (
   mode: Environment,
   options: { prerender: boolean }
-): Promise<webpack.Configuration> => {
+): webpack.Configuration => {
   const isProd = mode === 'production';
 
   const virtualModules = new VirtualModulesPlugin({
-    // create a virtual module that consists of parsed component data and examples
-    // so we can import it inside our client
-    [resolveCompdoc('node_modules/react-compdoc-components.js')]:
-      await generateCompdocData(),
+    // create a virtual module that consists of parsed code blocks
+    // so we can pregenerate during build time for better SSR
+    [resolveCompdoc('node_modules/react-compdoc-codeblocks.js')]:
+      generateCodeblocksData(),
     // a virtual module that exports an `imports` that includes all the imports as configured in `imports` in config file.
     [resolveCompdoc('node_modules/react-compdoc-imports.js')]:
       getImportsAttach(),
+    // a virtual module that consists of all the sections and component metadata.
     [resolveCompdoc('node_modules/react-compdoc-sections.js')]:
       generateSections(),
   });
@@ -148,7 +140,7 @@ const createBaseWebpackConfig = async (
                 {
                   loader: require.resolve('xdm/webpack.cjs'),
                   options: {
-                    rehypePlugins: [rehypeMetaAsAttribute],
+                    rehypePlugins: [rehypeMetaAsAttribute, rehypeMdxTitle],
                     remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
                   },
                 },
@@ -170,6 +162,7 @@ const createBaseWebpackConfig = async (
       new webpack.EnvironmentPlugin({
         serverData: JSON.stringify(getEnvVariables()),
         PRERENDER: String(options.prerender),
+        PAGE_TITLE: title,
       }),
       virtualModules,
     ],

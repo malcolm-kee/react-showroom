@@ -1,13 +1,10 @@
 // @ts-check
 const webpackConfig = require('./webpack.config');
+const { defineConfig } = require('react-compdoc');
 
-/**
- * @type {import('react-compdoc').ReactCompdocConfiguration}
- */
-const config = {
+module.exports = defineConfig({
   sections: [
     {
-      title: 'Introduction to Example',
       content: 'README.md',
     },
     {
@@ -17,6 +14,9 @@ const config = {
     {
       title: 'GitHub',
       href: 'https://github.com/malcolm-kee/react-compdoc',
+    },
+    {
+      content: 'docs/about.md',
     },
   ],
   webpackConfig,
@@ -32,6 +32,4 @@ const config = {
     },
   ],
   prerender: true,
-};
-
-module.exports = config;
+});

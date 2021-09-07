@@ -1,6 +1,8 @@
 import type { ReactCompdocSection } from '@compdoc/core';
-import { css, styled } from '../stitches.config';
-import { A, Div, text } from './base';
+import { ExternalLinkIcon } from '@heroicons/react/outline';
+import { slashToDash } from '../lib/slash-to-dash';
+import { css, icons, styled } from '../stitches.config';
+import { A, Div } from './base';
 
 export const Sidebar = (props: { sections: Array<ReactCompdocSection> }) => {
   return (
@@ -22,13 +24,28 @@ export const Sidebar = (props: { sections: Array<ReactCompdocSection> }) => {
   );
 };
 
-const Section = ({ section }: { section: ReactCompdocSection }) => {
+const Section = ({
+  section,
+  level = 0,
+}: {
+  section: ReactCompdocSection;
+  level?: number;
+}) => {
   switch (section.type) {
     case 'group':
       return (
-        <div>
+        <Div
+          css={{
+            borderBottom: '1px solid $gray-200',
+            py: '$2',
+            marginBottom: '$2',
+          }}
+        >
           {section.Component ? (
-            <A href={section.slug} className={sectionClass()}>
+            <A
+              href={`#${slashToDash(section.slug)}`}
+              className={sectionClass()}
+            >
               {section.title}
             </A>
           ) : (
@@ -40,23 +57,41 @@ const Section = ({ section }: { section: ReactCompdocSection }) => {
             }}
           >
             {section.items.map((section, i) => (
-              <Section section={section} key={i} />
+              <Section section={section} level={level + 1} key={i} />
             ))}
           </Div>
-        </div>
+        </Div>
       );
 
     case 'component':
       return (
-        <Link href={`#${section.slug}`} className={text({ variant: 'lg' })}>
+        <Link href={`#${slashToDash(section.slug)}`} root={level === 0}>
           {section.data.component.displayName}
         </Link>
       );
 
     case 'markdown':
       return (
-        <Link href={`#${section.slug}`} className={text({ variant: 'lg' })}>
+        <Link href={`#${slashToDash(section.slug)}`} root={level === 0}>
           {section.title}
+        </Link>
+      );
+
+    case 'link':
+      return (
+        <Link
+          href={section.href}
+          target="_blank"
+          rel="noopener"
+          css={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+          root={level === 0}
+        >
+          {section.title}
+          <ExternalLinkIcon className={icons()} width={20} height={20} />
         </Link>
       );
 
@@ -82,5 +117,13 @@ const Link = styled('a', {
   borderRadius: '$md',
   '&:hover': {
     backgroundColor: '$gray-200',
+  },
+  variants: {
+    root: {
+      true: {
+        px: '$4',
+        borderRadius: '$none',
+      },
+    },
   },
 });
