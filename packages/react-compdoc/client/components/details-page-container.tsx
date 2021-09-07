@@ -2,13 +2,16 @@ import { ArrowLeftIcon } from '@heroicons/react/outline';
 import * as React from 'react';
 import { icons } from '../stitches.config';
 import { Div, NavLink } from './base';
+import { Seo } from './seo';
 
 export interface DetailsPageContainerProps {
   children: React.ReactNode;
+  title?: string;
 }
 
 export const DetailsPageContainer = (props: DetailsPageContainerProps) => (
   <>
+    <Seo title={props.title} />
     <Div
       as="nav"
       css={{

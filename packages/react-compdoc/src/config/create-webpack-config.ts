@@ -162,6 +162,7 @@ const createBaseWebpackConfig = (
       new webpack.EnvironmentPlugin({
         serverData: JSON.stringify(getEnvVariables()),
         PRERENDER: String(options.prerender),
+        PAGE_TITLE: title,
       }),
       virtualModules,
     ],

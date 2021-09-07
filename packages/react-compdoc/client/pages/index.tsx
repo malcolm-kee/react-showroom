@@ -3,6 +3,7 @@ import sections from 'react-compdoc-sections';
 import { Div } from '../components/base';
 import { ComponentDocArticle } from '../components/component-doc-article';
 import { MarkdownArticle } from '../components/markdown-article';
+import { Seo } from '../components/seo';
 import { Sidebar } from '../components/sidebar';
 
 export const HomePage = () => (
@@ -13,6 +14,7 @@ export const HomePage = () => (
       overflow: 'hidden',
     }}
   >
+    <Seo />
     <Sidebar sections={sections} />
     <Div
       as="main"

@@ -2,6 +2,7 @@
 process.env.BABEL_ENV = 'production';
 process.env.NODE_ENV = 'production';
 
+import { Ssr } from '@compdoc/core';
 import * as fs from 'fs';
 import * as temp from 'temp';
 import webpack from 'webpack';
@@ -45,15 +46,21 @@ async function prerenderSite(tmpDir: string) {
   const prerenderCodePath = `${tmpDir}/server/prerender.js`;
   const htmlPath = resolveApp(`${outDir}/index.html`);
 
-  const { render, getCssText } = require(prerenderCodePath);
+  const { render, getCssText, getHelmet } = require(prerenderCodePath) as Ssr;
 
   const prerenderContent = render();
 
   const template = await fs.promises.readFile(htmlPath, 'utf-8');
 
+  const helmet = getHelmet();
+
   const finalHtml = template
-    .replace('<!--SSR-target-->', prerenderContent)
-    .replace('/* SSR-style */', getCssText());
+    .replace('/* SSR-style */', getCssText())
+    .replace(
+      '<!--SSR-helmet-->',
+      `${helmet.title.toString()}${helmet.meta.toString()}${helmet.link.toString()}`
+    )
+    .replace('<!--SSR-target-->', prerenderContent);
 
   await fs.promises.writeFile(htmlPath, finalHtml);
 }

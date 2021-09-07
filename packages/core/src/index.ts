@@ -2,6 +2,7 @@ import type { ComponentType } from 'react';
 import type { ComponentDoc as DocgenComponentDoc } from 'react-docgen-typescript';
 import type { Configuration } from 'webpack';
 
+export { Ssr } from './ssr-types';
 export { ImportMapData, Packages, transpileImports } from './transpile-imports';
 
 export interface RequestCompileData {

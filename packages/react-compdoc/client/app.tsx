@@ -24,7 +24,7 @@ export const App = () => (
       if (section.type === 'component') {
         return (
           <Route path={`/${section.slug}`} key={section.slug}>
-            <DetailsPageContainer>
+            <DetailsPageContainer title={section.data.component.displayName}>
               <ComponentDocArticle doc={section} />
             </DetailsPageContainer>
           </Route>
@@ -34,7 +34,7 @@ export const App = () => (
       if (section.type === 'markdown') {
         return (
           <Route path={`/${section.slug}`} key={section.slug}>
-            <DetailsPageContainer>
+            <DetailsPageContainer title={section.title}>
               <MarkdownArticle section={section} />
             </DetailsPageContainer>
           </Route>

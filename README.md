@@ -10,7 +10,8 @@
 - [x] precompile snippet example
 - [x] pre-rendering
 - [x] configure sidebar structure (including supporting arbitrary mdx file)
-- [ ] focused view
+- [x] focused view
+- [ ] SSR for detailed page
 - [ ] allow search components in sidebar
 - [ ] tweak design
 - [ ] automated tests
