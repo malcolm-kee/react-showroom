@@ -1,6 +1,5 @@
+import { styled } from '@compdoc/ui';
 import { HashtagIcon } from '@heroicons/react/outline';
-
-import { styled } from '../stitches.config';
 
 export const HashTag = styled(HashtagIcon, {
   visibility: 'hidden',

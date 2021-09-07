@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "ESNext",
+        "lib": [
+            "ES2020"
+        ],
+        "allowJs": true,
+        "sourceMap": true,
+        "strict": true,
+        "noUnusedLocals": true,
+        "moduleResolution": "node",
+        "composite": true,
+        "rootDir": "src",
+        "outDir": "dist",
+        "importHelpers": true,
+        "downlevelIteration": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "jsx": "react-jsx",
+        "skipLibCheck": true
+    },
+    "include": ["src"]
+}

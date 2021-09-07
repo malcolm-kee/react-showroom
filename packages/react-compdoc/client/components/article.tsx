@@ -1,4 +1,4 @@
-import { styled } from '../stitches.config';
+import { styled } from '@compdoc/ui';
 
 export const Article = styled('article', {
   py: '$6',

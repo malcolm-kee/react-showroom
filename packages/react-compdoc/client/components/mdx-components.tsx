@@ -1,7 +1,7 @@
+import { icons, styled } from '@compdoc/ui';
 import { ArrowsExpandIcon } from '@heroicons/react/outline';
 import * as React from 'react';
 import { slashToDash } from '../lib/slash-to-dash';
-import { icons, styled } from '../stitches.config';
 import { NavLink } from './base';
 import { Code, Pre } from './code-block';
 import { HashTag, Title } from './title';

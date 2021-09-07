@@ -1,6 +1,6 @@
+import { icons } from '@compdoc/ui';
 import { ArrowLeftIcon } from '@heroicons/react/outline';
 import * as React from 'react';
-import { icons } from '../stitches.config';
 import { Div, NavLink } from './base';
 import { Seo } from './seo';
 

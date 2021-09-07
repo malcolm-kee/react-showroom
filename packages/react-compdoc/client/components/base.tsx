@@ -1,5 +1,5 @@
+import { css, styled } from '@compdoc/ui';
 import { Link } from 'react-router-dom';
-import { css, styled } from '../stitches.config';
 
 export const Div = styled('div');
 

@@ -1,15 +1,13 @@
+import { Alert, Collapsible, css, icons } from '@compdoc/ui';
 import { TerminalIcon } from '@heroicons/react/outline';
 import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
 import * as React from 'react';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import { useCodeCompilation } from '../lib/use-code-compilation';
-import { css, icons } from '../stitches.config';
-import { Alert } from './alert';
 import { Div, Span } from './base';
 import { CodeEditor, CodeEditorProps } from './code-editor';
 import { CodeHighlight } from './code-highlight';
 import { CodePreview } from './code-preview';
-import * as Collapsible from './collapsible';
 
 const IsBlockCodeContext = React.createContext(false);
 IsBlockCodeContext.displayName = 'IsBlockCodeContext';

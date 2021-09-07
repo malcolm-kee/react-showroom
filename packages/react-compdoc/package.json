@@ -10,12 +10,10 @@
   "dependencies": {
     "@babel/preset-react": "^7.14.5",
     "@compdoc/core": "^0.0.1",
+    "@compdoc/ui": "^0.0.1",
     "@heroicons/react": "^1.0.4",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.0-rc.6",
-    "@radix-ui/react-announce": "^0.0.15",
-    "@radix-ui/react-collapsible": "^0.0.17",
     "@radix-ui/react-id": "^0.0.6",
-    "@stitches/react": "^1.0.0",
     "core-js": "^3.16.3",
     "cross-spawn": "^7.0.3",
     "esbuild": "^0.12.25",

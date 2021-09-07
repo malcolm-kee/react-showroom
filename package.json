@@ -41,6 +41,7 @@
     "dev": "lerna run dev --stream --parallel",
     "compdoc": "yarn workspace react-compdoc",
     "core": "yarn workspace @compdoc/core",
+    "ui": "yarn workspace @compdoc/ui",
     "clean": "lerna run clean"
   }
 }

@@ -16,7 +16,7 @@ export const render: Ssr['render'] = ({ pathname = '/' } = {}) =>
     </StaticRouter>
   );
 
-export { getCssText } from './stitches.config';
+export { getCssText } from '@compdoc/ui';
 
 export const getHelmet: Ssr['getHelmet'] = () => Helmet.renderStatic();
 

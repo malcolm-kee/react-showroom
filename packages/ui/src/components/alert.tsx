@@ -5,8 +5,7 @@ import {
   XCircleIcon,
 } from '@heroicons/react/solid';
 import * as Announce from '@radix-ui/react-announce';
-import { css, styled } from '../stitches.config';
-import { Div, text } from './base';
+import { css, styled, text } from '../stitches.config';
 
 export interface AlertProps {
   variant: 'error' | 'success' | 'info' | 'warning';
@@ -17,19 +16,18 @@ export function Alert(props: AlertProps) {
   const Icon = iconMap[props.variant];
   return (
     <Root role="alert" variant={props.variant}>
-      <Div
-        css={{
-          flexShrink: '0',
-        }}
-      >
+      <IconWrapper>
         <Icon className={iconClass({ variant: props.variant })} />
-      </Div>
-      <Div css={{ whiteSpace: 'pre-wrap' }} className={text({ variant: 'sm' })}>
+      </IconWrapper>
+      <ContentWrapper className={text({ variant: 'sm' })}>
         {props.children}
-      </Div>
+      </ContentWrapper>
     </Root>
   );
 }
+
+const IconWrapper = styled('div', { flexShrink: '0' });
+const ContentWrapper = styled('div', { whiteSpace: 'pre-wrap' });
 
 const iconMap = {
   error: XCircleIcon,
