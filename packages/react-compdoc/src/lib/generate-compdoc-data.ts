@@ -5,7 +5,7 @@ import {
 import { getClientImportMap } from './get-client-import-map';
 import { getConfig } from './get-config';
 
-export const generateCompdocData = async () => {
+export const generateCodeblocksData = () => {
   const { components } = getConfig();
 
   return `module.exports = {

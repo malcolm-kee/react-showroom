@@ -10,7 +10,7 @@ import { createWebpackConfig } from '../config/create-webpack-config';
 (async function startDevServer() {
   const PORT = Number((argv as any).port ?? process.env.PORT ?? 6969);
 
-  const webpackConfig = await createWebpackConfig('development');
+  const webpackConfig = createWebpackConfig('development');
 
   const devServerOptions: webpackDevServer.Configuration = {
     port: PORT,

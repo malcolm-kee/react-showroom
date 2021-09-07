@@ -3,7 +3,7 @@ import React from 'react';
 import sections from 'react-compdoc-sections';
 import { Div } from './components/base';
 import { ComponentDocArticle } from './components/component-doc-article';
-import { mdxComponents } from './components/mdx-components';
+import { MarkdownArticle } from './components/markdown-article';
 import { Sidebar } from './components/sidebar';
 
 export const App = () => (
@@ -45,11 +45,8 @@ export const App = () => (
               case 'component':
                 return <ComponentDocArticle doc={section} key={i} />;
 
-              case 'markdown': {
-                const { Component } = section;
-
-                return <Component components={mdxComponents} key={i} />;
-              }
+              case 'markdown':
+                return <MarkdownArticle section={section} key={i} />;
 
               default:
                 return null;

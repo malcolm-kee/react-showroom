@@ -3,7 +3,7 @@ declare module '*.wasm' {
   export default src;
 }
 
-declare module 'react-compdoc-components' {
+declare module 'react-compdoc-codeblocks' {
   import type { CodeBlocks } from '@compdoc/core';
 
   interface ReactCompdocData {

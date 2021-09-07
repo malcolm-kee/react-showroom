@@ -147,7 +147,7 @@ export interface ReactCompdocComponentSection {
   slug: string;
 }
 
-interface ReactCompdocMarkdownSection {
+export interface ReactCompdocMarkdownSection {
   type: 'markdown';
   Component: ComponentType<any>;
   title: string;

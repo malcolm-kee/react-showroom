@@ -1,4 +1,4 @@
-import Data from 'react-compdoc-components';
+import Data from 'react-compdoc-codeblocks';
 import { QueryClient } from 'react-query';
 
 export const createQueryClient = () => {

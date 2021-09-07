@@ -1,4 +1,5 @@
 import type { ReactCompdocSection } from '@compdoc/core';
+import { slashToDash } from '../lib/slash-to-dash';
 import { css, styled } from '../stitches.config';
 import { A, Div, text } from './base';
 
@@ -28,7 +29,10 @@ const Section = ({ section }: { section: ReactCompdocSection }) => {
       return (
         <div>
           {section.Component ? (
-            <A href={section.slug} className={sectionClass()}>
+            <A
+              href={`#${slashToDash(section.slug)}`}
+              className={sectionClass()}
+            >
               {section.title}
             </A>
           ) : (
@@ -48,14 +52,20 @@ const Section = ({ section }: { section: ReactCompdocSection }) => {
 
     case 'component':
       return (
-        <Link href={`#${section.slug}`} className={text({ variant: 'lg' })}>
+        <Link
+          href={`#${slashToDash(section.slug)}`}
+          className={text({ variant: 'lg' })}
+        >
           {section.data.component.displayName}
         </Link>
       );
 
     case 'markdown':
       return (
-        <Link href={`#${section.slug}`} className={text({ variant: 'lg' })}>
+        <Link
+          href={`#${slashToDash(section.slug)}`}
+          className={text({ variant: 'lg' })}
+        >
           {section.title}
         </Link>
       );

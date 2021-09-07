@@ -2,6 +2,7 @@ import { ReactCompdocComponentSection } from '@compdoc/core';
 import { HashtagIcon } from '@heroicons/react/outline';
 import * as React from 'react';
 import snarkdown from 'snarkdown';
+import { slashToDash } from '../lib/slash-to-dash';
 import { styled } from '../stitches.config';
 import { Div, text } from './base';
 import * as Collapsible from './collapsible';
@@ -23,11 +24,11 @@ export const ComponentMeta = ({
     <>
       <Div
         as="h2"
-        id={section.slug}
+        id={slashToDash(section.slug)}
         css={{ marginBottom: '$5', fontWeight: 700 }}
         className={text({ variant: '5xl' })}
       >
-        <Title href={`#${section.slug}`}>
+        <Title href={`#${slashToDash(section.slug)}`}>
           <HashTag />
           {doc.displayName}
         </Title>
