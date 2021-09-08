@@ -1,7 +1,7 @@
 import type { ReactCompdocSection } from '@compdoc/core';
+import { css, icons, styled } from '@compdoc/ui';
 import { ExternalLinkIcon } from '@heroicons/react/outline';
 import { slashToDash } from '../lib/slash-to-dash';
-import { css, icons, styled } from '../stitches.config';
 import { A, Div } from './base';
 
 export const Sidebar = (props: { sections: Array<ReactCompdocSection> }) => {
@@ -117,6 +117,12 @@ const Link = styled('a', {
   borderRadius: '$md',
   '&:hover': {
     backgroundColor: '$gray-200',
+  },
+  '&:focus': {
+    outline: 'none',
+  },
+  '&:focus-visible': {
+    outline: '1px solid $primary-300',
   },
   variants: {
     root: {

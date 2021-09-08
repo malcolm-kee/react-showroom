@@ -44,7 +44,7 @@ export interface SectionConfiguration {
   /**
    * section title
    */
-  title: string;
+  title?: string;
   /**
    * location of a Markdown file containing the overview content.
    */

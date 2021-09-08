@@ -1,6 +1,5 @@
+import { styled } from '@compdoc/ui';
 import { HashtagIcon } from '@heroicons/react/outline';
-
-import { styled } from '../stitches.config';
 
 export const HashTag = styled(HashtagIcon, {
   visibility: 'hidden',
@@ -18,6 +17,12 @@ export const Title = styled('a', {
   marginX: '-$2',
   color: '$gray-500',
   position: 'relative',
+  '&:focus': {
+    outline: 'none',
+  },
+  '&:focus-visible': {
+    outline: '1px solid $primary-200',
+  },
   [`&:hover ${HashTag}`]: {
     visibility: 'visible',
   },

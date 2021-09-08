@@ -12,7 +12,7 @@ const spaces = SPACE_VARIANTS.reduce<
 >(
   (result, item) => ({
     ...result,
-    [item]: `${item * SPACE_UNIT}px`,
+    [item]: `${Math.round(item * SPACE_UNIT)}px`,
   }),
   {} as any
 );
@@ -27,6 +27,13 @@ export const {
   createTheme,
   config,
 } = createStitches({
+  media: {
+    sm: '(min-width: 640px)',
+    md: '(min-width: 768px)',
+    lg: '(min-width: 1024px)',
+    xl: '(min-width: 1280px)',
+    '2xl': '(min-width: 1536px)',
+  },
   theme: {
     fontSizes: {
       xs: '0.75rem',
@@ -87,6 +94,19 @@ export const {
       'yellow-50': '#FFFBEB',
       'yellow-400': '#FBBF24',
       'yellow-800': '#92400E',
+      'primary-50': '#FDF2F8',
+      'primary-100': '#FCE7F3',
+      'primary-200': '#FBCFE8',
+      'primary-300': '#F9A8D4',
+      'primary-400': '#F472B6',
+      'primary-500': '#EC4899',
+      'primary-600': '#DB2777',
+      'primary-700': '#BE185D',
+      'primary-800': '#9D174D',
+      'primary-900': '#831843',
+    },
+    fonts: {
+      sans: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
     },
     radii: {
       none: '0px',
@@ -133,4 +153,59 @@ export const {
 
 export const icons = css({
   color: '$gray-400',
+});
+
+export const text = css({
+  variants: {
+    variant: {
+      xs: {
+        fontSize: '$xs',
+        lineHeight: '$xs',
+      },
+      sm: {
+        fontSize: '$sm',
+        lineHeight: '$sm',
+      },
+      base: {
+        fontSize: '$base',
+        lineHeight: '$base',
+      },
+      lg: {
+        fontSize: '$lg',
+        lineHeight: '$lg',
+      },
+      xl: {
+        fontSize: '$xl',
+        lineHeight: '$xl',
+      },
+      '2xl': {
+        fontSize: '$2xl',
+        lineHeight: '$2xl',
+      },
+      '3xl': {
+        fontSize: '$3xl',
+        lineHeight: '$3xl',
+      },
+      '4xl': {
+        fontSize: '$4xl',
+        lineHeight: '$4xl',
+      },
+      '5xl': {
+        fontSize: '$5xl',
+        lineHeight: '$5xl',
+      },
+      '6xl': {
+        fontSize: '$6xl',
+        lineHeight: '$6xl',
+      },
+      '7xl': {
+        fontSize: '$7xl',
+        lineHeight: '$7xl',
+      },
+      '8xl': {
+        fontSize: '$8xl',
+        lineHeight: '$8xl',
+      },
+    },
+  },
 });

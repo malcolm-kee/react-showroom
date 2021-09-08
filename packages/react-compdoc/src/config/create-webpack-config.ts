@@ -4,6 +4,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
 import { rehypeMdxTitle } from 'rehype-mdx-title';
 import remarkFrontmatter from 'remark-frontmatter';
+import rehypeSlug from 'rehype-slug';
 import { remarkMdxFrontmatter } from 'remark-mdx-frontmatter';
 import * as webpack from 'webpack';
 import { merge } from 'webpack-merge';
@@ -48,7 +49,7 @@ export const createWebpackConfig = (
                 collapseWhitespace: true,
                 keepClosingSlash: true,
                 removeComments: true,
-                ignoreCustomComments: [/SSR-/],
+                ignoreCustomComments: prerender ? [/SSR-/] : [],
                 removeRedundantAttributes: true,
                 removeScriptTypeAttributes: true,
                 removeStyleLinkTypeAttributes: true,
@@ -140,7 +141,11 @@ const createBaseWebpackConfig = (
                 {
                   loader: require.resolve('xdm/webpack.cjs'),
                   options: {
-                    rehypePlugins: [rehypeMetaAsAttribute, rehypeMdxTitle],
+                    rehypePlugins: [
+                      rehypeSlug,
+                      rehypeMetaAsAttribute,
+                      rehypeMdxTitle,
+                    ],
                     remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
                   },
                 },

@@ -1,11 +1,10 @@
 import { ReactCompdocComponentSection } from '@compdoc/core';
+import { Collapsible, icons, styled } from '@compdoc/ui';
 import { ArrowsExpandIcon } from '@heroicons/react/outline';
 import * as React from 'react';
 import snarkdown from 'snarkdown';
 import { slashToDash } from '../lib/slash-to-dash';
-import { icons, styled } from '../stitches.config';
 import { Div, NavLink, text } from './base';
-import * as Collapsible from './collapsible';
 import { HashTag, Title } from './title';
 
 export const ComponentMeta = ({

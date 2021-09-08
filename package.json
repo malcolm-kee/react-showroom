@@ -11,7 +11,9 @@
     ]
   },
   "devDependencies": {
+    "@types/cross-spawn": "^6.0.2",
     "@types/fs-extra": "^9.0.12",
+    "@types/glob": "^7.1.4",
     "@types/mdx-js__react": "^1.5.4",
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",
@@ -19,7 +21,6 @@
     "@types/react-router-dom": "^5.1.8",
     "@types/rimraf": "^3.0.2",
     "@types/temp": "^0.9.1",
-    "@types/uuid": "^8.3.1",
     "@types/yargs": "^17.0.2",
     "concurrently": "^6.2.1",
     "lerna": "^4.0.0",
@@ -28,10 +29,7 @@
     "rimraf": "^3.0.2",
     "type-fest": "^2.1.0"
   },
-  "dependencies": {
-    "@types/cross-spawn": "^6.0.2",
-    "@types/glob": "^7.1.4"
-  },
+  "dependencies": {},
   "scripts": {
     "prepare": "lerna run build",
     "build": "lerna run build",
@@ -41,6 +39,7 @@
     "dev": "lerna run dev --stream --parallel",
     "compdoc": "yarn workspace react-compdoc",
     "core": "yarn workspace @compdoc/core",
+    "ui": "yarn workspace @compdoc/ui",
     "clean": "lerna run clean"
   }
 }

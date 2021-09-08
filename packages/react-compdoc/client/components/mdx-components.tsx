@@ -1,7 +1,7 @@
+import { icons, styled } from '@compdoc/ui';
 import { ArrowsExpandIcon } from '@heroicons/react/outline';
 import * as React from 'react';
 import { slashToDash } from '../lib/slash-to-dash';
-import { icons, styled } from '../stitches.config';
 import { NavLink } from './base';
 import { Code, Pre } from './code-block';
 import { HashTag, Title } from './title';
@@ -62,6 +62,10 @@ export const mdxComponents = {
     fontSize: '$4xl',
     lineHeight: '$4xl',
     marginBottom: '$2',
+  }),
+  h3: styled('h3', {
+    fontSize: '$2xl',
+    lineHeight: '$2xl',
   }),
   pre: Pre,
   code: Code,
