@@ -58,12 +58,14 @@ async function prerenderSite(tmpDir: string) {
   const routes = getRoutes();
 
   for (const route of routes) {
-    console.log(`Prerendering /${route}`);
+    if (route !== '') {
+      console.log(`Prerendering /${route}`);
 
-    await fs.outputFile(
-      resolveApp(`${outDir}/${route}/index.html`),
-      getHtml(`/${route}`)
-    );
+      await fs.outputFile(
+        resolveApp(`${outDir}/${route}/index.html`),
+        getHtml(`/${route}`)
+      );
+    }
   }
 
   console.log(`Prerendering home page`);

@@ -1,20 +1,15 @@
 import { ReactCompdocComponentSection } from '@compdoc/core';
-import { Collapsible, icons, styled } from '@compdoc/ui';
-import { ArrowsExpandIcon } from '@heroicons/react/outline';
+import { Collapsible, styled } from '@compdoc/ui';
 import * as React from 'react';
 import snarkdown from 'snarkdown';
-import { slashToDash } from '../lib/slash-to-dash';
-import { Div, NavLink, text } from './base';
-import { HashTag, Title } from './title';
+import { Div, H1 } from './base';
 
 export const ComponentMeta = ({
   section,
   propsDefaultOpen,
-  showLinkToDetails,
 }: {
   section: ReactCompdocComponentSection;
   propsDefaultOpen?: boolean;
-  showLinkToDetails?: boolean;
 }) => {
   const [propsIsOpen, setPropsIsOpen] = React.useState(propsDefaultOpen);
 
@@ -22,32 +17,9 @@ export const ComponentMeta = ({
     data: { component: doc },
   } = section;
 
-  const slug = slashToDash(section.slug);
-
   return (
     <>
-      <Div
-        as="h2"
-        id={slug}
-        css={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '$5',
-          fontWeight: 700,
-        }}
-        className={text({ variant: '4xl' })}
-      >
-        <Title href={`#${slug}`}>
-          <HashTag />
-          {doc.displayName}
-        </Title>
-        {showLinkToDetails && (
-          <NavLink to={`/${section.slug}`}>
-            <ArrowsExpandIcon className={icons()} width={20} height={20} />
-          </NavLink>
-        )}
-      </Div>
+      <H1>{doc.displayName}</H1>
       {doc.description && (
         <Div
           dangerouslySetInnerHTML={{

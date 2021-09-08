@@ -66,7 +66,7 @@ export const generateSections = () => {
             section.docPath ? `require('${section.docPath}').default` : 'null'
           },
           items: ${mapSections(section.items)},
-          slug: '${section.parentSlugs.concat(section.slug).join('/')}'
+          slug: '${section.slug}'
         }`;
         }
 
@@ -87,11 +87,8 @@ export const generateSections = () => {
             type: 'markdown',
             Component: require('${section.sourcePath}').default,
             title: require('${section.sourcePath}').title || '${section.title}',
-            get slug() {
-              const parentSlugs = '${section.parentSlugs.join('/')}';
-
-              return (parentSlugs && (parentSlugs + '/')) + slugify(this.title, {lower: true});
-            }
+            slug: '${section.slug}',
+            frontmatter: require('${section.sourcePath}').frontmatter || {},
           }`;
         }
 

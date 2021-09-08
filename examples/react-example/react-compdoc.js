@@ -5,9 +5,6 @@ const { defineConfig } = require('react-compdoc');
 module.exports = defineConfig({
   sections: [
     {
-      content: 'README.md',
-    },
-    {
       title: 'Core',
       components: 'src/components/**/*.tsx',
     },
@@ -15,10 +12,8 @@ module.exports = defineConfig({
       title: 'GitHub',
       href: 'https://github.com/malcolm-kee/react-compdoc',
     },
-    {
-      content: 'docs/about.md',
-    },
   ],
+  docsFolder: 'docs',
   webpackConfig,
   title: 'React Compdoc Example',
   imports: [
