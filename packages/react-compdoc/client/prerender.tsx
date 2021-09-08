@@ -9,7 +9,7 @@ import { createQueryClient } from './lib/create-query-client';
 
 export const render: Ssr['render'] = ({ pathname }) =>
   ReactDOMServer.renderToString(
-    <StaticRouter location={{ pathname }}>
+    <StaticRouter location={{ pathname }} basename={process.env.BASE_PATH}>
       <QueryClientProvider client={createQueryClient()}>
         <App />
       </QueryClientProvider>

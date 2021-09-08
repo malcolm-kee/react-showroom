@@ -17,6 +17,7 @@ const defaultConfig = {
   title: 'React Compdoc',
   outDir: 'compdoc',
   prerender: false,
+  basePath: '/',
 };
 
 let _normalizedConfig: NormalizedReactCompdocConfiguration;
@@ -91,6 +92,11 @@ export const getConfig = (): NormalizedReactCompdocConfiguration => {
     ...providedConfig,
     sections,
     components,
+    basePath: providedConfig.basePath
+      ? providedConfig.basePath === '/'
+        ? '/'
+        : removeTrailingSlash(providedConfig.basePath)
+      : defaultConfig.basePath,
   };
 
   return _normalizedConfig;
@@ -191,3 +197,5 @@ const getUserConfig = (): ReactCompdocConfiguration => {
 
   return require(paths.appCompdocConfig);
 };
+
+const removeTrailingSlash = (path: string) => path.replace(/\/$/, '');

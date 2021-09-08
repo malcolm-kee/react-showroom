@@ -13,7 +13,7 @@ import { resolveApp } from '../lib/paths';
 
 temp.track();
 
-const { prerender, outDir } = getConfig();
+const { prerender, outDir, basePath } = getConfig();
 
 async function buildStaticSite() {
   const webpackConfig = createWebpackConfig('production', {
@@ -56,6 +56,10 @@ async function prerenderSite(tmpDir: string) {
   const template = await fs.readFile(htmlPath, 'utf-8');
 
   const routes = getRoutes();
+
+  if (basePath !== '/') {
+    console.log(`Prerender with basePath: ${basePath}`);
+  }
 
   for (const route of routes) {
     if (route !== '') {
