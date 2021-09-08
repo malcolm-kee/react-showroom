@@ -1,15 +1,14 @@
 import type { ReactCompdocSection } from '@compdoc/core';
 import { css, icons, styled } from '@compdoc/ui';
 import { ExternalLinkIcon } from '@heroicons/react/outline';
-import { slashToDash } from '../lib/slash-to-dash';
-import { A, Div } from './base';
+import { Div, NavLink } from './base';
 
 export const Sidebar = (props: { sections: Array<ReactCompdocSection> }) => {
   return (
     <Div
       as="nav"
       css={{
-        py: '$10',
+        paddingBottom: '$10',
         borderRight: '1px solid',
         borderRightColor: '$gray-300',
         minWidth: 240,
@@ -31,6 +30,10 @@ const Section = ({
   section: ReactCompdocSection;
   level?: number;
 }) => {
+  if ('slug' in section && section.slug === '') {
+    return null;
+  }
+
   switch (section.type) {
     case 'group':
       return (
@@ -42,12 +45,9 @@ const Section = ({
           }}
         >
           {section.Component ? (
-            <A
-              href={`#${slashToDash(section.slug)}`}
-              className={sectionClass()}
-            >
+            <NavLink to={`/${section.slug}`} className={sectionClass()}>
               {section.title}
-            </A>
+            </NavLink>
           ) : (
             <Div className={sectionClass()}>{section.title}</Div>
           )}
@@ -65,14 +65,14 @@ const Section = ({
 
     case 'component':
       return (
-        <Link href={`#${slashToDash(section.slug)}`} root={level === 0}>
+        <Link to={`/${section.slug}`} root={level === 0}>
           {section.data.component.displayName}
         </Link>
       );
 
     case 'markdown':
       return (
-        <Link href={`#${slashToDash(section.slug)}`} root={level === 0}>
+        <Link to={`/${section.slug}`} root={level === 0}>
           {section.title}
         </Link>
       );
@@ -83,6 +83,7 @@ const Section = ({
           href={section.href}
           target="_blank"
           rel="noopener"
+          as="a"
           css={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -109,7 +110,7 @@ const sectionClass = css({
   textTransform: 'uppercase',
 });
 
-const Link = styled('a', {
+const Link = styled(NavLink, {
   display: 'block',
   color: '$gray-600',
   px: '$4',

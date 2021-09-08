@@ -3,8 +3,8 @@ import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
 import { rehypeMdxTitle } from 'rehype-mdx-title';
-import remarkFrontmatter from 'remark-frontmatter';
 import rehypeSlug from 'rehype-slug';
+import remarkFrontmatter from 'remark-frontmatter';
 import { remarkMdxFrontmatter } from 'remark-mdx-frontmatter';
 import * as webpack from 'webpack';
 import { merge } from 'webpack-merge';
@@ -20,7 +20,11 @@ import { moduleFileExtensions, resolveApp, resolveCompdoc } from '../lib/paths';
 import { rehypeMetaAsAttribute } from '../lib/rehype-meta-as-attribute';
 import VirtualModulesPlugin = require('webpack-virtual-modules');
 
-const { webpackConfig: userConfig, title } = getConfig();
+const {
+  webpackConfig: userConfig,
+  title,
+  prerender: prerenderConfig,
+} = getConfig();
 
 export const createWebpackConfig = (
   mode: Environment,
@@ -35,7 +39,7 @@ export const createWebpackConfig = (
       entry: resolveCompdoc('client-dist/index.js'),
       output: {
         path: resolveApp(outDir),
-        publicPath: '/',
+        publicPath: prerenderConfig ? '/' : 'auto',
       },
       plugins: [
         isProd ? undefined : new ReactRefreshWebpackPlugin(),
@@ -146,7 +150,10 @@ const createBaseWebpackConfig = (
                       rehypeMetaAsAttribute,
                       rehypeMdxTitle,
                     ],
-                    remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
+                    remarkPlugins: [
+                      remarkFrontmatter,
+                      [remarkMdxFrontmatter, { name: 'frontmatter' }],
+                    ],
                   },
                 },
               ],
@@ -167,6 +174,7 @@ const createBaseWebpackConfig = (
       new webpack.EnvironmentPlugin({
         serverData: JSON.stringify(getEnvVariables()),
         PRERENDER: String(options.prerender),
+        MULTI_PAGES: String(prerenderConfig),
         PAGE_TITLE: title,
       }),
       virtualModules,

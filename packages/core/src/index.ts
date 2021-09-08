@@ -70,6 +70,7 @@ export interface ReactCompdocConfiguration
     name: string;
     path: string;
   }>;
+  docsFolder?: string;
   /**
    * Title to be displayed for the site.
    *
@@ -106,7 +107,7 @@ export interface ReactCompdocComponentSectionConfig {
 interface ReactCompdocMarkdownSectionConfig {
   type: 'markdown';
   sourcePath: string;
-  parentSlugs: Array<string>;
+  slug: string;
   title?: string;
 }
 
@@ -120,7 +121,6 @@ interface ReactCompdocGroupSectionConfig {
   type: 'group';
   title: string;
   slug: string;
-  parentSlugs: Array<string>;
   docPath: string | null;
   items: Array<ReactCompdocSectionConfig>;
 }
@@ -154,6 +154,11 @@ export interface ReactCompdocMarkdownSection {
   Component: ComponentType<any>;
   title: string;
   slug: string;
+  frontmatter: {
+    title?: string;
+    order?: number;
+    hideSidebar?: boolean;
+  };
 }
 
 interface ReactCompdocLinkSection {

@@ -30,13 +30,17 @@ export const getConfig = (): NormalizedReactCompdocConfiguration => {
   const sections: Array<ReactCompdocSectionConfig> = [];
   const components: Array<ReactCompdocComponentSectionConfig> = [];
 
-  if (!providedConfig.components && !providedConfig.sections) {
+  if (
+    !providedConfig.components &&
+    !providedConfig.sections &&
+    !providedConfig.docsFolder
+  ) {
     const componentPaths = glob.sync(DEFAULT_COMPONENTS_GLOB, {
       cwd: paths.appPath,
       absolute: true,
     });
 
-    collectComponents(componentPaths);
+    collectComponents(componentPaths, sections, []);
   }
 
   if (providedConfig.components) {
@@ -45,11 +49,41 @@ export const getConfig = (): NormalizedReactCompdocConfiguration => {
       absolute: true,
     });
 
-    collectComponents(componentPaths);
+    collectComponents(componentPaths, sections, []);
   }
 
   if (providedConfig.sections) {
-    collectSections(providedConfig.sections);
+    collectSections(providedConfig.sections, sections, []);
+  }
+
+  if (providedConfig.docsFolder) {
+    const docsFolder = providedConfig.docsFolder;
+
+    const pagesPaths = glob.sync(`${docsFolder}/**/*.{md,mdx}`, {
+      cwd: paths.appPath,
+    });
+
+    pagesPaths.forEach((pagePath) => {
+      const pathInfo = path.parse(pagePath);
+
+      sections.push({
+        type: 'markdown',
+        sourcePath: path.resolve(paths.appPath, pagePath),
+        slug: pathInfo.name === 'index' ? '' : pathInfo.name,
+      });
+    });
+  }
+
+  if (!sections.some((section) => 'slug' in section && section.slug === '')) {
+    // use README.md as home page if no home page
+    const readmePath = path.resolve(paths.appPath, 'README.md');
+    if (fs.existsSync(readmePath)) {
+      sections.push({
+        type: 'markdown',
+        sourcePath: readmePath,
+        slug: '',
+      });
+    }
   }
 
   _normalizedConfig = {
@@ -63,8 +97,8 @@ export const getConfig = (): NormalizedReactCompdocConfiguration => {
 
   function collectComponents(
     componentPaths: Array<string>,
-    parent = sections,
-    parentSlugs: Array<string> = []
+    parent: Array<ReactCompdocSectionConfig>,
+    parentSlugs: Array<string>
   ) {
     componentPaths.forEach((comPath) => {
       const comPathInfo = path.parse(comPath);
@@ -84,8 +118,8 @@ export const getConfig = (): NormalizedReactCompdocConfiguration => {
 
   function collectSections(
     sectionConfigs: Array<SectionConfiguration>,
-    parent = sections,
-    parentSlugs: Array<string> = []
+    parent: Array<ReactCompdocSectionConfig>,
+    parentSlugs: Array<string>
   ) {
     sectionConfigs.forEach((sectionConfig, sectionIndex) => {
       const docPath =
@@ -100,10 +134,9 @@ export const getConfig = (): NormalizedReactCompdocConfiguration => {
         const section: ReactCompdocSectionConfig = {
           type: 'group',
           title: sectionTitle,
-          slug,
+          slug: parentSlugs.concat(slug).join('/'),
           items: [],
           docPath: docPath && fs.existsSync(docPath) ? docPath : null,
-          parentSlugs,
         };
 
         if (sectionConfig.components) {
@@ -136,11 +169,15 @@ export const getConfig = (): NormalizedReactCompdocConfiguration => {
         };
         parent.push(linkSection);
       } else if (docPath && fs.existsSync(docPath)) {
+        const pathInfo = path.parse(docPath);
+
         parent.push({
           type: 'markdown',
           sourcePath: docPath,
           title: sectionConfig.title,
-          parentSlugs,
+          slug: parentSlugs
+            .concat(slugify(pathInfo.name, { lower: true }))
+            .join('/'),
         });
       }
     });

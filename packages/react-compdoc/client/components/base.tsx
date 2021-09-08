@@ -7,6 +7,14 @@ export const Span = styled('span');
 
 export const A = styled('a');
 
+export const H1 = styled('h1', {
+  fontSize: '$6xl',
+  lineHeight: '$6xl',
+  marginBottom: '$6',
+  fontWeight: 700,
+  color: '$gray-500',
+});
+
 export const NavLink = styled(Link, {
   display: 'inline-block',
 });

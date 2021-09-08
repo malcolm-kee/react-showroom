@@ -7,7 +7,7 @@ import { StaticRouter } from 'react-router-dom';
 import { App } from './app';
 import { createQueryClient } from './lib/create-query-client';
 
-export const render: Ssr['render'] = ({ pathname = '/' } = {}) =>
+export const render: Ssr['render'] = ({ pathname }) =>
   ReactDOMServer.renderToString(
     <StaticRouter location={{ pathname }}>
       <QueryClientProvider client={createQueryClient()}>
