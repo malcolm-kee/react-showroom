@@ -95,6 +95,16 @@ export interface ReactCompdocConfiguration
    * @default false
    */
   prerender?: boolean;
+  /**
+   * Set a prefix for the static site.
+   *
+   * Note that this only takes effect if `prerender` is set to `true`.
+   *
+   * @example '/docs'
+   *
+   * @default '/''
+   */
+  basePath?: string;
 }
 
 export interface ReactCompdocComponentSectionConfig {
@@ -141,6 +151,7 @@ export interface NormalizedReactCompdocConfiguration
   components: Array<ReactCompdocComponentSectionConfig>;
   outDir: string;
   prerender: boolean;
+  basePath: string;
 }
 
 export interface ReactCompdocComponentSection {

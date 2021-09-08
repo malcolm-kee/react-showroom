@@ -24,6 +24,7 @@ const {
   webpackConfig: userConfig,
   title,
   prerender: prerenderConfig,
+  basePath,
 } = getConfig();
 
 export const createWebpackConfig = (
@@ -39,7 +40,11 @@ export const createWebpackConfig = (
       entry: resolveCompdoc('client-dist/index.js'),
       output: {
         path: resolveApp(outDir),
-        publicPath: prerenderConfig ? '/' : 'auto',
+        publicPath: prerenderConfig
+          ? basePath === '/' || !isProd
+            ? '/'
+            : `${basePath}/` // need to add trailing slash
+          : 'auto',
       },
       plugins: [
         isProd ? undefined : new ReactRefreshWebpackPlugin(),
@@ -176,6 +181,7 @@ const createBaseWebpackConfig = (
         PRERENDER: String(options.prerender),
         MULTI_PAGES: String(prerenderConfig),
         PAGE_TITLE: title,
+        BASE_PATH: isProd ? basePath : '/',
       }),
       virtualModules,
     ],
