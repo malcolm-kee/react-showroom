@@ -3,7 +3,7 @@
         "target": "ES2020",
         "module": "ESNext",
         "lib": [
-            "ES2020"
+            "ES2020", "DOM"
         ],
         "allowJs": true,
         "sourceMap": true,

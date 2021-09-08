@@ -8,6 +8,7 @@ import { Div, Span } from './base';
 import { CodeEditor, CodeEditorProps } from './code-editor';
 import { CodeHighlight } from './code-highlight';
 import { CodePreview } from './code-preview';
+import { LanguageTag } from './language-tag';
 
 const IsBlockCodeContext = React.createContext(false);
 IsBlockCodeContext.displayName = 'IsBlockCodeContext';
@@ -52,6 +53,7 @@ export const Code = (props: {
           borderRadius: '$base',
           whiteSpace: 'pre',
           fontFamily: 'monospace',
+          position: 'relative',
         }}
       >
         <CodeHighlight
@@ -59,6 +61,7 @@ export const Code = (props: {
           language={lang}
           theme={theme}
         />
+        {lang && <LanguageTag language={lang} />}
       </Div>
     );
   }

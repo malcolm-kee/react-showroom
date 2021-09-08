@@ -3,6 +3,8 @@ import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
 import { CSSProperties, useEffect, useState } from 'react';
 import Editor from 'react-simple-code-editor';
 import { CodeHighlight } from './code-highlight';
+import { Div } from './base';
+import { LanguageTag } from './language-tag';
 
 export interface CodeEditorProps {
   code: string;
@@ -51,18 +53,25 @@ export const CodeEditor = (props: CodeEditorProps) => {
   const baseTheme = theme && typeof theme.plain === 'object' ? theme.plain : {};
 
   return (
-    <Editor
-      value={code}
-      padding={10}
-      highlight={highlightCode}
-      onValueChange={updateContent}
-      style={{
-        whiteSpace: 'pre',
-        fontFamily: 'monospace',
-        ...(baseTheme as any),
-        ...style,
+    <Div
+      css={{
+        position: 'relative',
       }}
-      {...rest}
-    />
+    >
+      <Editor
+        value={code}
+        padding={10}
+        highlight={highlightCode}
+        onValueChange={updateContent}
+        style={{
+          whiteSpace: 'pre',
+          fontFamily: 'monospace',
+          ...(baseTheme as any),
+          ...style,
+        }}
+        {...rest}
+      />
+      {props.language && <LanguageTag language={props.language} />}
+    </Div>
   );
 };

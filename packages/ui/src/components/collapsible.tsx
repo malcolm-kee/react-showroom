@@ -11,7 +11,7 @@ export const Button = styled(Collapsible.Trigger, {
     outline: 'none',
   },
   '&:focus-visible': {
-    outlineColor: '$gray-200',
+    outlineColor: '$primary-200',
     outlineStyle: 'solid',
     outlineWidth: '2px',
   },

@@ -63,6 +63,10 @@ export const mdxComponents = {
     lineHeight: '$4xl',
     marginBottom: '$2',
   }),
+  h3: styled('h3', {
+    fontSize: '$2xl',
+    lineHeight: '$2xl',
+  }),
   pre: Pre,
   code: Code,
   p: styled('p', {

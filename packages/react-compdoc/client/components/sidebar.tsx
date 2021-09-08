@@ -118,6 +118,12 @@ const Link = styled('a', {
   '&:hover': {
     backgroundColor: '$gray-200',
   },
+  '&:focus': {
+    outline: 'none',
+  },
+  '&:focus-visible': {
+    outline: '1px solid $primary-300',
+  },
   variants: {
     root: {
       true: {
