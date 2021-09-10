@@ -183,7 +183,7 @@ const createBaseWebpackConfig = (
         PRERENDER: String(options.prerender),
         MULTI_PAGES: String(prerenderConfig),
         PAGE_TITLE: title,
-        BASE_PATH: isProd ? basePath : '/',
+        BASE_PATH: isProd && basePath !== '/' ? basePath : '',
         CODE_THEME: JSON.stringify(codeTheme),
       }),
       virtualModules,
