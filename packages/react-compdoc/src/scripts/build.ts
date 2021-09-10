@@ -8,6 +8,7 @@ import * as temp from 'temp';
 import webpack from 'webpack';
 import { createWebpackConfig } from '../config/create-webpack-config';
 import { createPrerenderBundle } from '../lib/create-prerender-bundle';
+import { logToStdout } from '../lib/log-to-stdout';
 import { getConfig } from '../lib/get-config';
 import { resolveApp } from '../lib/paths';
 
@@ -58,12 +59,14 @@ async function prerenderSite(tmpDir: string) {
   const routes = getRoutes();
 
   if (basePath !== '/') {
-    console.log(`Prerender with basePath: ${basePath}`);
+    logToStdout(`Prerender with basePath: ${basePath}`);
   }
+
+  logToStdout('Prerendering...');
 
   for (const route of routes) {
     if (route !== '') {
-      console.log(`Prerendering /${route}`);
+      logToStdout(` - /${route}`);
 
       await fs.outputFile(
         resolveApp(`${outDir}/${route}/index.html`),
@@ -72,7 +75,7 @@ async function prerenderSite(tmpDir: string) {
     }
   }
 
-  console.log(`Prerendering home page`);
+  logToStdout(` - /`);
 
   await fs.outputFile(htmlPath, getHtml('/'));
 
@@ -97,18 +100,14 @@ async function prerenderSite(tmpDir: string) {
 (async function build() {
   const tmpDir = await temp.mkdir('react-compdoc-ssr');
 
-  console.log('Generating bundle...');
-
   await Promise.all([
     buildStaticSite(),
     prerender ? createPrerenderBundle(tmpDir) : Promise.resolve(),
   ]);
 
-  console.log('Generated bundle.');
-
   if (prerender) {
     await prerenderSite(tmpDir);
   }
 
-  console.log('Done.');
+  logToStdout('Done');
 })();
