@@ -11,6 +11,7 @@ import * as path from 'path';
 import slugify from 'slugify';
 import { paths } from './paths';
 import type { defineConfig } from '../index';
+import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
 
 const DEFAULT_COMPONENTS_GLOB = 'src/components/**/*.{js,jsx,ts,tsx}';
 
@@ -19,6 +20,7 @@ const defaultConfig = {
   outDir: 'compdoc',
   prerender: false,
   basePath: '/',
+  codeTheme: nightOwlTheme,
 };
 
 let _normalizedConfig: NormalizedReactCompdocConfiguration;
@@ -42,37 +44,6 @@ export const getConfig = (): NormalizedReactCompdocConfiguration => {
   } else {
     collectSections(providedConfig.items, sections, []);
   }
-
-  // if (providedConfig.components) {
-  //   const componentPaths = glob.sync(providedConfig.components, {
-  //     cwd: paths.appPath,
-  //     absolute: true,
-  //   });
-
-  //   collectComponents(componentPaths, sections, []);
-  // }
-
-  // if (providedConfig.sections) {
-  //   collectSections(providedConfig.sections, sections, []);
-  // }
-
-  // if (providedConfig.docsFolder) {
-  //   const docsFolder = providedConfig.docsFolder;
-
-  //   const pagesPaths = glob.sync(`${docsFolder}/**/*.{md,mdx}`, {
-  //     cwd: paths.appPath,
-  //   });
-
-  //   pagesPaths.forEach((pagePath) => {
-  //     const pathInfo = path.parse(pagePath);
-
-  //     sections.push({
-  //       type: 'markdown',
-  //       sourcePath: path.resolve(paths.appPath, pagePath),
-  //       slug: pathInfo.name === 'index' ? '' : pathInfo.name,
-  //     });
-  //   });
-  // }
 
   if (!sections.some((section) => 'slug' in section && section.slug === '')) {
     // use README.md as home page if no home page

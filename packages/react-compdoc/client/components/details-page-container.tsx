@@ -33,19 +33,15 @@ export const DetailsPageContainer = (props: DetailsPageContainerProps) => {
             overflowY: 'auto',
           }}
         >
-          {props.hideSidebar ? (
-            props.children
-          ) : (
-            <Div
-              css={{
-                maxWidth: '$screen2Xl',
-                marginX: 'auto',
-                px: '$6',
-              }}
-            >
-              {props.children}
-            </Div>
-          )}
+          <Div
+            css={{
+              maxWidth: '$screen2Xl',
+              marginX: 'auto',
+              px: '$6',
+            }}
+          >
+            {props.children}
+          </Div>
         </Div>
       </Div>
     </Div>

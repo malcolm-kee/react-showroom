@@ -1,8 +1,8 @@
 import { Alert, Collapsible, css, icons } from '@compdoc/ui';
 import { TerminalIcon } from '@heroicons/react/outline';
-import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
 import * as React from 'react';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
+import { useCodeTheme } from '../lib/code-theme-context';
 import { useCodeCompilation } from '../lib/use-code-compilation';
 import { Div, Span } from './base';
 import { CodeEditor, CodeEditorProps } from './code-editor';
@@ -39,9 +39,9 @@ export const Code = (props: {
 
   const lang: any = props.className && props.className.split('-').pop();
 
-  if (props.static) {
-    const theme = nightOwlTheme;
+  const theme = useCodeTheme();
 
+  if (props.static) {
     return (
       <Div
         style={{
@@ -66,11 +66,17 @@ export const Code = (props: {
     );
   }
 
-  return <CodeLiveEditor code={props.children as string} language={lang} />;
+  return (
+    <CodeLiveEditor
+      code={props.children as string}
+      theme={theme}
+      language={lang}
+    />
+  );
 };
 
 const CodeLiveEditor = (
-  props: { code: string } & Pick<CodeEditorProps, 'language'>
+  props: { code: string } & Pick<CodeEditorProps, 'language' | 'theme'>
 ) => {
   const [code, setCode] = React.useState(props.code);
 
@@ -163,6 +169,7 @@ const CodeLiveEditor = (
             onChange={setCode}
             language={props.language}
             className={editorBottom()}
+            theme={props.theme}
           />
         </Collapsible.Content>
       </Collapsible.Root>

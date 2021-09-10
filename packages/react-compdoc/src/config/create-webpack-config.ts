@@ -1,5 +1,4 @@
 import { Environment } from '@compdoc/core';
-// import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
 import { rehypeMdxTitle } from 'rehype-mdx-title';
@@ -25,6 +24,7 @@ const {
   title,
   prerender: prerenderConfig,
   basePath,
+  codeTheme,
 } = getConfig();
 
 export const createWebpackConfig = (
@@ -47,7 +47,6 @@ export const createWebpackConfig = (
           : 'auto',
       },
       plugins: [
-        // isProd ? undefined : new ReactRefreshWebpackPlugin(),
         new HtmlWebpackPlugin({
           template: resolveCompdoc('public/index.html'),
           templateParameters: {
@@ -183,6 +182,7 @@ const createBaseWebpackConfig = (
         MULTI_PAGES: String(prerenderConfig),
         PAGE_TITLE: title,
         BASE_PATH: isProd ? basePath : '/',
+        CODE_THEME: JSON.stringify(codeTheme),
       }),
       virtualModules,
     ],

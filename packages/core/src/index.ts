@@ -1,3 +1,4 @@
+import type { PrismTheme } from 'prism-react-renderer';
 import type { ComponentType } from 'react';
 import type { ComponentDoc as DocgenComponentDoc } from 'react-docgen-typescript';
 import type { Configuration } from 'webpack';
@@ -159,6 +160,10 @@ export interface ReactCompdocConfiguration {
    * @default '/''
    */
   basePath?: string;
+  /**
+   * One of the themes provided by `'prism-react-renderer'`.
+   */
+  codeTheme?: PrismTheme;
 }
 
 export interface ReactCompdocComponentSectionConfig {
@@ -205,6 +210,7 @@ export interface NormalizedReactCompdocConfiguration
   outDir: string;
   prerender: boolean;
   basePath: string;
+  codeTheme: PrismTheme;
 }
 
 export interface ReactCompdocComponentSection {

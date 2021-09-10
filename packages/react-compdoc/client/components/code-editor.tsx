@@ -1,9 +1,8 @@
 import { Language, PrismTheme } from 'prism-react-renderer';
-import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
 import { CSSProperties, useEffect, useState } from 'react';
 import Editor from 'react-simple-code-editor';
-import { CodeHighlight } from './code-highlight';
 import { Div } from './base';
+import { CodeHighlight } from './code-highlight';
 import { LanguageTag } from './language-tag';
 
 export interface CodeEditorProps {
@@ -12,12 +11,12 @@ export interface CodeEditorProps {
   disabled?: boolean;
   onChange?: (newCode: string) => void;
   style?: CSSProperties;
-  theme?: PrismTheme;
+  theme: PrismTheme;
   className?: string;
 }
 
 export const CodeEditor = (props: CodeEditorProps) => {
-  const theme = props.theme ?? nightOwlTheme;
+  const theme = props.theme;
 
   const [state, setState] = useState<{
     code: string;
