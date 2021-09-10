@@ -166,6 +166,12 @@ export interface ReactShowroomConfiguration {
    * One of the themes provided by `'prism-react-renderer'`.
    */
   codeTheme?: PrismTheme;
+  /**
+   * Your application static assets folder will be accessible as / in the style guide dev server.
+   *
+   * @example ['public']
+   */
+  assetDirs?: Array<string>;
 }
 
 export interface ReactShowroomComponentSectionConfig {
@@ -213,6 +219,10 @@ export interface NormalizedReactShowroomConfiguration
   prerender: boolean;
   basePath: string;
   codeTheme: PrismTheme;
+  /**
+   * assetDirs in absolute paths
+   */
+  assetDirs: Array<string>;
 }
 
 export interface ReactShowroomComponentSection {

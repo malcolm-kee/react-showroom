@@ -9,7 +9,7 @@ import * as fs from 'fs';
 import * as glob from 'glob';
 import * as path from 'path';
 import slugify from 'slugify';
-import { paths } from './paths';
+import { paths, resolveApp } from './paths';
 import type { defineConfig } from '../index';
 import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
 
@@ -67,6 +67,9 @@ export const getConfig = (): NormalizedReactShowroomConfiguration => {
         ? '/'
         : removeTrailingSlash(providedConfig.basePath)
       : defaultConfig.basePath,
+    assetDirs: providedConfig.assetDirs
+      ? providedConfig.assetDirs.map((dir) => resolveApp(dir))
+      : [],
   };
 
   return _normalizedConfig;

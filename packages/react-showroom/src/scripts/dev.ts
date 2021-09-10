@@ -8,6 +8,7 @@ import webpack from 'webpack';
 import webpackDevServer from 'webpack-dev-server';
 import { argv } from 'yargs';
 import { createWebpackConfig } from '../config/create-webpack-config';
+import { getConfig } from '../lib/get-config';
 import { logToStdout } from '../lib/log-to-stdout';
 import { prepareUrls } from '../lib/prepare-url';
 
@@ -20,6 +21,8 @@ const { openBrowser } = require(path.resolve(
 ));
 
 (async function startDevServer() {
+  const { assetDirs } = getConfig();
+
   const PORT = Number((argv as any).port ?? process.env.PORT ?? 6969);
   const HOST = '0.0.0.0';
 
@@ -33,6 +36,10 @@ const { openBrowser } = require(path.resolve(
     },
     hot: true, // hot reload replacement not supported for module federation
     historyApiFallback: true,
+    static: assetDirs.map((dir) => ({
+      directory: dir,
+      watch: true,
+    })),
   };
 
   const compiler = webpack(webpackConfig);
