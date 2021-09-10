@@ -12,6 +12,7 @@ const DialogContext = React.createContext<DialogContextType>({
   openedDialogId: '',
   setOpenedDialogId: function noop() {},
 });
+DialogContext.displayName = 'CompdocDialogContext';
 
 export const DialogContextProvider = (props: { children: React.ReactNode }) => {
   const location = useLocation();
@@ -21,9 +22,15 @@ export const DialogContextProvider = (props: { children: React.ReactNode }) => {
     [location.search]
   );
 
-  const [openedDialogId, setOpenedDialogId] = React.useState(
-    () => (params.modalId as string) || ''
-  );
+  const [openedDialogId, setOpenedDialogId] = React.useState('');
+
+  React.useEffect(() => {
+    const paramsModalId = params.modalId as string;
+
+    if (paramsModalId) {
+      setOpenedDialogId(paramsModalId);
+    }
+  }, []);
 
   return (
     <DialogContext.Provider
@@ -53,6 +60,7 @@ export const useDialog = (fixedId?: string) => {
   const { openedDialogId, setOpenedDialogId } = React.useContext(DialogContext);
 
   return {
+    dialogId,
     isOpen: openedDialogId === dialogId,
     open: () => setOpenedDialogId(dialogId),
     dismiss: () => setOpenedDialogId(''),

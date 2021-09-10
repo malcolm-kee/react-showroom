@@ -13,7 +13,7 @@ import { CodePreview } from './code-preview';
 import { LanguageTag } from './language-tag';
 
 const IsBlockCodeContext = React.createContext(false);
-IsBlockCodeContext.displayName = 'IsBlockCodeContext';
+IsBlockCodeContext.displayName = 'CompdocIsBlockCodeContext';
 
 export const Pre = (props: { children: React.ReactNode }) => (
   <Div
@@ -200,7 +200,7 @@ const CodeLiveEditorFocus = (props: Omit<CodeLiveEditorProps, 'hasDialog'>) => {
       onOpenChange={(opening) => (opening ? dialog.open() : dialog.dismiss())}
     >
       <Dialog.Trigger asChild>
-        <Button type="button">
+        <Button type="button" id={dialog.dialogId}>
           Standalone
           <ArrowsExpandIcon width={20} height={20} className={icons()} />
         </Button>
