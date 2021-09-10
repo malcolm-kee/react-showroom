@@ -15,6 +15,7 @@ import {
 import { getConfig } from '../lib/get-config';
 import { getEnvVariables } from '../lib/get-env-variables';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
+import { rehypeCodeAutoId } from '../lib/rehype-code-auto-id';
 import { moduleFileExtensions, resolveApp, resolveCompdoc } from '../lib/paths';
 import { rehypeMetaAsAttribute } from '../lib/rehype-meta-as-attribute';
 import VirtualModulesPlugin = require('webpack-virtual-modules');
@@ -154,6 +155,7 @@ const createBaseWebpackConfig = (
                       rehypeSlug,
                       rehypeMetaAsAttribute,
                       rehypeMdxTitle,
+                      rehypeCodeAutoId,
                     ],
                     remarkPlugins: [
                       remarkFrontmatter,

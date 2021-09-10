@@ -107,7 +107,7 @@ const ComponentMetaTags = ({ tags }: { tags: Record<string, unknown> }) => {
   return (
     <>
       {tagKeys.map((tag) => (
-        <p>
+        <p key={tag}>
           <TagKey capitalize={tag === 'deprecated'}>{tag}</TagKey>
           {tags[tag] && typeof tags[tag] === 'string' && `: ${tags[tag]}`}
         </p>

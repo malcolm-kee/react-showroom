@@ -32,6 +32,7 @@ export const Code = (props: {
   children: React.ReactNode;
   className?: string;
   static?: boolean;
+  id?: string;
 }) => {
   const isBlockCode = React.useContext(IsBlockCodeContext);
 
@@ -73,6 +74,7 @@ export const Code = (props: {
       code={props.children as string}
       theme={theme}
       language={lang}
+      id={props.id}
       hasDialog
     />
   );
@@ -82,6 +84,7 @@ interface CodeLiveEditorProps
   extends Pick<CodeEditorProps, 'language' | 'theme'> {
   code: string;
   hasDialog?: boolean;
+  id?: string;
 }
 
 const CodeLiveEditor = ({ hasDialog, ...props }: CodeLiveEditorProps) => {
@@ -190,7 +193,7 @@ const CodeLiveEditor = ({ hasDialog, ...props }: CodeLiveEditorProps) => {
 };
 
 const CodeLiveEditorFocus = (props: Omit<CodeLiveEditorProps, 'hasDialog'>) => {
-  const dialog = useDialog();
+  const dialog = useDialog(props.id);
 
   const componentData = React.useContext(ComponentDataContext);
 
@@ -200,7 +203,7 @@ const CodeLiveEditorFocus = (props: Omit<CodeLiveEditorProps, 'hasDialog'>) => {
       onOpenChange={(opening) => (opening ? dialog.open() : dialog.dismiss())}
     >
       <Dialog.Trigger asChild>
-        <Button type="button" id={dialog.dialogId}>
+        <Button type="button">
           Standalone
           <ArrowsExpandIcon width={20} height={20} className={icons()} />
         </Button>
