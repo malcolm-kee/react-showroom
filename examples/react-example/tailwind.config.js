@@ -4,7 +4,7 @@ module.exports = {
     './src/**/*.jsx',
     './src/**/*.ts',
     './src/**/*.tsx',
-    './src/**/*.mdx',
+    './src/**/*.md',
   ],
   mode: 'jit',
   darkMode: false, // or 'media' or 'class'

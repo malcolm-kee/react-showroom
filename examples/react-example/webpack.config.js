@@ -85,7 +85,12 @@ const config = (env) => {
         },
       ],
     },
-    plugins: [new MiniCssExtractPlugin()],
+    plugins: [
+      new MiniCssExtractPlugin({
+        filename: 'static/css/[name].[contenthash].css',
+        chunkFilename: 'static/css/[name].[contenthash].css',
+      }),
+    ],
     optimization: {
       minimize: isProd,
       minimizer: ['...', new CssMinimizerPlugin()],

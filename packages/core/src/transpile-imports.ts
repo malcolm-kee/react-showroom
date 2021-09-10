@@ -121,7 +121,8 @@ const transformImports = (
 
     return starImports
       .map(
-        ({ local }) => `const ${local.name} = imports.${pkgConfig.varName};\n`
+        ({ local }) =>
+          `const ${local.name} = imports['${pkgConfig.varName}'];\n`
       )
       .join('');
   })();
@@ -139,7 +140,7 @@ const transformImports = (
       )
       .join(',');
 
-    return `const {${importSpecifiers}} = imports.${pkgConfig.varName};\n`;
+    return `const {${importSpecifiers}} = imports['${pkgConfig.varName}'];\n`;
   })();
 
   const defaultImportsOutput: string = (function () {
@@ -150,7 +151,7 @@ const transformImports = (
     return defaultImports
       .map(
         ({ local }) =>
-          `const ${local.name} = tslib.__importDefault(imports.${pkgConfig.varName}).default;\n`
+          `const ${local.name} = tslib.__importDefault(imports['${pkgConfig.varName}']).default;\n`
       )
       .join('');
   })();

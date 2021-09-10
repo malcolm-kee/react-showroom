@@ -19,7 +19,7 @@ React component documentations made easy.
 - [x] allow search components in sidebar
 - [x] tweak design
 - [x] support both multi-pages or single page
-- [ ] basepath
+- [x] basepath
 - [ ] focus mode
 - [ ] automated tests
 

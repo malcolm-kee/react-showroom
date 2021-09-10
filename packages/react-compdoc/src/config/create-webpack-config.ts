@@ -1,5 +1,5 @@
 import { Environment } from '@compdoc/core';
-import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+// import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
 import { rehypeMdxTitle } from 'rehype-mdx-title';
@@ -47,7 +47,7 @@ export const createWebpackConfig = (
           : 'auto',
       },
       plugins: [
-        isProd ? undefined : new ReactRefreshWebpackPlugin(),
+        // isProd ? undefined : new ReactRefreshWebpackPlugin(),
         new HtmlWebpackPlugin({
           template: resolveCompdoc('public/index.html'),
           templateParameters: {
@@ -122,6 +122,7 @@ const createBaseWebpackConfig = (
       extensions: moduleFileExtensions.map((ext) => `.${ext}`),
     },
     output: {
+      filename: 'main-[contenthash].js',
       assetModuleFilename: '[name]-[contenthash][ext][query]',
       clean: isProd,
     },
@@ -143,7 +144,7 @@ const createBaseWebpackConfig = (
                 {
                   loader: require.resolve('esbuild-loader'),
                   options: {
-                    loader: 'jsx',
+                    loader: 'tsx',
                     target: 'es2015',
                   },
                 },

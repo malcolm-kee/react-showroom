@@ -62,9 +62,6 @@ export const generateSections = () => {
           return `{
           type: 'group',
           title: '${section.title}',
-          Component: ${
-            section.docPath ? `require('${section.docPath}').default` : 'null'
-          },
           items: ${mapSections(section.items)},
           slug: '${section.slug}'
         }`;

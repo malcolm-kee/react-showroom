@@ -49,6 +49,7 @@ export const App = () => {
                 <DetailsPageContainer
                   title={section.slug === '' ? undefined : section.title}
                   hideSidebar={section.frontmatter.hideSidebar}
+                  hideHeader={section.frontmatter.hideHeader}
                 >
                   <MarkdownArticle section={section} />
                 </DetailsPageContainer>

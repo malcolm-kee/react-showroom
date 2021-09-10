@@ -44,13 +44,7 @@ const Section = ({
             marginBottom: '$2',
           }}
         >
-          {section.Component ? (
-            <NavLink to={`/${section.slug}`} className={sectionClass()}>
-              {section.title}
-            </NavLink>
-          ) : (
-            <Div className={sectionClass()}>{section.title}</Div>
-          )}
+          <Div className={sectionClass()}>{section.title}</Div>
           <Div
             css={{
               px: '$2',
