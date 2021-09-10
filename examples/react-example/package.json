@@ -4,8 +4,8 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "doc": "react-compdoc dev",
-    "build:doc": "react-compdoc build"
+    "doc": "react-showroom dev",
+    "build:doc": "react-showroom build"
   },
   "dependencies": {
     "@tailwindcss/forms": "^0.3.3",
@@ -13,7 +13,7 @@
     "css-minimizer-webpack-plugin": "^3.0.2",
     "mini-css-extract-plugin": "^2.2.1",
     "react": "^17.0.2",
-    "react-compdoc": "^0.0.1",
+    "react-showroom": "^0.0.1",
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.15.2"
   },

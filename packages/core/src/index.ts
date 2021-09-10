@@ -113,7 +113,7 @@ export type ItemConfiguration =
   | DocSectionConfiguration
   | GroupSectionConfiguration;
 
-export interface ReactCompdocConfiguration {
+export interface ReactShowroomConfiguration {
   /**
    * modules to be available to be imported in examples.
    *
@@ -131,14 +131,14 @@ export interface ReactCompdocConfiguration {
   /**
    * Title to be displayed for the site.
    *
-   * @default 'React Compdoc'
+   * @default 'React Showroom'
    */
   title?: string;
   webpackConfig?: Configuration | ((env: Environment) => Configuration);
   /**
    * output of the generated site.
    *
-   * @default 'compdoc'
+   * @default 'showroom'
    */
   outDir?: string;
   /**
@@ -168,60 +168,60 @@ export interface ReactCompdocConfiguration {
   codeTheme?: PrismTheme;
 }
 
-export interface ReactCompdocComponentSectionConfig {
+export interface ReactShowroomComponentSectionConfig {
   type: 'component';
   sourcePath: string;
   docPath: string | null;
   parentSlugs: Array<string>;
 }
 
-interface ReactCompdocMarkdownSectionConfig {
+interface ReactShowroomMarkdownSectionConfig {
   type: 'markdown';
   sourcePath: string;
   slug: string;
   title?: string;
 }
 
-interface ReactCompdocLinkSectionConfig {
+interface ReactShowroomLinkSectionConfig {
   type: 'link';
   href: string;
   title: string;
 }
 
-interface ReactCompdocGroupSectionConfig {
+interface ReactShowroomGroupSectionConfig {
   type: 'group';
   title: string;
   slug: string;
-  items: Array<ReactCompdocSectionConfig>;
+  items: Array<ReactShowroomSectionConfig>;
 }
 
 /**
  * @private
  */
-export type ReactCompdocSectionConfig =
-  | ReactCompdocComponentSectionConfig
-  | ReactCompdocMarkdownSectionConfig
-  | ReactCompdocLinkSectionConfig
-  | ReactCompdocGroupSectionConfig;
+export type ReactShowroomSectionConfig =
+  | ReactShowroomComponentSectionConfig
+  | ReactShowroomMarkdownSectionConfig
+  | ReactShowroomLinkSectionConfig
+  | ReactShowroomGroupSectionConfig;
 
-export interface NormalizedReactCompdocConfiguration
-  extends Omit<ReactCompdocConfiguration, 'components' | 'sections'> {
+export interface NormalizedReactShowroomConfiguration
+  extends Omit<ReactShowroomConfiguration, 'components' | 'sections'> {
   title: string;
-  sections: Array<ReactCompdocSectionConfig>;
-  components: Array<ReactCompdocComponentSectionConfig>;
+  sections: Array<ReactShowroomSectionConfig>;
+  components: Array<ReactShowroomComponentSectionConfig>;
   outDir: string;
   prerender: boolean;
   basePath: string;
   codeTheme: PrismTheme;
 }
 
-export interface ReactCompdocComponentSection {
+export interface ReactShowroomComponentSection {
   type: 'component';
   data: ComponentDocItem;
   slug: string;
 }
 
-export interface ReactCompdocMarkdownSection {
+export interface ReactShowroomMarkdownSection {
   type: 'markdown';
   Component: ComponentType<any>;
   title: string;
@@ -234,21 +234,21 @@ export interface ReactCompdocMarkdownSection {
   };
 }
 
-interface ReactCompdocLinkSection {
+interface ReactShowroomLinkSection {
   type: 'link';
   href: string;
   title: string;
 }
 
-export interface ReactCompdocGroupSection {
+export interface ReactShowroomGroupSection {
   type: 'group';
   title: string;
   slug: string;
-  items: Array<ReactCompdocSection>;
+  items: Array<ReactShowroomSection>;
 }
 
-export type ReactCompdocSection =
-  | ReactCompdocComponentSection
-  | ReactCompdocMarkdownSection
-  | ReactCompdocLinkSection
-  | ReactCompdocGroupSection;
+export type ReactShowroomSection =
+  | ReactShowroomComponentSection
+  | ReactShowroomMarkdownSection
+  | ReactShowroomLinkSection
+  | ReactShowroomGroupSection;

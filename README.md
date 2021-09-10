@@ -1,4 +1,4 @@
-# react-compdoc
+# react-showroom
 
 React component documentations made easy.
 
@@ -21,7 +21,8 @@ React component documentations made easy.
 - [x] support both multi-pages or single page
 - [x] basepath
 - [x] focus mode
-- [ ] better CLI message (remove webpack messages)
+- [x] better CLI message (remove webpack messages)
+- [ ] msw integrations
 - [ ] documentations
 - [ ] automated tests
 

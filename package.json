@@ -1,5 +1,5 @@
 {
-  "name": "react-compdoc-workspace",
+  "name": "react-showroom-workspace",
   "private": true,
   "version": "1.0.0",
   "main": "index.js",
@@ -37,9 +37,9 @@
     "example": "yarn workspace react-example",
     "example:build": "yarn workspace react-example build:doc",
     "dev": "lerna run dev --stream --parallel",
-    "compdoc": "yarn workspace react-compdoc",
-    "core": "yarn workspace @compdoc/core",
-    "ui": "yarn workspace @compdoc/ui",
+    "showroom": "yarn workspace react-showroom",
+    "core": "yarn workspace @showroom/core",
+    "ui": "yarn workspace @showroom/ui",
     "clean": "lerna run clean"
   }
 }
