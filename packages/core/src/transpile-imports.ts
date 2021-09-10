@@ -95,7 +95,7 @@ const transformImports = (
 
   if (!pkgConfig) {
     console.error(
-      `${importedPkg} is not added in "imports" in react-compdoc.js`
+      `${importedPkg} is not added in "imports" in react-showroom.js`
     );
     return '';
   }
