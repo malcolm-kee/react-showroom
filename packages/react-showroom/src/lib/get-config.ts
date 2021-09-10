@@ -81,12 +81,24 @@ export const getConfig = (): NormalizedReactShowroomConfiguration => {
   ) {
     componentPaths.forEach((comPath) => {
       const comPathInfo = path.parse(comPath);
-      const docPath = `${comPathInfo.dir}/${comPathInfo.name}.md`;
+
+      let docPath: string | null = null;
+
+      // const docPath = `${comPathInfo.dir}/${comPathInfo.name}.md`;
+      for (const ext of COMPONENT_DOC_EXTENSIONS) {
+        const possibleDocPath = `${comPathInfo.dir}/${comPathInfo.name}${ext}`;
+
+        if (fs.existsSync(possibleDocPath)) {
+          docPath = possibleDocPath;
+          break;
+        }
+      }
 
       const section: ReactShowroomComponentSectionConfig = {
         type: 'component',
         sourcePath: comPath,
-        docPath: fs.existsSync(docPath) ? docPath : null,
+        // docPath: fs.existsSync(docPath) ? docPath : null,
+        docPath,
         parentSlugs,
       };
 
@@ -247,3 +259,5 @@ const getUserConfig = (): ReactShowroomConfiguration => {
 };
 
 const removeTrailingSlash = (path: string) => path.replace(/\/$/, '');
+
+const COMPONENT_DOC_EXTENSIONS = ['.mdx', '.md'] as const;

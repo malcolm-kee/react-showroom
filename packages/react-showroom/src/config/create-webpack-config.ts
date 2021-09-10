@@ -159,6 +159,19 @@ const createBaseWebpackConfig = (
     module: {
       rules: [
         {
+          test: /\.(js|jsx|ts|tsx)$/,
+          resourceQuery: /showroomCompile/,
+          use: [
+            {
+              loader: require.resolve('esbuild-loader'),
+              options: {
+                loader: 'tsx',
+                target: 'es2015',
+              },
+            },
+          ],
+        },
+        {
           test: /\.mdx?$/,
           oneOf: [
             {
