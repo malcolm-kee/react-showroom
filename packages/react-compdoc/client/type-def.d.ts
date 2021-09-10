@@ -28,3 +28,9 @@ declare module 'react-compdoc-sections' {
 
   export default sections;
 }
+
+declare namespace NodeJS {
+  interface ProcessEnv {
+    readonly CODE_THEME: string;
+  }
+}

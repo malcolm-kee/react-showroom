@@ -1,5 +1,4 @@
 import { Environment } from '@compdoc/core';
-import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
 import { rehypeMdxTitle } from 'rehype-mdx-title';
@@ -16,6 +15,7 @@ import {
 import { getConfig } from '../lib/get-config';
 import { getEnvVariables } from '../lib/get-env-variables';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
+import { rehypeCodeAutoId } from '../lib/rehype-code-auto-id';
 import { moduleFileExtensions, resolveApp, resolveCompdoc } from '../lib/paths';
 import { rehypeMetaAsAttribute } from '../lib/rehype-meta-as-attribute';
 import VirtualModulesPlugin = require('webpack-virtual-modules');
@@ -25,6 +25,7 @@ const {
   title,
   prerender: prerenderConfig,
   basePath,
+  codeTheme,
 } = getConfig();
 
 export const createWebpackConfig = (
@@ -47,7 +48,6 @@ export const createWebpackConfig = (
           : 'auto',
       },
       plugins: [
-        isProd ? undefined : new ReactRefreshWebpackPlugin(),
         new HtmlWebpackPlugin({
           template: resolveCompdoc('public/index.html'),
           templateParameters: {
@@ -122,6 +122,7 @@ const createBaseWebpackConfig = (
       extensions: moduleFileExtensions.map((ext) => `.${ext}`),
     },
     output: {
+      filename: 'main-[contenthash].js',
       assetModuleFilename: '[name]-[contenthash][ext][query]',
       clean: isProd,
     },
@@ -143,7 +144,7 @@ const createBaseWebpackConfig = (
                 {
                   loader: require.resolve('esbuild-loader'),
                   options: {
-                    loader: 'jsx',
+                    loader: 'tsx',
                     target: 'es2015',
                   },
                 },
@@ -154,6 +155,7 @@ const createBaseWebpackConfig = (
                       rehypeSlug,
                       rehypeMetaAsAttribute,
                       rehypeMdxTitle,
+                      rehypeCodeAutoId,
                     ],
                     remarkPlugins: [
                       remarkFrontmatter,
@@ -182,6 +184,7 @@ const createBaseWebpackConfig = (
         MULTI_PAGES: String(prerenderConfig),
         PAGE_TITLE: title,
         BASE_PATH: isProd ? basePath : '/',
+        CODE_THEME: JSON.stringify(codeTheme),
       }),
       virtualModules,
     ],

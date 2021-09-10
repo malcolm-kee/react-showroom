@@ -39,6 +39,13 @@ const Content = styled(DialogPrimitive.Content, {
     willChange: 'transform',
   },
   '&:focus': { outline: 'none' },
+  variants: {
+    fullWidth: {
+      true: {
+        maxWidth: 'none',
+      },
+    },
+  },
 });
 
 const Close = styled(DialogPrimitive.Close, {
@@ -61,6 +68,7 @@ export const DialogImpl = ({ children, ...props }: DialogProps) => (
 export interface DialogContentProps extends DialogPrimitive.DialogContentProps {
   children: React.ReactNode;
   showCloseBtn?: boolean;
+  fullWidth?: boolean;
 }
 
 const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(

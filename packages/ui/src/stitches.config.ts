@@ -148,6 +148,16 @@ export const {
       borderBottomLeftRadius: value,
       borderBottomRightRadius: value,
     }),
+    outlineRing: (value: Stitches.PropertyValue<'color'>) => ({
+      '&:focus': {
+        outline: 'none',
+      },
+      '&:focus-visible': {
+        outlineColor: value || '$primary-200',
+        outlineStyle: 'solid',
+        outlineWidth: '2px',
+      },
+    }),
   },
 });
 

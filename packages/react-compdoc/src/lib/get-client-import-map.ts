@@ -12,7 +12,21 @@ export const getClientImportMap = () => {
   const { imports } = getConfig();
 
   return imports.reduce<Record<string, ImportMapData>>(
-    (result, { name, path }) => {
+    (result, importConfig) => {
+      if (typeof importConfig === 'string') {
+        return {
+          ...result,
+          [importConfig]: {
+            name: importConfig,
+            varName: _.camelCase(importConfig),
+            path: require.resolve(importConfig, {
+              paths: [paths.appPath],
+            }),
+          },
+        };
+      }
+      const { name, path } = importConfig;
+
       const varName = _.camelCase(name);
 
       return {

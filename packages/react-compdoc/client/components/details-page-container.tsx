@@ -1,14 +1,15 @@
 import * as React from 'react';
+import sections from 'react-compdoc-sections';
 import { Div } from './base';
 import { Header } from './header';
 import { Seo } from './seo';
 import { Sidebar } from './sidebar';
-import sections from 'react-compdoc-sections';
 
 export interface DetailsPageContainerProps {
   children: React.ReactNode;
   title?: string;
   hideSidebar?: boolean;
+  hideHeader?: boolean;
 }
 
 export const DetailsPageContainer = (props: DetailsPageContainerProps) => {
@@ -22,7 +23,7 @@ export const DetailsPageContainer = (props: DetailsPageContainerProps) => {
       }}
     >
       <Seo title={props.title} />
-      <Header />
+      {!props.hideHeader && <Header />}
       <Div css={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         {!props.hideSidebar && <Sidebar sections={sections} />}
         <Div

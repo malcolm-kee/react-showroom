@@ -77,6 +77,10 @@ const HeaderInner = styled('div', {
 });
 
 const Title = styled(Link, {
+  px: '$2',
+  '&:focus': {
+    outlineColor: '$primary-200',
+  },
   '@md': {
     fontSize: '$xl',
   },

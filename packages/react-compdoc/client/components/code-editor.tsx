@@ -1,9 +1,8 @@
 import { Language, PrismTheme } from 'prism-react-renderer';
-import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
 import { CSSProperties, useEffect, useState } from 'react';
 import Editor from 'react-simple-code-editor';
-import { CodeHighlight } from './code-highlight';
 import { Div } from './base';
+import { CodeHighlight } from './code-highlight';
 import { LanguageTag } from './language-tag';
 
 export interface CodeEditorProps {
@@ -12,25 +11,28 @@ export interface CodeEditorProps {
   disabled?: boolean;
   onChange?: (newCode: string) => void;
   style?: CSSProperties;
-  theme?: PrismTheme;
+  theme: PrismTheme;
   className?: string;
 }
 
-export const CodeEditor = (props: CodeEditorProps) => {
-  const theme = props.theme ?? nightOwlTheme;
-
+export const CodeEditor = ({
+  code: providedCode,
+  theme,
+  language,
+  ...props
+}: CodeEditorProps) => {
   const [state, setState] = useState<{
     code: string;
     prevCodeProp?: string;
   }>({
-    code: props.code || '',
+    code: providedCode || '',
   });
 
   useEffect(() => {
-    if (state.prevCodeProp && props.code !== state.prevCodeProp) {
-      setState({ code: props.code, prevCodeProp: props.code });
+    if (state.prevCodeProp && providedCode !== state.prevCodeProp) {
+      setState({ code: providedCode, prevCodeProp: providedCode });
     }
-  }, [props.code]);
+  }, [providedCode]);
 
   const updateContent = (code: string) => {
     setState({ code });
@@ -43,12 +45,11 @@ export const CodeEditor = (props: CodeEditorProps) => {
   }, [state.code]);
 
   const highlightCode = (code: string) => (
-    <CodeHighlight code={code} theme={theme} language={props.language} />
+    <CodeHighlight code={code} theme={theme} language={language} />
   );
 
   // eslint-disable-next-line no-unused-vars
   const { style, onChange, ...rest } = props;
-  const { code } = state;
 
   const baseTheme = theme && typeof theme.plain === 'object' ? theme.plain : {};
 
@@ -59,7 +60,7 @@ export const CodeEditor = (props: CodeEditorProps) => {
       }}
     >
       <Editor
-        value={code}
+        value={state.code}
         padding={10}
         highlight={highlightCode}
         onValueChange={updateContent}
@@ -71,7 +72,7 @@ export const CodeEditor = (props: CodeEditorProps) => {
         }}
         {...rest}
       />
-      {props.language && <LanguageTag language={props.language} />}
+      {language && <LanguageTag language={language} />}
     </Div>
   );
 };

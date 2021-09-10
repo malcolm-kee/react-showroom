@@ -1,7 +1,9 @@
 export type {
   ReactCompdocConfiguration,
-  SectionConfiguration,
+  ItemConfiguration,
 } from '@compdoc/core';
 import { ReactCompdocConfiguration } from '@compdoc/core';
 
-export const defineConfig = (config: ReactCompdocConfiguration) => config;
+export const defineConfig = (
+  config: ReactCompdocConfiguration | (() => ReactCompdocConfiguration)
+) => config;

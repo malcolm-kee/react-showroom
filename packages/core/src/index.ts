@@ -1,10 +1,13 @@
+import type { PrismTheme } from 'prism-react-renderer';
 import type { ComponentType } from 'react';
 import type { ComponentDoc as DocgenComponentDoc } from 'react-docgen-typescript';
 import type { Configuration } from 'webpack';
 
 export { flattenArray, NestedArray } from './flatten-array';
+export { parseQueryString, stringifyQueryString } from './query-string';
 export { Ssr } from './ssr-types';
 export { ImportMapData, Packages, transpileImports } from './transpile-imports';
+export { isDefined, isNil, isNumber } from './type-guard';
 
 export interface RequestCompileData {
   source: string;
@@ -40,37 +43,91 @@ export interface ComponentDocItem {
 
 export type Environment = 'development' | 'production';
 
-export interface SectionConfiguration {
-  /**
-   * section title
-   */
+export interface ItemConfigurationWithPath {
   title?: string;
   /**
-   * location of a Markdown file containing the overview content.
+   * path for the section. Will be inferred from title if not provided
    */
-  content?: string;
+  path?: string;
+}
+
+export interface ComponentSectionConfiguration
+  extends ItemConfigurationWithPath {
+  type: 'components';
   /**
    * A short description of this section.
    */
   description?: string;
   /**
+   * location of a Markdown file containing the overview content.
+   */
+  content?: string;
+  /**
    * a glob pattern string
    */
-  components?: string;
-  sections?: Array<SectionConfiguration>;
-  /**
-   * an URL to navigate to instead of navigating to the section content
-   */
-  href?: string;
+  components: string;
 }
 
-export interface ReactCompdocConfiguration
-  extends Pick<SectionConfiguration, 'components' | 'sections'> {
-  imports: Array<{
-    name: string;
-    path: string;
-  }>;
-  docsFolder?: string;
+export interface ContentItemConfiguration extends ItemConfigurationWithPath {
+  type: 'content';
+  /**
+   * location of a Markdown file containing the overview content.
+   */
+  content: string;
+}
+
+export interface LinkItemConfiguration {
+  type: 'link';
+  title: string;
+  /**
+   * URL for the link
+   */
+  href: string;
+}
+
+export interface DocSectionConfiguration extends ItemConfigurationWithPath {
+  type: 'docs';
+  /**
+   * relative path to the folder that contents all the markdown files.
+   */
+  folder: string;
+}
+
+export interface GroupSectionConfiguration extends ItemConfigurationWithPath {
+  type: 'group';
+  /**
+   * section title
+   */
+  title?: string;
+  /**
+   * path for the section. Will be inferred from title if not provided
+   */
+  path?: string;
+  items: Array<ItemConfiguration>;
+}
+
+export type ItemConfiguration =
+  | ComponentSectionConfiguration
+  | ContentItemConfiguration
+  | LinkItemConfiguration
+  | DocSectionConfiguration
+  | GroupSectionConfiguration;
+
+export interface ReactCompdocConfiguration {
+  /**
+   * modules to be available to be imported in examples.
+   *
+   * - If it's a local module in the project, pass 'name' (how it is imported) and 'path' (relative path from project root).
+   * - If it's a third-party library, pass the package name.
+   */
+  imports: Array<
+    | {
+        name: string;
+        path: string;
+      }
+    | string
+  >;
+  items?: Array<ItemConfiguration>;
   /**
    * Title to be displayed for the site.
    *
@@ -105,6 +162,10 @@ export interface ReactCompdocConfiguration
    * @default '/''
    */
   basePath?: string;
+  /**
+   * One of the themes provided by `'prism-react-renderer'`.
+   */
+  codeTheme?: PrismTheme;
 }
 
 export interface ReactCompdocComponentSectionConfig {
@@ -131,7 +192,6 @@ interface ReactCompdocGroupSectionConfig {
   type: 'group';
   title: string;
   slug: string;
-  docPath: string | null;
   items: Array<ReactCompdocSectionConfig>;
 }
 
@@ -152,6 +212,7 @@ export interface NormalizedReactCompdocConfiguration
   outDir: string;
   prerender: boolean;
   basePath: string;
+  codeTheme: PrismTheme;
 }
 
 export interface ReactCompdocComponentSection {
@@ -169,6 +230,7 @@ export interface ReactCompdocMarkdownSection {
     title?: string;
     order?: number;
     hideSidebar?: boolean;
+    hideHeader?: boolean;
   };
 }
 
@@ -181,8 +243,6 @@ interface ReactCompdocLinkSection {
 export interface ReactCompdocGroupSection {
   type: 'group';
   title: string;
-  docPath: string | null;
-  Component: ComponentType<any> | null;
   slug: string;
   items: Array<ReactCompdocSection>;
 }
