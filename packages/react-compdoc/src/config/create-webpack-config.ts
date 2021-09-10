@@ -14,11 +14,13 @@ import {
 } from '../lib/generate-compdoc-data';
 import { getConfig } from '../lib/get-config';
 import { getEnvVariables } from '../lib/get-env-variables';
+import { logToStdout } from '../lib/log-to-stdout';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
-import { rehypeCodeAutoId } from '../lib/rehype-code-auto-id';
 import { moduleFileExtensions, resolveApp, resolveCompdoc } from '../lib/paths';
+import { rehypeCodeAutoId } from '../lib/rehype-code-auto-id';
 import { rehypeMetaAsAttribute } from '../lib/rehype-meta-as-attribute';
 import VirtualModulesPlugin = require('webpack-virtual-modules');
+const WebpackMessages = require('webpack-messages');
 
 const {
   webpackConfig: userConfig,
@@ -66,6 +68,10 @@ export const createWebpackConfig = (
               }
             : false,
         }),
+        new WebpackMessages({
+          name: 'compdoc',
+          logger: logToStdout,
+        }),
       ].filter(isDefined),
     }),
     userConfig,
@@ -91,6 +97,12 @@ export const createPrerenderWebpackConfig = (
       },
       externalsPresets: { node: true },
       target: 'node14.17',
+      plugins: [
+        new WebpackMessages({
+          name: 'prerender',
+          logger: logToStdout,
+        }),
+      ],
     }),
     userConfig,
     mode
@@ -190,6 +202,9 @@ const createBaseWebpackConfig = (
     ],
     performance: {
       hints: false,
+    },
+    infrastructureLogging: {
+      level: isProd ? 'info' : 'none',
     },
     stats: 'none',
   };
