@@ -1,9 +1,9 @@
 import * as React from 'react';
+import sections from 'react-compdoc-sections';
 import { Div } from './base';
 import { Header } from './header';
 import { Seo } from './seo';
 import { Sidebar } from './sidebar';
-import sections from 'react-compdoc-sections';
 
 export interface DetailsPageContainerProps {
   children: React.ReactNode;

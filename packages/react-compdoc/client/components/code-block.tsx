@@ -1,8 +1,10 @@
-import { Alert, Collapsible, css, icons } from '@compdoc/ui';
-import { TerminalIcon } from '@heroicons/react/outline';
+import { Alert, Collapsible, css, Dialog, icons, styled } from '@compdoc/ui';
+import { ArrowsExpandIcon, TerminalIcon } from '@heroicons/react/outline';
 import * as React from 'react';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import { useCodeTheme } from '../lib/code-theme-context';
+import { ComponentDataContext } from '../lib/component-data-context';
+import { useDialog } from '../lib/dialog-context';
 import { useCodeCompilation } from '../lib/use-code-compilation';
 import { Div, Span } from './base';
 import { CodeEditor, CodeEditorProps } from './code-editor';
@@ -71,13 +73,18 @@ export const Code = (props: {
       code={props.children as string}
       theme={theme}
       language={lang}
+      hasDialog
     />
   );
 };
 
-const CodeLiveEditor = (
-  props: { code: string } & Pick<CodeEditorProps, 'language' | 'theme'>
-) => {
+interface CodeLiveEditorProps
+  extends Pick<CodeEditorProps, 'language' | 'theme'> {
+  code: string;
+  hasDialog?: boolean;
+}
+
+const CodeLiveEditor = ({ hasDialog, ...props }: CodeLiveEditorProps) => {
   const [code, setCode] = React.useState(props.code);
 
   const { data, isFetching, isLoading, error, isError } =
@@ -85,7 +92,9 @@ const CodeLiveEditor = (
 
   const isCompiling = isFetching || isLoading;
 
-  const [showCode, setShowCode] = React.useState<boolean | undefined>(false);
+  const [showCode, setShowCode] = React.useState<boolean | undefined>(
+    !hasDialog
+  );
 
   return (
     <div>
@@ -142,6 +151,8 @@ const CodeLiveEditor = (
       <Collapsible.Root open={showCode} onOpenChange={setShowCode}>
         <Div
           css={{
+            display: 'flex',
+            justifyContent: 'space-between',
             py: '$1',
           }}
         >
@@ -162,6 +173,7 @@ const CodeLiveEditor = (
             />
             Code
           </Collapsible.Button>
+          {hasDialog && <CodeLiveEditorFocus {...props} />}
         </Div>
         <Collapsible.Content>
           <CodeEditor
@@ -176,6 +188,47 @@ const CodeLiveEditor = (
     </div>
   );
 };
+
+const CodeLiveEditorFocus = (props: Omit<CodeLiveEditorProps, 'hasDialog'>) => {
+  const dialog = useDialog();
+
+  const componentData = React.useContext(ComponentDataContext);
+
+  return (
+    <Dialog
+      open={dialog.isOpen}
+      onOpenChange={(opening) => (opening ? dialog.open() : dialog.dismiss())}
+    >
+      <Dialog.Trigger asChild>
+        <Button type="button">
+          Standalone
+          <ArrowsExpandIcon width={20} height={20} className={icons()} />
+        </Button>
+      </Dialog.Trigger>
+      <Dialog.Content fullWidth>
+        {componentData && (
+          <Dialog.Title>{componentData.component.displayName}</Dialog.Title>
+        )}
+        <Div
+          css={{
+            padding: '$2',
+          }}
+        >
+          <CodeLiveEditor {...props} />
+        </Div>
+      </Dialog.Content>
+    </Dialog>
+  );
+};
+
+const Button = styled('button', {
+  display: 'inline-flex',
+  px: '$1',
+  gap: '$1',
+  fontSize: '$sm',
+  color: '$gray-500',
+  outlineRing: '',
+});
 
 const editorBottom = css({
   borderRadius: '$base',

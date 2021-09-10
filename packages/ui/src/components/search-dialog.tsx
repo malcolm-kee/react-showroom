@@ -244,7 +244,7 @@ const Kbd = styled('kbd', {
 });
 
 const Description = styled('div', {
-  color: '$gray-600',
+  color: '$gray-500',
   fontSize: '$sm',
   lineHeight: '$sm',
   overflow: 'hidden',

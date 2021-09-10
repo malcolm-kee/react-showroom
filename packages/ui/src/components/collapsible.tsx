@@ -7,14 +7,7 @@ export const Button = styled(Collapsible.Trigger, {
   position: 'relative',
   fontWeight: '600',
   px: '$1',
-  '&:focus': {
-    outline: 'none',
-  },
-  '&:focus-visible': {
-    outlineColor: '$primary-200',
-    outlineStyle: 'solid',
-    outlineWidth: '2px',
-  },
+  outlineRing: '',
 });
 
 const open = keyframes({

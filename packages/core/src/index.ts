@@ -4,8 +4,10 @@ import type { ComponentDoc as DocgenComponentDoc } from 'react-docgen-typescript
 import type { Configuration } from 'webpack';
 
 export { flattenArray, NestedArray } from './flatten-array';
+export { parseQueryString, stringifyQueryString } from './query-string';
 export { Ssr } from './ssr-types';
 export { ImportMapData, Packages, transpileImports } from './transpile-imports';
+export { isDefined, isNil, isNumber } from './type-guard';
 
 export interface RequestCompileData {
   source: string;

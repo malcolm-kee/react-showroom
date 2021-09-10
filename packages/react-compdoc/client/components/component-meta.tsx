@@ -4,6 +4,11 @@ import * as React from 'react';
 import snarkdown from 'snarkdown';
 import { Div, H1 } from './base';
 
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+
+const hasTag = (tags: Record<string, unknown>, tag: string) =>
+  hasOwnProperty.call(tags, tag);
+
 export const ComponentMeta = ({
   section,
   propsDefaultOpen,
@@ -17,9 +22,22 @@ export const ComponentMeta = ({
     data: { component: doc },
   } = section;
 
+  const tags = doc.tags as Record<string, unknown>;
+
   return (
     <>
-      <H1>{doc.displayName}</H1>
+      <H1
+        css={
+          hasTag(tags, 'deprecated')
+            ? {
+                textDecorationLine: 'line-through',
+                fontWeight: 'normal',
+              }
+            : {}
+        }
+      >
+        {doc.displayName}
+      </H1>
       {doc.description && (
         <Div
           dangerouslySetInnerHTML={{
@@ -27,6 +45,7 @@ export const ComponentMeta = ({
           }}
         />
       )}
+      <ComponentMetaTags tags={tags} />
       {doc.props && Object.keys(doc.props).length > 0 && (
         <Collapsible.Root
           open={propsIsOpen}
@@ -81,6 +100,31 @@ export const ComponentMeta = ({
     </>
   );
 };
+
+const ComponentMetaTags = ({ tags }: { tags: Record<string, unknown> }) => {
+  const tagKeys = Object.keys(tags);
+
+  return (
+    <>
+      {tagKeys.map((tag) => (
+        <p>
+          <TagKey capitalize={tag === 'deprecated'}>{tag}</TagKey>
+          {tags[tag] && typeof tags[tag] === 'string' && `: ${tags[tag]}`}
+        </p>
+      ))}
+    </>
+  );
+};
+
+const TagKey = styled('b', {
+  variants: {
+    capitalize: {
+      true: {
+        textTransform: 'capitalize',
+      },
+    },
+  },
+});
 
 const Table = styled('table', {
   borderRadius: '$base',

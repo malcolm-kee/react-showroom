@@ -20,7 +20,9 @@ React component documentations made easy.
 - [x] tweak design
 - [x] support both multi-pages or single page
 - [x] basepath
-- [ ] focus mode
+- [x] focus mode
+- [ ] better CLI message (remove webpack messages)
+- [ ] documentations
 - [ ] automated tests
 
 Something like `react-styleguidist`, but use MDX for example and `esbuild` for playground so you can have example in TypeScript.
