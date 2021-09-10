@@ -1,4 +1,5 @@
 import { Environment } from '@showroomjs/core';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
 import { rehypeMdxTitle } from 'rehype-mdx-title';
@@ -32,6 +33,7 @@ const {
   prerender: prerenderConfig,
   basePath,
   codeTheme,
+  assetDirs,
 } = getConfig();
 
 export const createWebpackConfig = (
@@ -76,6 +78,18 @@ export const createWebpackConfig = (
           name: 'showroom',
           logger: logToStdout,
         }),
+        isProd && assetDirs.length > 0
+          ? new CopyWebpackPlugin({
+              patterns: assetDirs.map((dir) => ({
+                from: path.posix.join(dir.replace(/\\/g, '/'), '**/*'),
+                to: resolveApp(outDir),
+                context: dir,
+                globOptions: {
+                  ignore: ['**/*.html'],
+                },
+              })),
+            })
+          : undefined,
       ].filter(isDefined),
     }),
     userConfig,

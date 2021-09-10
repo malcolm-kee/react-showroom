@@ -11,6 +11,7 @@
     ]
   },
   "devDependencies": {
+    "@types/copy-webpack-plugin": "^8.0.1",
     "@types/cross-spawn": "^6.0.2",
     "@types/fs-extra": "^9.0.12",
     "@types/glob": "^7.1.4",

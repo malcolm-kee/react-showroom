@@ -29,4 +29,5 @@ module.exports = defineConfig({
     'react-hook-form',
   ],
   prerender: true,
+  assetDirs: ['public'],
 });
