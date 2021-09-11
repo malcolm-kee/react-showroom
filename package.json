@@ -39,8 +39,8 @@
     "example:build": "yarn workspace react-example build:doc",
     "dev": "lerna run dev --stream --parallel",
     "showroom": "yarn workspace react-showroom",
-    "core": "yarn workspace @showroom/core",
-    "ui": "yarn workspace @showroom/ui",
+    "core": "yarn workspace @showroomjs/core",
+    "ui": "yarn workspace @showroomjs/ui",
     "clean": "lerna run clean"
   }
 }

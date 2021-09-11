@@ -1,8 +1,8 @@
-import { ReactShowroomSection } from '@showroomjs/core';
+import { ReactShowroomSection } from '@showroomjs/core/react';
 import { Option, SearchDialog, styled } from '@showroomjs/ui';
 import * as React from 'react';
-import sections from 'react-showroom-sections';
 import { Link, useHistory } from 'react-router-dom';
+import sections from 'react-showroom-sections';
 
 export const Header = () => {
   const history = useHistory();

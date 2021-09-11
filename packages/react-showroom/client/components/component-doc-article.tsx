@@ -1,8 +1,9 @@
-import type { ReactShowroomComponentSection } from '@showroomjs/core';
+import type { ReactShowroomComponentSection } from '@showroomjs/core/react';
+import { ComponentDataContext } from '../lib/component-data-context';
+import { ComponentPropsContext } from '../lib/component-props-context';
 import { Article } from './article';
 import { ComponentMeta } from './component-meta';
 import { mdxComponents } from './mdx-components';
-import { ComponentDataContext } from '../lib/component-data-context';
 
 export const ComponentDocArticle = (props: {
   doc: ReactShowroomComponentSection;
@@ -11,12 +12,14 @@ export const ComponentDocArticle = (props: {
 
   return (
     <Article>
-      <ComponentMeta section={props.doc} propsDefaultOpen={!Doc} />
-      {Doc && (
-        <ComponentDataContext.Provider value={props.doc.data}>
-          <Doc components={mdxComponents} />
-        </ComponentDataContext.Provider>
-      )}
+      <ComponentPropsContext.Provider value={props.doc.data.component.props}>
+        <ComponentMeta section={props.doc} propsDefaultOpen={!Doc} />
+        {Doc && (
+          <ComponentDataContext.Provider value={props.doc.data}>
+            <Doc components={mdxComponents} />
+          </ComponentDataContext.Provider>
+        )}
+      </ComponentPropsContext.Provider>
     </Article>
   );
 };

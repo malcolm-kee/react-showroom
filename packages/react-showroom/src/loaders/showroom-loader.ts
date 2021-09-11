@@ -10,6 +10,9 @@ const docGenerator = docgen.withCustomConfig(paths.appTsConfig, {
     }
     return true;
   },
+  shouldExtractLiteralValuesFromEnum: true,
+  shouldExtractValuesFromUnion: true,
+  shouldRemoveUndefinedFromOptional: true,
 });
 
 const showroomLoader: LoaderDefinition = function () {

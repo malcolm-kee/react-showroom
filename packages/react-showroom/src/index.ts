@@ -1,8 +1,8 @@
 export type {
-  ReactShowroomConfiguration,
   ItemConfiguration,
-} from '@showroomjs/core';
-import { ReactShowroomConfiguration } from '@showroomjs/core';
+  ReactShowroomConfiguration,
+} from '@showroomjs/core/react';
+import { ReactShowroomConfiguration } from '@showroomjs/core/react';
 
 export const defineConfig = (
   config: ReactShowroomConfiguration | (() => ReactShowroomConfiguration)

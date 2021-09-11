@@ -10,6 +10,7 @@ import * as webpack from 'webpack';
 import { merge } from 'webpack-merge';
 import {
   generateCodeblocksData,
+  generateWrapper,
   generateSections,
   getImportsAttach,
 } from '../lib/generate-showroom-data';
@@ -144,6 +145,8 @@ const createBaseWebpackConfig = (
     // a virtual module that consists of all the sections and component metadata.
     [resolveShowroom('node_modules/react-showroom-sections.js')]:
       generateSections(),
+    [resolveShowroom('node_modules/react-showroom-wrapper.js')]:
+      generateWrapper(),
   });
 
   return {

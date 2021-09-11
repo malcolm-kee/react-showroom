@@ -1,4 +1,4 @@
-import { ReactShowroomMarkdownSection } from '@showroomjs/core';
+import { ReactShowroomMarkdownSection } from '@showroomjs/core/react';
 import { Article } from './article';
 import { mdxComponents } from './mdx-components';
 

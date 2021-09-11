@@ -25,3 +25,34 @@ import { Button } from 'components';
 
 <Button>Static</Button>;
 ```
+
+### Example that fetch data
+
+```jsx
+import { Button } from 'components';
+
+const Example = () => {
+  const [result, setResult] = React.useState('');
+
+  return (
+    <div>
+      <Button
+        onClick={() =>
+          fetch('/hello')
+            .then((res) => res.json())
+            .then((data) => setResult(data.message))
+        }
+        variant="primary"
+      >
+        Fetch Data
+      </Button>
+      <div>
+        Result:
+        <output>{result}</output>
+      </div>
+    </div>
+  );
+};
+
+render(<Example />);
+```

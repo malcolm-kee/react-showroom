@@ -1,7 +1,7 @@
 import {
   ReactShowroomComponentSectionConfig,
   ReactShowroomSectionConfig,
-} from '@showroomjs/core';
+} from '@showroomjs/core/react';
 import { getClientImportMap } from './get-client-import-map';
 import { getConfig } from './get-config';
 
@@ -96,4 +96,16 @@ export const generateSections = () => {
 
   return `import slugify from 'slugify';
   export default ${mapSections(sections)};`;
+};
+
+export const generateWrapper = () => {
+  const { wrapper } = getConfig();
+
+  if (wrapper) {
+    return `import Wrapper from '${wrapper}?showroomCompile';
+    export default Wrapper`;
+  }
+
+  return `import * as React from 'react';
+  export default React.Fragment;`;
 };

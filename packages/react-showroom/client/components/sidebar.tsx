@@ -1,4 +1,4 @@
-import type { ReactShowroomSection } from '@showroomjs/core';
+import type { ReactShowroomSection } from '@showroomjs/core/react';
 import { css, icons, styled } from '@showroomjs/ui';
 import { ExternalLinkIcon } from '@heroicons/react/outline';
 import { Div, NavLink } from './base';

@@ -1,7 +1,8 @@
-import { ReactShowroomComponentSection } from '@showroomjs/core';
+import { ReactShowroomComponentSection } from '@showroomjs/core/react';
 import { Collapsible, styled } from '@showroomjs/ui';
 import * as React from 'react';
 import snarkdown from 'snarkdown';
+import { useComponentProps } from '../lib/component-props-context';
 import { Div, H1 } from './base';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -46,58 +47,71 @@ export const ComponentMeta = ({
         />
       )}
       <ComponentMetaTags tags={tags} />
-      {doc.props && Object.keys(doc.props).length > 0 && (
-        <Collapsible.Root
-          open={propsIsOpen}
-          onOpenChange={setPropsIsOpen}
+      <ComponentPropsTable open={propsIsOpen} onOpenChange={setPropsIsOpen} />
+    </>
+  );
+};
+
+const ComponentPropsTable = (props: {
+  open: boolean | undefined;
+  onOpenChange: (val: boolean) => void;
+}) => {
+  const componentProps = useComponentProps();
+
+  if (Object.keys(props).length === 0) {
+    return null;
+  }
+
+  return (
+    <Collapsible.Root
+      open={props.open}
+      onOpenChange={props.onOpenChange}
+      css={{
+        marginY: '$4',
+      }}
+    >
+      <Div css={{ padding: '$1' }}>
+        <Collapsible.Button
           css={{
-            marginY: '$4',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '$1',
           }}
         >
-          <Div css={{ padding: '$1' }}>
-            <Collapsible.Button
-              css={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '$1',
-              }}
-            >
-              <Collapsible.ToggleIcon
-                hide={propsIsOpen}
-                aria-label={propsIsOpen ? 'Hide' : 'View'}
-                width="16"
-                height="16"
-              />
-              Props
-            </Collapsible.Button>
-          </Div>
-          <Collapsible.Content>
-            <Table>
-              <thead>
-                <tr>
-                  <Th>NAME</Th>
-                  <Th>TYPE</Th>
-                  <Th>DESCRIPTION</Th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.keys(doc.props).map((prop) => {
-                  const propData = doc.props[prop];
+          <Collapsible.ToggleIcon
+            hide={props.open}
+            aria-label={props.open ? 'Hide' : 'View'}
+            width="16"
+            height="16"
+          />
+          Props
+        </Collapsible.Button>
+      </Div>
+      <Collapsible.Content>
+        <Table>
+          <thead>
+            <tr>
+              <Th>NAME</Th>
+              <Th>TYPE</Th>
+              <Th>DESCRIPTION</Th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.keys(componentProps).map((prop) => {
+              const propData = componentProps[prop];
 
-                  return (
-                    <tr key={prop}>
-                      <Td>{propData.name}</Td>
-                      <Td>{propData.type.name}</Td>
-                      <Td>{propData.description}</Td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
-          </Collapsible.Content>
-        </Collapsible.Root>
-      )}
-    </>
+              return (
+                <tr key={prop}>
+                  <Td>{propData.name}</Td>
+                  <Td>{propData.type.raw}</Td>
+                  <Td>{propData.description}</Td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </Table>
+      </Collapsible.Content>
+    </Collapsible.Root>
   );
 };
 

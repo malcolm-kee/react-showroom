@@ -4,7 +4,7 @@ import {
   ReactShowroomConfiguration,
   ReactShowroomSectionConfig,
   ItemConfiguration,
-} from '@showroomjs/core';
+} from '@showroomjs/core/react';
 import * as fs from 'fs';
 import * as glob from 'glob';
 import * as path from 'path';
@@ -70,6 +70,7 @@ export const getConfig = (): NormalizedReactShowroomConfiguration => {
     assetDirs: providedConfig.assetDirs
       ? providedConfig.assetDirs.map((dir) => resolveApp(dir))
       : [],
+    wrapper: providedConfig.wrapper && resolveApp(providedConfig.wrapper),
   };
 
   return _normalizedConfig;

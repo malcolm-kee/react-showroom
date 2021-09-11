@@ -22,8 +22,9 @@ React component documentations made easy.
 - [x] basepath
 - [x] focus mode
 - [x] better CLI message (remove webpack messages)
-- [ ] msw integrations
+- [x] msw integrations
 - [ ] documentations
+- [ ] a convenient way to render controls for props
 - [ ] automated tests
 
 Something like `react-styleguidist`, but use MDX for example and `esbuild` for playground so you can have example in TypeScript.

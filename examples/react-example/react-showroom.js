@@ -30,4 +30,5 @@ module.exports = defineConfig({
   ],
   prerender: true,
   assetDirs: ['public'],
+  wrapper: 'docs/provider.tsx',
 });

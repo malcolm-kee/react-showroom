@@ -13,5 +13,5 @@ export const TextHighlight = (props: TextHighlightProps) => {
 };
 
 const cls = css({
-  backgroundColor: '$primary-100',
+  backgroundColor: '$primary-200',
 });
