@@ -77,6 +77,8 @@ const HeaderInner = styled('div', {
 });
 
 const Title = styled(Link, {
+  color: 'inherit',
+  textDecoration: 'none',
   px: '$2',
   '&:focus': {
     outlineColor: '$primary-200',

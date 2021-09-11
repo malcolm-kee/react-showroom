@@ -31,4 +31,11 @@ export type CompileResult =
 
 export type CodeBlocks = Record<string, CompilationSuccessResult | undefined>;
 
+export const SUPPORTED_LANGUAGES: ReadonlyArray<string> = [
+  'js',
+  'jsx',
+  'ts',
+  'tsx',
+];
+
 export type Environment = 'development' | 'production';

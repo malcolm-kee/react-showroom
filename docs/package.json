@@ -1,0 +1,13 @@
+{
+  "name": "react-showroom-docs",
+  "private": true,
+  "license": "MIT",
+  "version": "0.0.0",
+  "dependencies": {
+    "react-showroom": "0.0.1"
+  },
+  "scripts": {
+    "start": "react-showroom dev",
+    "build": "react-showroom build"
+  }
+}

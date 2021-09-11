@@ -21,6 +21,7 @@ const defaultConfig = {
   prerender: false,
   basePath: '/',
   codeTheme: nightOwlTheme,
+  resetCss: true,
 };
 
 let _normalizedConfig: NormalizedReactShowroomConfiguration;

@@ -108,7 +108,7 @@ const SearchDialogInternal = function SearchDialog<T extends unknown>(
       {isResultsShown && options.length === 0 && (
         <NoResult>No results found.</NoResult>
       )}
-      <ul {...getMenuProps()}>
+      <Menu {...getMenuProps()}>
         {isResultsShown &&
           options.map((option, i) => (
             <li key={i}>
@@ -136,10 +136,16 @@ const SearchDialogInternal = function SearchDialog<T extends unknown>(
               </OptionItem>
             </li>
           ))}
-      </ul>
+      </Menu>
     </div>
   );
 };
+
+const Menu = styled('ul', {
+  margin: '0',
+  padding: '0',
+  listStyle: 'none',
+});
 
 type Dismiss = () => void;
 

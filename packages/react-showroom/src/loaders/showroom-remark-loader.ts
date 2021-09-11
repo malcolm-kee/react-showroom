@@ -1,9 +1,13 @@
-import { CodeBlocks, transpileImports } from '@showroomjs/core';
+import {
+  CodeBlocks,
+  SUPPORTED_LANGUAGES,
+  transpileImports,
+} from '@showroomjs/core';
+import * as esbuild from 'esbuild';
 import remarkParse from 'remark-parse';
 import unified from 'unified';
 import vFile from 'vfile';
 import type { LoaderDefinition } from 'webpack';
-import * as esbuild from 'esbuild';
 import { getEnvVariables } from '../lib/get-env-variables';
 const { codeblocks } = require('remark-code-blocks');
 
@@ -47,7 +51,5 @@ const showroomRemarkLoader: LoaderDefinition = function (source, map, meta) {
     cb(null, `module.exports = ${JSON.stringify(result)};`, map, meta);
   });
 };
-
-const SUPPORTED_LANGUAGES = ['js', 'jsx', 'ts', 'tsx'];
 
 module.exports = showroomRemarkLoader;

@@ -1,4 +1,5 @@
 import { Alert, Collapsible, css, Dialog, icons, styled } from '@showroomjs/ui';
+import { SUPPORTED_LANGUAGES } from '@showroomjs/core';
 import { ArrowsExpandIcon, TerminalIcon } from '@heroicons/react/outline';
 import * as React from 'react';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
@@ -36,15 +37,16 @@ export const Code = (props: {
 }) => {
   const isBlockCode = React.useContext(IsBlockCodeContext);
 
-  if (!isBlockCode) {
+  if (!isBlockCode || typeof props.children !== 'string') {
     return <code {...props} />;
   }
 
   const lang: any = props.className && props.className.split('-').pop();
+  const code = props.children.trim();
 
   const theme = useCodeTheme();
 
-  if (props.static) {
+  if (!SUPPORTED_LANGUAGES.includes(lang) || props.static) {
     return (
       <Div
         style={{
@@ -52,18 +54,15 @@ export const Code = (props: {
         }}
         css={{
           padding: 10,
-          fontSize: 13,
+          fontSize: 14,
           borderRadius: '$base',
           whiteSpace: 'pre',
           fontFamily: 'monospace',
           position: 'relative',
         }}
+        className={props.className}
       >
-        <CodeHighlight
-          code={props.children as string}
-          language={lang}
-          theme={theme}
-        />
+        <CodeHighlight code={code} language={lang} theme={theme} />
         {lang && <LanguageTag language={lang} />}
       </Div>
     );
@@ -71,7 +70,7 @@ export const Code = (props: {
 
   return (
     <CodeLiveEditor
-      code={props.children as string}
+      code={code}
       theme={theme}
       language={lang}
       id={props.id}
@@ -85,9 +84,14 @@ interface CodeLiveEditorProps
   code: string;
   hasDialog?: boolean;
   id?: string;
+  className?: string;
 }
 
-const CodeLiveEditor = ({ hasDialog, ...props }: CodeLiveEditorProps) => {
+const CodeLiveEditor = ({
+  hasDialog,
+  className,
+  ...props
+}: CodeLiveEditorProps) => {
   const [code, setCode] = React.useState(props.code);
 
   const { data, isFetching, isLoading, error, isError } =
@@ -100,7 +104,7 @@ const CodeLiveEditor = ({ hasDialog, ...props }: CodeLiveEditorProps) => {
   );
 
   return (
-    <div>
+    <div className={className}>
       <Div
         css={{
           position: 'relative',

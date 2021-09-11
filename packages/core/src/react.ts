@@ -86,7 +86,7 @@ export interface ReactShowroomConfiguration {
    * - If it's a local module in the project, pass 'name' (how it is imported) and 'path' (relative path from project root).
    * - If it's a third-party library, pass the package name.
    */
-  imports: Array<
+  imports?: Array<
     | {
         name: string;
         path: string;
@@ -144,6 +144,12 @@ export interface ReactShowroomConfiguration {
    * Use this to render context providers that your application need, e.g. Redux Provider.
    */
   wrapper?: string;
+  /**
+   * whether to include CSS reset
+   *
+   * @default true
+   */
+  resetCss?: boolean;
 }
 
 export interface ReactShowroomComponentSectionConfig {
@@ -195,6 +201,7 @@ export interface NormalizedReactShowroomConfiguration
    * assetDirs in absolute paths
    */
   assetDirs: Array<string>;
+  resetCss: boolean;
 }
 
 export interface ReactShowroomComponentSection {
