@@ -220,6 +220,7 @@ export interface ReactShowroomMarkdownSection {
     order?: number;
     hideSidebar?: boolean;
     hideHeader?: boolean;
+    description?: string;
   };
 }
 

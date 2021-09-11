@@ -29,6 +29,7 @@ export const Header = () => {
             result.push({
               label: item.title,
               value: item.slug,
+              description: item.frontmatter.description,
             });
         }
       });

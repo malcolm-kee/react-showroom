@@ -248,9 +248,7 @@ export const getConfig = (): NormalizedReactShowroomConfiguration => {
 
 const getUserConfig = (): ReactShowroomConfiguration => {
   if (!fs.existsSync(paths.appShowroomConfig)) {
-    throw new Error(
-      'Add a react-showroom.js file at the root of your project.'
-    );
+    return {};
   }
 
   const provided: ReturnType<

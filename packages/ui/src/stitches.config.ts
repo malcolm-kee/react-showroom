@@ -64,6 +64,8 @@ export const {
       '8xl': '1',
     },
     sizes: {
+      screenMd: '768px',
+      screenLg: '1024px',
       screenXl: '1280px',
       screen2Xl: '1536px',
     },

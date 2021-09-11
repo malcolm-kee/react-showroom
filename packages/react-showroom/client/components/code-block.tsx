@@ -1,6 +1,6 @@
-import { Alert, Collapsible, css, Dialog, icons, styled } from '@showroomjs/ui';
-import { SUPPORTED_LANGUAGES } from '@showroomjs/core';
 import { ArrowsExpandIcon, TerminalIcon } from '@heroicons/react/outline';
+import { SUPPORTED_LANGUAGES } from '@showroomjs/core';
+import { Alert, Collapsible, css, Dialog, icons, styled } from '@showroomjs/ui';
 import * as React from 'react';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import { useCodeTheme } from '../lib/code-theme-context';
@@ -34,6 +34,8 @@ export const Code = (props: {
   className?: string;
   static?: boolean;
   id?: string;
+  inlineBlock?: boolean;
+  fileName?: string;
 }) => {
   const isBlockCode = React.useContext(IsBlockCodeContext);
 
@@ -44,38 +46,63 @@ export const Code = (props: {
   const lang: any = props.className && props.className.split('-').pop();
   const code = props.children.trim();
 
+  const heading = props.fileName ? (
+    <Div
+      css={{
+        px: '$2',
+        py: '$1',
+        backgroundColor: '$gray-300',
+        roundedT: '$md',
+        fontSize: '$sm',
+        lineHeight: '$sm',
+      }}
+    >
+      <code>{props.fileName}</code>
+    </Div>
+  ) : null;
+
   const theme = useCodeTheme();
 
   if (!SUPPORTED_LANGUAGES.includes(lang) || props.static) {
     return (
-      <Div
-        style={{
-          ...(typeof theme.plain === 'object' ? (theme.plain as any) : {}),
-        }}
-        css={{
-          padding: 10,
-          fontSize: 14,
-          borderRadius: '$base',
-          whiteSpace: 'pre',
-          fontFamily: 'monospace',
-          position: 'relative',
-        }}
-        className={props.className}
-      >
-        <CodeHighlight code={code} language={lang} theme={theme} />
-        {lang && <LanguageTag language={lang} />}
-      </Div>
+      <>
+        {heading}
+        <Div
+          style={{
+            ...(typeof theme.plain === 'object' ? (theme.plain as any) : {}),
+          }}
+          css={{
+            py: 10,
+            fontSize: 14,
+            roundedT: heading ? '$none' : props.inlineBlock ? '$xl' : '$base',
+            roundedB: props.inlineBlock ? '$xl' : '$base',
+            whiteSpace: 'pre',
+            fontFamily: 'monospace',
+            position: 'relative',
+            display: props.inlineBlock ? 'inline-block' : 'block',
+            px: props.inlineBlock ? '$6' : 10,
+          }}
+          className={props.className}
+        >
+          <CodeHighlight code={code} language={lang} theme={theme} />
+          {!props.inlineBlock && lang && <LanguageTag language={lang} />}
+        </Div>
+      </>
     );
   }
 
   return (
-    <CodeLiveEditor
-      code={code}
-      theme={theme}
-      language={lang}
-      id={props.id}
-      hasDialog
-    />
+    <>
+      {heading}
+      <CodeLiveEditor
+        code={code}
+        theme={theme}
+        language={lang}
+        id={props.id}
+        hasDialog
+        hasHeading={!!heading}
+      />
+    </>
   );
 };
 
@@ -83,12 +110,14 @@ interface CodeLiveEditorProps
   extends Pick<CodeEditorProps, 'language' | 'theme'> {
   code: string;
   hasDialog?: boolean;
+  hasHeading?: boolean;
   id?: string;
   className?: string;
 }
 
 const CodeLiveEditor = ({
   hasDialog,
+  hasHeading,
   className,
   ...props
 }: CodeLiveEditorProps) => {
@@ -112,7 +141,7 @@ const CodeLiveEditor = ({
           border: '1px solid',
           borderColor: '$gray-300',
           padding: '$1',
-          roundedT: '$base',
+          roundedT: hasHeading ? '$none' : '$base',
         }}
       >
         {isError ? (
