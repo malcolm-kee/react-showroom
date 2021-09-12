@@ -25,10 +25,6 @@ export interface ComponentSectionConfiguration
    */
   description?: string;
   /**
-   * location of a Markdown file containing the overview content.
-   */
-  content?: string;
-  /**
    * a glob pattern string
    */
   components: string;
@@ -81,7 +77,18 @@ export type ItemConfiguration =
 
 export interface ReactShowroomConfiguration {
   /**
-   * modules to be available to be imported in examples.
+   * a glob pattern string to search for all your components.
+   *
+   * If you want to organize your components in a nested structure, use `items`.
+   */
+  components?: string;
+  items?: Array<ItemConfiguration>;
+  /**
+   * Webpack configuration to load your components (or any other resources that are needed by the components, e.g. CSS)
+   */
+  webpackConfig?: Configuration | ((env: Environment) => Configuration);
+  /**
+   * modules to be available in examples via `import`.
    *
    * - If it's a local module in the project, pass 'name' (how it is imported) and 'path' (relative path from project root).
    * - If it's a third-party library, pass the package name.
@@ -93,41 +100,12 @@ export interface ReactShowroomConfiguration {
       }
     | string
   >;
-  items?: Array<ItemConfiguration>;
   /**
    * Title to be displayed for the site.
    *
    * @default 'React Showroom'
    */
   title?: string;
-  webpackConfig?: Configuration | ((env: Environment) => Configuration);
-  /**
-   * output of the generated site.
-   *
-   * @default 'showroom'
-   */
-  outDir?: string;
-  /**
-   * controls if the build output should be pre-rendered.
-   *
-   * This is useful to ensure your components are SSR-friendly.
-   *
-   * Note that this would increase time to generate the static site because
-   * we will need to generate separate bundle for pre-rendering.
-   *
-   * @default false
-   */
-  prerender?: boolean;
-  /**
-   * Set a prefix for the static site.
-   *
-   * Note that this only takes effect if `prerender` is set to `true`.
-   *
-   * @example '/docs'
-   *
-   * @default '/''
-   */
-  basePath?: string;
   /**
    * One of the themes provided by `'prism-react-renderer'`.
    */
@@ -150,6 +128,38 @@ export interface ReactShowroomConfiguration {
    * @default true
    */
   resetCss?: boolean;
+  devServer?: {
+    port?: number;
+  };
+  build?: {
+    /**
+     * output of the generated site.
+     *
+     * @default 'showroom'
+     */
+    outDir?: string;
+    /**
+     * controls if the build output should be pre-rendered.
+     *
+     * This is useful to ensure your components are SSR-friendly.
+     *
+     * Note that this would increase time to generate the static site because
+     * we will need to generate separate bundle for pre-rendering.
+     *
+     * @default false
+     */
+    prerender?: boolean;
+    /**
+     * Set a prefix for the static site.
+     *
+     * Note that this only takes effect if `prerender` is set to `true`.
+     *
+     * @example '/docs'
+     *
+     * @default '/''
+     */
+    basePath?: string;
+  };
 }
 
 export interface ReactShowroomComponentSectionConfig {
@@ -189,7 +199,10 @@ export type ReactShowroomSectionConfig =
   | ReactShowroomGroupSectionConfig;
 
 export interface NormalizedReactShowroomConfiguration
-  extends Omit<ReactShowroomConfiguration, 'components' | 'sections'> {
+  extends Omit<
+    ReactShowroomConfiguration,
+    'items' | 'devServer' | 'build' | 'components'
+  > {
   title: string;
   sections: Array<ReactShowroomSectionConfig>;
   components: Array<ReactShowroomComponentSectionConfig>;
@@ -202,6 +215,7 @@ export interface NormalizedReactShowroomConfiguration
    */
   assetDirs: Array<string>;
   resetCss: boolean;
+  devServerPort: number;
 }
 
 export interface ReactShowroomComponentSection {

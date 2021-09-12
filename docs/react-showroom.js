@@ -31,6 +31,11 @@ module.exports = defineConfig({
     },
   ],
   webpackConfig,
-  prerender: true,
+  devServer: {
+    port: 8989,
+  },
+  build: {
+    prerender: true,
+  },
   wrapper: 'components/wrapper.tsx',
 });

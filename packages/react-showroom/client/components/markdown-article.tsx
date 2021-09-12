@@ -5,13 +5,14 @@ import { mdxComponents } from './mdx-components';
 export const MarkdownArticle = (props: {
   section: ReactShowroomMarkdownSection;
   showLinkToDetails?: boolean;
+  center?: boolean;
 }) => {
   const {
     section: { Component },
   } = props;
 
   return (
-    <Article>
+    <Article center={props.center}>
       <Component components={mdxComponents} />
     </Article>
   );

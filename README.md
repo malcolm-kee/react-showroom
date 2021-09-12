@@ -1,33 +1,14 @@
 # react-showroom
 
-React component documentations made easy.
+https://react-showroom.netlify.app/
 
-## Features
+Document React components by declaring props definition and writing markdown.
 
-- [x] get component props data and render example `.mdx` with MDX.
-- [x] live example that is editable
-- [x] load custom CSS
-- [x] customize webpack plugin
-- [x] build static output
-- [x] tweak design
-- [x] show all components in sidebar
-- [x] precompile snippet example
-- [x] pre-rendering
-- [x] configure sidebar structure (including supporting arbitrary mdx file)
-- [x] focused view
-- [x] SSR for detailed page
-- [x] allow search components in sidebar
-- [x] tweak design
-- [x] support both multi-pages or single page
-- [x] basepath
-- [x] focus mode
-- [x] better CLI message (remove webpack messages)
-- [x] msw integrations
-- [ ] documentations
-- [ ] a convenient way to render controls for props
-- [ ] automated tests
+## Key Features
 
-Something like `react-styleguidist`, but use MDX for example and `esbuild` for playground so you can have example in TypeScript.
+- Auto generate documentations for your component props from the component's TypeScript definition.
+- Write markdown to show examples to use the component, which will become an editable playground.
+- Ensure the components are SSR-friendly - the site can be pre-render on build time.
 
 ## Built With
 
@@ -41,3 +22,25 @@ Something like `react-styleguidist`, but use MDX for example and `esbuild` for p
 ## Inspired by
 
 This project is largely inspired by [React Styleguidist](https://react-styleguidist.js.org/). To be honest this project is started as my plan to rewrite it to understand how it works.
+
+## Philosophy
+
+The philosophy of React Showroom is that you should be continuing your existing workflow (declaring component props/writing standard markdown) and the Showroom is just an automatic side product (hopefully a valuable one) of that workflow.
+
+This is in contrast with [Storybook](https://storybook.js.org/) where it aims to be central part of your development workflow (and requires you to write examples/documentations in a special format).
+
+We believe that compared to languages (TypeScript and markdown), libraries are generally short-lived and often less stable. Write your documentations in a more stable medium gives you more freedom and allows you to migrate to alternative tool in future.
+
+## Roadmap
+
+Following are the scopes that I want to implement before making this library as 1.0:
+
+- NodeJS API: Allowing to require this package in your NodeJS script and invoke it.
+- E2E Smoke Tests: Add some basic cypress tests to verify the examples are working fine, especially for SSR
+
+Following are the ideas that I want to implement as enhancements (but I not sure if they are possible):
+
+- Run jest tests in the Showroom
+- Vue support
+- Rollup support
+- Vite support

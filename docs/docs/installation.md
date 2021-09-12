@@ -36,6 +36,40 @@ module.exports = defineConfig({
 });
 ```
 
+All the available configuration options are specified [here](/api/configuration).
+
 ## 3. Start Showroom for Development
 
+```bash
+npx react-showroom dev
+```
+
+You probably want to add a npm script in your `package.json`:
+
+```json fileName="package.json"
+{
+  ...
+  "scripts": {
+    ...
+    "start": "react-showroom dev"
+  }
+}
+```
+
 ## 4. Build Showroom for Deployment
+
+```bash
+npx react-showroom build
+```
+
+You probably want to add a npm script in your `package.json`:
+
+```json fileName="package.json"
+{
+  ...
+  "scripts": {
+    ...
+    "start": "react-showroom build"
+  }
+}
+```

@@ -59,7 +59,10 @@ export const App = () => {
                         hideSidebar={section.frontmatter.hideSidebar}
                         hideHeader={section.frontmatter.hideHeader}
                       >
-                        <MarkdownArticle section={section} />
+                        <MarkdownArticle
+                          section={section}
+                          center={!section.frontmatter.hideSidebar}
+                        />
                       </DetailsPageContainer>
                     </Route>
                   );

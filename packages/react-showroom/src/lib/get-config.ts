@@ -1,24 +1,22 @@
 import {
+  ItemConfiguration,
   NormalizedReactShowroomConfiguration,
   ReactShowroomComponentSectionConfig,
   ReactShowroomConfiguration,
   ReactShowroomSectionConfig,
-  ItemConfiguration,
 } from '@showroomjs/core/react';
 import * as fs from 'fs';
 import * as glob from 'glob';
 import * as path from 'path';
-import slugify from 'slugify';
-import { paths, resolveApp } from './paths';
-import type { defineConfig } from '../index';
 import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
+import slugify from 'slugify';
+import type { defineConfig } from '../index';
+import { paths, resolveApp } from './paths';
 
-const DEFAULT_COMPONENTS_GLOB = 'src/components/**/*.{js,jsx,ts,tsx}';
+const DEFAULT_COMPONENTS_GLOB = 'src/components/**/*.{ts,tsx}';
 
 const defaultConfig = {
   title: 'React Showroom',
-  outDir: 'showroom',
-  prerender: false,
   basePath: '/',
   codeTheme: nightOwlTheme,
   resetCss: true,
@@ -30,20 +28,35 @@ export const getConfig = (): NormalizedReactShowroomConfiguration => {
     return _normalizedConfig;
   }
 
-  const providedConfig = getUserConfig();
+  const {
+    build: providedBuildConfig = {},
+    devServer: providedDevServerConfig = {},
+    components: providedComponentGlob,
+    items,
+    ...providedConfig
+  } = getUserConfig();
 
   const sections: Array<ReactShowroomSectionConfig> = [];
   const components: Array<ReactShowroomComponentSectionConfig> = [];
 
-  if (!providedConfig.items) {
+  if (providedComponentGlob) {
+    const componentPaths = glob.sync(providedComponentGlob, {
+      cwd: paths.appPath,
+      absolute: true,
+    });
+
+    collectComponents(componentPaths, sections, []);
+  } else if (!items) {
     const componentPaths = glob.sync(DEFAULT_COMPONENTS_GLOB, {
       cwd: paths.appPath,
       absolute: true,
     });
 
     collectComponents(componentPaths, sections, []);
-  } else {
-    collectSections(providedConfig.items, sections, []);
+  }
+
+  if (items) {
+    collectSections(items, sections, []);
   }
 
   if (!sections.some((section) => 'slug' in section && section.slug === '')) {
@@ -63,15 +76,18 @@ export const getConfig = (): NormalizedReactShowroomConfiguration => {
     ...providedConfig,
     sections,
     components,
-    basePath: providedConfig.basePath
-      ? providedConfig.basePath === '/'
+    basePath: providedBuildConfig.basePath
+      ? providedBuildConfig.basePath === '/'
         ? '/'
-        : removeTrailingSlash(providedConfig.basePath)
+        : removeTrailingSlash(providedBuildConfig.basePath)
       : defaultConfig.basePath,
     assetDirs: providedConfig.assetDirs
       ? providedConfig.assetDirs.map((dir) => resolveApp(dir))
       : [],
     wrapper: providedConfig.wrapper && resolveApp(providedConfig.wrapper),
+    outDir: providedBuildConfig.outDir || 'showroom',
+    prerender: providedBuildConfig.prerender || false,
+    devServerPort: providedDevServerConfig.port || 6969,
   };
 
   return _normalizedConfig;

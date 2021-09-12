@@ -21,9 +21,9 @@ const { openBrowser } = require(path.resolve(
 ));
 
 (async function startDevServer() {
-  const { assetDirs } = getConfig();
+  const { assetDirs, devServerPort } = getConfig();
 
-  const PORT = Number((argv as any).port ?? process.env.PORT ?? 6969);
+  const PORT = Number((argv as any).port ?? process.env.PORT ?? devServerPort);
   const HOST = '0.0.0.0';
 
   const webpackConfig = createWebpackConfig('development');

@@ -40,7 +40,7 @@ export const Code = (props: {
   const isBlockCode = React.useContext(IsBlockCodeContext);
 
   if (!isBlockCode || typeof props.children !== 'string') {
-    return <code {...props} />;
+    return <InlineCode {...props} />;
   }
 
   const lang: any = props.className && props.className.split('-').pop();
@@ -279,5 +279,13 @@ const ErrorFallback = (props: FallbackProps) => {
     </Alert>
   );
 };
+
+const InlineCode = styled('code', {
+  fontFamily: '$mono',
+  backgroundColor: '$gray-200',
+  display: 'inline-block',
+  px: '$1',
+  borderRadius: '$sm',
+});
 
 const formatError = (error: string) => error.replace(/<stdin>:|\"\\x0A\"/g, '');

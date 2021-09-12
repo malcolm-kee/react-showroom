@@ -28,7 +28,9 @@ module.exports = defineConfig({
     },
     'react-hook-form',
   ],
-  prerender: true,
+  build: {
+    prerender: true,
+  },
   assetDirs: ['public'],
   wrapper: 'docs/provider.tsx',
 });

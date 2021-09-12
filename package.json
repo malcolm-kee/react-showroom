@@ -38,6 +38,7 @@
     "lerna": "lerna",
     "example": "yarn workspace react-example",
     "example:build": "yarn workspace react-example build:doc",
+    "docs:build": "yarn docs build",
     "dev": "lerna run dev --stream --parallel",
     "showroom": "yarn workspace react-showroom",
     "core": "yarn workspace @showroomjs/core",
