@@ -6,10 +6,6 @@ module.exports = defineConfig({
   title: 'React Showroom',
   items: [
     {
-      type: 'docs',
-      folder: 'pages',
-    },
-    {
       type: 'group',
       title: 'Getting Started',
       items: [

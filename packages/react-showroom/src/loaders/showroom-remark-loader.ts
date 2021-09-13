@@ -3,6 +3,7 @@ import {
   SUPPORTED_LANGUAGES,
   transpileImports,
 } from '@showroomjs/core';
+import { ImportConfig } from '@showroomjs/core/react';
 import * as esbuild from 'esbuild';
 import remarkParse from 'remark-parse';
 import unified from 'unified';
@@ -13,12 +14,15 @@ const { codeblocks } = require('remark-code-blocks');
 
 const parser = unified().use(remarkParse as any);
 
-const { packages } = getEnvVariables();
-
 const showroomRemarkLoader: LoaderDefinition = function (source, map, meta) {
   const cb = this.async();
 
   const tree = parser.parse(vFile(source));
+
+  const { imports } = this.getOptions() as {
+    imports: Array<ImportConfig> | undefined;
+  };
+  const { packages } = getEnvVariables(imports);
 
   const blocks: Record<string, Array<string>> = codeblocks(tree).codeblocks;
 
@@ -34,9 +38,15 @@ const showroomRemarkLoader: LoaderDefinition = function (source, map, meta) {
               target: 'es2018',
             });
 
+            const postTranspileResult = transpileImports(
+              transformResult.code,
+              packages
+            );
+
             result[code] = {
               type: 'success',
-              code: transpileImports(transformResult.code, packages),
+              code: postTranspileResult.code,
+              importNames: postTranspileResult.importNames,
               messageId: -1,
             };
           } catch (err) {

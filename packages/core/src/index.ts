@@ -1,5 +1,7 @@
 export { flattenArray, NestedArray } from './flatten-array';
+export { omit } from './object';
 export { parseQueryString, stringifyQueryString } from './query-string';
+export { safeEval } from './safe-eval';
 export { Ssr } from './ssr-types';
 export { ImportMapData, Packages, transpileImports } from './transpile-imports';
 export { isDefined, isNil, isNumber } from './type-guard';
@@ -18,6 +20,10 @@ export interface CompilationSuccessResult {
   type: 'success';
   code: string;
   messageId: number;
+  /**
+   * Local names for the import statements in the code.
+   */
+  importNames: Array<string>;
 }
 
 export type CompileResult =

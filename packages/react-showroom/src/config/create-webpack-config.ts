@@ -1,4 +1,5 @@
 import { Environment } from '@showroomjs/core';
+import { NormalizedReactShowroomConfiguration } from '@showroomjs/core/react';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
@@ -10,11 +11,10 @@ import * as webpack from 'webpack';
 import { merge } from 'webpack-merge';
 import {
   generateCodeblocksData,
-  generateWrapper,
   generateSections,
+  generateWrapper,
   getImportsAttach,
 } from '../lib/generate-showroom-data';
-import { getConfig } from '../lib/get-config';
 import { getEnvVariables } from '../lib/get-env-variables';
 import { logToStdout } from '../lib/log-to-stdout';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
@@ -28,21 +28,20 @@ import { rehypeMetaAsAttribute } from '../lib/rehype-meta-as-attribute';
 import VirtualModulesPlugin = require('webpack-virtual-modules');
 const WebpackMessages = require('webpack-messages');
 
-const {
-  webpackConfig: userConfig,
-  title,
-  prerender: prerenderConfig,
-  basePath,
-  codeTheme,
-  assetDirs,
-  resetCss,
-} = getConfig();
-
 export const createWebpackConfig = (
   mode: Environment,
+  config: NormalizedReactShowroomConfiguration,
   { outDir = 'showroom', prerender = false } = {}
 ): webpack.Configuration => {
-  const baseConfig = createBaseWebpackConfig(mode, { prerender });
+  const baseConfig = createBaseWebpackConfig(mode, config, { prerender });
+
+  const {
+    webpackConfig: userConfig,
+    prerender: prerenderConfig,
+    assetDirs,
+    basePath,
+    resetCss,
+  } = config;
 
   const isProd = mode === 'production';
 
@@ -56,6 +55,9 @@ export const createWebpackConfig = (
             ? '/'
             : `${basePath}/` // need to add trailing slash
           : 'auto',
+      },
+      optimization: {
+        minimize: isProd,
       },
       plugins: [
         new HtmlWebpackPlugin({
@@ -122,9 +124,10 @@ export const createWebpackConfig = (
 
 export const createPrerenderWebpackConfig = (
   mode: Environment,
+  config: NormalizedReactShowroomConfiguration,
   { outDir = 'showroom' } = {}
 ): webpack.Configuration => {
-  const baseConfig = createBaseWebpackConfig(mode, { prerender: true });
+  const baseConfig = createBaseWebpackConfig(mode, config, { prerender: true });
 
   return mergeWebpackConfig(
     merge(baseConfig, {
@@ -145,13 +148,23 @@ export const createPrerenderWebpackConfig = (
         }),
       ],
     }),
-    userConfig,
+    config.webpackConfig,
     mode
   );
 };
 
 const createBaseWebpackConfig = (
   mode: Environment,
+  {
+    title,
+    prerender: prerenderConfig,
+    basePath,
+    codeTheme,
+    components,
+    sections,
+    imports,
+    wrapper,
+  }: NormalizedReactShowroomConfiguration,
   options: { prerender: boolean }
 ): webpack.Configuration => {
   const isProd = mode === 'production';
@@ -160,15 +173,15 @@ const createBaseWebpackConfig = (
     // create a virtual module that consists of parsed code blocks
     // so we can pregenerate during build time for better SSR
     [resolveShowroom('node_modules/react-showroom-codeblocks.js')]:
-      generateCodeblocksData(),
+      generateCodeblocksData(components),
     // a virtual module that exports an `imports` that includes all the imports as configured in `imports` in config file.
     [resolveShowroom('node_modules/react-showroom-imports.js')]:
-      getImportsAttach(),
+      getImportsAttach(imports),
     // a virtual module that consists of all the sections and component metadata.
     [resolveShowroom('node_modules/react-showroom-sections.js')]:
-      generateSections(),
+      generateSections(sections),
     [resolveShowroom('node_modules/react-showroom-wrapper.js')]:
-      generateWrapper(),
+      generateWrapper(wrapper),
   });
 
   return {
@@ -177,8 +190,11 @@ const createBaseWebpackConfig = (
       extensions: moduleFileExtensions.map((ext) => `.${ext}`),
     },
     output: {
-      filename: 'main-[contenthash].js',
-      assetModuleFilename: '[name]-[contenthash][ext][query]',
+      filename: isProd ? 'assets/js/[name].[contenthash:8].js' : '[name].js',
+      chunkFilename: isProd
+        ? 'assets/js/[name].[contenthash:8].js'
+        : '[name].js',
+      assetModuleFilename: 'assets/media/[name]-[contenthash][ext][query]',
       clean: isProd,
     },
     module: {
@@ -204,6 +220,9 @@ const createBaseWebpackConfig = (
               use: [
                 {
                   loader: 'showroom-remark-loader',
+                  options: {
+                    imports,
+                  },
                 },
               ],
             },
@@ -247,7 +266,7 @@ const createBaseWebpackConfig = (
     devtool: isProd ? 'source-map' : 'cheap-module-source-map',
     plugins: [
       new webpack.EnvironmentPlugin({
-        serverData: JSON.stringify(getEnvVariables()),
+        serverData: JSON.stringify(getEnvVariables(imports)),
         PRERENDER: String(options.prerender),
         MULTI_PAGES: String(prerenderConfig),
         PAGE_TITLE: title,

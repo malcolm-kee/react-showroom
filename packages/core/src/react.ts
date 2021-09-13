@@ -5,7 +5,9 @@ import type { Configuration } from 'webpack';
 import { Environment } from './index';
 
 export interface ComponentDocItem {
-  component: DocgenComponentDoc & { slug: string };
+  component: DocgenComponentDoc & { slug: string } & {
+    Component: ComponentType<any> | undefined;
+  };
   doc: null | ComponentType<any>;
 }
 
@@ -75,6 +77,13 @@ export type ItemConfiguration =
   | DocSectionConfiguration
   | GroupSectionConfiguration;
 
+export type ImportConfig =
+  | string
+  | {
+      name: string;
+      path: string;
+    };
+
 export interface ReactShowroomConfiguration {
   /**
    * a glob pattern string to search for all your components.
@@ -93,13 +102,7 @@ export interface ReactShowroomConfiguration {
    * - If it's a local module in the project, pass 'name' (how it is imported) and 'path' (relative path from project root).
    * - If it's a third-party library, pass the package name.
    */
-  imports?: Array<
-    | {
-        name: string;
-        path: string;
-      }
-    | string
-  >;
+  imports?: Array<ImportConfig>;
   /**
    * Title to be displayed for the site.
    *

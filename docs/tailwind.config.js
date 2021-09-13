@@ -1,7 +1,6 @@
 module.exports = {
   purge: [
-    './pages/**/*.md',
-    './pages/**/*.mdx',
+    './README.md',
     './docs/**/*.md',
     './docs/**/*.mdx',
     './components/**/*.jsx',

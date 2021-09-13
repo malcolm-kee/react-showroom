@@ -1,5 +1,4 @@
 // @ts-check
-const webpackConfig = require('./webpack.config');
 const { defineConfig } = require('react-showroom');
 
 module.exports = defineConfig({
@@ -19,7 +18,6 @@ module.exports = defineConfig({
       folder: 'docs',
     },
   ],
-  webpackConfig,
   title: 'React Showroom Example',
   imports: [
     {

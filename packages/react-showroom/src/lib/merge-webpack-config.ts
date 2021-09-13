@@ -4,14 +4,7 @@ import omit from 'lodash/omit';
 import { Configuration } from 'webpack';
 import { mergeWithCustomize, unique } from 'webpack-merge';
 
-const IGNORE_SECTIONS = [
-  'entry',
-  'externals',
-  'output',
-  'watch',
-  'stats',
-  'styleguidist',
-];
+const IGNORE_SECTIONS = ['entry', 'externals', 'output', 'watch', 'stats'];
 const IGNORE_SECTIONS_ENV: Record<Environment, string[]> = {
   development: [],
   // For production builds, we'll ignore devtool settings to avoid

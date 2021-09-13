@@ -152,7 +152,7 @@ const CodeLiveEditor = ({
           data &&
           (data.type === 'success' ? (
             <ErrorBoundary FallbackComponent={ErrorFallback}>
-              <CodePreview code={data.code} />
+              <CodePreview code={data.code} importNames={data.importNames} />
             </ErrorBoundary>
           ) : (
             <Alert variant="error">{formatError(data.error)}</Alert>

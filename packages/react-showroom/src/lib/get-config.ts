@@ -9,9 +9,11 @@ import * as fs from 'fs';
 import * as glob from 'glob';
 import * as path from 'path';
 import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
+import type webpack from 'webpack';
 import slugify from 'slugify';
 import type { defineConfig } from '../index';
 import { paths, resolveApp } from './paths';
+import { logToStdout } from './log-to-stdout';
 
 const DEFAULT_COMPONENTS_GLOB = 'src/components/**/*.{ts,tsx}';
 
@@ -23,7 +25,9 @@ const defaultConfig = {
 };
 
 let _normalizedConfig: NormalizedReactShowroomConfiguration;
-export const getConfig = (): NormalizedReactShowroomConfiguration => {
+export const getConfig = (
+  userConfig?: ReactShowroomConfiguration
+): NormalizedReactShowroomConfiguration => {
   if (_normalizedConfig) {
     return _normalizedConfig;
   }
@@ -33,8 +37,9 @@ export const getConfig = (): NormalizedReactShowroomConfiguration => {
     devServer: providedDevServerConfig = {},
     components: providedComponentGlob,
     items,
+    webpackConfig,
     ...providedConfig
-  } = getUserConfig();
+  } = userConfig || getUserConfig();
 
   const sections: Array<ReactShowroomSectionConfig> = [];
   const components: Array<ReactShowroomComponentSectionConfig> = [];
@@ -74,6 +79,7 @@ export const getConfig = (): NormalizedReactShowroomConfiguration => {
   _normalizedConfig = {
     ...defaultConfig,
     ...providedConfig,
+    webpackConfig: webpackConfig || getUserWebpackConfig(),
     sections,
     components,
     basePath: providedBuildConfig.basePath
@@ -277,3 +283,14 @@ const getUserConfig = (): ReactShowroomConfiguration => {
 const removeTrailingSlash = (path: string) => path.replace(/\/$/, '');
 
 const COMPONENT_DOC_EXTENSIONS = ['.mdx', '.md'] as const;
+
+const getUserWebpackConfig = (): webpack.Configuration | undefined => {
+  const rootWebpackConfigPath = resolveApp('webpack.config.js');
+
+  if (fs.existsSync(rootWebpackConfigPath)) {
+    logToStdout(`Using webpack config at ${rootWebpackConfigPath}.`);
+    return require(rootWebpackConfigPath);
+  }
+
+  return undefined;
+};

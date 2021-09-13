@@ -1,18 +1,10 @@
-<div className="text-center">
-
 # React Showroom
 
-<div className="text-xl font-medium max-w-md mx-auto">
-
 Document React components by declaring props definition and writing markdown.
-
-</div>
 
 ```bash inlineBlock
 npm i react-showroom
 ```
-
-</div>
 
 ## Features
 

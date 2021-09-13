@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { getConfig } from './get-config';
 import { paths, resolveApp } from './paths';
+import { ImportConfig } from '@showroomjs/core/react';
 
 export interface ImportMapData {
   name: string;
@@ -8,9 +8,9 @@ export interface ImportMapData {
   path: string;
 }
 
-export const getClientImportMap = () => {
-  const { imports } = getConfig();
-
+export const getClientImportMap = (
+  imports: undefined | Array<ImportConfig>
+) => {
   return imports
     ? imports.reduce<Record<string, ImportMapData>>((result, importConfig) => {
         if (typeof importConfig === 'string') {

@@ -1,17 +1,47 @@
+import { omit, safeEval } from '@showroomjs/core';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as tslib from 'tslib';
-import { safeEval } from '../lib/safe-eval';
 import { imports } from 'react-showroom-imports';
-
-export interface CodePreview {
+import * as tslib from 'tslib';
+import { useCodeVariables } from '../lib/code-variables-context';
+export interface CodePreviewProps {
   /**
    * Code that should call `render` to show the UI.
    */
   code: string;
+  /**
+   * Local names for the import statements in the code.
+   */
+  importNames: Array<string>;
 }
 
-export const CodePreview = (props: CodePreview) => {
+export const CodePreview = (props: CodePreviewProps) => {
+  const codeVariables = useCodeVariables();
+
+  const evalCode = React.useCallback(
+    (
+      code: string,
+      importNames: Array<string>,
+      render: (ui: React.ReactElement) => void
+    ) =>
+      safeEval(
+        code,
+        // omit variables that has already been imported to avoid conflict.
+        omit(
+          {
+            ...codeVariables,
+            React,
+            ReactDOM,
+            render,
+            tslib,
+            imports,
+          },
+          importNames
+        )
+      ),
+    []
+  );
+
   const [ui, setUi] = React.useState<null | React.ReactElement>(() => {
     if (!props.code) {
       return null;
@@ -19,29 +49,15 @@ export const CodePreview = (props: CodePreview) => {
 
     let result: React.ReactElement | null = null;
 
-    const render = (ui: React.ReactElement) => {
+    evalCode(props.code, props.importNames, (ui: React.ReactElement) => {
       result = ui;
-    };
-
-    safeEval(props.code, {
-      React,
-      ReactDOM,
-      render,
-      tslib,
-      imports,
     });
 
     return result;
   });
 
   React.useEffect(() => {
-    safeEval(props.code, {
-      React,
-      ReactDOM,
-      render: setUi,
-      tslib,
-      imports,
-    });
+    evalCode(props.code, props.importNames, setUi);
   }, [props.code]);
 
   return ui;
