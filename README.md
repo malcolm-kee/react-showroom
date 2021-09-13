@@ -35,7 +35,7 @@ We believe that compared to languages (TypeScript and markdown), libraries are g
 
 Following are the scopes that I want to implement before making this library as 1.0:
 
-- NodeJS API: Allowing to require this package in your NodeJS script and invoke it.
+- Mobile-friendly: Make the layout works for small screen.
 - E2E Smoke Tests: Add some basic cypress tests to verify the examples are working fine, especially for SSR
 
 Following are the ideas that I want to implement as enhancements (but I not sure if they are possible):
