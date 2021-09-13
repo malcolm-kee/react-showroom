@@ -23,8 +23,9 @@ import {
   resolveApp,
   resolveShowroom,
 } from '../lib/paths';
-import { rehypeCodeAutoId } from '../lib/rehype-code-auto-id';
-import { rehypeMetaAsAttribute } from '../lib/rehype-meta-as-attribute';
+import { rehypeCodeAutoId } from '../plugins/rehype-code-auto-id';
+import { rehypeMetaAsAttribute } from '../plugins/rehype-meta-as-attribute';
+import { rehypeMdxHeadings } from '../plugins/rehype-mdx-headings';
 import VirtualModulesPlugin = require('webpack-virtual-modules');
 const WebpackMessages = require('webpack-messages');
 
@@ -216,10 +217,10 @@ const createBaseWebpackConfig = (
           test: /\.mdx?$/,
           oneOf: [
             {
-              resourceQuery: /showroomRemark/,
+              resourceQuery: /showroomRemarkCodeblocks/,
               use: [
                 {
-                  loader: 'showroom-remark-loader',
+                  loader: 'showroom-remark-codeblocks-loader',
                   options: {
                     imports,
                   },
@@ -243,10 +244,12 @@ const createBaseWebpackConfig = (
                       rehypeMetaAsAttribute,
                       rehypeMdxTitle,
                       rehypeCodeAutoId,
+                      rehypeMdxHeadings,
                     ],
                     remarkPlugins: [
                       remarkFrontmatter,
                       [remarkMdxFrontmatter, { name: 'frontmatter' }],
+                      // remarkMdxExtractToc,
                     ],
                   },
                 },

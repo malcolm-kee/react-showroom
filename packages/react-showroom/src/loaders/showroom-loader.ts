@@ -29,12 +29,6 @@ const showroomLoader: LoaderDefinition = function () {
       .map(([key, value]) => `${key}: ${JSON.stringify(value)},`)
       .join('\n')}
   };`;
-
-  // return `const MaybeComponent = require('${sourcePath}');
-  // module.exports = {${JSON.stringify({
-  //   ...compdoc,
-  //   slug: slugify(compdoc.displayName, { lower: true }),
-  // })}};`;
 };
 
 module.exports = showroomLoader;

@@ -239,6 +239,11 @@ export interface ReactShowroomMarkdownSection {
     hideHeader?: boolean;
     description?: string;
   };
+  headings: Array<{
+    text: string;
+    id?: string;
+    rank: number;
+  }>;
 }
 
 interface ReactShowroomLinkSection {

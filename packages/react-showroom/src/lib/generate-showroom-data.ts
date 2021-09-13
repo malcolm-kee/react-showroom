@@ -15,7 +15,7 @@ export const generateCodeblocksData = (
               (comp) =>
                 `{codeBlocks: ${
                   comp.docPath
-                    ? `require('${comp.docPath}?showroomRemark')`
+                    ? `require('${comp.docPath}?showroomRemarkCodeblocks')`
                     : '{}'
                 }}`
             )
@@ -88,6 +88,7 @@ export const generateSections = (
             title: require('${section.sourcePath}').title || '${section.title}',
             slug: '${section.slug}',
             frontmatter: require('${section.sourcePath}').frontmatter || {},
+            headings: require('${section.sourcePath}').headings || [],
           }`;
         }
 
