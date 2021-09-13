@@ -1,22 +1,38 @@
-import { fork } from 'child_process';
+/*
+ * This script should be run in separate thread using child_process.fork
+ * to improve performance.
+ */
 
-export const createPrerenderBundle = (tempDir: string) =>
-  new Promise<void>((fulfill, reject) => {
-    const proc = fork(
-      require.resolve('./create-prerender-bundle-worker'),
-      [tempDir],
-      {
-        stdio: 'inherit',
-      }
-    );
+import { NormalizedReactShowroomConfiguration } from '@showroomjs/core/react';
+import webpack from 'webpack';
+import { createPrerenderWebpackConfig } from '../config/create-webpack-config';
 
-    proc.on('message', (ok: boolean) => {
-      if (ok) {
-        fulfill();
-      } else {
-        reject(new Error('Fails'));
-      }
-    });
-
-    proc.on('error', reject);
+export async function createPrerenderBundle(
+  config: NormalizedReactShowroomConfiguration,
+  tmpDir: string
+) {
+  const webpackConfig = createPrerenderWebpackConfig('production', config, {
+    outDir: tmpDir,
   });
+
+  const compiler = webpack(webpackConfig);
+
+  await new Promise<void>((fulfill, reject) => {
+    compiler.run((err, stats) => {
+      if (err || stats?.hasErrors()) {
+        if (err) {
+          console.error(err);
+        }
+        compiler.close(() => {
+          console.error('Fix the error and try again.');
+        });
+
+        reject(err || new Error(stats?.toString()));
+      }
+
+      compiler.close(() => {
+        fulfill();
+      });
+    });
+  });
+}

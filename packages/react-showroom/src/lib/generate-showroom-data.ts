@@ -1,13 +1,13 @@
 import {
+  ImportConfig,
   ReactShowroomComponentSectionConfig,
   ReactShowroomSectionConfig,
 } from '@showroomjs/core/react';
 import { getClientImportMap } from './get-client-import-map';
-import { getConfig } from './get-config';
 
-export const generateCodeblocksData = () => {
-  const { components } = getConfig();
-
+export const generateCodeblocksData = (
+  components: Array<ReactShowroomComponentSectionConfig>
+) => {
   return `module.exports = {
       items: [
           ${components
@@ -15,7 +15,7 @@ export const generateCodeblocksData = () => {
               (comp) =>
                 `{codeBlocks: ${
                   comp.docPath
-                    ? `require('${comp.docPath}?showroomRemark')`
+                    ? `require('${comp.docPath}?showroomRemarkCodeblocks')`
                     : '{}'
                 }}`
             )
@@ -39,8 +39,10 @@ function compileComponentSection(
   }`;
 }
 
-export const getImportsAttach = () => {
-  const importMap = getClientImportMap();
+export const getImportsAttach = (
+  importConfigs: Array<ImportConfig> | undefined
+) => {
+  const importMap = getClientImportMap(importConfigs);
 
   return `export const imports = {};
 ${Object.values(importMap)
@@ -52,9 +54,9 @@ ${Object.values(importMap)
 `;
 };
 
-export const generateSections = () => {
-  const { sections } = getConfig();
-
+export const generateSections = (
+  sections: Array<ReactShowroomSectionConfig>
+) => {
   function mapSections(sectionList: Array<ReactShowroomSectionConfig>): string {
     return `[${sectionList
       .map((section) => {
@@ -86,6 +88,7 @@ export const generateSections = () => {
             title: require('${section.sourcePath}').title || '${section.title}',
             slug: '${section.slug}',
             frontmatter: require('${section.sourcePath}').frontmatter || {},
+            headings: require('${section.sourcePath}').headings || [],
           }`;
         }
 
@@ -98,9 +101,7 @@ export const generateSections = () => {
   export default ${mapSections(sections)};`;
 };
 
-export const generateWrapper = () => {
-  const { wrapper } = getConfig();
-
+export const generateWrapper = (wrapper: string | undefined) => {
   if (wrapper) {
     return `import Wrapper from '${wrapper}?showroomCompile';
     export default Wrapper`;

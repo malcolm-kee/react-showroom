@@ -13,8 +13,12 @@ export type Packages = Record<string, ImportMapData>;
 export const transpileImports = (
   providedCode: string,
   packages: Packages
-): string => {
+): {
+  code: string;
+  importNames: Array<string>;
+} => {
   let code = providedCode;
+  const importNames: Array<string> = [];
 
   if (hasImports(code)) {
     const ast = acorn.parse(code, {
@@ -34,6 +38,9 @@ export const transpileImports = (
           packages
         );
 
+        const importLocals = getImportNames(node as ImportDeclarationNode);
+        importNames.push(...importLocals);
+
         code =
           code.substring(0, start) + transpiledStatement + code.substring(end);
 
@@ -42,7 +49,7 @@ export const transpileImports = (
     });
   }
 
-  return code;
+  return { code, importNames };
 };
 
 const hasImports = (code: string): boolean =>
@@ -85,6 +92,31 @@ interface ImportDeclarationNode extends Node {
   >;
 }
 
+const categorizeImports = (importDec: ImportDeclarationNode) => {
+  const starImports: Array<ImportNamespaceSpecifierNode> = [];
+  const namedImports: Array<ImportSpecifierNode> = [];
+  const defaultImports: Array<ImportDefaultSpecifierNode> = [];
+
+  importDec.specifiers.forEach((specifier) => {
+    if (specifier.type === 'ImportSpecifier') {
+      namedImports.push(specifier);
+    } else if (specifier.type === 'ImportNamespaceSpecifier') {
+      starImports.push(specifier);
+    } else {
+      defaultImports.push(specifier);
+    }
+  });
+
+  return {
+    starImports,
+    namedImports,
+    defaultImports,
+  };
+};
+
+const getImportNames = (importDec: ImportDeclarationNode): Array<string> =>
+  importDec.specifiers.map(({ local }) => local.name);
+
 const transformImports = (
   importDec: ImportDeclarationNode,
   packages: Packages
@@ -100,19 +132,8 @@ const transformImports = (
     return '';
   }
 
-  const starImports: Array<ImportNamespaceSpecifierNode> = [];
-  const namedImports: Array<ImportSpecifierNode> = [];
-  const defaultImports: Array<ImportDefaultSpecifierNode> = [];
-
-  importDec.specifiers.forEach((specifier) => {
-    if (specifier.type === 'ImportSpecifier') {
-      namedImports.push(specifier);
-    } else if (specifier.type === 'ImportNamespaceSpecifier') {
-      starImports.push(specifier);
-    } else {
-      defaultImports.push(specifier);
-    }
-  });
+  const { starImports, namedImports, defaultImports } =
+    categorizeImports(importDec);
 
   const starImportsOutput: string = (function () {
     if (starImports.length === 0) {

@@ -1,6 +1,6 @@
 {
   "name": "@showroomjs/core",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,5 +16,8 @@
     "acorn": "^8.4.1",
     "acorn-walk": "^8.1.1",
     "tslib": "^2.3.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

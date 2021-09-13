@@ -67,6 +67,7 @@ export const CodeEditor = ({
         style={{
           whiteSpace: 'pre',
           fontFamily: 'monospace',
+          fontSize: '14px',
           ...(baseTheme as any),
           ...style,
         }}

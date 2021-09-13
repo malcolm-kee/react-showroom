@@ -29,6 +29,7 @@ export const Header = () => {
             result.push({
               label: item.title,
               value: item.slug,
+              description: item.frontmatter.description,
             });
         }
       });
@@ -77,6 +78,8 @@ const HeaderInner = styled('div', {
 });
 
 const Title = styled(Link, {
+  color: 'inherit',
+  textDecoration: 'none',
   px: '$2',
   '&:focus': {
     outlineColor: '$primary-200',

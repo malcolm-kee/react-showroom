@@ -10,6 +10,7 @@ export const A = styled('a');
 export const H1 = styled('h1', {
   fontSize: '$6xl',
   lineHeight: '$6xl',
+  marginTop: '$0',
   marginBottom: '$6',
   fontWeight: 700,
   color: '$gray-500',

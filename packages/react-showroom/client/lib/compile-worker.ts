@@ -47,9 +47,15 @@ self.onmessage = (ev) => {
           target: 'es2018',
         })
         .then((transformOutput) => {
+          const { code, importNames } = transpileImports(
+            transformOutput.code,
+            serverData.packages
+          );
+
           const result: CompileResult = {
             type: 'success',
-            code: transpileImports(transformOutput.code, serverData.packages),
+            code,
+            importNames,
             messageId: data.messageId,
           };
           self.postMessage(result);

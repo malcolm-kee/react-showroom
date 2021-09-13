@@ -16,12 +16,19 @@ const docGenerator = docgen.withCustomConfig(paths.appTsConfig, {
 });
 
 const showroomLoader: LoaderDefinition = function () {
-  const compdoc = docGenerator.parse(this.resourcePath)[0];
+  const sourcePath = this.resourcePath;
 
-  return `module.exports = ${JSON.stringify({
-    ...compdoc,
-    slug: slugify(compdoc.displayName, { lower: true }),
-  })};`;
+  const compdoc = docGenerator.parse(sourcePath)[0];
+  return `const MaybeComponent = require('${sourcePath}');
+  module.exports = {
+    Component: MaybeComponent.default || MaybeComponent['${
+      compdoc.displayName
+    }'] || MaybeComponent,
+    slug: '${slugify(compdoc.displayName, { lower: true })}',
+    ${Object.entries(compdoc)
+      .map(([key, value]) => `${key}: ${JSON.stringify(value)},`)
+      .join('\n')}
+  };`;
 };
 
 module.exports = showroomLoader;

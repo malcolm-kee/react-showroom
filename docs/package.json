@@ -1,0 +1,24 @@
+{
+  "name": "react-showroom-docs",
+  "private": true,
+  "license": "MIT",
+  "version": "0.0.0",
+  "dependencies": {
+    "react-showroom": "0.0.2"
+  },
+  "scripts": {
+    "start": "react-showroom dev",
+    "build": "react-showroom build"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.3.3",
+    "autoprefixer": "^10.3.4",
+    "css-loader": "^6.2.0",
+    "css-minimizer-webpack-plugin": "^3.0.2",
+    "mini-css-extract-plugin": "^2.3.0",
+    "postcss": "^8.3.6",
+    "postcss-loader": "^6.1.1",
+    "style-loader": "^3.2.1",
+    "tailwindcss": "^2.2.15"
+  }
+}
