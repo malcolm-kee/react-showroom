@@ -39,14 +39,23 @@ const Ul = styled('ul', {
 export const mdxComponents = {
   h1: H1,
   h2: styled('h2', {
-    fontSize: '$3xl',
-    lineHeight: '$3xl',
+    fontSize: '$2xl',
+    lineHeight: '$2xl',
+    '@sm': {
+      fontSize: '$3xl',
+      lineHeight: '$3xl',
+    },
+
     marginTop: '$12',
     marginBottom: '$2',
   }),
   h3: styled('h3', {
-    fontSize: '$2xl',
-    lineHeight: '$2xl',
+    fontSize: '$xl',
+    lineHeight: '$xl',
+    '@sm': {
+      fontSize: '$2xl',
+      lineHeight: '$2xl',
+    },
     marginTop: '$6',
     marginBottom: '$2',
   }),
