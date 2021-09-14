@@ -15,5 +15,10 @@ export const Seo = (props: { title?: string; description?: string }) => (
     {props.description && (
       <meta name="twitter:description" content={props.description}></meta>
     )}
+    <meta property="og:type" content="article" />
+    {props.title && <meta property="og:title" content={props.title} />}
+    {props.description && (
+      <meta property="og:description" content={props.description} />
+    )}
   </Helmet>
 );
