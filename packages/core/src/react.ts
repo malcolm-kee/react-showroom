@@ -1,15 +1,11 @@
 import type { PrismTheme } from 'prism-react-renderer';
 import type { ComponentType } from 'react';
-import type { ComponentDoc as DocgenComponentDoc } from 'react-docgen-typescript';
+import type {
+  ComponentDoc as DocgenComponentDoc,
+  ParserOptions,
+} from 'react-docgen-typescript';
 import type { Configuration } from 'webpack';
 import { Environment } from './index';
-
-export interface ComponentDocItem {
-  component: DocgenComponentDoc & { slug: string } & {
-    Component: ComponentType<any> | undefined;
-  };
-  doc: null | ComponentType<any>;
-}
 
 export interface ItemConfigurationWithPath {
   title?: string;
@@ -27,9 +23,9 @@ export interface ComponentSectionConfiguration
    */
   description?: string;
   /**
-   * a glob pattern string
+   * glob pattern to look for the components
    */
-  components: string;
+  components: string | Array<string>;
 }
 
 export interface ContentItemConfiguration extends ItemConfigurationWithPath {
@@ -84,6 +80,61 @@ export type ImportConfig =
       path: string;
     };
 
+export interface ThemeConfiguration {
+  /**
+   * Title to be displayed for the site.
+   *
+   * @default 'React Showroom'
+   */
+  title?: string;
+  /**
+   * One of the themes provided by `'prism-react-renderer'`.
+   */
+  codeTheme: PrismTheme;
+  /**
+   * whether to include CSS reset
+   *
+   * @default true
+   */
+  resetCss: boolean;
+  colors: {
+    'primary-50': string;
+    'primary-100': string;
+    'primary-200': string;
+    'primary-300': string;
+    'primary-400': string;
+    'primary-500': string;
+    'primary-600': string;
+    'primary-700': string;
+    'primary-800': string;
+    'primary-900': string;
+  };
+  navbar: {
+    /**
+     * Version for the library to be shown in header
+     */
+    version?: string;
+    logo?: {
+      alt: string;
+      src: string;
+      width?: string;
+      height?: string;
+    };
+    items?: Array<{
+      to: string;
+      label: string;
+    }>;
+  };
+}
+
+export interface DocgenConfiguration {
+  /**
+   * @default 'tsconfig.json' at project root
+   */
+  tsconfigPath: string;
+  options: ParserOptions;
+}
+
 export interface ReactShowroomConfiguration {
   /**
    * a glob pattern string to search for all your components.
@@ -103,16 +154,7 @@ export interface ReactShowroomConfiguration {
    * - If it's a third-party library, pass the package name.
    */
   imports?: Array<ImportConfig>;
-  /**
-   * Title to be displayed for the site.
-   *
-   * @default 'React Showroom'
-   */
-  title?: string;
-  /**
-   * One of the themes provided by `'prism-react-renderer'`.
-   */
-  codeTheme?: PrismTheme;
+  theme?: Partial<ThemeConfiguration>;
   /**
    * Your application static assets folder will be accessible as / in the style guide dev server.
    *
@@ -125,12 +167,7 @@ export interface ReactShowroomConfiguration {
    * Use this to render context providers that your application need, e.g. Redux Provider.
    */
   wrapper?: string;
-  /**
-   * whether to include CSS reset
-   *
-   * @default true
-   */
-  resetCss?: boolean;
+  docgen?: Partial<DocgenConfiguration>;
   devServer?: {
     port?: number;
   };
@@ -163,6 +200,7 @@ export interface ReactShowroomConfiguration {
      */
     basePath?: string;
   };
+  debug?: boolean;
 }
 
 export interface ReactShowroomComponentSectionConfig {
@@ -206,19 +244,25 @@ export interface NormalizedReactShowroomConfiguration
     ReactShowroomConfiguration,
     'items' | 'devServer' | 'build' | 'components'
   > {
-  title: string;
   sections: Array<ReactShowroomSectionConfig>;
   components: Array<ReactShowroomComponentSectionConfig>;
   outDir: string;
   prerender: boolean;
   basePath: string;
-  codeTheme: PrismTheme;
   /**
    * assetDirs in absolute paths
    */
   assetDirs: Array<string>;
-  resetCss: boolean;
   devServerPort: number;
+  docgen: DocgenConfiguration;
+  theme: ThemeConfiguration;
+}
+
+export interface ComponentDocItem {
+  component: DocgenComponentDoc & { slug: string } & {
+    Component: ComponentType<any> | undefined;
+  };
+  doc: null | ComponentType<any>;
 }
 
 export interface ReactShowroomComponentSection {

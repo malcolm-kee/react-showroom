@@ -31,7 +31,7 @@ export const DetailsPageContainer = (props: DetailsPageContainerProps) => {
           css={{
             flex: '1',
             overflowY: 'auto',
-            paddingBottom: '$4',
+            paddingBottom: '$12',
           }}
         >
           <Div

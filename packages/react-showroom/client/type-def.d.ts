@@ -39,6 +39,6 @@ declare module 'react-showroom-wrapper' {
 
 declare namespace NodeJS {
   interface ProcessEnv {
-    readonly CODE_THEME: string;
+    readonly REACT_SHOWROOM_THEME: string;
   }
 }

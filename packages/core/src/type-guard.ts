@@ -6,3 +6,6 @@ export const isNil = (value: any): value is undefined | null =>
 
 export const isNumber = (value: any): value is number =>
   typeof value === 'number';
+
+export const isString = (value: any): value is string =>
+  typeof value === 'string';

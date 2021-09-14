@@ -84,5 +84,10 @@
     "dist",
     "public",
     "open-browser"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/malcolm-kee/react-showroom.git",
+    "directory": "packages/react-showroom"
+  }
 }

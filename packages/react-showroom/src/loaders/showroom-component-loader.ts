@@ -1,22 +1,21 @@
+import { DocgenConfiguration } from '@showroomjs/core/react';
 import * as docgen from 'react-docgen-typescript';
-import type { LoaderDefinition } from 'webpack';
-import { paths } from '../lib/paths';
 import slugify from 'slugify';
+import type { LoaderDefinition } from 'webpack';
 
-const docGenerator = docgen.withCustomConfig(paths.appTsConfig, {
-  propFilter: (prop) => {
-    if (prop.parent) {
-      return !prop.parent.fileName.includes('@types/react');
-    }
-    return true;
-  },
-  shouldExtractLiteralValuesFromEnum: true,
-  shouldExtractValuesFromUnion: true,
-  shouldRemoveUndefinedFromOptional: true,
-});
+let docGenerator: docgen.FileParser;
 
 const showroomLoader: LoaderDefinition = function () {
   const sourcePath = this.resourcePath;
+
+  const loaderOptions = this.getOptions() as DocgenConfiguration;
+
+  if (!docGenerator) {
+    docGenerator = docgen.withCustomConfig(
+      loaderOptions.tsconfigPath,
+      loaderOptions.options
+    );
+  }
 
   const compdoc = docGenerator.parse(sourcePath)[0];
   return `const MaybeComponent = require('${sourcePath}');

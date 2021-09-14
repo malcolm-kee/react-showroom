@@ -2994,10 +2994,10 @@ ansi-regex@^5.0.0:
   resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-5.0.0.tgz#388539f55179bf39339c81af30a654d69f87cb75"
   integrity sha512-bY6fj56OUQ0hU1KjFNDQuJFezqKdrAyFdIevADiqrWHwSlbmBNMHp5ak2f40Pm8JTFyM2mqxkG6ngkHO11f/lg==
 
-ansi-regex@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-6.0.0.tgz#ecc7f5933cbe5ac7b33e209a5ff409ab1669c6b2"
-  integrity sha512-tAaOSrWCHF+1Ear1Z4wnJCXA9GGox4K6Ic85a5qalES2aeEwQGr7UC93mwef49536PkCYjzkp0zIxfFvexJ6zQ==
+ansi-regex@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-6.0.1.tgz#3183e38fae9a65d7cb5e53945cd5897d0260a06a"
+  integrity sha512-n5M855fKb2SsfMIiFFoVrABHJC8QtHwVx+mHWP3QcEqBHYienj5dHSgjbxtC0WEZXYt4wcD6zrQElDPhFuZgfA==
 
 ansi-styles@^3.2.1:
   version "3.2.1"
@@ -4628,9 +4628,9 @@ esbuild-loader@^2.15.1:
     webpack-sources "^2.2.0"
 
 esbuild-wasm@^0.12.24:
-  version "0.12.27"
-  resolved "https://registry.yarnpkg.com/esbuild-wasm/-/esbuild-wasm-0.12.27.tgz#5f60ff7866ef0e821155497d0b19dc35ba060850"
-  integrity sha512-vuzLng5lSXouUX+QXV+24U6Htn6Kh3azGYyBAMj44oRbCPEt0SquZQX4LAJCnVItP9/Axa9q7B3/9vTLBIcOoQ==
+  version "0.12.28"
+  resolved "https://registry.yarnpkg.com/esbuild-wasm/-/esbuild-wasm-0.12.28.tgz#4142a6bb1aeb1987c4b3596b247327d7bc6aa4a2"
+  integrity sha512-SiIIPHyPWaXRQ+IkAHeF5Pd9+n86mPqQG7mZAhGKn7Y6NfPqP1H+svVEG72pN8aoBZKxblB0ah210qQfhbQIfA==
 
 esbuild@^0.12.21:
   version "0.12.25"
@@ -4638,9 +4638,9 @@ esbuild@^0.12.21:
   integrity sha512-woie0PosbRSoN8gQytrdCzUbS2ByKgO8nD1xCZkEup3D9q92miCze4PqEI9TZDYAuwn6CruEnQpJxgTRWdooAg==
 
 esbuild@^0.12.25:
-  version "0.12.27"
-  resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.12.27.tgz#9bcfb837111c5e89b189188dde339515b213a724"
-  integrity sha512-G42siADcTdRU1qRBxhiIiVLG4gcEMyWV4CWfLBdSii+olCueZJHFRHc7EqQRnRvNkSQq88i0k1Oufw/YVueUWQ==
+  version "0.12.28"
+  resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.12.28.tgz#84da0d2a0d0dee181281545271e0d65cf6fab1ef"
+  integrity sha512-pZ0FrWZXlvQOATlp14lRSk1N9GkeJ3vLIwOcUoo3ICQn9WNR4rWoNi81pbn6sC1iYUy7QPqNzI3+AEzokwyVcA==
 
 escalade@^3.1.1:
   version "3.1.1"
@@ -4857,9 +4857,9 @@ fast-json-stable-stringify@^2.0.0:
   integrity sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==
 
 fastq@^1.6.0:
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.12.0.tgz#ed7b6ab5d62393fb2cc591c853652a5c318bf794"
-  integrity sha512-VNX0QkHK3RsXVKr9KrlUv/FoTa0NdbYoHHl7uXHv2rzyHSlxjdNAKug2twd9luJxpcyNeAgf5iPPMutJO67Dfg==
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.13.0.tgz#616760f88a7526bdfc596b7cab8c18938c36b98c"
+  integrity sha512-YpkpUnK8od0o1hmeSc7UUs/eB/vIPWJYjKck2QKIzAf71Vm1AAQ3EbuZB3g2JIy+pg+ERD0vqI79KyZiB2e2Nw==
   dependencies:
     reusify "^1.0.4"
 
@@ -9703,11 +9703,11 @@ strip-ansi@^6.0.0:
     ansi-regex "^5.0.0"
 
 strip-ansi@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-7.0.0.tgz#1dc49b980c3a4100366617adac59327eefdefcb0"
-  integrity sha512-UhDTSnGF1dc0DRbUqr1aXwNoY3RgVkSWG8BrpnuFIxhP57IqbS7IRta2Gfiavds4yCxc5+fEAVVOgBZWnYkvzg==
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-7.0.1.tgz#61740a08ce36b61e50e65653f07060d000975fb2"
+  integrity sha512-cXNxvT8dFNRVfhVME3JAe98mkXDYN2O1l7jmcwMnOslDeESg1rF/OZMtK0nRAhiari1unG5cD4jG3rapUAkLbw==
   dependencies:
-    ansi-regex "^6.0.0"
+    ansi-regex "^6.0.1"
 
 strip-bom@^3.0.0:
   version "3.0.0"
@@ -10554,9 +10554,9 @@ webpack-dev-middleware@^5.1.0:
     schema-utils "^3.1.0"
 
 webpack-dev-server@^4.1.1:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/webpack-dev-server/-/webpack-dev-server-4.2.0.tgz#f669117e97f0acbee447a5b2eb70060b03f39dcb"
-  integrity sha512-iBaDkHBLfW3cEITeJWNkjZBrm+b5A3YLg8XVdNOdjUNABdXJwcsJv4dzKSnVf1q4Ch489+6epWVW6OcOyVfG7w==
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/webpack-dev-server/-/webpack-dev-server-4.2.1.tgz#12e912b3cad8ddd5222a4ba2c41c6fc69d2545fb"
+  integrity sha512-SQrIyQDZsTaF84p/WMAXNRKxjTeIaewhDIiHYZ423ENhNAsQWyubvqPTn0IoLMGkbhWyWv8/GYnCjItt0ZNC5w==
   dependencies:
     ansi-html-community "^0.0.8"
     bonjour "^3.5.0"

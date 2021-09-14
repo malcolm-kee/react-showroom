@@ -1,17 +1,45 @@
+import { ExternalLinkIcon, MenuIcon } from '@heroicons/react/outline';
 import type { ReactShowroomSection } from '@showroomjs/core/react';
 import {
   css,
-  icons,
-  styled,
-  Portal,
-  IconButton,
   DropdownMenu,
+  IconButton,
+  icons,
+  Portal,
+  styled,
 } from '@showroomjs/ui';
-import { ExternalLinkIcon, MenuIcon } from '@heroicons/react/outline';
-import { Div, NavLink } from './base';
-import { useHistory } from 'react-router';
+import * as React from 'react';
+import { NavLink, useHistory } from 'react-router-dom';
+import { Div } from './base';
+import { colorTheme, THEME } from '../theme';
+import { GenericLink } from './generic-link';
+import { isExternalLink } from '../lib/is-external-link';
+
+const navBarItems = THEME.navbar.items;
 
 export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
+  const sections = React.useMemo(
+    () => props.sections.filter((sec) => 'slug' in sec && sec.slug !== ''),
+    [props.sections]
+  );
+
+  const mobileSections = React.useMemo(() => {
+    if (navBarItems) {
+      return sections.concat({
+        type: 'group',
+        items: navBarItems.map((item) => ({
+          type: 'link',
+          href: item.to,
+          title: item.label,
+        })),
+        slug: '',
+        title: '',
+      } as ReactShowroomSection);
+    }
+
+    return sections;
+  }, [sections]);
+
   return (
     <>
       <Div
@@ -29,8 +57,8 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
           overflowY: 'auto',
         }}
       >
-        {props.sections.map((section, i) => (
-          <Section section={section} key={i} />
+        {sections.map((section, i) => (
+          <SidebarSection section={section} key={i} />
         ))}
       </Div>
       <Portal
@@ -40,6 +68,7 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
           right: 24,
           bottom: 24,
         }}
+        className={colorTheme}
       >
         <DropdownMenu>
           <DropdownMenu.Trigger asChild>
@@ -47,9 +76,13 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
               css={{
                 width: 48,
                 height: 48,
-                color: '$primary-700',
+                backgroundColor: '$primary-700',
+                color: 'White',
                 boxShadow:
                   '0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)',
+                '&:hover': {
+                  backgroundColor: '$primary-900',
+                },
                 '@md': {
                   display: 'none',
                 },
@@ -59,7 +92,7 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
             </IconButton>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content>
-            {props.sections.map((section, i) => (
+            {mobileSections.map((section, i) => (
               <DropdownSection section={section} key={i} index={i} />
             ))}
           </DropdownMenu.Content>
@@ -78,10 +111,6 @@ const DropdownSection = (props: {
 
   const history = useHistory();
 
-  if ('slug' in section && section.slug === '') {
-    return null;
-  }
-
   switch (section.type) {
     case 'component':
       return (
@@ -94,6 +123,18 @@ const DropdownSection = (props: {
       return (
         <DropdownMenu.Item onSelect={() => history.push(`/${section.slug}`)}>
           {section.title}
+        </DropdownMenu.Item>
+      );
+
+    case 'link':
+      return (
+        <DropdownMenu.Item asChild>
+          <DropdownLink href={section.href}>
+            {section.title}
+            {isExternalLink(section.href) && (
+              <ExternalLinkIcon className={icons()} width={20} height={20} />
+            )}
+          </DropdownLink>
         </DropdownMenu.Item>
       );
 
@@ -113,7 +154,7 @@ const DropdownSection = (props: {
   }
 };
 
-const Section = ({
+const SidebarSection = ({
   section,
   level = 0,
 }: {
@@ -141,7 +182,7 @@ const Section = ({
             }}
           >
             {section.items.map((section, i) => (
-              <Section section={section} level={level + 1} key={i} />
+              <SidebarSection section={section} level={level + 1} key={i} />
             ))}
           </Div>
         </Div>
@@ -194,6 +235,12 @@ const sectionClass = css({
   textTransform: 'uppercase',
 });
 
+const DropdownLink = styled(GenericLink, {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+});
+
 const Link = styled(NavLink, {
   display: 'block',
   color: '$gray-600',
@@ -216,5 +263,8 @@ const Link = styled(NavLink, {
         borderRadius: '$none',
       },
     },
+  },
+  '&[aria-current="page"]': {
+    color: '$primary-900',
   },
 });

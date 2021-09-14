@@ -18,7 +18,9 @@ module.exports = defineConfig({
       folder: 'docs',
     },
   ],
-  title: 'React Showroom Example',
+  theme: {
+    title: 'React Showroom Example',
+  },
   imports: [
     {
       name: 'components',

@@ -17,6 +17,7 @@ export interface SearchDialogProps<T> {
   options: Array<Option<T>>;
   searchHistories?: string[];
   placeholder?: string;
+  className?: string;
 }
 
 const SearchDialogImpl = function SearchDialog<T extends unknown>(
@@ -75,7 +76,11 @@ const SearchDialogInternal = function SearchDialog<T extends unknown>(
   });
 
   return (
-    <div {...getComboboxProps()}>
+    <div
+      {...getComboboxProps({
+        className: props.className,
+      })}
+    >
       <InputWrapper>
         <SearchIcon width={24} height={24} />
         <TextInput

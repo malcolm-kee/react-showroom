@@ -3,16 +3,7 @@ import { H1 } from './base';
 import { Code, Pre } from './code-block';
 import { Link } from 'react-router-dom';
 import * as React from 'react';
-
-const MarkdownLink = React.forwardRef<
-  HTMLAnchorElement,
-  React.ComponentPropsWithoutRef<'a'>
->(function MarkdownLink({ href, ...props }, ref) {
-  if (href && href.startsWith('/')) {
-    return <Link to={href} {...props} ref={ref} />;
-  }
-  return <a href={href} {...props} ref={ref} />;
-});
+import { GenericLink } from './generic-link';
 
 const Li = styled('li', {
   marginY: '0.5em',
@@ -68,7 +59,7 @@ export const mdxComponents = {
     borderColor: '$gray-200',
     marginY: '$6',
   }),
-  a: styled(MarkdownLink, {
+  a: styled(GenericLink, {
     textDecoration: 'none',
     color: '$primary-700',
     '&:hover': {

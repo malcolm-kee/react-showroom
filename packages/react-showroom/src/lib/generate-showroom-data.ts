@@ -26,7 +26,7 @@ export const generateCodeblocksData = (
 
 const compileToComponentMetadata = (
   component: ReactShowroomComponentSectionConfig
-) => `require('showroom-loader?modules!${component.sourcePath}')`;
+) => `require('${component.sourcePath}?showroomComponent')`;
 
 function compileComponentSection(
   component: ReactShowroomComponentSectionConfig

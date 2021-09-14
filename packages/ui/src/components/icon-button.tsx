@@ -1,6 +1,7 @@
 import { styled } from '../stitches.config';
 
 export const IconButton = styled('button', {
+  cursor: 'pointer',
   all: 'unset',
   fontFamily: 'inherit',
   borderRadius: '100%',
@@ -13,5 +14,6 @@ export const IconButton = styled('button', {
   backgroundColor: 'white',
   boxShadow: `0 2px 10px $gray-400`,
   '&:hover': { backgroundColor: '$gray-100' },
+  '&:disabled': { cursor: 'default' },
   outlineRing: '',
 });

@@ -1,27 +1,60 @@
+import { flattenArray, isString } from '@showroomjs/core';
 import {
   ItemConfiguration,
   NormalizedReactShowroomConfiguration,
   ReactShowroomComponentSectionConfig,
   ReactShowroomConfiguration,
   ReactShowroomSectionConfig,
+  ThemeConfiguration,
 } from '@showroomjs/core/react';
 import * as fs from 'fs';
 import * as glob from 'glob';
 import * as path from 'path';
 import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
-import type webpack from 'webpack';
+import type { ParserOptions } from 'react-docgen-typescript';
 import slugify from 'slugify';
+import type webpack from 'webpack';
 import type { defineConfig } from '../index';
-import { paths, resolveApp } from './paths';
 import { logToStdout } from './log-to-stdout';
+import { paths, resolveApp } from './paths';
 
 const DEFAULT_COMPONENTS_GLOB = 'src/components/**/*.{ts,tsx}';
 
 const defaultConfig = {
-  title: 'React Showroom',
   basePath: '/',
   codeTheme: nightOwlTheme,
   resetCss: true,
+};
+
+const defaultDocgenOptions: ParserOptions = {
+  propFilter: (prop) => {
+    if (prop.parent) {
+      return !prop.parent.fileName.includes('@types/react');
+    }
+    return true;
+  },
+  shouldExtractLiteralValuesFromEnum: true,
+  shouldExtractValuesFromUnion: true,
+  shouldRemoveUndefinedFromOptional: true,
+};
+
+const defaultThemeConfiguration: ThemeConfiguration = {
+  title: 'React Showroom',
+  codeTheme: nightOwlTheme,
+  resetCss: true,
+  navbar: {},
+  colors: {
+    'primary-50': '#FDF2F8',
+    'primary-100': '#FCE7F3',
+    'primary-200': '#FBCFE8',
+    'primary-300': '#F9A8D4',
+    'primary-400': '#F472B6',
+    'primary-500': '#EC4899',
+    'primary-600': '#DB2777',
+    'primary-700': '#BE185D',
+    'primary-800': '#9D174D',
+    'primary-900': '#831843',
+  },
 };
 
 let _normalizedConfig: NormalizedReactShowroomConfiguration;
@@ -38,6 +71,8 @@ export const getConfig = (
     components: providedComponentGlob,
     items,
     webpackConfig,
+    docgen: providedDocgenConfig = {},
+    theme: providedThemeConfig = {},
     ...providedConfig
   } = userConfig || getUserConfig();
 
@@ -94,6 +129,17 @@ export const getConfig = (
     outDir: providedBuildConfig.outDir || 'showroom',
     prerender: providedBuildConfig.prerender || false,
     devServerPort: providedDevServerConfig.port || 6969,
+    docgen: {
+      tsconfigPath: providedDocgenConfig.tsconfigPath || paths.appTsConfig,
+      options: {
+        ...defaultDocgenOptions,
+        ...(providedDocgenConfig.options || {}),
+      },
+    },
+    theme: {
+      ...defaultThemeConfiguration,
+      ...providedThemeConfig,
+    },
   };
 
   return _normalizedConfig;
@@ -108,7 +154,6 @@ export const getConfig = (
 
       let docPath: string | null = null;
 
-      // const docPath = `${comPathInfo.dir}/${comPathInfo.name}.md`;
       for (const ext of COMPONENT_DOC_EXTENSIONS) {
         const possibleDocPath = `${comPathInfo.dir}/${comPathInfo.name}${ext}`;
 
@@ -121,7 +166,6 @@ export const getConfig = (
       const section: ReactShowroomComponentSectionConfig = {
         type: 'component',
         sourcePath: comPath,
-        // docPath: fs.existsSync(docPath) ? docPath : null,
         docPath,
         parentSlugs,
       };
@@ -175,10 +219,19 @@ export const getConfig = (
         case 'components': {
           const title = sectionConfig.title;
 
-          const componentPaths = glob.sync(sectionConfig.components, {
-            cwd: paths.appPath,
-            absolute: true,
-          });
+          const componentPaths = Array.isArray(sectionConfig.components)
+            ? flattenArray(
+                sectionConfig.components.map((pattern) =>
+                  glob.sync(pattern, {
+                    cwd: paths.appPath,
+                    absolute: true,
+                  })
+                )
+              )
+            : glob.sync(sectionConfig.components, {
+                cwd: paths.appPath,
+                absolute: true,
+              });
 
           if (componentPaths.length === 0) {
             return;
@@ -220,11 +273,11 @@ export const getConfig = (
             return;
           }
 
-          const slug =
-            sectionConfig.path ||
-            (sectionConfig.title &&
-              slugify(sectionConfig.title, { lower: true })) ||
-            path.parse(docPath).name;
+          const slug = isString(sectionConfig.path)
+            ? sectionConfig.path
+            : (sectionConfig.title &&
+                slugify(sectionConfig.title, { lower: true })) ||
+              path.parse(docPath).name;
 
           parent.push({
             type: 'markdown',
