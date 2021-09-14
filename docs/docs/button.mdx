@@ -1,0 +1,17 @@
+```tsx
+render(<Button>Hello</Button>);
+```
+
+Example with states:
+
+```tsx
+import * as React from 'react';
+
+const Example = () => {
+  const [on, setOn] = React.useState<boolean>(false);
+
+  return <Button onClick={() => setOn(!on)}>{on ? 'On' : 'Off'}</Button>;
+};
+
+render(<Example />);
+```

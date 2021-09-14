@@ -37,7 +37,7 @@ export const MarkdownArticle = (props: {
         <Div
           css={{
             '@lg': {
-              px: '$6',
+              paddingLeft: '$6',
               width: '25%',
             },
           }}
@@ -120,7 +120,7 @@ export const MarkdownArticle = (props: {
             />
             <Div
               css={{
-                maxHeight: 'calc(100vh - 4.8rem)',
+                maxHeight: '80vh',
                 overflow: 'auto',
                 py: '$6',
                 borderLeft: '1px solid $gray-300',

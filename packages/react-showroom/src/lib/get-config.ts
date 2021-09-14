@@ -73,6 +73,7 @@ export const getConfig = (
     webpackConfig,
     docgen: providedDocgenConfig = {},
     theme: providedThemeConfig = {},
+    imports: providedImports,
     ...providedConfig
   } = userConfig || getUserConfig();
 
@@ -140,6 +141,13 @@ export const getConfig = (
       ...defaultThemeConfiguration,
       ...providedThemeConfig,
     },
+    imports: providedImports
+      ? providedImports.some((imp) =>
+          isString(imp) ? imp === 'react' : imp.name === 'react'
+        )
+        ? providedImports
+        : providedImports.concat('react')
+      : ['react'],
   };
 
   return _normalizedConfig;

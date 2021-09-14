@@ -1,0 +1,73 @@
+---
+description: Learn how to document components with React Showroom
+---
+
+import {
+  DocumentingComponentPropsSource,
+  DocumentingComponentPropsResult,
+  DocumentingComponentCommentsSource,
+  DocumentingComponentCommentsResult,
+  DeprecatedExampleSource,
+  DeprecatedExampleResult,
+  MarkdownSource,
+  MarkdownResult,
+  AnotherMarkdownSource,
+  AnotherMarkdownResult,
+} from './documenting-components';
+
+# Documenting Components
+
+React Showroom generates documentations for your components based on type definition of your components, the comments on the type definitions, and markdown file.
+
+## Documenting Component Props
+
+Declare your component props as usual in TypeScript:
+
+<DocumentingComponentPropsSource />
+
+And the following will be generated:
+
+<DocumentingComponentPropsResult />
+
+## Comments for Component and Props
+
+To provide more descriptions to the props and the comment itself, you can add JSDoc style comments.
+
+<DocumentingComponentCommentsSource />
+
+And the documentations will be reflected.
+
+<DocumentingComponentCommentsResult />
+
+JSDoc tags will be parsed and displayed as well.
+
+<DeprecatedExampleSource />
+
+will results in
+
+<DeprecatedExampleResult />
+
+## Show Usages with Markdown
+
+To show usage examples for the component, create a `.mdx` file next to the component with the same name.
+
+<MarkdownSource />
+
+will produces the following output.
+
+<MarkdownResult />
+
+Few things to take note:
+
+- You must tag the code block with `tsx` or `jsx` for it to become live example.
+- You must call the `render` function in your code block.
+- The component is automatically injected into the scope, so you doesn't need to import it.
+- `React` is automatically injected into the scope as well, but it's fine if you want to import it.
+
+A few scenarios for code blocks:
+
+<AnotherMarkdownSource />
+
+And their results:
+
+<AnotherMarkdownResult />

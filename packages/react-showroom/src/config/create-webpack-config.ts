@@ -233,6 +233,9 @@ const createBaseWebpackConfig = (
               ],
             },
             {
+              resourceQuery: {
+                not: [/showroomRaw/],
+              },
               use: [
                 {
                   loader: require.resolve('esbuild-loader'),
@@ -264,6 +267,10 @@ const createBaseWebpackConfig = (
         {
           test: /\.wasm$/,
           type: 'asset/resource',
+        },
+        {
+          resourceQuery: /showroomRaw/,
+          type: 'asset/source',
         },
       ],
     },

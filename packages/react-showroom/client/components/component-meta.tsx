@@ -1,8 +1,8 @@
-import { ReactShowroomComponentSection } from '@showroomjs/core/react';
+import { ComponentDocItem } from '@showroomjs/core/react';
 import { Collapsible, styled } from '@showroomjs/ui';
 import * as React from 'react';
+import type { Props } from 'react-docgen-typescript';
 import snarkdown from 'snarkdown';
-import { useComponentProps } from '../lib/component-props-context';
 import { Div, H1 } from './base';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -10,18 +10,18 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
 const hasTag = (tags: Record<string, unknown>, tag: string) =>
   hasOwnProperty.call(tags, tag);
 
-export const ComponentMeta = ({
-  section,
-  propsDefaultOpen,
-}: {
-  section: ReactShowroomComponentSection;
+export interface ComponentMetaProps {
+  componentData: ComponentDocItem['component'];
   propsDefaultOpen?: boolean;
-}) => {
+}
+
+export const ComponentMeta = ({
+  componentData,
+  propsDefaultOpen,
+}: ComponentMetaProps) => {
   const [propsIsOpen, setPropsIsOpen] = React.useState(propsDefaultOpen);
 
-  const {
-    data: { component: doc },
-  } = section;
+  const doc = componentData;
 
   const tags = doc.tags as Record<string, unknown>;
 
@@ -47,7 +47,11 @@ export const ComponentMeta = ({
         />
       )}
       <ComponentMetaTags tags={tags} />
-      <ComponentPropsTable open={propsIsOpen} onOpenChange={setPropsIsOpen} />
+      <ComponentPropsTable
+        componentProps={doc.props}
+        open={propsIsOpen}
+        onOpenChange={setPropsIsOpen}
+      />
     </>
   );
 };
@@ -55,10 +59,11 @@ export const ComponentMeta = ({
 const ComponentPropsTable = (props: {
   open: boolean | undefined;
   onOpenChange: (val: boolean) => void;
+  componentProps: Props;
 }) => {
-  const componentProps = useComponentProps();
+  const componentProps = props.componentProps;
 
-  if (Object.keys(props).length === 0) {
+  if (Object.keys(componentProps).length === 0) {
     return null;
   }
 

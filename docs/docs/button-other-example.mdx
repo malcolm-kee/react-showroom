@@ -1,0 +1,27 @@
+Use `static` modifier to show static code.
+
+```tsx static
+<Button>Hello</Button>
+```
+
+Use `fileName` modifier to add a file name at the top of the code block.
+
+```tsx fileName="code.tsx"
+import * as React from 'react';
+
+const Example = () => {
+  const [on, setOn] = React.useState<boolean>(false);
+
+  return <Button onClick={() => setOn(!on)}>{on ? 'On' : 'Off'}</Button>;
+};
+
+render(<Example />);
+```
+
+Unsupported language will have syntax highlighting.
+
+```html
+<section>
+  <h1>Hello World!</h1>
+</section>
+```

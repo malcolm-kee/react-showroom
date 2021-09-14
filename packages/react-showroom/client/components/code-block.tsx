@@ -49,8 +49,8 @@ export const Code = (props: {
   const heading = props.fileName ? (
     <Div
       css={{
-        px: '$2',
-        py: '$1',
+        px: '$4',
+        py: '$3',
         backgroundColor: '$gray-300',
         roundedT: '$md',
         fontSize: '$sm',

@@ -12,6 +12,19 @@ const config = (env) => {
     module: {
       rules: [
         {
+          test: /\.tsx$/,
+          resourceQuery: {
+            not: [/showroomRaw/],
+          },
+          use: {
+            loader: require.resolve('esbuild-loader'),
+            options: {
+              loader: 'tsx',
+              target: 'es2015',
+            },
+          },
+        },
+        {
           test: /\.css$/,
           use: [
             isProd

@@ -19,6 +19,10 @@ module.exports = defineConfig({
           type: 'content',
           content: 'docs/installation.md',
         },
+        {
+          type: 'content',
+          content: 'docs/documenting-components.mdx',
+        },
       ],
     },
     {

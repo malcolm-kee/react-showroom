@@ -3,6 +3,7 @@ module.exports = {
     './README.md',
     './docs/**/*.md',
     './docs/**/*.mdx',
+    './docs/**/*.tsx',
     './components/**/*.jsx',
     './components/**/*.tsx',
   ],

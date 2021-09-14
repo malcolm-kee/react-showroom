@@ -24,7 +24,7 @@ export const ComponentDocArticle = (props: {
   return (
     <Article>
       <ComponentPropsContext.Provider value={component.props}>
-        <ComponentMeta section={props.doc} propsDefaultOpen={!Doc} />
+        <ComponentMeta componentData={component} propsDefaultOpen={!Doc} />
         {Doc && (
           <CodeVariablesContextProvider value={codeVariables}>
             <ComponentDataContext.Provider value={props.doc.data}>
