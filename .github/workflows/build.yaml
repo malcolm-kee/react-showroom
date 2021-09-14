@@ -33,16 +33,14 @@ jobs:
         env:
           CI: true
 
-      - name: Deploy
-        run: yarn deploy --prod
-        if: ${{ github.ref == 'refs/heads/main' }}
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-
-      - name: Deploy Branch
+      - name: Deploy to Netlify
         run: yarn deploy
-        if: ${{ github.ref != 'refs/heads/main'}}
+        with:
+          publish-dir: docs/showroom
+          production-deploy: ${{ github.ref != 'refs/heads/main'}}
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: 'Deploy from GitHub Actions'
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
