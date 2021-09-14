@@ -115,7 +115,7 @@ export const MarkdownArticle = (props: {
                 right: 0,
                 zIndex: 10,
                 backgroundImage:
-                  'linear-gradient(to bottom, rgba(255,255,255,1) 0%, #fff 5%, rgba(255,255,255,0) 100%)',
+                  'linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%)',
               }}
             />
             <Div
@@ -160,7 +160,7 @@ export const MarkdownArticle = (props: {
                 right: 0,
                 zIndex: 10,
                 backgroundImage:
-                  'linear-gradient(to top, rgba(255,255,255,1) 0%, #fff 5%, rgba(255,255,255,0) 100%)',
+                  'linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%)',
               }}
             />
           </Div>
