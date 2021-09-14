@@ -2,11 +2,12 @@ import { SearchIcon as PlainSearchIcon } from '@heroicons/react/outline';
 import { useCombobox } from 'downshift';
 import { matchSorter } from 'match-sorter';
 import * as React from 'react';
-import { styled, css } from '../stitches.config';
+import cx from 'classnames';
+import { css, styled } from '../stitches.config';
 import { Dialog } from './dialog';
+import { ShortcutKey } from './shortcut-key';
 import { TextHighlight } from './text-highlight';
 import { TextInput } from './text-input';
-import { ShortcutKey } from './shortcut-key';
 
 export interface SearchDialogProps<T> {
   /**
@@ -59,11 +60,12 @@ const SearchDialogInternal = function SearchDialog<T extends unknown>(
     itemToString: (i) => (i ? i.label : ''),
     onSelectedItemChange: (changes) => {
       if (hasSearchTerm) {
+        setInputValue('');
+        dismissDialog();
         props.onSelect(
           changes.selectedItem ? changes.selectedItem.value : null,
           trimmedInput
         );
-        dismissDialog();
       } else {
         if (changes.selectedItem) {
           setInputValue(changes.selectedItem.label);
@@ -182,19 +184,24 @@ const SearchDialogRoot = (props: { children: React.ReactNode }) => {
 };
 
 export const SearchDialog = Object.assign(SearchDialogImpl, {
-  Trigger: function SearchDialogTrigger(props: { children: React.ReactNode }) {
+  Trigger: function SearchDialogTrigger({
+    children,
+    className,
+    ...props
+  }: { children: React.ReactNode } & React.ComponentPropsWithoutRef<'button'>) {
     return (
       <Dialog.Trigger asChild>
         <TextInput
           as="button"
-          className={triggerInput({})}
+          className={cx(triggerInput({}), className)}
           css={{
             width: 'auto',
             color: '$gray-400',
           }}
+          {...props}
         >
           <PlainSearchIcon width={16} height={16} />
-          {props.children}
+          {children}
           <ShortcutKey
             css={{
               display: 'none',
@@ -236,6 +243,7 @@ const SearchIcon = styled(PlainSearchIcon, {
 const OptionItem = styled('div', {
   px: '$3',
   py: '$2',
+  cursor: 'pointer',
   variants: {
     highlighted: {
       true: {

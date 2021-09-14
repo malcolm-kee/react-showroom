@@ -1,11 +1,12 @@
 import { ReactShowroomSection } from '@showroomjs/core/react';
 import { Option, SearchDialog, styled } from '@showroomjs/ui';
 import * as React from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import sections from 'react-showroom-sections';
 
 export const Header = () => {
   const history = useHistory();
+  const location = useLocation<{ searchNavigated?: boolean }>();
 
   const options = React.useMemo<Array<Option<string>>>(() => {
     const result: Array<Option<string>> = [];
@@ -45,13 +46,17 @@ export const Header = () => {
       <HeaderInner>
         <Title to="/">{process.env.PAGE_TITLE}</Title>
         <SearchDialog.Root>
-          <SearchDialog.Trigger>Search</SearchDialog.Trigger>
+          <SearchDialog.Trigger
+            autoFocus={!!(location.state && location.state.searchNavigated)}
+          >
+            Search
+          </SearchDialog.Trigger>
           <SearchDialog
             options={options}
             placeholder="Search docs"
             onSelect={(result) => {
               if (result) {
-                history.push(`/${result}`);
+                history.push(`/${result}`, { searchNavigated: true });
               }
             }}
           />
