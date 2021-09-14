@@ -173,7 +173,7 @@ export interface ReactShowroomConfiguration {
   };
   build?: {
     /**
-     * output of the generated site.
+     * Output folder for the generated site.
      *
      * @default 'showroom'
      */

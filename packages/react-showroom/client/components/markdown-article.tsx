@@ -11,10 +11,10 @@ export const MarkdownArticle = (props: {
   center?: boolean;
 }) => {
   const {
-    section: { Component, headings },
+    section: { Component, headings, slug },
   } = props;
 
-  const hasHeadings = headings && headings.length > 0;
+  const hasHeadings = headings && headings.length > 0 && slug !== '';
 
   const [submenuIsOpen, setSubmenuIsOpen] = React.useState<boolean | undefined>(
     false
@@ -101,34 +101,68 @@ export const MarkdownArticle = (props: {
                 display: 'block',
               },
               position: 'sticky',
-              top: '$6',
-              py: '$3',
-              borderLeft: '1px solid $gray-300',
+              top: '0',
+              py: '$4',
             }}
           >
             <Div
               css={{
-                color: '$gray-400',
-                paddingLeft: 16,
-                textTransform: 'uppercase',
-                fontWeight: 'bold',
-                marginBottom: '$2',
+                pointerEvents: 'none',
+                height: '3rem',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                zIndex: 10,
+                backgroundImage:
+                  'linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%)',
+              }}
+            />
+            <Div
+              css={{
+                maxHeight: 'calc(100vh - 4.8rem)',
+                overflow: 'auto',
+                py: '$6',
+                borderLeft: '1px solid $gray-300',
               }}
             >
-              In this page
+              <Div
+                css={{
+                  color: '$gray-400',
+                  paddingLeft: 16,
+                  textTransform: 'uppercase',
+                  fontWeight: 'bold',
+                  marginBottom: '$2',
+                }}
+              >
+                In this page
+              </Div>
+              <ul>
+                {headings.map((heading, index) => (
+                  <Item
+                    css={{
+                      paddingLeft: 16 + (heading.rank - 2) * 24,
+                    }}
+                    key={index}
+                  >
+                    <A href={`#${heading.id}`}>{heading.text}</A>
+                  </Item>
+                ))}
+              </ul>
             </Div>
-            <ul>
-              {headings.map((heading, index) => (
-                <Item
-                  css={{
-                    paddingLeft: 16 + (heading.rank - 2) * 24,
-                  }}
-                  key={index}
-                >
-                  <A href={`#${heading.id}`}>{heading.text}</A>
-                </Item>
-              ))}
-            </ul>
+            <Div
+              css={{
+                pointerEvents: 'none',
+                height: '3rem',
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                zIndex: 10,
+                backgroundImage:
+                  'linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%)',
+              }}
+            />
           </Div>
         </Div>
       )}
