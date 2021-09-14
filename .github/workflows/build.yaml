@@ -37,7 +37,7 @@ jobs:
         uses: nwtgck/actions-netlify@v1.2
         with:
           publish-dir: docs/showroom
-          production-deploy: ${{ github.ref != 'refs/heads/main'}}
+          production-deploy: ${{ github.ref == 'refs/heads/main'}}
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
           deploy-message: 'Deploy from GitHub Actions'
