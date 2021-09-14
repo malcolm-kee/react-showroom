@@ -40,6 +40,7 @@ export const App = () => {
                       <Route path={`/${section.slug}`} key={section.slug}>
                         <DetailsPageContainer
                           title={section.data.component.displayName}
+                          description={section.data.component.description}
                         >
                           <ComponentDocArticle doc={section} />
                         </DetailsPageContainer>
@@ -58,6 +59,7 @@ export const App = () => {
                           title={
                             section.slug === '' ? undefined : section.title
                           }
+                          description={section.frontmatter.description}
                           hideSidebar={section.frontmatter.hideSidebar}
                           hideHeader={section.frontmatter.hideHeader}
                         >

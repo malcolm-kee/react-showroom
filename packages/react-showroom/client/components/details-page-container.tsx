@@ -8,6 +8,7 @@ import { Sidebar } from './sidebar';
 export interface DetailsPageContainerProps {
   children: React.ReactNode;
   title?: string;
+  description?: string;
   hideSidebar?: boolean;
   hideHeader?: boolean;
 }
@@ -22,7 +23,7 @@ export const DetailsPageContainer = (props: DetailsPageContainerProps) => {
         overflow: 'hidden',
       }}
     >
-      <Seo title={props.title} />
+      <Seo title={props.title} description={props.description} />
       {!props.hideHeader && <Header />}
       <Div css={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         {!props.hideSidebar && <Sidebar sections={sections} />}
