@@ -36,7 +36,6 @@ export const mdxComponents = {
       fontSize: '$3xl',
       lineHeight: '$3xl',
     },
-
     marginTop: '$12',
     marginBottom: '$2',
   }),
@@ -48,6 +47,13 @@ export const mdxComponents = {
       lineHeight: '$2xl',
     },
     marginTop: '$6',
+    marginBottom: '$2',
+  }),
+  h4: styled('h4', {
+    fontSize: '$lg',
+    fontWeight: 'bold',
+    lineHeight: '$lg',
+    marginTop: '$4',
     marginBottom: '$2',
   }),
   pre: Pre,
