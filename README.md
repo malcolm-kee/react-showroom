@@ -33,13 +33,10 @@ We believe that compared to languages (TypeScript and markdown), libraries are g
 
 ## Roadmap
 
-Following are the scopes that I want to implement before making this library as 1.0:
-
-- E2E Smoke Tests: Add some basic cypress tests to verify the examples are working fine, especially for SSR
-
 Following are the ideas that I want to implement as enhancements (but I not sure if they are possible):
 
 - Run jest tests in the Showroom
+- Code splitting with SSR
 - Vue support
 - Rollup support
 - Vite support

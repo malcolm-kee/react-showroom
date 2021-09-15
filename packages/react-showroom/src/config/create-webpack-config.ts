@@ -27,7 +27,9 @@ import { rehypeCodeAutoId } from '../plugins/rehype-code-auto-id';
 import { rehypeMetaAsAttribute } from '../plugins/rehype-meta-as-attribute';
 import { rehypeMdxHeadings } from '../plugins/rehype-mdx-headings';
 import VirtualModulesPlugin = require('webpack-virtual-modules');
+import { createBabelPreset } from './create-babel-preset';
 const WebpackMessages = require('webpack-messages');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 export const createWebpackConfig = (
   mode: Environment,
@@ -168,6 +170,7 @@ const createBaseWebpackConfig = (
   options: { prerender: boolean }
 ): webpack.Configuration => {
   const isProd = mode === 'production';
+  const isDev = mode === 'development';
 
   const virtualModules = new VirtualModulesPlugin({
     // create a virtual module that consists of parsed code blocks
@@ -183,6 +186,8 @@ const createBaseWebpackConfig = (
     [resolveShowroom('node_modules/react-showroom-wrapper.js')]:
       generateWrapper(wrapper),
   });
+
+  const babelPreset = createBabelPreset(mode);
 
   return {
     mode,
@@ -210,10 +215,14 @@ const createBaseWebpackConfig = (
           resourceQuery: /showroomCompile/,
           use: [
             {
-              loader: require.resolve('esbuild-loader'),
+              loader: require.resolve('babel-loader'),
               options: {
-                loader: 'tsx',
-                target: 'es2015',
+                presets: [() => babelPreset],
+                plugins: isDev
+                  ? [require.resolve('react-refresh/babel')]
+                  : undefined,
+                babelrc: false,
+                configFile: false,
               },
             },
           ],
@@ -238,10 +247,14 @@ const createBaseWebpackConfig = (
               },
               use: [
                 {
-                  loader: require.resolve('esbuild-loader'),
+                  loader: require.resolve('babel-loader'),
                   options: {
-                    loader: 'tsx',
-                    target: 'es2015',
+                    presets: [() => babelPreset],
+                    plugins: isProd
+                      ? undefined
+                      : [require.resolve('react-refresh/babel')],
+                    babelrc: false,
+                    configFile: false,
                   },
                 },
                 {
@@ -287,7 +300,8 @@ const createBaseWebpackConfig = (
         REACT_SHOWROOM_THEME: JSON.stringify(theme),
       }),
       virtualModules,
-    ],
+      isDev ? new ReactRefreshWebpackPlugin() : undefined,
+    ].filter(isDefined),
     performance: {
       hints: false,
     },
