@@ -2,10 +2,10 @@
   "name": "react-showroom-docs",
   "private": true,
   "license": "MIT",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "dependencies": {
     "esbuild-loader": "^2.15.1",
-    "react-showroom": "^0.2.0"
+    "react-showroom": "^0.2.1"
   },
   "scripts": {
     "start": "react-showroom dev",
