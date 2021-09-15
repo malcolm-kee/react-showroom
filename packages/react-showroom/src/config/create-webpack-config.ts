@@ -132,7 +132,7 @@ export const createPrerenderWebpackConfig = (
 ): webpack.Configuration => {
   const baseConfig = createBaseWebpackConfig(mode, config, { prerender: true });
 
-  const clientEntry = resolveShowroom('client-dist/index.js');
+  const clientEntry = resolveShowroom('client-dist/prerender.js');
 
   return mergeWebpackConfig(
     merge(baseConfig, {
