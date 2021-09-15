@@ -77,8 +77,12 @@ export const generateSections = (
               const parentSlugs = '${section.parentSlugs.join('/')}';
 
               return (parentSlugs && (parentSlugs + '/')) + slugify(this.data.component.slug, {lower: true})
+            },
+            get shouldIgnore() {
+              return !this.data.component.Component;
             }
           }`;
+          // because the component parsing may return nothing, so need to set a flag here and filter it at bottom
         }
 
         if (section.type === 'markdown') {
@@ -94,7 +98,7 @@ export const generateSections = (
 
         return JSON.stringify(section);
       })
-      .join(', ')}]`;
+      .join(', ')}].filter(el => !el.shouldIgnore)`;
   }
 
   return `import slugify from 'slugify';

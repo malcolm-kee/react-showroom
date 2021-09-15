@@ -237,6 +237,13 @@ Path to a module/file that export default a React component that should wrap the
 
 Use this to render context providers that your application need, e.g. Redux Provider.
 
+### `ignores`
+
+- Type: `Array<string>`
+- Default: `['**/__tests__/**', '**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}','**/*.d.ts']`
+
+Patterns to ignore for components.
+
 ### `theme.codeTheme`
 
 - Default: `require('prism-react-renderer/themes/nightOwl')`

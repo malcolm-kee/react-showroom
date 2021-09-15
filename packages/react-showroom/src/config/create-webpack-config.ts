@@ -208,7 +208,10 @@ const createBaseWebpackConfig = (
           test: /\.(ts|tsx)$/,
           resourceQuery: /showroomComponent/,
           loader: 'showroom-component-loader',
-          options: docgen,
+          options: {
+            ...docgen,
+            debug,
+          },
         },
         {
           test: /\.(js|jsx|ts|tsx)$/,

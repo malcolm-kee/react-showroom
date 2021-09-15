@@ -19,6 +19,12 @@ import { logToStdout } from './log-to-stdout';
 import { paths, resolveApp } from './paths';
 
 const DEFAULT_COMPONENTS_GLOB = 'src/components/**/*.{ts,tsx}';
+const DEFAULT_IGNORES = [
+  '**/__tests__/**',
+  '**/*.test.{ts,tsx}',
+  '**/*.spec.{ts,tsx}',
+  '**/*.d.ts',
+];
 
 const defaultConfig = {
   basePath: '/',
@@ -74,6 +80,7 @@ export const getConfig = (
     docgen: providedDocgenConfig = {},
     theme: providedThemeConfig = {},
     imports: providedImports,
+    ignores = DEFAULT_IGNORES,
     ...providedConfig
   } = userConfig || getUserConfig();
 
@@ -84,6 +91,7 @@ export const getConfig = (
     const componentPaths = glob.sync(providedComponentGlob, {
       cwd: paths.appPath,
       absolute: true,
+      ignore: ignores,
     });
 
     collectComponents(componentPaths, sections, []);
@@ -91,6 +99,7 @@ export const getConfig = (
     const componentPaths = glob.sync(DEFAULT_COMPONENTS_GLOB, {
       cwd: paths.appPath,
       absolute: true,
+      ignore: ignores,
     });
 
     collectComponents(componentPaths, sections, []);
@@ -115,6 +124,7 @@ export const getConfig = (
   _normalizedConfig = {
     ...defaultConfig,
     ...providedConfig,
+    ignores,
     webpackConfig: webpackConfig || getUserWebpackConfig(),
     sections,
     components,
@@ -233,12 +243,14 @@ export const getConfig = (
                   glob.sync(pattern, {
                     cwd: paths.appPath,
                     absolute: true,
+                    ignore: ignores,
                   })
                 )
               )
             : glob.sync(sectionConfig.components, {
                 cwd: paths.appPath,
                 absolute: true,
+                ignore: ignores,
               });
 
           if (componentPaths.length === 0) {
