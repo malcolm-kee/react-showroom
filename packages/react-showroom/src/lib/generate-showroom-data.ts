@@ -36,6 +36,11 @@ function compileComponentSection(
       component.docPath ? `require('${component.docPath}').default` : 'null'
     },
     component: ${compileToComponentMetadata(component)},
+    imports: ${
+      component.docPath
+        ? `require('${component.docPath}?showroomRemarkImports').imports`
+        : '{}'
+    },
   }`;
 }
 
@@ -93,6 +98,7 @@ export const generateSections = (
             slug: '${section.slug}',
             frontmatter: require('${section.sourcePath}').frontmatter || {},
             headings: require('${section.sourcePath}').headings || [],
+            imports: require('${section.sourcePath}?showroomRemarkImports').imports || {},
           }`;
         }
 

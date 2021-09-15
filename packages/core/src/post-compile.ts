@@ -1,5 +1,6 @@
 import type { Node } from 'acorn';
 import * as walk from 'acorn-walk';
+import { getSafeName } from './get-safe-name';
 
 const acorn = require('acorn');
 
@@ -15,18 +16,19 @@ const ACORN_OPTIONS = {
   sourceType: 'module',
 };
 
+export interface PostCompileResult {
+  code: string;
+  importNames: Array<string>;
+  importedPackages: Array<string>;
+}
+
 /**
  * Additional compilation after compiled by esbuild to JavaScript
  */
-export const postCompile = (
-  providedCode: string,
-  packages: Packages
-): {
-  code: string;
-  importNames: Array<string>;
-} => {
+export const postCompile = (providedCode: string): PostCompileResult => {
   let code = providedCode;
   const importNames: Array<string> = [];
+  const importedPackages: Array<string> = [];
 
   if (!hasRender(code)) {
     code = insertRender(code);
@@ -42,13 +44,15 @@ export const postCompile = (
         const start = node.start + offset;
         const end = node.end + offset;
         const statement = code.substring(start, end);
-        const transpiledStatement = transformImports(
-          node as ImportDeclarationNode,
-          packages
-        );
 
-        const importLocals = getImportNames(node as ImportDeclarationNode);
+        const declarationNode = node as ImportDeclarationNode;
+
+        const transpiledStatement = transformImports(declarationNode);
+
+        const importLocals = getImportNames(declarationNode);
         importNames.push(...importLocals);
+
+        importedPackages.push(getImportedPackage(declarationNode));
 
         code =
           code.substring(0, start) + transpiledStatement + code.substring(end);
@@ -58,7 +62,7 @@ export const postCompile = (
     });
   }
 
-  return { code, importNames };
+  return { code, importNames, importedPackages };
 };
 
 // Strip semicolon (;) at the end
@@ -152,7 +156,7 @@ interface ProgramNode extends Node {
 const isExpressionNode = (node: Node): node is ExpressionStatementNode =>
   node.type === 'ExpressionStatement';
 const isMemberExpressionNode = (node: Node): node is MemberExpressionNode =>
-  node.type === 'MemberExpression';
+  !!node && node.type === 'MemberExpression';
 const isReactCreateElementExpression = (node: Node) =>
   isExpressionNode(node) &&
   isMemberExpressionNode(node.expression.callee) &&
@@ -184,20 +188,11 @@ const categorizeImports = (importDec: ImportDeclarationNode) => {
 const getImportNames = (importDec: ImportDeclarationNode): Array<string> =>
   importDec.specifiers.map(({ local }) => local.name);
 
-const transformImports = (
-  importDec: ImportDeclarationNode,
-  packages: Packages
-) => {
+const getImportedPackage = (importDec: ImportDeclarationNode): string =>
+  importDec.source.value;
+
+const transformImports = (importDec: ImportDeclarationNode) => {
   const importedPkg = importDec.source.value;
-
-  const pkgConfig = packages[importedPkg];
-
-  if (!pkgConfig) {
-    console.error(
-      `${importedPkg} is not added in "imports" in react-showroom.js`
-    );
-    return '';
-  }
 
   const { starImports, namedImports, defaultImports } =
     categorizeImports(importDec);
@@ -210,7 +205,7 @@ const transformImports = (
     return starImports
       .map(
         ({ local }) =>
-          `const ${local.name} = imports['${pkgConfig.varName}'];\n`
+          `const ${local.name} = imports['${getSafeName(importedPkg)}'];\n`
       )
       .join('');
   })();
@@ -228,7 +223,9 @@ const transformImports = (
       )
       .join(',');
 
-    return `const {${importSpecifiers}} = imports['${pkgConfig.varName}'];\n`;
+    return `const {${importSpecifiers}} = imports['${getSafeName(
+      importedPkg
+    )}'];\n`;
   })();
 
   const defaultImportsOutput: string = (function () {
@@ -239,7 +236,9 @@ const transformImports = (
     return defaultImports
       .map(
         ({ local }) =>
-          `const ${local.name} = tslib.__importDefault(imports['${pkgConfig.varName}']).default;\n`
+          `const ${local.name} = tslib.__importDefault(imports['${getSafeName(
+            importedPkg
+          )}']).default;\n`
       )
       .join('');
   })();

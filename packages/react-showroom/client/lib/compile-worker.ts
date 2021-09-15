@@ -8,7 +8,6 @@ import {
 } from '@showroomjs/core';
 import * as esbuild from 'esbuild-wasm';
 import wasmPath from 'esbuild-wasm/esbuild.wasm';
-import { serverData } from './server-data';
 
 const esBuildIsReady = esbuild.initialize({
   wasmURL: wasmPath,
@@ -47,10 +46,7 @@ self.onmessage = (ev) => {
           target: 'es2018',
         })
         .then((transformOutput) => {
-          const { code, importNames } = postCompile(
-            transformOutput.code,
-            serverData.packages
-          );
+          const { code, importNames } = postCompile(transformOutput.code);
 
           const result: CompileResult = {
             type: 'success',

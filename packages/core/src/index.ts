@@ -1,9 +1,10 @@
 export { flattenArray, NestedArray } from './flatten-array';
+export { getSafeName } from './get-safe-name';
 export { omit } from './object';
+export { ImportMapData, Packages, postCompile } from './post-compile';
 export { parseQueryString, stringifyQueryString } from './query-string';
 export { safeEval } from './safe-eval';
 export { Ssr } from './ssr-types';
-export { ImportMapData, Packages, postCompile } from './post-compile';
 export { isDefined, isNil, isNumber, isString } from './type-guard';
 
 export interface RequestCompileData {

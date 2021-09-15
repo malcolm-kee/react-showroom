@@ -15,7 +15,6 @@ import {
   generateWrapper,
   getImportsAttach,
 } from '../lib/generate-showroom-data';
-import { getEnvVariables } from '../lib/get-env-variables';
 import { logToStdout } from '../lib/log-to-stdout';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
 import {
@@ -24,10 +23,10 @@ import {
   resolveShowroom,
 } from '../lib/paths';
 import { rehypeCodeAutoId } from '../plugins/rehype-code-auto-id';
-import { rehypeMetaAsAttribute } from '../plugins/rehype-meta-as-attribute';
 import { rehypeMdxHeadings } from '../plugins/rehype-mdx-headings';
-import VirtualModulesPlugin = require('webpack-virtual-modules');
+import { rehypeMetaAsAttribute } from '../plugins/rehype-meta-as-attribute';
 import { createBabelPreset } from './create-babel-preset';
+import VirtualModulesPlugin = require('webpack-virtual-modules');
 const WebpackMessages = require('webpack-messages');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
@@ -242,6 +241,14 @@ const createBaseWebpackConfig = (
               use: [
                 {
                   loader: 'showroom-remark-codeblocks-loader',
+                },
+              ],
+            },
+            {
+              resourceQuery: /showroomRemarkImports/,
+              use: [
+                {
+                  loader: 'showroom-remark-codeblocks-imports-loader',
                   options: {
                     imports,
                   },
@@ -300,7 +307,6 @@ const createBaseWebpackConfig = (
     devtool: isProd ? 'source-map' : 'cheap-module-source-map',
     plugins: [
       new webpack.EnvironmentPlugin({
-        serverData: JSON.stringify(getEnvVariables(imports)),
         PRERENDER: String(options.prerender),
         MULTI_PAGES: String(prerenderConfig),
         BASE_PATH: isProd && basePath !== '/' ? basePath : '',

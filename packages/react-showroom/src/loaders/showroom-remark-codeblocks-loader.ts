@@ -1,12 +1,10 @@
 import { CodeBlocks, postCompile, SUPPORTED_LANGUAGES } from '@showroomjs/core';
-import { ImportConfig } from '@showroomjs/core/react';
 import * as esbuild from 'esbuild';
 import remarkParse from 'remark-parse';
 import unified from 'unified';
 import vFile from 'vfile';
 import type { LoaderDefinition } from 'webpack';
-import { getEnvVariables } from '../lib/get-env-variables';
-const { codeblocks } = require('remark-code-blocks');
+import { codeblocks } from '../lib/codeblocks';
 
 const parser = unified().use(remarkParse as any);
 
@@ -14,11 +12,6 @@ const showroomRemarkLoader: LoaderDefinition = function (source, map, meta) {
   const cb = this.async();
 
   const tree = parser.parse(vFile(source));
-
-  const { imports } = this.getOptions() as {
-    imports: Array<ImportConfig> | undefined;
-  };
-  const { packages } = getEnvVariables(imports);
 
   const blocks: Record<string, Array<string>> = codeblocks(tree).codeblocks;
 
@@ -34,10 +27,7 @@ const showroomRemarkLoader: LoaderDefinition = function (source, map, meta) {
               target: 'es2018',
             });
 
-            const postTranspileResult = postCompile(
-              transformResult.code,
-              packages
-            );
+            const postTranspileResult = postCompile(transformResult.code);
 
             result[code] = {
               type: 'success',

@@ -1,20 +1,22 @@
 import * as React from 'react';
-import buttonSource from './button?showroomRaw';
-import buttonData from './button?showroomComponent';
-import AnotherButtonDocs from './button-other-example.mdx';
-import anotherbuttonDocsSource from './button-other-example.mdx?showroomRaw';
-import buttonWithCommentsSource from './button-with-comments?showroomRaw';
-import buttonWithCommentsData from './button-with-comments?showroomComponent';
-import oldButtonSource from './old-button?showroomRaw';
-import oldButtonData from './old-button?showroomComponent';
-import docsSource from './button.mdx?showroomRaw';
-import ButtonDocs from './button.mdx';
 import {
-  mdxComponents,
-  ComponentMeta,
   BrowserWindow,
   ComponentDocArticle,
+  ComponentMeta,
+  mdxComponents,
 } from 'react-showroom/client-dist/exposes';
+import AnotherButtonDocs from './button-other-example.mdx';
+import anotherbuttonDocsSource from './button-other-example.mdx?showroomRaw';
+import { imports as buttonWithCommentsImports } from './button-other-example.mdx?showroomRemarkImports';
+import buttonWithCommentsData from './button-with-comments?showroomComponent';
+import buttonWithCommentsSource from './button-with-comments?showroomRaw';
+import ButtonDocs from './button.mdx';
+import docsSource from './button.mdx?showroomRaw';
+import { imports as buttonImports } from './button.mdx?showroomRemarkImports';
+import buttonData from './button?showroomComponent';
+import buttonSource from './button?showroomRaw';
+import oldButtonData from './old-button?showroomComponent';
+import oldButtonSource from './old-button?showroomRaw';
 
 const { pre: Pre, code: Code } = mdxComponents;
 
@@ -84,6 +86,7 @@ export const MarkdownResult = () => (
           data: {
             component: buttonWithCommentsData,
             doc: ButtonDocs,
+            imports: buttonImports,
           },
         }}
       />
@@ -109,6 +112,7 @@ export const AnotherMarkdownResult = () => (
           data: {
             component: buttonWithCommentsData,
             doc: AnotherButtonDocs,
+            imports: buttonWithCommentsImports,
           },
         }}
       />

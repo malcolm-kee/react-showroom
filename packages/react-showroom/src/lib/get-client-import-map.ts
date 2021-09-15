@@ -1,6 +1,6 @@
-import * as _ from 'lodash';
 import { paths, resolveApp } from './paths';
 import { ImportConfig } from '@showroomjs/core/react';
+import { getSafeName } from '@showroomjs/core';
 
 export interface ImportMapData {
   name: string;
@@ -18,7 +18,7 @@ export const getClientImportMap = (
             ...result,
             [importConfig]: {
               name: importConfig,
-              varName: _.camelCase(importConfig),
+              varName: getSafeName(importConfig),
               path: require.resolve(importConfig, {
                 paths: [paths.appPath],
               }),
@@ -27,7 +27,7 @@ export const getClientImportMap = (
         }
         const { name, path } = importConfig;
 
-        const varName = _.camelCase(name);
+        const varName = getSafeName(name);
 
         return {
           ...result,

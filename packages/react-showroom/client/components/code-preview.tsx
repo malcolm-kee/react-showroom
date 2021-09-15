@@ -1,8 +1,8 @@
 import { omit, safeEval } from '@showroomjs/core';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { imports } from 'react-showroom-imports';
 import * as tslib from 'tslib';
+import { useCodeImports } from '../lib/code-imports-context';
 import { useCodeVariables } from '../lib/code-variables-context';
 export interface CodePreviewProps {
   /**
@@ -17,6 +17,8 @@ export interface CodePreviewProps {
 
 export const CodePreview = (props: CodePreviewProps) => {
   const codeVariables = useCodeVariables();
+  const imports = useCodeImports();
+  console.log({ imports });
 
   const evalCode = React.useCallback(
     (
