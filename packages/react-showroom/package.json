@@ -5,6 +5,11 @@
   "bin": {
     "react-showroom": "react-showroom.js"
   },
+  "keywords": [
+    "react",
+    "styleguide"
+  ],
+  "homepage": "https://react-showroom.netlify.app/",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {

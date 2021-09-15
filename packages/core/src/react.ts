@@ -142,6 +142,12 @@ export interface ReactShowroomConfiguration {
    * If you want to organize your components in a nested structure, use `items`.
    */
   components?: string;
+  /**
+   * Patterns to ignore for components.
+   *
+   * @default Default patterns for jest tests
+   */
+  ignores?: Array<string>;
   items?: Array<ItemConfiguration>;
   /**
    * Webpack configuration to load your components (or any other resources that are needed by the components, e.g. CSS)
@@ -246,6 +252,7 @@ export interface NormalizedReactShowroomConfiguration
   > {
   sections: Array<ReactShowroomSectionConfig>;
   components: Array<ReactShowroomComponentSectionConfig>;
+  ignores: Array<string>;
   outDir: string;
   prerender: boolean;
   basePath: string;
