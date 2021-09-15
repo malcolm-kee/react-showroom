@@ -3,7 +3,7 @@ export { omit } from './object';
 export { parseQueryString, stringifyQueryString } from './query-string';
 export { safeEval } from './safe-eval';
 export { Ssr } from './ssr-types';
-export { ImportMapData, Packages, transpileImports } from './transpile-imports';
+export { ImportMapData, Packages, postCompile } from './post-compile';
 export { isDefined, isNil, isNumber, isString } from './type-guard';
 
 export interface RequestCompileData {

@@ -10,7 +10,15 @@ export interface ImportMapData {
 
 export type Packages = Record<string, ImportMapData>;
 
-export const transpileImports = (
+const ACORN_OPTIONS = {
+  ecmaVersion: 2018,
+  sourceType: 'module',
+};
+
+/**
+ * Additional compilation after compiled by esbuild to JavaScript
+ */
+export const postCompile = (
   providedCode: string,
   packages: Packages
 ): {
@@ -20,11 +28,12 @@ export const transpileImports = (
   let code = providedCode;
   const importNames: Array<string> = [];
 
+  if (!hasRender(code)) {
+    code = insertRender(code);
+  }
+
   if (hasImports(code)) {
-    const ast = acorn.parse(code, {
-      ecmaVersion: 2018,
-      sourceType: 'module',
-    });
+    const ast = acorn.parse(code, ACORN_OPTIONS);
 
     let offset = 0;
 
@@ -52,8 +61,37 @@ export const transpileImports = (
   return { code, importNames };
 };
 
+// Strip semicolon (;) at the end
+const unsemicolon = (s: string): string => s.replace(/;\s*$/, '');
+
+const insertRender = (code: string): string => {
+  let result = code;
+
+  try {
+    const ast: ProgramNode = acorn.parse(code, ACORN_OPTIONS);
+
+    if (ast.body && ast.body.length > 0) {
+      const lastNode = ast.body[ast.body.length - 1];
+      if (isReactCreateElementExpression(lastNode)) {
+        result =
+          result.substring(0, lastNode.start) +
+          `render(${unsemicolon(
+            result.substring(lastNode.start, lastNode.end)
+          )});`;
+
+        return result;
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
+
+  return result;
+};
+
 const hasImports = (code: string): boolean =>
   !!code.match(/import[\S\s]+?['"]([^'"]+)['"];?/m);
+const hasRender = (code: string): boolean => !!code.match(/render\(/m);
 
 interface LiteralNode extends Node {
   type: 'Literal';
@@ -91,6 +129,35 @@ interface ImportDeclarationNode extends Node {
     | ImportDefaultSpecifierNode
   >;
 }
+
+interface MemberExpressionNode extends Node {
+  type: 'MemberExpression';
+  object: IdentifierNode;
+  property: IdentifierNode;
+}
+
+interface ExpressionStatementNode extends Node {
+  type: 'ExpressionStatement';
+  expression: {
+    arguments: Array<Node>;
+    callee: Node;
+  };
+}
+
+interface ProgramNode extends Node {
+  type: 'Program';
+  body: Array<Node>;
+}
+
+const isExpressionNode = (node: Node): node is ExpressionStatementNode =>
+  node.type === 'ExpressionStatement';
+const isMemberExpressionNode = (node: Node): node is MemberExpressionNode =>
+  node.type === 'MemberExpression';
+const isReactCreateElementExpression = (node: Node) =>
+  isExpressionNode(node) &&
+  isMemberExpressionNode(node.expression.callee) &&
+  node.expression.callee.object.name === 'React' &&
+  node.expression.callee.property.name === 'createElement';
 
 const categorizeImports = (importDec: ImportDeclarationNode) => {
   const starImports: Array<ImportNamespaceSpecifierNode> = [];

@@ -160,6 +160,10 @@ export interface ReactShowroomConfiguration {
    * - If it's a third-party library, pass the package name.
    */
   imports?: Array<ImportConfig>;
+  /**
+   * Modules that are required for your style guide. Useful for third-party styles or polyfills.
+   */
+  require?: Array<string>;
   theme?: Partial<ThemeConfiguration>;
   /**
    * Your application static assets folder will be accessible as / in the style guide dev server.

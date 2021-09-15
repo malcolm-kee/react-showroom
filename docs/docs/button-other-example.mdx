@@ -15,7 +15,15 @@ const Example = () => {
   return <Button onClick={() => setOn(!on)}>{on ? 'On' : 'Off'}</Button>;
 };
 
-render(<Example />);
+<Example />;
+```
+
+You can manually call `render` if you want to add some operations before rendering the output.
+
+```tsx
+const wait = (ms: number) => new Promise((fulfill) => setTimeout(fulfill, ms));
+
+wait(1000).then(() => render(<Button>Delayed</Button>));
 ```
 
 Unsupported language will have syntax highlighting.
