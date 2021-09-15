@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.3.0
+
+### New Features
+
+- Auto insert `render` is last expression of code example is a JSX.
+- New config option: `require` to include third-party libraries or polyfills.
+
 ## 0.2.2
 
 ### Bug Fixes

@@ -225,9 +225,15 @@ Example:
 
 - Type: `Array<string>`
 
-Your application static assets folder to be accessible as / in the style guide server.
+Your application static assets folder to be accessible at "/" in the style guide server.
 
 When generate the static site, those files will be copied into the output folder.
+
+### `require`
+
+- Type: `Array<string>`
+
+Modules that are required for your style guide. Useful for third-party styles or polyfills.
 
 ### `wrapper`
 

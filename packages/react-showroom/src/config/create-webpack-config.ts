@@ -48,9 +48,11 @@ export const createWebpackConfig = (
 
   const isProd = mode === 'production';
 
+  const clientEntry = resolveShowroom('client-dist/index.js');
+
   return mergeWebpackConfig(
     merge(baseConfig, {
-      entry: resolveShowroom('client-dist/index.js'),
+      entry: config.require ? config.require.concat(clientEntry) : clientEntry,
       output: {
         path: resolveApp(outDir),
         publicPath: prerenderConfig
@@ -130,9 +132,11 @@ export const createPrerenderWebpackConfig = (
 ): webpack.Configuration => {
   const baseConfig = createBaseWebpackConfig(mode, config, { prerender: true });
 
+  const clientEntry = resolveShowroom('client-dist/index.js');
+
   return mergeWebpackConfig(
     merge(baseConfig, {
-      entry: resolveShowroom('client-dist/prerender.js'),
+      entry: config.require ? config.require.concat(clientEntry) : clientEntry,
       output: {
         path: resolveApp(`${outDir}/server`),
         filename: 'prerender.js',

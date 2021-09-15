@@ -3,8 +3,8 @@
 import {
   CompilationError,
   CompileResult,
+  postCompile,
   RequestCompileData,
-  transpileImports,
 } from '@showroomjs/core';
 import * as esbuild from 'esbuild-wasm';
 import wasmPath from 'esbuild-wasm/esbuild.wasm';
@@ -47,7 +47,7 @@ self.onmessage = (ev) => {
           target: 'es2018',
         })
         .then((transformOutput) => {
-          const { code, importNames } = transpileImports(
+          const { code, importNames } = postCompile(
             transformOutput.code,
             serverData.packages
           );

@@ -1,8 +1,4 @@
-import {
-  CodeBlocks,
-  SUPPORTED_LANGUAGES,
-  transpileImports,
-} from '@showroomjs/core';
+import { CodeBlocks, postCompile, SUPPORTED_LANGUAGES } from '@showroomjs/core';
 import { ImportConfig } from '@showroomjs/core/react';
 import * as esbuild from 'esbuild';
 import remarkParse from 'remark-parse';
@@ -38,7 +34,7 @@ const showroomRemarkLoader: LoaderDefinition = function (source, map, meta) {
               target: 'es2018',
             });
 
-            const postTranspileResult = transpileImports(
+            const postTranspileResult = postCompile(
               transformResult.code,
               packages
             );
