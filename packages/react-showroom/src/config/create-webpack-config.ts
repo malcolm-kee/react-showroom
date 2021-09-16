@@ -13,7 +13,6 @@ import {
   generateCodeblocksData,
   generateSections,
   generateWrapper,
-  getImportsAttach,
 } from '../lib/generate-showroom-data';
 import { logToStdout } from '../lib/log-to-stdout';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
@@ -180,9 +179,6 @@ const createBaseWebpackConfig = (
     // so we can pregenerate during build time for better SSR
     [resolveShowroom('node_modules/react-showroom-codeblocks.js')]:
       generateCodeblocksData(components),
-    // a virtual module that exports an `imports` that includes all the imports as configured in `imports` in config file.
-    [resolveShowroom('node_modules/react-showroom-imports.js')]:
-      getImportsAttach(imports),
     // a virtual module that consists of all the sections and component metadata.
     [resolveShowroom('node_modules/react-showroom-sections.js')]:
       generateSections(sections),

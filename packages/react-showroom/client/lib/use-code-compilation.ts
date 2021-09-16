@@ -1,11 +1,97 @@
+import {
+  CompilationErrorResult,
+  CompilationSuccessResult,
+  getSafeName,
+} from '@showroomjs/core';
+import * as React from 'react';
 import { useQuery } from 'react-query';
+import { useCodeImports } from './code-imports-context';
 
-export const useCodeCompilation = (providedCode: string) => {
+export const useCodeCompilation = (
+  providedCode: string,
+  options: {
+    onSuccess?: () => void;
+  } = {}
+) => {
   const code = providedCode.trim();
+  const precompiledImports = useCodeImports();
+  const precompilePkgs = React.useMemo(
+    () => Object.keys(precompiledImports),
+    [precompiledImports]
+  );
 
   return useQuery({
-    queryKey: ['codeCompilation', code],
-    queryFn: () => import('./compile-code').then((m) => m.compileCode(code)),
+    queryKey: ['codeCompilation', code, precompilePkgs],
+    queryFn: () =>
+      import('./compile-code')
+        .then((m) => m.compileCode(code))
+        .then(
+          (
+            result
+          ): Promise<
+            | CompilationErrorResult
+            | (CompilationSuccessResult & { imports?: Record<string, any> })
+          > => {
+            if (result.type === 'error') {
+              return Promise.resolve(result);
+            }
+
+            return prepareImports(
+              precompiledImports,
+              result.importedPackages
+            ).then((finalImports) => ({
+              ...result,
+              imports: finalImports,
+            }));
+          }
+        ),
     keepPreviousData: true,
+    ...options,
+  });
+};
+
+const nonLocalRegex = /^[a-z][a-zA-Z\-\/]+/;
+
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+
+const prepareImports = (
+  precompiledImports: Record<string, any>,
+  importedPackages: Array<string>
+): Promise<Record<string, any>> => {
+  const newImporteds = importedPackages.filter(
+    (pkg) =>
+      nonLocalRegex.test(pkg) &&
+      !hasOwnProperty.call(precompiledImports, getSafeName(pkg))
+  );
+
+  if (newImporteds.length > 0) {
+    const result = { ...precompiledImports };
+
+    return Promise.all(
+      newImporteds.map((newPkg) =>
+        loadRemotePackage(newPkg).then((newModule) => {
+          result[getSafeName(newPkg)] = newModule;
+        })
+      )
+    ).then(() => result);
+  }
+
+  return Promise.resolve(precompiledImports);
+};
+
+const remotePackageMap = new Map<string, any>();
+
+export const loadRemotePackage = (pkgName: string) => {
+  const cached = remotePackageMap.get(pkgName);
+
+  if (cached) {
+    return Promise.resolve(cached);
+  }
+
+  return import(
+    /* webpackIgnore: true */ `https://cdn.skypack.dev/${pkgName}`
+  ).then((result) => {
+    remotePackageMap.set(pkgName, result);
+    return result;
   });
 };

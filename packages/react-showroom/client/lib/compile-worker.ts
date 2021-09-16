@@ -46,12 +46,11 @@ self.onmessage = (ev) => {
           target: 'es2018',
         })
         .then((transformOutput) => {
-          const { code, importNames } = postCompile(transformOutput.code);
+          const compileResult = postCompile(transformOutput.code);
 
           const result: CompileResult = {
+            ...compileResult,
             type: 'success',
-            code,
-            importNames,
             messageId: data.messageId,
           };
           self.postMessage(result);

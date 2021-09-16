@@ -6,7 +6,7 @@ import { ComponentDocArticle } from './components/component-doc-article';
 import { DetailsPageContainer } from './components/details-page-container';
 import { MarkdownArticle } from './components/markdown-article';
 import { CodeThemeContext } from './lib/code-theme-context';
-import { DialogContextProvider } from './lib/dialog-context';
+import { QueryParamProvider } from './lib/use-query-params';
 import { DefaultHomePage } from './pages/index';
 import { colorTheme, THEME } from './theme';
 
@@ -15,8 +15,8 @@ export const App = () => {
     <Wrapper>
       <IdProvider>
         <div className={colorTheme}>
-          <CodeThemeContext.Provider value={THEME.codeTheme}>
-            <DialogContextProvider>
+          <QueryParamProvider>
+            <CodeThemeContext.Provider value={THEME.codeTheme}>
               <Switch>
                 {sections.map(function SectionRoute(section) {
                   if (section.type === 'link') {
@@ -78,8 +78,8 @@ export const App = () => {
                   <DefaultHomePage />
                 </Route>
               </Switch>
-            </DialogContextProvider>
-          </CodeThemeContext.Provider>
+            </CodeThemeContext.Provider>
+          </QueryParamProvider>
         </div>
       </IdProvider>
     </Wrapper>

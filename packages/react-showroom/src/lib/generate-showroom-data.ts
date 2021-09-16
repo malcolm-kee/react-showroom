@@ -1,9 +1,7 @@
 import {
-  ImportConfig,
   ReactShowroomComponentSectionConfig,
   ReactShowroomSectionConfig,
 } from '@showroomjs/core/react';
-import { getClientImportMap } from './get-client-import-map';
 
 export const generateCodeblocksData = (
   components: Array<ReactShowroomComponentSectionConfig>
@@ -43,21 +41,6 @@ function compileComponentSection(
     },
   }`;
 }
-
-export const getImportsAttach = (
-  importConfigs: Array<ImportConfig> | undefined
-) => {
-  const importMap = getClientImportMap(importConfigs);
-
-  return `export const imports = {};
-${Object.values(importMap)
-  .map(({ varName, path }) => `import * as ${varName} from '${path}';`)
-  .join('\n')}
-  ${Object.values(importMap)
-    .map(({ varName }) => `imports.${varName} = ${varName};`)
-    .join('\n')}
-`;
-};
 
 export const generateSections = (
   sections: Array<ReactShowroomSectionConfig>

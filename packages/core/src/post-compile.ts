@@ -30,9 +30,7 @@ export const postCompile = (providedCode: string): PostCompileResult => {
   const importNames: Array<string> = [];
   const importedPackages: Array<string> = [];
 
-  if (!hasRender(code)) {
-    code = insertRender(code);
-  }
+  code = insertRenderIfEndWithJsx(code);
 
   if (hasImports(code)) {
     const ast = acorn.parse(code, ACORN_OPTIONS);
@@ -68,7 +66,7 @@ export const postCompile = (providedCode: string): PostCompileResult => {
 // Strip semicolon (;) at the end
 const unsemicolon = (s: string): string => s.replace(/;\s*$/, '');
 
-const insertRender = (code: string): string => {
+const insertRenderIfEndWithJsx = (code: string): string => {
   let result = code;
 
   try {
@@ -95,7 +93,6 @@ const insertRender = (code: string): string => {
 
 const hasImports = (code: string): boolean =>
   !!code.match(/import[\S\s]+?['"]([^'"]+)['"];?/m);
-const hasRender = (code: string): boolean => !!code.match(/render\(/m);
 
 interface LiteralNode extends Node {
   type: 'Literal';

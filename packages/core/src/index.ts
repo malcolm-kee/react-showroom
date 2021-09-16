@@ -25,16 +25,17 @@ export interface CompilationSuccessResult {
    * Local names for the import statements in the code.
    */
   importNames: Array<string>;
+  importedPackages: Array<string>;
 }
 
-export type CompileResult =
-  | CompilationSuccessResult
-  | {
-      type: 'error';
-      error: string;
-      messageId: number;
-      meta?: CompilationError;
-    };
+export interface CompilationErrorResult {
+  type: 'error';
+  error: string;
+  messageId: number;
+  meta?: CompilationError;
+}
+
+export type CompileResult = CompilationSuccessResult | CompilationErrorResult;
 
 export type CodeBlocks = Record<string, CompilationSuccessResult | undefined>;
 

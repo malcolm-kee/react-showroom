@@ -17,10 +17,6 @@ declare module 'react-showroom-codeblocks' {
   export default data;
 }
 
-declare module 'react-showroom-imports' {
-  export const imports: Record<string, any>;
-}
-
 declare module 'react-showroom-sections' {
   import type { ReactShowroomSection } from '@showroomjs/core/react';
 

@@ -30,9 +30,8 @@ const showroomRemarkLoader: LoaderDefinition = function (source, map, meta) {
             const postTranspileResult = postCompile(transformResult.code);
 
             result[code] = {
+              ...postTranspileResult,
               type: 'success',
-              code: postTranspileResult.code,
-              importNames: postTranspileResult.importNames,
               messageId: -1,
             };
           } catch (err) {
