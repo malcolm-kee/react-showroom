@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "react-showroom dev",
-    "build": "react-showroom build"
+    "build": "react-showroom build && echo react-showroom.js.org > showroom/CNAME"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.3.3",
