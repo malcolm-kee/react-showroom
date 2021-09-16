@@ -1,36 +1,60 @@
 import * as React from 'react';
-import buttonSource from './button?showroomRaw';
-import buttonData from './button?showroomComponent';
-import AnotherButtonDocs from './button-other-example.mdx';
-import anotherbuttonDocsSource from './button-other-example.mdx?showroomRaw';
-import buttonWithCommentsSource from './button-with-comments?showroomRaw';
-import buttonWithCommentsData from './button-with-comments?showroomComponent';
-import oldButtonSource from './old-button?showroomRaw';
-import oldButtonData from './old-button?showroomComponent';
-import docsSource from './button.mdx?showroomRaw';
-import ButtonDocs from './button.mdx';
+import { useQueryClient } from 'react-query';
 import {
-  mdxComponents,
-  ComponentMeta,
   BrowserWindow,
   ComponentDocArticle,
+  ComponentMeta,
+  mdxComponents,
 } from 'react-showroom/client-dist/exposes';
+import AnotherButtonDocs from './button-other-example.mdx';
+import anotherbuttonDocsSource from './button-other-example.mdx?showroomRaw';
+import anotherButtonCodeBlocks from './button-other-example.mdx?showroomRemarkCodeblocks';
+import { imports as buttonWithCommentsImports } from './button-other-example.mdx?showroomRemarkImports';
+import buttonWithCommentsData from './button-with-comments?showroomComponent';
+import buttonWithCommentsSource from './button-with-comments?showroomRaw';
+import ButtonDocs from './button.mdx';
+import docsSource from './button.mdx?showroomRaw';
+import buttonCodeblocks from './button.mdx?showroomRemarkCodeblocks';
+import { imports as buttonImports } from './button.mdx?showroomRemarkImports';
+import buttonData from './button?showroomComponent';
+import buttonSource from './button?showroomRaw';
+import oldButtonData from './old-button?showroomComponent';
+import oldButtonSource from './old-button?showroomRaw';
 
 const { pre: Pre, code: Code } = mdxComponents;
 
-export const DocumentingComponentPropsSource = () => (
-  <Pre>
-    <Code className="language-tsx" static fileName="src/components/button.tsx">
-      {buttonSource}
-    </Code>
-  </Pre>
-);
+export const DocumentingComponentPropsSource = () => {
+  const queryClient = useQueryClient();
+
+  React.useEffect(() => {}, [
+    [buttonCodeblocks, anotherButtonCodeBlocks].forEach((blocks) => {
+      Object.keys(blocks).forEach((soureCode) =>
+        queryClient.setQueryData(
+          ['codeCompilation', soureCode],
+          blocks[soureCode]
+        )
+      );
+    }),
+  ]);
+
+  return (
+    <Pre>
+      <Code
+        className="language-tsx"
+        static
+        fileName="src/components/button.tsx"
+      >
+        {buttonSource}
+      </Code>
+    </Pre>
+  );
+};
 
 export const DocumentingComponentPropsResult = () => (
   <BrowserWindow url="http://localhost:6969" className="mb-4">
-    <div className="p-6">
+    <article className="p-6">
       <ComponentMeta componentData={buttonData} propsDefaultOpen />
-    </div>
+    </article>
   </BrowserWindow>
 );
 
@@ -44,9 +68,9 @@ export const DocumentingComponentCommentsSource = () => (
 
 export const DocumentingComponentCommentsResult = () => (
   <BrowserWindow url="http://localhost:6969" className="mb-4">
-    <div className="p-6">
+    <article className="p-6">
       <ComponentMeta componentData={buttonWithCommentsData} propsDefaultOpen />
-    </div>
+    </article>
   </BrowserWindow>
 );
 
@@ -60,9 +84,9 @@ export const DeprecatedExampleSource = () => (
 
 export const DeprecatedExampleResult = () => (
   <BrowserWindow url="http://localhost:6969" className="mb-4">
-    <div className="p-6">
+    <article className="p-6">
       <ComponentMeta componentData={oldButtonData} propsDefaultOpen />
-    </div>
+    </article>
   </BrowserWindow>
 );
 
@@ -84,6 +108,7 @@ export const MarkdownResult = () => (
           data: {
             component: buttonWithCommentsData,
             doc: ButtonDocs,
+            imports: buttonImports,
           },
         }}
       />
@@ -109,6 +134,7 @@ export const AnotherMarkdownResult = () => (
           data: {
             component: buttonWithCommentsData,
             doc: AnotherButtonDocs,
+            imports: buttonWithCommentsImports,
           },
         }}
       />

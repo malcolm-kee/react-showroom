@@ -1,8 +1,8 @@
 import { omit, safeEval } from '@showroomjs/core';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { imports } from 'react-showroom-imports';
 import * as tslib from 'tslib';
+import { useCodeImports } from '../lib/code-imports-context';
 import { useCodeVariables } from '../lib/code-variables-context';
 export interface CodePreviewProps {
   /**
@@ -13,15 +13,18 @@ export interface CodePreviewProps {
    * Local names for the import statements in the code.
    */
   importNames: Array<string>;
+  imports?: Record<string, any>;
 }
 
 export const CodePreview = (props: CodePreviewProps) => {
   const codeVariables = useCodeVariables();
+  const imports = useCodeImports();
 
   const evalCode = React.useCallback(
     (
       code: string,
       importNames: Array<string>,
+      imports: Record<string, any>,
       render: (ui: React.ReactElement) => void
     ) =>
       safeEval(
@@ -49,15 +52,20 @@ export const CodePreview = (props: CodePreviewProps) => {
 
     let result: React.ReactElement | null = null;
 
-    evalCode(props.code, props.importNames, (ui: React.ReactElement) => {
-      result = ui;
-    });
+    evalCode(
+      props.code,
+      props.importNames,
+      props.imports || imports,
+      (ui: React.ReactElement) => {
+        result = ui;
+      }
+    );
 
     return result;
   });
 
   React.useEffect(() => {
-    evalCode(props.code, props.importNames, setUi);
+    evalCode(props.code, props.importNames, props.imports || imports, setUi);
   }, [props.code]);
 
   return ui;

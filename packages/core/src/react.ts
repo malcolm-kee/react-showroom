@@ -274,6 +274,7 @@ export interface ComponentDocItem {
     Component: ComponentType<any> | undefined;
   };
   doc: null | ComponentType<any>;
+  imports: Record<string, any>;
 }
 
 export interface ReactShowroomComponentSection {

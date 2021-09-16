@@ -4,6 +4,18 @@ declare module '*?showroomRaw' {
   export default value;
 }
 
+declare module '*.mdx?showroomRemarkCodeblocks' {
+  import { CodeBlocks } from '@showroomjs/core';
+
+  var codeBlocks: CodeBlocks;
+
+  export = codeBlocks;
+}
+
+declare module '*?showroomRemarkImports' {
+  export var imports: Record<string, any>;
+}
+
 declare module '*?showroomComponent' {
   import { ComponentDocItem } from '@showroomjs/core/react';
 

@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 0.4.0
+
+### New Features
+
+- `import` statements in examples will be automatically parsed and the package will be injected if the package is available in the project instead of requires manual addition to the `imports` in the configuration.
+- If user add additional import statements in the live editor, the package will be downloaded from [Skypack](https://www.skypack.dev/) on the fly.
+- The code will be encoded in the URL if the example is viewed in Dialog. This would make it easier for developers to share updated examples.
+
 ## 0.3.0
 
 ### New Features

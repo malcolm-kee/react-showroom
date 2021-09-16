@@ -6,7 +6,11 @@ export const CodeHighlight = (props: {
   language: Language;
   theme: PrismTheme;
 }) => (
-  <Highlight Prism={Prism} {...props}>
+  <Highlight
+    Prism={Prism}
+    {...props}
+    language={isMarkdown(props.language) ? 'markdown' : props.language}
+  >
     {({ tokens, getLineProps, getTokenProps }) => (
       <Fragment>
         {tokens.map((line, i) => (
@@ -22,3 +26,5 @@ export const CodeHighlight = (props: {
     )}
   </Highlight>
 );
+
+const isMarkdown = (language: Language) => ['md', 'mdx'].includes(language);

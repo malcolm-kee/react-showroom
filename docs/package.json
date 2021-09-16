@@ -5,6 +5,7 @@
   "version": "0.3.0",
   "dependencies": {
     "esbuild-loader": "^2.15.1",
+    "react-hook-form": "^7.15.3",
     "react-showroom": "^0.3.0"
   },
   "scripts": {

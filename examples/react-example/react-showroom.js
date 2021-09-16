@@ -26,7 +26,6 @@ module.exports = defineConfig({
       name: 'components',
       path: './src/components',
     },
-    'react-hook-form',
   ],
   build: {
     prerender: true,
