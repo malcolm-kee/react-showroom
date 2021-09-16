@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useQueryClient } from 'react-query';
 import {
   BrowserWindow,
   ComponentDocArticle,
@@ -7,11 +8,13 @@ import {
 } from 'react-showroom/client-dist/exposes';
 import AnotherButtonDocs from './button-other-example.mdx';
 import anotherbuttonDocsSource from './button-other-example.mdx?showroomRaw';
+import anotherButtonCodeBlocks from './button-other-example.mdx?showroomRemarkCodeblocks';
 import { imports as buttonWithCommentsImports } from './button-other-example.mdx?showroomRemarkImports';
 import buttonWithCommentsData from './button-with-comments?showroomComponent';
 import buttonWithCommentsSource from './button-with-comments?showroomRaw';
 import ButtonDocs from './button.mdx';
 import docsSource from './button.mdx?showroomRaw';
+import buttonCodeblocks from './button.mdx?showroomRemarkCodeblocks';
 import { imports as buttonImports } from './button.mdx?showroomRemarkImports';
 import buttonData from './button?showroomComponent';
 import buttonSource from './button?showroomRaw';
@@ -20,13 +23,32 @@ import oldButtonSource from './old-button?showroomRaw';
 
 const { pre: Pre, code: Code } = mdxComponents;
 
-export const DocumentingComponentPropsSource = () => (
-  <Pre>
-    <Code className="language-tsx" static fileName="src/components/button.tsx">
-      {buttonSource}
-    </Code>
-  </Pre>
-);
+export const DocumentingComponentPropsSource = () => {
+  const queryClient = useQueryClient();
+
+  React.useEffect(() => {}, [
+    [buttonCodeblocks, anotherButtonCodeBlocks].forEach((blocks) => {
+      Object.keys(blocks).forEach((soureCode) =>
+        queryClient.setQueryData(
+          ['codeCompilation', soureCode],
+          blocks[soureCode]
+        )
+      );
+    }),
+  ]);
+
+  return (
+    <Pre>
+      <Code
+        className="language-tsx"
+        static
+        fileName="src/components/button.tsx"
+      >
+        {buttonSource}
+      </Code>
+    </Pre>
+  );
+};
 
 export const DocumentingComponentPropsResult = () => (
   <BrowserWindow url="http://localhost:6969" className="mb-4">

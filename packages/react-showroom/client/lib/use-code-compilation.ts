@@ -3,7 +3,6 @@ import {
   CompilationSuccessResult,
   getSafeName,
 } from '@showroomjs/core';
-import * as React from 'react';
 import { useQuery } from 'react-query';
 import { useCodeImports } from './code-imports-context';
 
@@ -15,13 +14,9 @@ export const useCodeCompilation = (
 ) => {
   const code = providedCode.trim();
   const precompiledImports = useCodeImports();
-  const precompilePkgs = React.useMemo(
-    () => Object.keys(precompiledImports),
-    [precompiledImports]
-  );
 
   return useQuery({
-    queryKey: ['codeCompilation', code, precompilePkgs],
+    queryKey: ['codeCompilation', code],
     queryFn: () =>
       import('./compile-code')
         .then((m) => m.compileCode(code))
