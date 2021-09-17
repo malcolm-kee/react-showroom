@@ -23,6 +23,10 @@ module.exports = defineConfig({
           type: 'content',
           content: 'docs/documenting-components.mdx',
         },
+        {
+          type: 'content',
+          content: 'docs/documenting-others.mdx',
+        },
       ],
     },
     {

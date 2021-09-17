@@ -81,7 +81,7 @@ export const generateSections = (
             slug: '${section.slug}',
             frontmatter: require('${section.sourcePath}').frontmatter || {},
             headings: require('${section.sourcePath}').headings || [],
-            imports: require('${section.sourcePath}?showroomRemarkImports').imports || {},
+            imports: require('${section.sourcePath}?showroomRemarkDocImports').imports || {},
           }`;
         }
 

@@ -1,0 +1,55 @@
+# Title
+
+I am some content.
+
+## Section Title
+
+Other content.
+
+A [local link](/api/configuration) and an [external link](https://github.com/malcolm-kee/react-showroom).
+
+### Sub-subsection
+
+List items:
+
+- item 1
+- item 2
+- item 3
+
+Numbered items:
+
+1. `react-showroom`
+1. orange
+1. durian
+
+## Code Blocks
+
+Different from the component examples, code blocks are static by default.
+
+```js
+const { buildShowroom } = require('react-showroom');
+
+buildShowroom();
+```
+
+Make an example interative using `live` props.
+
+```tsx live
+const LiveExample = () => {
+  const [count, setCount] = React.useState(0);
+
+  return (
+    <div className="p-4 text-center">
+      <button
+        type="button"
+        onClick={() => setCount(count + 1)}
+        className="px-6 py-2 w-24 bg-pink-700 text-white shadow rounded"
+      >
+        {count}
+      </button>
+    </div>
+  );
+};
+
+<LiveExample />;
+```

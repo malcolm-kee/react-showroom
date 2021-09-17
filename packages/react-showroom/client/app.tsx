@@ -1,5 +1,6 @@
 import { IdProvider } from '@radix-ui/react-id';
-import { Route, Switch } from 'react-router-dom';
+import * as React from 'react';
+import { Route, Switch, useLocation } from 'react-router-dom';
 import sections from 'react-showroom-sections';
 import Wrapper from 'react-showroom-wrapper';
 import { ComponentDocArticle } from './components/component-doc-article';
@@ -11,6 +12,33 @@ import { DefaultHomePage } from './pages/index';
 import { colorTheme, THEME } from './theme';
 
 export const App = () => {
+  const location = useLocation();
+
+  React.useEffect(() => {
+    const hashMatch = location.hash;
+
+    if (hashMatch) {
+      const hashTarget = document.querySelector(hashMatch);
+
+      if (hashTarget) {
+        let isCurrent = true;
+
+        import(
+          /* webpackPrefetch: true */
+          'scroll-into-view-if-needed'
+        ).then((scroll) => {
+          if (isCurrent) {
+            scroll.default(hashTarget);
+          }
+        });
+
+        return () => {
+          isCurrent = false;
+        };
+      }
+    }
+  }, [location]);
+
   return (
     <Wrapper>
       <IdProvider>

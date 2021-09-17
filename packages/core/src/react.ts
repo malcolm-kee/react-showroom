@@ -156,8 +156,7 @@ export interface ReactShowroomConfiguration {
   /**
    * modules to be available in examples via `import`.
    *
-   * - If it's a local module in the project, pass 'name' (how it is imported) and 'path' (relative path from project root).
-   * - If it's a third-party library, pass the package name.
+   * Pass 'name' (how it is imported) and 'path' (relative path from project root).
    */
   imports?: Array<ImportConfig>;
   /**
@@ -283,23 +282,27 @@ export interface ReactShowroomComponentSection {
   slug: string;
 }
 
+export interface ReactShowroomMarkdownFrontmatter {
+  title?: string;
+  order?: number;
+  hideSidebar?: boolean;
+  hideHeader?: boolean;
+  description?: string;
+}
+
+export interface ReactShowroomMarkdownHeading {
+  text: string;
+  id?: string;
+  rank: number;
+}
+
 export interface ReactShowroomMarkdownSection {
   type: 'markdown';
   Component: ComponentType<any>;
   title: string;
   slug: string;
-  frontmatter: {
-    title?: string;
-    order?: number;
-    hideSidebar?: boolean;
-    hideHeader?: boolean;
-    description?: string;
-  };
-  headings: Array<{
-    text: string;
-    id?: string;
-    rank: number;
-  }>;
+  frontmatter: ReactShowroomMarkdownFrontmatter;
+  headings: Array<ReactShowroomMarkdownHeading>;
 }
 
 interface ReactShowroomLinkSection {

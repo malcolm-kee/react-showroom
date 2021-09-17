@@ -12,7 +12,7 @@ Learn how to configure React Showroom to fit your use case.
 
 You can declare a static object or a function call that return the object.
 
-```js fileName="react-showroom.js" static
+```js fileName="react-showroom.js"
 // @ts-check
 const { defineConfig } = require('react-showroom');
 const webpackConfig = require('./webpack.config');
@@ -22,7 +22,7 @@ module.exports = defineConfig({
 });
 ```
 
-```js fileName="react-showroom.js" static
+```js fileName="react-showroom.js"
 // @ts-check
 const { defineConfig } = require('react-showroom');
 const webpackConfig = require('./webpack.config');
@@ -64,34 +64,22 @@ If you want to organize your components in a nested structure, use `items`.
 
 Modules to be available in examples via `import`.
 
-- If it's a local module in the project, pass 'name' (how it is imported) and 'path' (relative path from project root).
+Pass `name` (how it is imported) and `path` (relative path from project root).
 
-  For example, if all your components should be imported with `'@/components'`, which is a file at `src/components/index.ts` in your project, then add the following configuration:
+For example, if all your components should be imported with `'@/components'`, which is a file at `src/components/index.ts` in your project, then add the following configuration:
 
-  ```js fileName="react-showroom.js" static
-  const { defineConfig } = require('react-showroom');
+```js fileName="react-showroom.js"
+const { defineConfig } = require('react-showroom');
 
-  module.exports = defineConfig({
-    imports: [
-      {
-        name: '@/components',
-        path: './src/components',
-      },
-    ],
-  });
-  ```
-
-- If it's a third-party library, pass the package name.
-
-  For example, if you want to allow your examples to import `react-hook-form`, add the following configuration:
-
-  ```js fileName="react-showroom.js" static
-  const { defineConfig } = require('react-showroom');
-
-  module.exports = defineConfig({
-    imports: ['react-hook-form'],
-  });
-  ```
+module.exports = defineConfig({
+  imports: [
+    {
+      name: '@/components',
+      path: './src/components',
+    },
+  ],
+});
+```
 
 ### `build.outDir`
 
@@ -147,7 +135,7 @@ A group of components.
 
 Example:
 
-```js static
+```js
 {
   type: 'components',
   title: 'Optional title',
@@ -162,7 +150,7 @@ A markdown file.
 
 Example:
 
-```js static
+```js
 {
   type: 'content',
   title: 'Optional title, if not provided by will be inferred from first h1 of the markdown file',
@@ -177,7 +165,7 @@ A link (internal or external).
 
 Example:
 
-```js static
+```js
 {
   type: 'link',
   title: 'GitHub',
@@ -191,7 +179,7 @@ A group of markdown files.
 
 Example:
 
-```js static
+```js
 {
   type: 'docs',
   folder: 'docs-folder'
@@ -204,7 +192,7 @@ A grouping of items, which can contain more `items`.
 
 Example:
 
-```js static
+```js
 {
   type: 'group',
   title: 'Core',
@@ -269,7 +257,7 @@ Customize the primary color.
 
 Should be an object with the following shape:
 
-```js static
+```js
 {
   'primary-50': string;
   'primary-100': string;
@@ -290,7 +278,7 @@ An object to customize your navigation bar.
 
 Example:
 
-```js static
+```js
 {
     version: '1.2.2',
     logo: {

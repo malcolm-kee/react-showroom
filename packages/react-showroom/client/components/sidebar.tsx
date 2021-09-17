@@ -266,5 +266,6 @@ const Link = styled(NavLink, {
   },
   '&[aria-current="page"]': {
     color: '$primary-900',
+    backgroundColor: 'White',
   },
 });

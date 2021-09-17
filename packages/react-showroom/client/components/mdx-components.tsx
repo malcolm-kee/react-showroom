@@ -1,8 +1,6 @@
 import { styled } from '@showroomjs/ui';
 import { H1 } from './base';
 import { Code, Pre } from './code-block';
-import { Link } from 'react-router-dom';
-import * as React from 'react';
 import { GenericLink } from './generic-link';
 
 const Li = styled('li', {
@@ -23,6 +21,22 @@ const Ul = styled('ul', {
       height: '0.375em',
       top: 'calc(.875em - .1875em)',
       left: '0.25em',
+    },
+  },
+});
+
+const Ol = styled('ul', {
+  marginY: '1.25em',
+  counterReset: 'list-item',
+  [`& ${Li}`]: {
+    counterIncrement: 'list-item',
+    position: 'relative',
+    paddingLeft: '1.75em',
+    '&:before': {
+      content: 'counter(list-item) ". "',
+      position: 'absolute',
+      fontWeight: '400',
+      left: '0',
     },
   },
 });
@@ -74,5 +88,5 @@ export const mdxComponents = {
   }),
   ul: Ul,
   li: Li,
-  // head: Helmet as any, // somehow this not working
+  ol: Ol,
 };

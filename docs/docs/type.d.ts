@@ -16,18 +16,32 @@ declare module '*?showroomRemarkImports' {
   export var imports: Record<string, any>;
 }
 
+declare module '*?showroomRemarkDocImports' {
+  export var imports: Record<string, any>;
+}
+
 declare module '*?showroomComponent' {
   import { ComponentDocItem } from '@showroomjs/core/react';
 
-  var data: ComponentDocItem['component'];
+  const data: ComponentDocItem['component'];
 
   export default data;
 }
 
 declare module '*.mdx' {
+  import {
+    ReactShowroomMarkdownFrontmatter,
+    ReactShowroomMarkdownHeading,
+  } from '@showroomjs/core/react';
   import { ComponentType } from 'react';
 
-  var data: ComponentType<any>;
+  export const headings: Array<ReactShowroomMarkdownHeading>;
 
-  export = data;
+  export const frontmatter: ReactShowroomMarkdownFrontmatter | undefined;
+
+  export const title: string;
+
+  const data: ComponentType<any>;
+
+  export default data;
 }

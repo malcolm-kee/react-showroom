@@ -1,7 +1,11 @@
 import { Helmet } from 'react-helmet';
 import { THEME } from '../theme';
 
-export const Seo = (props: { title?: string; description?: string }) => (
+export const Seo = (props: {
+  title?: string;
+  description?: string;
+  children?: React.ReactNode;
+}) => (
   <Helmet
     title={props.title}
     defaultTitle={THEME.title}
@@ -20,5 +24,6 @@ export const Seo = (props: { title?: string; description?: string }) => (
     {props.description && (
       <meta property="og:description" content={props.description} />
     )}
+    {props.children}
   </Helmet>
 );

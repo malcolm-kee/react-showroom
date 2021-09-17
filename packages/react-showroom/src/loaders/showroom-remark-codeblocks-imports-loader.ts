@@ -1,17 +1,11 @@
-import {
-  getSafeName,
-  isString,
-  postCompile,
-  SUPPORTED_LANGUAGES,
-} from '@showroomjs/core';
+import { CodeBlocks, getSafeName, isString } from '@showroomjs/core';
 import { ImportConfig } from '@showroomjs/core/react';
-import * as esbuild from 'esbuild';
-import remarkParse from 'remark-parse';
-import unified from 'unified';
-import vFile from 'vfile';
 import type { LoaderDefinition } from 'webpack';
-import { codeblocks } from '../lib/codeblocks';
 import { paths, resolveApp } from '../lib/paths';
+
+export interface ShowroomRemarkCodeblocksImportLoaderOptions {
+  imports: Array<ImportConfig> | undefined;
+}
 
 interface ImportMapData {
   name: string;
@@ -66,59 +60,41 @@ ${Object.values(importMap)
 `;
 };
 
-const parser = unified().use(remarkParse as any);
+const showroomRemarkCodeblocksImportsLoader: LoaderDefinition<ShowroomRemarkCodeblocksImportLoaderOptions> =
+  function (_, __, meta) {
+    if (!meta) {
+      throw new Error(
+        `showroom-remark-codeblocks-imports-loader must be piped after showroom-remark-codeblocks-loader`
+      );
+    }
 
-const showroomRemarkCodeblocksImportsLoader: LoaderDefinition = function (
-  source,
-  map,
-  meta
-) {
-  const cb = this.async();
+    const processed = meta as CodeBlocks;
 
-  const tree = parser.parse(vFile(source));
+    const { imports } = this.getOptions();
 
-  const { imports } = this.getOptions() as {
-    imports: Array<ImportConfig> | undefined;
-  };
+    const result: Array<ImportConfig> = imports ? imports.slice() : [];
 
-  const blocks = codeblocks(tree).codeblocks;
+    Object.keys(processed).forEach((sourceCodeSnippet) => {
+      const compiled = processed[sourceCodeSnippet];
 
-  const result: Array<ImportConfig> = imports ? imports.slice() : [];
+      if (compiled) {
+        const { importedPackages } = compiled;
 
-  async function transformCodes() {
-    for (const lang of Object.keys(blocks)) {
-      if (SUPPORTED_LANGUAGES.includes(lang)) {
-        for (const code of blocks[lang]) {
-          try {
-            const transformResult = await esbuild.transform(code, {
-              loader: 'tsx',
-              target: 'es2018',
-            });
-
-            const { importedPackages } = postCompile(transformResult.code);
-
-            for (const pkgName of importedPackages) {
-              if (
-                !result.some((importConfig) =>
-                  isString(importConfig)
-                    ? importConfig === pkgName
-                    : importConfig.name === pkgName
-                )
-              ) {
-                result.push(pkgName);
-              }
-            }
-          } catch (err) {
-            console.error(err);
+        for (const pkgName of importedPackages) {
+          if (
+            !result.some((importConfig) =>
+              isString(importConfig)
+                ? importConfig === pkgName
+                : importConfig.name === pkgName
+            )
+          ) {
+            result.push(pkgName);
           }
         }
       }
-    }
-  }
+    });
 
-  transformCodes().finally(() => {
-    cb(null, getImportsAttach(result), map, meta);
-  });
-};
+    return getImportsAttach(result);
+  };
 
 module.exports = showroomRemarkCodeblocksImportsLoader;
