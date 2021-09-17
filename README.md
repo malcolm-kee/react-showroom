@@ -1,5 +1,7 @@
 # react-showroom
 
+[![npm version](https://badge.fury.io/js/react-showroom.svg)](https://badge.fury.io/js/react-showroom)
+
 https://react-showroom.netlify.app/
 
 Document React components by declaring props definition and writing markdown.

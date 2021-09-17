@@ -1,4 +1,5 @@
 // @ts-check
+const path = require('path');
 const { defineConfig } = require('react-showroom');
 
 module.exports = defineConfig({
@@ -29,6 +30,9 @@ module.exports = defineConfig({
   ],
   build: {
     prerender: true,
+  },
+  docgen: {
+    tsconfigPath: path.resolve(__dirname, 'tsconfig.build.json'),
   },
   assetDirs: ['public'],
   wrapper: 'docs/provider.tsx',
