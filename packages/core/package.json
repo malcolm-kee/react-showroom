@@ -7,7 +7,10 @@
   "scripts": {
     "build": "tsc -b .",
     "dev": "yarn build --watch",
-    "clean": "rimraf dist *.tsbuildinfo"
+    "clean": "rimraf dist *.tsbuildinfo",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:ci": "jest --watchAll=false --coverage --runInBand"
   },
   "devDependencies": {
     "typescript": "^4.4.2"

@@ -33,6 +33,9 @@ jobs:
         env:
           CI: true
 
+      - name: Test
+        run: yarn test
+
       - name: Deploy Docs to Netlify
         uses: nwtgck/actions-netlify@v1.2
         with:
