@@ -55,6 +55,7 @@
     "remark-parse": "9.0.0",
     "remark-stringify": "^9.0.1",
     "rimraf": "^3.0.2",
+    "scroll-into-view-if-needed": "^2.2.28",
     "slugify": "^1.6.0",
     "snarkdown": "^2.0.0",
     "temp": "^0.9.4",
@@ -91,6 +92,9 @@
     "clean": "rimraf dist client-dist *.tsbuildinfo"
   },
   "files": [
+    "client.js",
+    "react-showroom.js",
+    "client.d.ts",
     "client-dist",
     "dist",
     "public",

@@ -59,10 +59,15 @@ will produces the following output.
 
 Few things to take note:
 
-- You must tag the code block with `tsx` or `jsx` for it to become live example.
-- If the last expression in your code block is a JSX, that will be the displayed result of the example.
-- The component is automatically injected into the scope, so you doesn't need to import it.
-- `React` is automatically injected into the scope as well, but it's fine if you want to import it.
+1. You must tag the code block with `tsx` or `jsx` for it to become live example.
+1. If the last expression in your code block is a JSX, that will be the displayed result of the example.
+1. The component is automatically injected into the scope, so you doesn't need to import it.
+1. `React` is automatically injected into the scope as well, but it's fine if you want to import it.
+
+Handy features for collaborations:
+
+1. If you click the "Standalone" button to open the standalone view (a dialog), the states of the dialog is encoded in the URL. This allows you to share the URL to others and they can open the specific example using the URL.
+1. If you edit the code example in standalone view, the change will be encoded in the URL as well. You can use that to tweak the example and share the changes.
 
 A few scenarios for code blocks:
 

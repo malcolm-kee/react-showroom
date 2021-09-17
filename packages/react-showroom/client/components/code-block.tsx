@@ -23,14 +23,20 @@ export const Pre = (props: { children: React.ReactNode }) => (
   </Div>
 );
 
-export const Code = (props: {
-  children: React.ReactNode;
-  className?: string;
+export interface CodeProps extends React.ComponentPropsWithoutRef<'code'> {
   static?: boolean;
-  id?: string;
   inlineBlock?: boolean;
   fileName?: string;
-}) => {
+  noEditor?: boolean;
+}
+
+export const Code = ({
+  static: isStatic,
+  inlineBlock,
+  fileName,
+  noEditor,
+  ...props
+}: CodeProps) => {
   const isBlockCode = React.useContext(IsBlockCodeContext);
 
   if (!isBlockCode || typeof props.children !== 'string') {
@@ -40,24 +46,24 @@ export const Code = (props: {
   const lang: any = props.className && props.className.split('-').pop();
   const code = props.children.trim();
 
-  const heading = props.fileName ? (
+  const heading = fileName ? (
     <Div
       css={{
         px: '$4',
         py: '$3',
-        backgroundColor: '$gray-300',
+        backgroundColor: '$gray-200',
         roundedT: '$md',
         fontSize: '$sm',
         lineHeight: '$sm',
       }}
     >
-      <code>{props.fileName}</code>
+      <code>{fileName}</code>
     </Div>
   ) : null;
 
   const theme = useCodeTheme();
 
-  if (!SUPPORTED_LANGUAGES.includes(lang) || props.static) {
+  if (!SUPPORTED_LANGUAGES.includes(lang) || isStatic) {
     return (
       <>
         {heading}
@@ -68,19 +74,19 @@ export const Code = (props: {
           css={{
             py: 10,
             fontSize: 14,
-            roundedT: heading ? '$none' : props.inlineBlock ? '$xl' : '$base',
-            roundedB: props.inlineBlock ? '$xl' : '$base',
+            roundedT: heading ? '$none' : inlineBlock ? '$xl' : '$base',
+            roundedB: inlineBlock ? '$xl' : '$base',
             whiteSpace: 'pre',
             fontFamily: 'monospace',
             position: 'relative',
-            display: props.inlineBlock ? 'inline-block' : 'block',
-            px: props.inlineBlock ? '$6' : 10,
+            display: inlineBlock ? 'inline-block' : 'block',
+            px: inlineBlock ? '$6' : 10,
             overflowX: 'auto',
           }}
           className={props.className}
         >
           <CodeHighlight code={code} language={lang} theme={theme} />
-          {!props.inlineBlock && lang && <LanguageTag language={lang} />}
+          {!inlineBlock && lang && <LanguageTag language={lang} />}
         </Div>
       </>
     );
@@ -96,6 +102,7 @@ export const Code = (props: {
         id={props.id}
         hasDialog
         hasHeading={!!heading}
+        noEditor={noEditor}
       />
     </>
   );

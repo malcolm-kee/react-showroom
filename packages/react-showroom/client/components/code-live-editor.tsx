@@ -9,6 +9,7 @@ import { useCodeCompilation } from '../lib/use-code-compilation';
 import { useDebounce } from '../lib/use-debounce';
 import { useQueryParams } from '../lib/use-query-params';
 import { Div, Span } from './base';
+import { BrowserWindow } from './browser-window';
 import { CodeEditor, CodeEditorProps } from './code-editor';
 import { CodePreview } from './code-preview';
 
@@ -20,6 +21,7 @@ export interface CodeLiveEditorProps
   id?: string;
   className?: string;
   shouldEncodeInUrl?: boolean;
+  noEditor?: boolean;
 }
 
 export const CodeLiveEditor = ({
@@ -27,6 +29,7 @@ export const CodeLiveEditor = ({
   hasHeading,
   className,
   shouldEncodeInUrl,
+  noEditor,
   ...props
 }: CodeLiveEditorProps) => {
   const [queryParams, setQueryParams] = useQueryParams();
@@ -58,8 +61,8 @@ export const CodeLiveEditor = ({
     !hasDialog
   );
 
-  return (
-    <div className={className}>
+  const content = (
+    <>
       <Div
         css={{
           position: 'relative',
@@ -113,51 +116,65 @@ export const CodeLiveEditor = ({
           </Div>
         )}
       </Div>
-      <Collapsible.Root open={showCode} onOpenChange={setShowCode}>
-        <Div
-          css={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            py: '$1',
-          }}
-        >
-          <Collapsible.Button
+      {!noEditor && (
+        <Collapsible.Root open={showCode} onOpenChange={setShowCode}>
+          <Div
             css={{
               display: 'flex',
-              alignItems: 'center',
-              gap: '$1',
-              fontSize: '$sm',
-              lineHeight: '$sm',
+              justifyContent: 'space-between',
+              py: '$1',
             }}
           >
-            <Collapsible.ToggleIcon
-              hide={showCode}
-              aria-label={showCode ? 'Hide' : 'View'}
-              width="16"
-              height="16"
+            <Collapsible.Button
+              css={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '$1',
+                fontSize: '$sm',
+                lineHeight: '$sm',
+              }}
+            >
+              <Collapsible.ToggleIcon
+                hide={showCode}
+                aria-label={showCode ? 'Hide' : 'View'}
+                width="16"
+                height="16"
+              />
+              Code
+            </Collapsible.Button>
+            {hasDialog && <CodeLiveEditorFocus {...props} />}
+          </Div>
+          <Collapsible.Content>
+            <CodeEditor
+              code={code}
+              onChange={(newCode) => {
+                setCode(newCode);
+                if (shouldEncodeInUrl) {
+                  setQueryParams({
+                    code:
+                      newCode === props.code
+                        ? undefined
+                        : safeCompress(newCode),
+                  });
+                }
+              }}
+              language={props.language}
+              className={editorBottom()}
+              theme={props.theme}
             />
-            Code
-          </Collapsible.Button>
-          {hasDialog && <CodeLiveEditorFocus {...props} />}
-        </Div>
-        <Collapsible.Content>
-          <CodeEditor
-            code={code}
-            onChange={(newCode) => {
-              setCode(newCode);
-              if (shouldEncodeInUrl) {
-                setQueryParams({
-                  code:
-                    newCode === props.code ? undefined : safeCompress(newCode),
-                });
-              }
-            }}
-            language={props.language}
-            className={editorBottom()}
-            theme={props.theme}
-          />
-        </Collapsible.Content>
-      </Collapsible.Root>
+          </Collapsible.Content>
+        </Collapsible.Root>
+      )}
+    </>
+  );
+
+  return (
+    <div className={className}>
+      {noEditor ? (
+        <BrowserWindow url="preview">{content}</BrowserWindow>
+      ) : (
+        content
+      )}
     </div>
   );
 };

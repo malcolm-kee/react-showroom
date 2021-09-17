@@ -5,7 +5,7 @@ import {
   ComponentDocArticle,
   ComponentMeta,
   mdxComponents,
-} from 'react-showroom/client-dist/exposes';
+} from 'react-showroom/client';
 import AnotherButtonDocs from './button-other-example.mdx';
 import anotherbuttonDocsSource from './button-other-example.mdx?showroomRaw';
 import anotherButtonCodeBlocks from './button-other-example.mdx?showroomRemarkCodeblocks';
@@ -26,7 +26,7 @@ const { pre: Pre, code: Code } = mdxComponents;
 export const DocumentingComponentPropsSource = () => {
   const queryClient = useQueryClient();
 
-  React.useEffect(() => {}, [
+  React.useEffect(() => {
     [buttonCodeblocks, anotherButtonCodeBlocks].forEach((blocks) => {
       Object.keys(blocks).forEach((soureCode) =>
         queryClient.setQueryData(
@@ -34,8 +34,8 @@ export const DocumentingComponentPropsSource = () => {
           blocks[soureCode]
         )
       );
-    }),
-  ]);
+    });
+  }, []);
 
   return (
     <Pre>

@@ -1,4 +1,4 @@
-import { Environment } from '@showroomjs/core';
+import { Environment, isString } from '@showroomjs/core';
 import { NormalizedReactShowroomConfiguration } from '@showroomjs/core/react';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
@@ -26,6 +26,7 @@ import { rehypeMdxHeadings } from '../plugins/rehype-mdx-headings';
 import { rehypeMetaAsAttribute } from '../plugins/rehype-meta-as-attribute';
 import { createBabelPreset } from './create-babel-preset';
 import VirtualModulesPlugin = require('webpack-virtual-modules');
+import type { ShowroomRemarkCodeBlocksLoaderOptions } from '../loaders/showroom-remark-codeblocks-loader';
 const WebpackMessages = require('webpack-messages');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
@@ -188,6 +189,14 @@ const createBaseWebpackConfig = (
 
   const babelPreset = createBabelPreset(mode);
 
+  const codeBlocksOptions: ShowroomRemarkCodeBlocksLoaderOptions = {
+    filter: (code) => !isString(code.meta) || !code.meta.includes('static'),
+  };
+
+  const docsCodeBlocksOptions: ShowroomRemarkCodeBlocksLoaderOptions = {
+    filter: (code) => isString(code.meta) && code.meta.includes('live'),
+  };
+
   return {
     mode,
     resolve: {
@@ -237,6 +246,7 @@ const createBaseWebpackConfig = (
               use: [
                 {
                   loader: 'showroom-remark-codeblocks-loader',
+                  options: codeBlocksOptions,
                 },
               ],
             },
@@ -248,6 +258,25 @@ const createBaseWebpackConfig = (
                   options: {
                     imports,
                   },
+                },
+                {
+                  loader: 'showroom-remark-codeblocks-loader',
+                  options: codeBlocksOptions,
+                },
+              ],
+            },
+            {
+              resourceQuery: /showroomRemarkDocImports/,
+              use: [
+                {
+                  loader: 'showroom-remark-codeblocks-imports-loader',
+                  options: {
+                    imports,
+                  },
+                },
+                {
+                  loader: 'showroom-remark-codeblocks-loader',
+                  options: docsCodeBlocksOptions,
                 },
               ],
             },

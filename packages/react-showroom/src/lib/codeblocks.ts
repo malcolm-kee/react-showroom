@@ -1,43 +1,62 @@
-export const codeblocks = <Name extends string = 'codeblocks'>(
-  tree: any,
+import type { Parent, Code } from 'mdast';
+
+const all = 'all';
+
+export type AllLangResult<Name extends string> = {
+  [Key in Name]: Record<string, Array<string>>;
+};
+
+export type SingleLangResult<Name extends string> = {
+  [Key in Name]: Array<string>;
+};
+
+export const codeblocks = <
+  Name extends string = 'codeblocks',
+  Lang extends string = 'all'
+>(
+  tree: Parent,
   {
-    lang = 'all',
+    lang = all as Lang,
     name = 'codeblocks' as Name,
     formatter = (v) => v,
+    filter = () => true,
   }: {
     name?: Name;
-    lang?: string;
+    lang?: Lang;
     formatter?: (v: string) => string;
+    filter?: (child: Code) => boolean;
   } = {}
-): {
-  [Key in Name]: Record<string, Array<string>>;
-} => {
+): Lang extends 'all' ? AllLangResult<Name> : SingleLangResult<Name> => {
   const { children } = tree;
-  const data = {
-    [name]: {},
-  };
+  const result =
+    lang === all
+      ? ({
+          [name]: {},
+        } as AllLangResult<Name>)
+      : ({
+          [name]: [] as Array<string>,
+        } as SingleLangResult<Name>);
   let i = -1;
-  let child;
 
   while (++i < children.length) {
-    child = children[i];
+    const child = children[i];
 
-    if (child.type === 'code' && child.value && child.meta !== 'static') {
+    if (child.type === 'code' && child.value && filter(child)) {
       if (lang === 'all') {
         child.lang = child.lang || '_';
         // @ts-ignore
-        data[name][child.lang] = data[name][child.lang] || [];
+        result[name][child.lang] = result[name][child.lang] || [];
         // @ts-ignore
-        data[name][child.lang].push(formatter(child.value));
+        result[name][child.lang].push(formatter(child.value));
       } else {
         if (child.lang === lang) {
           // @ts-ignore
-          data[name].push(formatter(child.value));
+          result[name].push(formatter(child.value));
         }
       }
     }
   }
 
   // @ts-ignore
-  return data;
+  return result;
 };

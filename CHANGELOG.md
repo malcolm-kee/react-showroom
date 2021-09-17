@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 0.4.1
+
+### Bug Fixes
+
+- Default code blocks to be static for docs.
+
+### Documentations
+
+- Add docs on adding non-component documentations.
+
 ## 0.4.0
 
 ### New Features

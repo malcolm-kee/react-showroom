@@ -41,6 +41,20 @@ const FormExample = () => {
 <FormExample />;
 ```
 
+Use `noEditor` modifier to show only the output result.
+
+```tsx noEditor
+import * as React from 'react';
+
+const Example = () => {
+  const [on, setOn] = React.useState<boolean>(false);
+
+  return <Button onClick={() => setOn(!on)}>{on ? 'On' : 'Off'}</Button>;
+};
+
+<Example />;
+```
+
 Use `static` modifier to show static code.
 
 ```tsx static

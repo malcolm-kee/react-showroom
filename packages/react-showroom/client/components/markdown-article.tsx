@@ -1,9 +1,9 @@
 import { ReactShowroomMarkdownSection } from '@showroomjs/core/react';
-import { styled, Collapsible } from '@showroomjs/ui';
+import { Collapsible, styled } from '@showroomjs/ui';
+import * as React from 'react';
 import { Article } from './article';
 import { Div } from './base';
 import { mdxComponents } from './mdx-components';
-import * as React from 'react';
 
 export const MarkdownArticle = (props: {
   section: ReactShowroomMarkdownSection;
@@ -178,10 +178,25 @@ export const MarkdownArticle = (props: {
             : undefined
         }
       >
-        <Component components={mdxComponents} />
+        <Component components={components} />
       </Article>
     </Div>
   );
+};
+
+const { code: Code } = mdxComponents;
+
+const components = {
+  ...mdxComponents,
+  code: function CustomCode({
+    live,
+    static: staticValue = !live,
+    ...props
+  }: React.ComponentPropsWithoutRef<typeof Code> & {
+    live?: boolean;
+  }) {
+    return <Code static={staticValue} {...props} />;
+  },
 };
 
 const Item = styled('li');
