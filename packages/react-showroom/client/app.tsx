@@ -1,13 +1,15 @@
 import { IdProvider } from '@radix-ui/react-id';
+import { css, QueryParamProvider } from '@showroomjs/ui';
+import cx from 'classnames';
 import * as React from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import sections from 'react-showroom-sections';
 import Wrapper from 'react-showroom-wrapper';
-import { ComponentDocArticle } from './components/component-doc-article';
 import { DetailsPageContainer } from './components/details-page-container';
 import { MarkdownArticle } from './components/markdown-article';
 import { CodeThemeContext } from './lib/code-theme-context';
-import { QueryParamProvider } from './lib/use-query-params';
+import { SubRootRoute } from './lib/routing';
+import { ComponentDocRoute } from './pages/component-doc-route';
 import { DefaultHomePage } from './pages/index';
 import { colorTheme, THEME } from './theme';
 
@@ -42,7 +44,7 @@ export const App = () => {
   return (
     <Wrapper>
       <IdProvider>
-        <div className={colorTheme}>
+        <div className={cx(colorTheme, wrapper())}>
           <QueryParamProvider>
             <CodeThemeContext.Provider value={THEME.codeTheme}>
               <Switch>
@@ -65,20 +67,18 @@ export const App = () => {
 
                   if (section.type === 'component') {
                     return (
-                      <Route path={`/${section.slug}`} key={section.slug}>
-                        <DetailsPageContainer
-                          title={section.data.component.displayName}
-                          description={section.data.component.description}
-                        >
-                          <ComponentDocArticle doc={section} />
-                        </DetailsPageContainer>
-                      </Route>
+                      <SubRootRoute
+                        path={`/${section.slug}`}
+                        key={section.slug}
+                      >
+                        <ComponentDocRoute section={section} />
+                      </SubRootRoute>
                     );
                   }
 
                   if (section.type === 'markdown') {
                     return (
-                      <Route
+                      <SubRootRoute
                         path={`/${section.slug}`}
                         exact={section.slug === ''}
                         key={section.slug}
@@ -96,7 +96,7 @@ export const App = () => {
                             center={!section.frontmatter.hideSidebar}
                           />
                         </DetailsPageContainer>
-                      </Route>
+                      </SubRootRoute>
                     );
                   }
 
@@ -113,3 +113,7 @@ export const App = () => {
     </Wrapper>
   );
 };
+
+const wrapper = css({
+  height: '100%',
+});

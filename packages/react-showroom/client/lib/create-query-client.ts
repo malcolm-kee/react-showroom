@@ -17,10 +17,14 @@ export const createQueryClient = () => {
 
   Data.items.forEach((item) => {
     Object.keys(item.codeBlocks).forEach((sourceCode) => {
-      queryClient.setQueryData(
-        ['codeCompilation', sourceCode],
-        item.codeBlocks[sourceCode]
-      );
+      const codeData = item.codeBlocks[sourceCode];
+
+      if (codeData) {
+        queryClient.setQueryData(
+          ['codeCompilation', sourceCode, codeData.lang],
+          codeData
+        );
+      }
     });
   });
 

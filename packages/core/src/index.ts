@@ -4,12 +4,13 @@ export { omit } from './object';
 export { ImportMapData, Packages, postCompile } from './post-compile';
 export { parseQueryString, stringifyQueryString } from './query-string';
 export { safeEval } from './safe-eval';
-export { Ssr } from './ssr-types';
+export type { Ssr } from './ssr-types';
 export { isDefined, isNil, isNumber, isString } from './type-guard';
 
 export interface RequestCompileData {
   source: string;
   messageId: number;
+  lang: SupportedLanguage;
 }
 
 export interface CompilationError {
@@ -26,6 +27,8 @@ export interface CompilationSuccessResult {
    */
   importNames: Array<string>;
   importedPackages: Array<string>;
+  lang: SupportedLanguage;
+  initialCodeHash?: string;
 }
 
 export interface CompilationErrorResult {
@@ -39,11 +42,8 @@ export type CompileResult = CompilationSuccessResult | CompilationErrorResult;
 
 export type CodeBlocks = Record<string, CompilationSuccessResult | undefined>;
 
-export const SUPPORTED_LANGUAGES: ReadonlyArray<string> = [
-  'js',
-  'jsx',
-  'ts',
-  'tsx',
-];
+export const SUPPORTED_LANGUAGES = ['js', 'jsx', 'ts', 'tsx'] as const;
+
+export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
 
 export type Environment = 'development' | 'production';

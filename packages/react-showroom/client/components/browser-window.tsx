@@ -98,4 +98,6 @@ const BrowserWindowAddressBar = styled('div', {
   padding: '5px 15px',
   font: '400 13px Arial',
   userSelect: 'none',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
 });

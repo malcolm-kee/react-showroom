@@ -29,9 +29,12 @@ const compileToComponentMetadata = (
 function compileComponentSection(
   component: ReactShowroomComponentSectionConfig
 ) {
+  const { docPath } = component;
+
   return `{
-    doc: ${
-      component.docPath ? `require('${component.docPath}').default` : 'null'
+    doc: ${docPath ? `require('${docPath}').default` : 'null'},
+    codeblocks: ${
+      docPath ? `require('${docPath}?showroomRemarkCodeblocks')` : `{}`
     },
     component: ${compileToComponentMetadata(component)},
     imports: ${

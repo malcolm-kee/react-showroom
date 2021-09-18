@@ -1,15 +1,20 @@
-import type { CompileResult, RequestCompileData } from '@showroomjs/core';
+import type {
+  CompileResult,
+  RequestCompileData,
+  SupportedLanguage,
+} from '@showroomjs/core';
 
 const worker = new Worker(new URL('./compile-worker.js', import.meta.url));
 
 let id = 0;
 
-export const compileCode = (code: string) =>
+export const compileCode = (code: string, lang: SupportedLanguage) =>
   new Promise<CompileResult>((fulfill) => {
     const messageId = id++;
 
     const compileEvent: RequestCompileData = {
       messageId,
+      lang,
       source: code,
     };
     worker.postMessage(compileEvent);

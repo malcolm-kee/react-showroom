@@ -13,36 +13,36 @@ export interface CodeEditorProps {
   style?: CSSProperties;
   theme: PrismTheme;
   className?: string;
+  wrapperClass?: string;
 }
 
 export const CodeEditor = ({
   code: providedCode,
   theme,
   language,
+  wrapperClass,
   ...props
 }: CodeEditorProps) => {
   const [state, setState] = useState<{
     code: string;
     prevCodeProp?: string;
   }>({
-    code: providedCode || '',
+    code: providedCode,
+    prevCodeProp: providedCode,
   });
 
   useEffect(() => {
-    if (state.prevCodeProp && providedCode !== state.prevCodeProp) {
+    if (providedCode !== state.prevCodeProp) {
       setState({ code: providedCode, prevCodeProp: providedCode });
     }
   }, [providedCode]);
 
   const updateContent = (code: string) => {
     setState({ code });
-  };
-
-  useEffect(() => {
-    if (props.onChange) {
-      props.onChange(state.code);
+    if (code !== providedCode && props.onChange) {
+      props.onChange(code);
     }
-  }, [state.code]);
+  };
 
   const highlightCode = (code: string) => (
     <CodeHighlight code={code} theme={theme} language={language} />
@@ -58,6 +58,7 @@ export const CodeEditor = ({
       css={{
         position: 'relative',
       }}
+      className={wrapperClass}
     >
       <Editor
         value={state.code}

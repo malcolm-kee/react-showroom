@@ -1,7 +1,7 @@
 import { parseQueryString, stringifyQueryString } from '@showroomjs/core';
-import { createNameContext } from '@showroomjs/ui';
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
+import { createNameContext } from './create-named-context';
 
 const QueryParamContext = createNameContext<
   ReturnType<typeof useQueryParamsState> | undefined
@@ -11,12 +11,21 @@ const useQueryParamsState = () => {
   const location = useLocation();
   const history = useHistory();
 
-  const [paramValue, setParamValue] = React.useState<{
-    [key: string]: string | undefined;
-  }>({});
+  const [{ value: paramValue, isReady }, setParamValue] = React.useState<{
+    isReady: boolean;
+    value: {
+      [key: string]: string | undefined;
+    };
+  }>({
+    isReady: false,
+    value: {},
+  });
 
   React.useEffect(() => {
-    setParamValue(parseQueryString(location.search) as any);
+    setParamValue({
+      value: parseQueryString(location.search) as any,
+      isReady: true,
+    });
   }, []);
 
   const setQueryParams = React.useCallback(
@@ -26,15 +35,18 @@ const useQueryParamsState = () => {
         ...newState,
       };
 
-      setParamValue(newValue);
-      history.push({
+      setParamValue((value) => ({
+        value: newValue,
+        isReady: value.isReady,
+      }));
+      history.replace({
         search: stringifyQueryString(newValue),
       });
     },
     [paramValue]
   );
 
-  return [paramValue, setQueryParams] as const;
+  return [paramValue, setQueryParams, isReady] as const;
 };
 
 export const QueryParamProvider = (props: { children: React.ReactNode }) => {

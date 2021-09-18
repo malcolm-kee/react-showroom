@@ -6,6 +6,7 @@ import {
   ComponentMeta,
   mdxComponents,
 } from 'react-showroom/client';
+import { ComponentDocRoute } from '../components/component-doc-route';
 import AnotherButtonDocs from './button-other-example.mdx';
 import anotherbuttonDocsSource from './button-other-example.mdx?showroomRaw';
 import anotherButtonCodeBlocks from './button-other-example.mdx?showroomRemarkCodeblocks';
@@ -98,22 +99,23 @@ export const MarkdownSource = () => (
   </Pre>
 );
 
+const markdownData = {
+  component: buttonWithCommentsData,
+  doc: ButtonDocs,
+  imports: buttonImports,
+  codeblocks: buttonCodeblocks,
+};
+
 export const MarkdownResult = () => (
-  <BrowserWindow url="http://localhost:6969" className="mb-4">
-    <div className="p-6">
-      <ComponentDocArticle
-        doc={{
-          type: 'component',
-          slug: buttonWithCommentsData.slug,
-          data: {
-            component: buttonWithCommentsData,
-            doc: ButtonDocs,
-            imports: buttonImports,
-          },
-        }}
-      />
-    </div>
-  </BrowserWindow>
+  <ComponentDocRoute data={markdownData}>
+    <ComponentDocArticle
+      doc={{
+        type: 'component',
+        slug: buttonWithCommentsData.slug,
+        data: markdownData,
+      }}
+    />
+  </ComponentDocRoute>
 );
 
 export const AnotherMarkdownSource = () => (
@@ -124,20 +126,21 @@ export const AnotherMarkdownSource = () => (
   </Pre>
 );
 
+const anotherMarkdownData = {
+  component: buttonWithCommentsData,
+  doc: AnotherButtonDocs,
+  imports: buttonWithCommentsImports,
+  codeblocks: anotherButtonCodeBlocks,
+};
+
 export const AnotherMarkdownResult = () => (
-  <BrowserWindow url="http://localhost:6969" className="mb-4">
-    <div className="p-6">
-      <ComponentDocArticle
-        doc={{
-          type: 'component',
-          slug: buttonWithCommentsData.slug,
-          data: {
-            component: buttonWithCommentsData,
-            doc: AnotherButtonDocs,
-            imports: buttonWithCommentsImports,
-          },
-        }}
-      />
-    </div>
-  </BrowserWindow>
+  <ComponentDocRoute data={anotherMarkdownData}>
+    <ComponentDocArticle
+      doc={{
+        type: 'component',
+        slug: buttonWithCommentsData.slug,
+        data: anotherMarkdownData,
+      }}
+    />
+  </ComponentDocRoute>
 );

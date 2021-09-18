@@ -42,7 +42,7 @@ self.onmessage = (ev) => {
     .then(() =>
       esbuild
         .transform(data.source, {
-          loader: 'tsx',
+          loader: data.lang,
           target: 'es2018',
         })
         .then((transformOutput) => {
@@ -52,6 +52,7 @@ self.onmessage = (ev) => {
             ...compileResult,
             type: 'success',
             messageId: data.messageId,
+            lang: data.lang,
           };
           self.postMessage(result);
         })

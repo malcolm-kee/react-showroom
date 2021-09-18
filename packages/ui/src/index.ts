@@ -1,5 +1,3 @@
-import { createContext } from 'react';
-
 export { Root as Portal } from '@radix-ui/react-portal';
 export * from './components/alert';
 export * as Collapsible from './components/collapsible';
@@ -9,13 +7,7 @@ export * from './components/icon-button';
 export * from './components/search-dialog';
 export * from './components/text-input';
 export * from './lib';
+export { createNameContext } from './lib/create-named-context';
+export { useDebounce } from './lib/use-debounce';
+export { QueryParamProvider, useQueryParams } from './lib/use-query-params';
 export * from './stitches.config';
-
-export const createNameContext = <ContextType>(
-  name: string,
-  defaultValue: ContextType
-) => {
-  const context = createContext(defaultValue);
-  context.displayName = name;
-  return context;
-};

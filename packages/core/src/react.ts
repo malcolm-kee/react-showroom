@@ -5,7 +5,7 @@ import type {
   ParserOptions,
 } from 'react-docgen-typescript';
 import type { Configuration } from 'webpack';
-import { Environment } from './index';
+import { Environment, CodeBlocks } from './index';
 
 export interface ItemConfigurationWithPath {
   title?: string;
@@ -274,6 +274,7 @@ export interface ComponentDocItem {
   };
   doc: null | ComponentType<any>;
   imports: Record<string, any>;
+  codeblocks: CodeBlocks;
 }
 
 export interface ReactShowroomComponentSection {
