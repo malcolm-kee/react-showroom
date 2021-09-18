@@ -1,5 +1,7 @@
+import { Link } from '@showroomjs/bundles/routing';
 import { css, styled } from '@showroomjs/ui';
-import { Link } from 'react-router-dom';
+
+export const headerHeight = 58;
 
 export const Div = styled('div');
 
@@ -18,6 +20,7 @@ export const H1 = styled('h1', {
   marginBottom: '$6',
   fontWeight: 700,
   color: '$gray-500',
+  scrollMarginTop: headerHeight,
 });
 
 export const NavLink = styled(Link, {

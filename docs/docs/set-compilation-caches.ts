@@ -1,6 +1,9 @@
 import * as React from 'react';
-import { useQueryClient } from 'react-query';
-import { CodeBlocks, getCompilationKey } from 'react-showroom/client';
+import {
+  CodeBlocks,
+  getCompilationKey,
+  useQueryClient,
+} from 'react-showroom/client';
 
 export const useSetCompilationCaches = (codeblocks: Array<CodeBlocks>) => {
   const qClient = useQueryClient();

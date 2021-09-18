@@ -1,5 +1,5 @@
+import { useParams } from '@showroomjs/bundles/routing';
 import * as React from 'react';
-import { useParams } from 'react-router-dom';
 import { Div } from '../components/base';
 import { StandaloneCodeLiveEditor } from '../components/standalone-code-live-editor';
 import { useCodeBlocks } from '../lib/codeblocks-context';

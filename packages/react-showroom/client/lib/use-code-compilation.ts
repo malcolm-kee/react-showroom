@@ -1,11 +1,11 @@
+import { useQuery } from '@showroomjs/bundles/query';
 import {
   CompilationErrorResult,
   CompilationSuccessResult,
+  getCompilationKey,
   getSafeName,
   SupportedLanguage,
-  getCompilationKey,
 } from '@showroomjs/core';
-import { useQuery } from 'react-query';
 import { useCodeImports } from './code-imports-context';
 
 export const useCodeCompilation = (

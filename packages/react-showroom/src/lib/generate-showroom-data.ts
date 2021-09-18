@@ -4,19 +4,43 @@ import {
 } from '@showroomjs/core/react';
 
 export const generateCodeblocksData = (
-  components: Array<ReactShowroomComponentSectionConfig>
+  sections: Array<ReactShowroomSectionConfig>
 ) => {
+  const codeBlocksStatements: Array<string> = [];
+
+  function collectCodeblocks(section: ReactShowroomSectionConfig) {
+    switch (section.type) {
+      case 'component':
+        if (section.docPath) {
+          codeBlocksStatements.push(
+            `require('${section.docPath}?showroomRemarkCodeblocks')`
+          );
+        }
+
+        break;
+
+      case 'markdown':
+        codeBlocksStatements.push(
+          `require('${section.sourcePath}?showroomRemarkDocCodeblocks')`
+        );
+
+        break;
+
+      case 'group':
+        section.items.forEach(collectCodeblocks);
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  sections.forEach(collectCodeblocks);
+
   return `module.exports = {
       items: [
-          ${components
-            .map(
-              (comp) =>
-                `{codeBlocks: ${
-                  comp.docPath
-                    ? `require('${comp.docPath}?showroomRemarkCodeblocks')`
-                    : '{}'
-                }}`
-            )
+          ${codeBlocksStatements
+            .map((statement) => `{ codeBlocks: ${statement} }`)
             .join(',')}
       ],
   }`;

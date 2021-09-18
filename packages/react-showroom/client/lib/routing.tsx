@@ -1,4 +1,4 @@
-import { Route, RouteProps } from 'react-router-dom';
+import { Route, RouteProps } from '@showroomjs/bundles/routing';
 import { createNameContext } from '@showroomjs/ui';
 import * as React from 'react';
 

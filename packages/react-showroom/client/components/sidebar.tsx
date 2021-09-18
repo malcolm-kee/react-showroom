@@ -1,4 +1,5 @@
 import { ExternalLinkIcon, MenuIcon } from '@heroicons/react/outline';
+import { NavLink, useHistory } from '@showroomjs/bundles/routing';
 import type { ReactShowroomSection } from '@showroomjs/core/react';
 import {
   css,
@@ -9,11 +10,10 @@ import {
   styled,
 } from '@showroomjs/ui';
 import * as React from 'react';
-import { NavLink, useHistory } from 'react-router-dom';
-import { Div } from './base';
-import { colorTheme, THEME } from '../theme';
-import { GenericLink } from './generic-link';
 import { isExternalLink } from '../lib/is-external-link';
+import { colorTheme, THEME } from '../theme';
+import { Div } from './base';
+import { GenericLink } from './generic-link';
 
 const navBarItems = THEME.navbar.items;
 
@@ -48,6 +48,11 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
           display: 'none',
           '@md': {
             display: 'block',
+            position: 'sticky',
+            top: 58,
+            left: 0,
+            bottom: 0,
+            height: 'calc(100vh - 58px)',
           },
           paddingBottom: '$10',
           borderRight: '1px solid',

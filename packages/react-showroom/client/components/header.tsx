@@ -1,7 +1,7 @@
-import { ReactShowroomSection } from '@showroomjs/core/react';
 import { ArrowLeftIcon } from '@heroicons/react/outline';
+import { Link, useHistory, useLocation } from '@showroomjs/bundles/routing';
+import { ReactShowroomSection } from '@showroomjs/core/react';
 import { Option, SearchDialog, styled } from '@showroomjs/ui';
-import { Link, useHistory, useLocation } from 'react-router-dom';
 import sections from 'react-showroom-sections';
 import { colorTheme, THEME } from '../theme';
 import { GenericLink } from './generic-link';
@@ -101,9 +101,12 @@ const ItemWrapper = styled('div', {
 });
 
 const HeaderRoot = styled('header', {
+  position: 'sticky',
+  top: 0,
   backgroundColor: '$primary-800',
   color: 'White',
   boxShadow: 'rgba(0, 0, 0, 0.1) 0px 1px 2px 0px',
+  zIndex: 20,
 });
 
 const HeaderInner = styled('div', {

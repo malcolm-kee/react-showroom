@@ -1,4 +1,5 @@
 import { ArrowsExpandIcon, TerminalIcon } from '@heroicons/react/outline';
+import { Link, useRouteMatch } from '@showroomjs/bundles/routing';
 import { SupportedLanguage } from '@showroomjs/core';
 import {
   Alert,
@@ -11,7 +12,6 @@ import {
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
-import { Link, useRouteMatch } from 'react-router-dom';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { useCodeBlocks } from '../lib/codeblocks-context';
 import { useCodeCompilation } from '../lib/use-code-compilation';
