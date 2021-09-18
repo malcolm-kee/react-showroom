@@ -3,6 +3,7 @@ import {
   CompilationSuccessResult,
   getSafeName,
   SupportedLanguage,
+  getCompilationKey,
 } from '@showroomjs/core';
 import { useQuery } from 'react-query';
 import { useCodeImports } from './code-imports-context';
@@ -18,7 +19,7 @@ export const useCodeCompilation = (
   const precompiledImports = useCodeImports();
 
   const result = useQuery({
-    queryKey: ['codeCompilation', code, lang],
+    queryKey: getCompilationKey(code, lang),
     queryFn: () =>
       import('./compile-code')
         .then((m) => m.compileCode(code, lang))

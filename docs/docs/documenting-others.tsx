@@ -1,27 +1,16 @@
 import * as React from 'react';
-import { useQueryClient } from 'react-query';
 import { mdxComponents } from 'react-showroom/client';
 import { MarkdownDocRoute } from '../components/markdown-doc-route';
 import * as markdownExampleResult from './markdown-example.mdx';
 import markdownExampleSource from './markdown-example.mdx?showroomRaw';
 import markdownExampleCodeblocks from './markdown-example.mdx?showroomRemarkCodeblocks';
 import * as markdownExampleImports from './markdown-example.mdx?showroomRemarkDocImports';
+import { useSetCompilationCaches } from './set-compilation-caches';
 
 const { pre: Pre, code: Code } = mdxComponents;
 
 export const MarkdownExampleSource = () => {
-  const queryClient = useQueryClient();
-
-  React.useEffect(() => {
-    [markdownExampleCodeblocks].forEach((blocks) => {
-      Object.keys(blocks).forEach((soureCode) =>
-        queryClient.setQueryData(
-          ['codeCompilation', soureCode],
-          blocks[soureCode]
-        )
-      );
-    });
-  }, []);
+  useSetCompilationCaches([markdownExampleCodeblocks]);
 
   return (
     <Pre>

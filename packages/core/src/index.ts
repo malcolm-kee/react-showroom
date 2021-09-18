@@ -1,3 +1,8 @@
+export {
+  getCompilationKey,
+  SupportedLanguage,
+  SUPPORTED_LANGUAGES,
+} from './compilation';
 export { flattenArray, NestedArray } from './flatten-array';
 export { getSafeName } from './get-safe-name';
 export { omit } from './object';
@@ -7,6 +12,7 @@ export { safeEval } from './safe-eval';
 export type { Ssr } from './ssr-types';
 export { isDefined, isNil, isNumber, isString } from './type-guard';
 
+import { SupportedLanguage } from './compilation';
 export interface RequestCompileData {
   source: string;
   messageId: number;
@@ -41,9 +47,5 @@ export interface CompilationErrorResult {
 export type CompileResult = CompilationSuccessResult | CompilationErrorResult;
 
 export type CodeBlocks = Record<string, CompilationSuccessResult | undefined>;
-
-export const SUPPORTED_LANGUAGES = ['js', 'jsx', 'ts', 'tsx'] as const;
-
-export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
 
 export type Environment = 'development' | 'production';

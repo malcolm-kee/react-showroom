@@ -5,8 +5,6 @@ import * as React from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import sections from 'react-showroom-sections';
 import Wrapper from 'react-showroom-wrapper';
-import { DetailsPageContainer } from './components/details-page-container';
-import { MarkdownArticle } from './components/markdown-article';
 import { CodeThemeContext } from './lib/code-theme-context';
 import { SubRootRoute } from './lib/routing';
 import { ComponentDocRoute } from './pages/component-doc-route';

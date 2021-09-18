@@ -1,5 +1,6 @@
 import Data from 'react-showroom-codeblocks';
 import { QueryClient } from 'react-query';
+import { getCompilationKey } from '@showroomjs/core';
 
 export const createQueryClient = () => {
   const queryClient = new QueryClient({
@@ -21,7 +22,7 @@ export const createQueryClient = () => {
 
       if (codeData) {
         queryClient.setQueryData(
-          ['codeCompilation', sourceCode, codeData.lang],
+          getCompilationKey(sourceCode, codeData.lang),
           codeData
         );
       }

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useQueryClient } from 'react-query';
 import {
   BrowserWindow,
   ComponentMeta,
@@ -20,22 +19,12 @@ import buttonData from './button?showroomComponent';
 import buttonSource from './button?showroomRaw';
 import oldButtonData from './old-button?showroomComponent';
 import oldButtonSource from './old-button?showroomRaw';
+import { useSetCompilationCaches } from './set-compilation-caches';
 
 const { pre: Pre, code: Code } = mdxComponents;
 
 export const DocumentingComponentPropsSource = () => {
-  const queryClient = useQueryClient();
-
-  React.useEffect(() => {
-    [buttonCodeblocks, anotherButtonCodeBlocks].forEach((blocks) => {
-      Object.keys(blocks).forEach((soureCode) =>
-        queryClient.setQueryData(
-          ['codeCompilation', soureCode],
-          blocks[soureCode]
-        )
-      );
-    });
-  }, []);
+  useSetCompilationCaches([buttonCodeblocks, anotherButtonCodeBlocks]);
 
   return (
     <Pre>

@@ -12,7 +12,7 @@ const config = (env) => {
     module: {
       rules: [
         {
-          test: /\.tsx$/,
+          test: /\.tsx?$/,
           resourceQuery: {
             not: [/showroomRaw/],
           },

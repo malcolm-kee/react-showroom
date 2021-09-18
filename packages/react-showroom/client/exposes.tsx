@@ -1,3 +1,5 @@
+export { getCompilationKey } from '@showroomjs/core';
+export type { CodeBlocks } from '@showroomjs/core';
 export { QueryParamProvider } from '@showroomjs/ui';
 export { BrowserWindow } from './components/browser-window';
 export type { BrowserWindowProps } from './components/browser-window';
