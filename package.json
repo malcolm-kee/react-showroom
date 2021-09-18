@@ -12,6 +12,9 @@
     ]
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^20.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.4",
+    "@rollup/plugin-typescript": "^8.2.5",
     "@types/copy-webpack-plugin": "^8.0.1",
     "@types/cross-spawn": "^6.0.2",
     "@types/fs-extra": "^9.0.12",
@@ -34,6 +37,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "rimraf": "^3.0.2",
+    "rollup": "^2.56.3",
     "ts-jest": "^27.0.5",
     "type-fest": "^2.1.0"
   },
@@ -50,6 +54,7 @@
     "showroom": "yarn workspace react-showroom",
     "core": "yarn workspace @showroomjs/core",
     "ui": "yarn workspace @showroomjs/ui",
+    "bundles": "yarn workspace @showroomjs/bundles",
     "docs": "yarn workspace react-showroom-docs",
     "clean": "lerna run clean"
   }

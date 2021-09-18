@@ -1,0 +1,19 @@
+{
+  "name": "@showroomjs/bundles",
+  "version": "0.5.0",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "react-query": "^3.24.0",
+    "react-router-dom": "^5.3.0"
+  },
+  "scripts": {
+    "build": "yarn run typedef && yarn run bundle",
+    "bundle": "rollup --config rollup.config.js",
+    "typedef": "tsc --declaration --emitDeclarationOnly"
+  }
+}

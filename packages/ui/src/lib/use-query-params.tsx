@@ -1,6 +1,6 @@
+import { useHistory, useLocation } from '@showroomjs/bundles/routing';
 import { parseQueryString, stringifyQueryString } from '@showroomjs/core';
 import * as React from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
 import { createNameContext } from './create-named-context';
 
 const QueryParamContext = createNameContext<

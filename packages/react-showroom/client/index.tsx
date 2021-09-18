@@ -1,7 +1,7 @@
+import { QueryClientProvider } from '@showroomjs/bundles/query';
+import { BrowserRouter, HashRouter } from '@showroomjs/bundles/routing';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { QueryClientProvider } from 'react-query';
-import { BrowserRouter, HashRouter } from 'react-router-dom';
 import { App } from './app';
 import { createQueryClient } from './lib/create-query-client';
 

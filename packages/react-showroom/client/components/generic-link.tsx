@@ -1,5 +1,5 @@
+import { Link } from '@showroomjs/bundles/routing';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { isExternalLink } from '../lib/is-external-link';
 
 export const GenericLink = React.forwardRef<

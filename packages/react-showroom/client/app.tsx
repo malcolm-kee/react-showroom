@@ -1,8 +1,8 @@
 import { IdProvider } from '@radix-ui/react-id';
+import { Route, Switch, useLocation } from '@showroomjs/bundles/routing';
 import { css, QueryParamProvider } from '@showroomjs/ui';
 import cx from 'classnames';
 import * as React from 'react';
-import { Route, Switch, useLocation } from 'react-router-dom';
 import sections from 'react-showroom-sections';
 import Wrapper from 'react-showroom-wrapper';
 import { CodeThemeContext } from './lib/code-theme-context';
@@ -19,7 +19,7 @@ export const App = () => {
     const hashMatch = location.hash;
 
     if (hashMatch) {
-      const hashTarget = document.querySelector(hashMatch);
+      const hashTarget = document.getElementById(hashMatch.replace('^#', ''));
 
       if (hashTarget) {
         let isCurrent = true;

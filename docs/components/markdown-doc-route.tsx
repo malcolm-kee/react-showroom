@@ -1,11 +1,13 @@
 import * as React from 'react';
-import { MemoryRouter, Route, Switch } from 'react-router-dom';
 import {
   MarkdownArticle,
   MarkdownDataProvider,
+  MemoryRouter,
   QueryParamProvider,
+  Route,
   StandaloneEditor,
   SubRootRoute,
+  Switch,
 } from 'react-showroom/client';
 import { BrowserWindowInRouter } from './browser-window-in-router';
 

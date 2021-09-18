@@ -1,6 +1,6 @@
-import Data from 'react-showroom-codeblocks';
-import { QueryClient } from 'react-query';
+import { QueryClient } from '@showroomjs/bundles/query';
 import { getCompilationKey } from '@showroomjs/core';
+import Data from 'react-showroom-codeblocks';
 
 export const createQueryClient = () => {
   const queryClient = new QueryClient({
