@@ -62,7 +62,7 @@ export const StandaloneCodeLiveEditor = ({
       css={{
         padding: '$2',
         height: '100%',
-        '@2xl': {
+        '@xl': {
           display: 'flex',
           flexDirection: 'row-reverse',
           gap: '$4',
@@ -109,7 +109,7 @@ export const StandaloneCodeLiveEditor = ({
               alignItems: 'center',
               backgroundColor: 'rgba(229, 231, 235, 0.1)',
               gap: '$2',
-              '@2xl': {
+              '@xl': {
                 top: '50%',
                 left: '50%',
                 bottom: 'auto',
@@ -132,7 +132,7 @@ export const StandaloneCodeLiveEditor = ({
 
       <Div
         css={{
-          '@2xl': {
+          '@xl': {
             flex: 1,
           },
         }}
@@ -157,7 +157,7 @@ const editorWrapper = css({
 
 const editor = css({
   borderRadius: '$base',
-  '@2xl': {
+  '@xl': {
     height: '100%',
     overflowY: 'auto',
   },
