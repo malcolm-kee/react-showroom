@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 0.6.0
+
+### New Features
+
+- Added `@showroomjs/bundles` to prebundle some third-party libraries to fix compatibility issue.
+
+### Bug Fixes
+
+- Change hash focus logic from `document.querySelector` to `document.getElementById` to handle the edge case of id starting with number.
+
 ## 0.5.0
 
 ### New Features
