@@ -304,6 +304,8 @@ export interface ReactShowroomMarkdownSection {
   slug: string;
   frontmatter: ReactShowroomMarkdownFrontmatter;
   headings: Array<ReactShowroomMarkdownHeading>;
+  imports: Record<string, any>;
+  codeblocks: CodeBlocks;
 }
 
 interface ReactShowroomLinkSection {

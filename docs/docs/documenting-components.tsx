@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useQueryClient } from 'react-query';
 import {
   BrowserWindow,
-  ComponentDocArticle,
   ComponentMeta,
   mdxComponents,
 } from 'react-showroom/client';
@@ -106,17 +105,7 @@ const markdownData = {
   codeblocks: buttonCodeblocks,
 };
 
-export const MarkdownResult = () => (
-  <ComponentDocRoute data={markdownData}>
-    <ComponentDocArticle
-      doc={{
-        type: 'component',
-        slug: buttonWithCommentsData.slug,
-        data: markdownData,
-      }}
-    />
-  </ComponentDocRoute>
-);
+export const MarkdownResult = () => <ComponentDocRoute data={markdownData} />;
 
 export const AnotherMarkdownSource = () => (
   <Pre>
@@ -134,13 +123,5 @@ const anotherMarkdownData = {
 };
 
 export const AnotherMarkdownResult = () => (
-  <ComponentDocRoute data={anotherMarkdownData}>
-    <ComponentDocArticle
-      doc={{
-        type: 'component',
-        slug: buttonWithCommentsData.slug,
-        data: anotherMarkdownData,
-      }}
-    />
-  </ComponentDocRoute>
+  <ComponentDocRoute data={anotherMarkdownData} />
 );

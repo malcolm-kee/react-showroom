@@ -1,5 +1,4 @@
 import { ReactShowroomComponentSection } from '@showroomjs/core/react';
-import * as React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { ComponentDataProvider } from '../components/component-data-provider';
 import { ComponentDocArticle } from '../components/component-doc-article';

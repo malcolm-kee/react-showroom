@@ -85,6 +85,7 @@ export const generateSections = (
             frontmatter: require('${section.sourcePath}').frontmatter || {},
             headings: require('${section.sourcePath}').headings || [],
             imports: require('${section.sourcePath}?showroomRemarkDocImports').imports || {},
+            codeblocks: require('${section.sourcePath}?showroomRemarkDocCodeblocks') || {}
           }`;
         }
 

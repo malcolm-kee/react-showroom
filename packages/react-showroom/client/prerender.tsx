@@ -40,7 +40,15 @@ export const getRoutes: Ssr['getRoutes'] = () =>
       }
 
       if (section.type === 'markdown') {
-        return section.slug;
+        const standaloneRoutes = Object.values(section.codeblocks)
+          .map((block) => block?.initialCodeHash)
+          .filter(isDefined);
+
+        return [section.slug].concat(
+          standaloneRoutes.map(
+            (route) => `${section.slug}/_standalone/${route}`
+          )
+        );
       }
 
       return [];

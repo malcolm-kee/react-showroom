@@ -11,6 +11,7 @@ import { CodeThemeContext } from './lib/code-theme-context';
 import { SubRootRoute } from './lib/routing';
 import { ComponentDocRoute } from './pages/component-doc-route';
 import { DefaultHomePage } from './pages/index';
+import { MarkdownRoute } from './pages/markdown-route';
 import { colorTheme, THEME } from './theme';
 
 export const App = () => {
@@ -83,19 +84,7 @@ export const App = () => {
                         exact={section.slug === ''}
                         key={section.slug}
                       >
-                        <DetailsPageContainer
-                          title={
-                            section.slug === '' ? undefined : section.title
-                          }
-                          description={section.frontmatter.description}
-                          hideSidebar={section.frontmatter.hideSidebar}
-                          hideHeader={section.frontmatter.hideHeader}
-                        >
-                          <MarkdownArticle
-                            section={section}
-                            center={!section.frontmatter.hideSidebar}
-                          />
-                        </DetailsPageContainer>
+                        <MarkdownRoute section={section} />
                       </SubRootRoute>
                     );
                   }
