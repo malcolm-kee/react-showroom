@@ -1,6 +1,6 @@
 {
   "name": "react-showroom",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "license": "MIT",
   "bin": {
     "react-showroom": "react-showroom.js"
@@ -22,7 +22,7 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.0-rc.6",
     "@radix-ui/react-id": "^0.1.0",
     "@showroomjs/core": "^0.5.0",
-    "@showroomjs/ui": "^0.5.0",
+    "@showroomjs/ui": "^0.5.1",
     "babel-loader": "^8.2.2",
     "chalk": "^4.1.2",
     "copy-webpack-plugin": "^9.0.1",
