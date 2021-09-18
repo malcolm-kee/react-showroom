@@ -7,7 +7,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {
+  "devDependencies": {
     "react-query": "^3.24.0",
     "react-router-dom": "^5.3.0"
   },
