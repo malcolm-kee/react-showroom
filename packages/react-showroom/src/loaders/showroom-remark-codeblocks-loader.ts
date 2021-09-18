@@ -40,7 +40,7 @@ const showroomRemarkCodeblocksLoader: LoaderDefinition<ShowroomRemarkCodeBlocksL
           for (const code of blocks[language]) {
             try {
               const transformResult = await esbuild.transform(code, {
-                loader: 'tsx',
+                loader: lang,
                 target: 'es2018',
               });
 
