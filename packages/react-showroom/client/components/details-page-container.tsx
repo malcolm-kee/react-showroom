@@ -15,23 +15,15 @@ export interface DetailsPageContainerProps {
 
 export const DetailsPageContainer = (props: DetailsPageContainerProps) => {
   return (
-    <Div
-      css={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        overflow: 'hidden',
-      }}
-    >
+    <>
       <Seo title={props.title} description={props.description} />
       {!props.hideHeader && <Header />}
-      <Div css={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <Div css={{ display: 'flex' }}>
         {!props.hideSidebar && <Sidebar sections={sections} />}
         <Div
           as="main"
           css={{
             flex: '1',
-            overflowY: 'auto',
             paddingBottom: '$12',
           }}
         >
@@ -46,6 +38,6 @@ export const DetailsPageContainer = (props: DetailsPageContainerProps) => {
           </Div>
         </Div>
       </Div>
-    </Div>
+    </>
   );
 };

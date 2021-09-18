@@ -1,5 +1,5 @@
 import { styled } from '@showroomjs/ui';
-import { H1 } from './base';
+import { H1, headerHeight } from './base';
 import { Code, Pre } from './code-block';
 import { GenericLink } from './generic-link';
 
@@ -52,6 +52,7 @@ export const mdxComponents = {
     },
     marginTop: '$12',
     marginBottom: '$2',
+    scrollMarginTop: headerHeight,
   }),
   h3: styled('h3', {
     fontSize: '$xl',
@@ -62,6 +63,7 @@ export const mdxComponents = {
     },
     marginTop: '$6',
     marginBottom: '$2',
+    scrollMarginTop: headerHeight,
   }),
   h4: styled('h4', {
     fontSize: '$lg',
@@ -69,6 +71,7 @@ export const mdxComponents = {
     lineHeight: '$lg',
     marginTop: '$4',
     marginBottom: '$2',
+    scrollMarginTop: headerHeight,
   }),
   pre: Pre,
   code: Code,

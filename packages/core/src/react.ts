@@ -254,7 +254,6 @@ export interface NormalizedReactShowroomConfiguration
     'items' | 'devServer' | 'build' | 'components'
   > {
   sections: Array<ReactShowroomSectionConfig>;
-  components: Array<ReactShowroomComponentSectionConfig>;
   ignores: Array<string>;
   outDir: string;
   prerender: boolean;

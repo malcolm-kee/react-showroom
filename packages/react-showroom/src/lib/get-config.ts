@@ -128,7 +128,6 @@ export const getConfig = (
     ignores,
     webpackConfig: webpackConfig || getUserWebpackConfig(),
     sections,
-    components,
     basePath: providedBuildConfig.basePath
       ? providedBuildConfig.basePath === '/'
         ? '/'

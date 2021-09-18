@@ -39,6 +39,10 @@ export const MarkdownArticle = (props: {
             '@lg': {
               paddingLeft: '$6',
               width: '25%',
+              position: 'sticky',
+              top: 58,
+              bottom: 0,
+              maxHeight: 'calc(100vh - 58px - 2rem)',
             },
           }}
         >
@@ -101,7 +105,7 @@ export const MarkdownArticle = (props: {
                 display: 'block',
               },
               position: 'sticky',
-              top: '0',
+              top: 0,
               py: '$4',
             }}
           >

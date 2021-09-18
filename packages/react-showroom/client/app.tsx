@@ -1,7 +1,6 @@
 import { IdProvider } from '@radix-ui/react-id';
 import { Route, Switch, useLocation } from '@showroomjs/bundles/routing';
-import { css, QueryParamProvider } from '@showroomjs/ui';
-import cx from 'classnames';
+import { QueryParamProvider } from '@showroomjs/ui';
 import * as React from 'react';
 import sections from 'react-showroom-sections';
 import Wrapper from 'react-showroom-wrapper';
@@ -11,15 +10,18 @@ import { ComponentDocRoute } from './pages/component-doc-route';
 import { DefaultHomePage } from './pages/index';
 import { MarkdownRoute } from './pages/markdown-route';
 import { colorTheme, THEME } from './theme';
+import { headerHeight } from './components/base';
 
 export const App = () => {
   const location = useLocation();
+
+  const lastPathName = React.useRef(location.pathname);
 
   React.useEffect(() => {
     const hashMatch = location.hash;
 
     if (hashMatch) {
-      const hashTarget = document.getElementById(hashMatch.replace('^#', ''));
+      const hashTarget = document.getElementById(hashMatch.replace(/^#/, ''));
 
       if (hashTarget) {
         let isCurrent = true;
@@ -29,7 +31,9 @@ export const App = () => {
           'scroll-into-view-if-needed'
         ).then((scroll) => {
           if (isCurrent) {
-            scroll.default(hashTarget);
+            scroll.default(hashTarget, {
+              scrollMode: 'if-needed',
+            });
           }
         });
 
@@ -37,13 +41,18 @@ export const App = () => {
           isCurrent = false;
         };
       }
+    } else {
+      if (lastPathName.current !== location.pathname) {
+        window.scrollTo(0, 0);
+        lastPathName.current = location.pathname;
+      }
     }
   }, [location]);
 
   return (
     <Wrapper>
       <IdProvider>
-        <div className={cx(colorTheme, wrapper())}>
+        <div className={colorTheme}>
           <QueryParamProvider>
             <CodeThemeContext.Provider value={THEME.codeTheme}>
               <Switch>
@@ -100,7 +109,3 @@ export const App = () => {
     </Wrapper>
   );
 };
-
-const wrapper = css({
-  height: '100%',
-});

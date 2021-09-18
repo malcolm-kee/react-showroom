@@ -101,9 +101,12 @@ const ItemWrapper = styled('div', {
 });
 
 const HeaderRoot = styled('header', {
+  position: 'sticky',
+  top: 0,
   backgroundColor: '$primary-800',
   color: 'White',
   boxShadow: 'rgba(0, 0, 0, 0.1) 0px 1px 2px 0px',
+  zIndex: 20,
 });
 
 const HeaderInner = styled('div', {

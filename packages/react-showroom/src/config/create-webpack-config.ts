@@ -163,7 +163,6 @@ const createBaseWebpackConfig = (
     prerender: prerenderConfig,
     basePath,
     theme,
-    components,
     sections,
     imports,
     wrapper,
@@ -179,7 +178,7 @@ const createBaseWebpackConfig = (
     // create a virtual module that consists of parsed code blocks
     // so we can pregenerate during build time for better SSR
     [resolveShowroom('node_modules/react-showroom-codeblocks.js')]:
-      generateCodeblocksData(components),
+      generateCodeblocksData(sections),
     // a virtual module that consists of all the sections and component metadata.
     [resolveShowroom('node_modules/react-showroom-sections.js')]:
       generateSections(sections),
