@@ -1,15 +1,22 @@
+export {
+  getCompilationKey,
+  SupportedLanguage,
+  SUPPORTED_LANGUAGES,
+} from './compilation';
 export { flattenArray, NestedArray } from './flatten-array';
 export { getSafeName } from './get-safe-name';
 export { omit } from './object';
 export { ImportMapData, Packages, postCompile } from './post-compile';
 export { parseQueryString, stringifyQueryString } from './query-string';
 export { safeEval } from './safe-eval';
-export { Ssr } from './ssr-types';
+export type { Ssr } from './ssr-types';
 export { isDefined, isNil, isNumber, isString } from './type-guard';
 
+import { SupportedLanguage } from './compilation';
 export interface RequestCompileData {
   source: string;
   messageId: number;
+  lang: SupportedLanguage;
 }
 
 export interface CompilationError {
@@ -26,6 +33,8 @@ export interface CompilationSuccessResult {
    */
   importNames: Array<string>;
   importedPackages: Array<string>;
+  lang: SupportedLanguage;
+  initialCodeHash?: string;
 }
 
 export interface CompilationErrorResult {
@@ -38,12 +47,5 @@ export interface CompilationErrorResult {
 export type CompileResult = CompilationSuccessResult | CompilationErrorResult;
 
 export type CodeBlocks = Record<string, CompilationSuccessResult | undefined>;
-
-export const SUPPORTED_LANGUAGES: ReadonlyArray<string> = [
-  'js',
-  'jsx',
-  'ts',
-  'tsx',
-];
 
 export type Environment = 'development' | 'production';

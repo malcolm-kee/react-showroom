@@ -1,51 +1,51 @@
 import { ArrowsExpandIcon, TerminalIcon } from '@heroicons/react/outline';
-import { Alert, Collapsible, css, Dialog, icons, styled } from '@showroomjs/ui';
-import lzString from 'lz-string';
+import { SupportedLanguage } from '@showroomjs/core';
+import {
+  Alert,
+  Collapsible,
+  css,
+  icons,
+  styled,
+  useDebounce,
+} from '@showroomjs/ui';
+import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
-import { ComponentDataContext } from '../lib/component-data-context';
-import { useDialog } from '../lib/dialog-context';
+import { Link, useRouteMatch } from 'react-router-dom';
+import { useCodeTheme } from '../lib/code-theme-context';
+import { useCodeBlocks } from '../lib/codeblocks-context';
 import { useCodeCompilation } from '../lib/use-code-compilation';
-import { useDebounce } from '../lib/use-debounce';
-import { useQueryParams } from '../lib/use-query-params';
 import { Div, Span } from './base';
 import { BrowserWindow } from './browser-window';
-import { CodeEditor, CodeEditorProps } from './code-editor';
+import { CodeEditor } from './code-editor';
 import { CodePreview } from './code-preview';
 
-export interface CodeLiveEditorProps
-  extends Pick<CodeEditorProps, 'language' | 'theme'> {
+export interface CodeLiveEditorProps {
   code: string;
-  hasDialog?: boolean;
+  lang: SupportedLanguage;
   hasHeading?: boolean;
   id?: string;
   className?: string;
-  shouldEncodeInUrl?: boolean;
   noEditor?: boolean;
 }
 
 export const CodeLiveEditor = ({
-  hasDialog,
   hasHeading,
   className,
-  shouldEncodeInUrl,
   noEditor,
   ...props
 }: CodeLiveEditorProps) => {
-  const [queryParams, setQueryParams] = useQueryParams();
+  const theme = useCodeTheme();
 
-  const [code, setCode] = React.useState(() => {
-    return shouldEncodeInUrl && queryParams.code
-      ? safeDecompress(queryParams.code as string, props.code)
-      : props.code;
-  });
+  const [code, setCode] = React.useState(props.code);
 
   const debouncedCode = useDebounce(code);
 
   const errorBoundaryRef = React.useRef<ErrorBoundary>(null);
 
-  const { data, isFetching, isLoading, error, isError } = useCodeCompilation(
+  const { data, isCompiling, error, isError } = useCodeCompilation(
     debouncedCode,
+    props.lang,
     {
       onSuccess: () => {
         if (errorBoundaryRef.current) {
@@ -55,11 +55,7 @@ export const CodeLiveEditor = ({
     }
   );
 
-  const isCompiling = isFetching || isLoading;
-
-  const [showCode, setShowCode] = React.useState<boolean | undefined>(
-    !hasDialog
-  );
+  const [showCode, setShowCode] = React.useState<boolean | undefined>(false);
 
   const content = (
     <>
@@ -142,25 +138,15 @@ export const CodeLiveEditor = ({
               />
               Code
             </Collapsible.Button>
-            {hasDialog && <CodeLiveEditorFocus {...props} />}
+            <LinkToStandaloneView code={props.code} />
           </Div>
           <Collapsible.Content>
             <CodeEditor
               code={code}
-              onChange={(newCode) => {
-                setCode(newCode);
-                if (shouldEncodeInUrl) {
-                  setQueryParams({
-                    code:
-                      newCode === props.code
-                        ? undefined
-                        : safeCompress(newCode),
-                  });
-                }
-              }}
-              language={props.language}
+              onChange={setCode}
+              language={props.lang as Language}
               className={editorBottom()}
-              theme={props.theme}
+              theme={theme}
             />
           </Collapsible.Content>
         </Collapsible.Root>
@@ -179,36 +165,23 @@ export const CodeLiveEditor = ({
   );
 };
 
-const CodeLiveEditorFocus = (props: Omit<CodeLiveEditorProps, 'hasDialog'>) => {
-  const dialog = useDialog(props.id);
+const LinkToStandaloneView = (props: { code: string }) => {
+  const { url } = useRouteMatch();
 
-  const componentData = React.useContext(ComponentDataContext);
+  const codeBlocks = useCodeBlocks();
+  const matchCodeData = codeBlocks[props.code];
 
-  return (
-    <Dialog
-      open={dialog.isOpen}
-      onOpenChange={(opening) => (opening ? dialog.open() : dialog.dismiss())}
+  return matchCodeData ? (
+    <Button
+      as={Link}
+      to={`${url === '/' ? '' : url}/_standalone/${
+        matchCodeData.initialCodeHash
+      }`}
     >
-      <Dialog.Trigger asChild>
-        <Button type="button">
-          Standalone
-          <ArrowsExpandIcon width={20} height={20} className={icons()} />
-        </Button>
-      </Dialog.Trigger>
-      <Dialog.Content fullWidth>
-        {componentData && (
-          <Dialog.Title>{componentData.component.displayName}</Dialog.Title>
-        )}
-        <Div
-          css={{
-            padding: '$2',
-          }}
-        >
-          {dialog.isOpen && <CodeLiveEditor {...props} shouldEncodeInUrl />}
-        </Div>
-      </Dialog.Content>
-    </Dialog>
-  );
+      Standalone
+      <ArrowsExpandIcon width={20} height={20} className={icons()} />
+    </Button>
+  ) : null;
 };
 
 const Button = styled('button', {
@@ -235,22 +208,3 @@ const ErrorFallback = (props: FallbackProps) => {
 };
 
 const formatError = (error: string) => error.replace(/<stdin>:|\"\\x0A\"/g, '');
-
-const safeCompress = (oriString: string): string => {
-  try {
-    return lzString.compressToEncodedURIComponent(oriString);
-  } catch (err) {
-    return oriString;
-  }
-};
-
-const safeDecompress = (compressedString: string, fallback: string): string => {
-  try {
-    const decompressed =
-      lzString.decompressFromEncodedURIComponent(compressedString);
-
-    return decompressed === null ? fallback : decompressed;
-  } catch (err) {
-    return fallback;
-  }
-};

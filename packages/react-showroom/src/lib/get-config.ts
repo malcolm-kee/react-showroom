@@ -7,6 +7,7 @@ import {
   ReactShowroomSectionConfig,
   ThemeConfiguration,
 } from '@showroomjs/core/react';
+import chalk from 'chalk';
 import * as fs from 'fs';
 import * as glob from 'glob';
 import * as path from 'path';
@@ -217,6 +218,15 @@ export const getConfig = (
 
           const slug = sectionConfig.path || slugify(title, { lower: true });
 
+          if (slug.startsWith('_')) {
+            logToStdout(
+              chalk.yellow(
+                'Having path starts with _ may causes unexpected behavior.'
+              )
+            );
+            logToStdout(`Path is "${slug}" for ${title}`);
+          }
+
           const section: ReactShowroomSectionConfig = {
             type: 'group',
             title,
@@ -270,6 +280,15 @@ export const getConfig = (
 
           const slug = sectionConfig.path || slugify(title, { lower: true });
 
+          if (slug.startsWith('_')) {
+            logToStdout(
+              chalk.yellow(
+                'Having path starts with _ may causes unexpected behavior.'
+              )
+            );
+            logToStdout(`Path is "${slug}" for ${title}`);
+          }
+
           const section: ReactShowroomSectionConfig = {
             type: 'group',
             title,
@@ -299,6 +318,15 @@ export const getConfig = (
                 slugify(sectionConfig.title, { lower: true })) ||
               path.parse(docPath).name;
 
+          if (slug.startsWith('_')) {
+            logToStdout(
+              chalk.yellow(
+                'Having path starts with _ may causes unexpected behavior.'
+              )
+            );
+            logToStdout(`Path is "${slug}" for ${sectionConfig.content}`);
+          }
+
           parent.push({
             type: 'markdown',
             title: sectionConfig.title,
@@ -324,6 +352,15 @@ export const getConfig = (
             const pathInfo = path.parse(pagePath);
 
             const slug = pathInfo.name === 'index' ? '' : pathInfo.name;
+
+            if (slug.startsWith('_')) {
+              logToStdout(
+                chalk.yellow(
+                  'Having path starts with _ may causes unexpected behavior.'
+                )
+              );
+              logToStdout(`Path is "${slug}" for ${pagePath}`);
+            }
 
             parent.push({
               type: 'markdown',

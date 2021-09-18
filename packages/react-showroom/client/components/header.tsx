@@ -1,4 +1,5 @@
 import { ReactShowroomSection } from '@showroomjs/core/react';
+import { ArrowLeftIcon } from '@heroicons/react/outline';
 import { Option, SearchDialog, styled } from '@showroomjs/ui';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import sections from 'react-showroom-sections';
@@ -40,7 +41,11 @@ const options = (function (allItems: Array<ReactShowroomSection>) {
 
 const navbarOptions = THEME.navbar;
 
-export const Header = () => {
+export interface HeaderProps {
+  backUrl?: string;
+}
+
+export const Header = (props: HeaderProps) => {
   const history = useHistory();
   const location = useLocation<{ searchNavigated?: boolean }>();
 
@@ -48,6 +53,11 @@ export const Header = () => {
     <HeaderRoot>
       <HeaderInner>
         <ItemWrapper>
+          {props.backUrl && (
+            <HeaderLink href={props.backUrl}>
+              <ArrowLeftIcon aria-label="Back" width={20} height={20} />
+            </HeaderLink>
+          )}
           {navbarOptions.logo && <img {...navbarOptions.logo} />}
           <Title to="/">
             {THEME.title}{' '}

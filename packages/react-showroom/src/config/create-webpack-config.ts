@@ -251,6 +251,15 @@ const createBaseWebpackConfig = (
               ],
             },
             {
+              resourceQuery: /showroomRemarkDocCodeblocks/,
+              use: [
+                {
+                  loader: 'showroom-remark-codeblocks-loader',
+                  options: docsCodeBlocksOptions,
+                },
+              ],
+            },
+            {
               resourceQuery: /showroomRemarkImports/,
               use: [
                 {

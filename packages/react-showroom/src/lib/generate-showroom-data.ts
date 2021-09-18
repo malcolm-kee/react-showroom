@@ -29,9 +29,12 @@ const compileToComponentMetadata = (
 function compileComponentSection(
   component: ReactShowroomComponentSectionConfig
 ) {
+  const { docPath } = component;
+
   return `{
-    doc: ${
-      component.docPath ? `require('${component.docPath}').default` : 'null'
+    doc: ${docPath ? `require('${docPath}').default` : 'null'},
+    codeblocks: ${
+      docPath ? `require('${docPath}?showroomRemarkCodeblocks')` : `{}`
     },
     component: ${compileToComponentMetadata(component)},
     imports: ${
@@ -82,6 +85,7 @@ export const generateSections = (
             frontmatter: require('${section.sourcePath}').frontmatter || {},
             headings: require('${section.sourcePath}').headings || [],
             imports: require('${section.sourcePath}?showroomRemarkDocImports').imports || {},
+            codeblocks: require('${section.sourcePath}?showroomRemarkDocCodeblocks') || {}
           }`;
         }
 

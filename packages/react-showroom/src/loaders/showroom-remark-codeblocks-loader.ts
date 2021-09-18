@@ -1,4 +1,9 @@
-import { CodeBlocks, postCompile, SUPPORTED_LANGUAGES } from '@showroomjs/core';
+import {
+  CodeBlocks,
+  postCompile,
+  SupportedLanguage,
+  SUPPORTED_LANGUAGES,
+} from '@showroomjs/core';
 import * as esbuild from 'esbuild';
 import type { Parent as MdParent, Code as MdCode } from 'mdast';
 import remarkParse from 'remark-parse';
@@ -6,6 +11,7 @@ import unified from 'unified';
 import vFile from 'vfile';
 import type { LoaderDefinition } from 'webpack';
 import { codeblocks } from '../lib/codeblocks';
+import { createHash } from '../lib/create-hash';
 
 const parser = unified().use(remarkParse as any);
 
@@ -28,12 +34,13 @@ const showroomRemarkCodeblocksLoader: LoaderDefinition<ShowroomRemarkCodeBlocksL
     const result: CodeBlocks = {};
 
     async function transformCodes() {
-      for (const lang of Object.keys(blocks)) {
+      for (const language of Object.keys(blocks)) {
+        const lang = language as SupportedLanguage;
         if (SUPPORTED_LANGUAGES.includes(lang)) {
-          for (const code of blocks[lang]) {
+          for (const code of blocks[language]) {
             try {
               const transformResult = await esbuild.transform(code, {
-                loader: 'tsx',
+                loader: lang,
                 target: 'es2018',
               });
 
@@ -43,6 +50,8 @@ const showroomRemarkCodeblocksLoader: LoaderDefinition<ShowroomRemarkCodeBlocksL
                 ...postTranspileResult,
                 type: 'success',
                 messageId: -1,
+                initialCodeHash: createHash(code),
+                lang,
               };
             } catch (err) {
               console.error(err);

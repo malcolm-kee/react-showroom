@@ -2,12 +2,15 @@ import {
   CompilationErrorResult,
   CompilationSuccessResult,
   getSafeName,
+  SupportedLanguage,
+  getCompilationKey,
 } from '@showroomjs/core';
 import { useQuery } from 'react-query';
 import { useCodeImports } from './code-imports-context';
 
 export const useCodeCompilation = (
   providedCode: string,
+  lang: SupportedLanguage,
   options: {
     onSuccess?: () => void;
   } = {}
@@ -15,11 +18,11 @@ export const useCodeCompilation = (
   const code = providedCode.trim();
   const precompiledImports = useCodeImports();
 
-  return useQuery({
-    queryKey: ['codeCompilation', code],
+  const result = useQuery({
+    queryKey: getCompilationKey(code, lang),
     queryFn: () =>
       import('./compile-code')
-        .then((m) => m.compileCode(code))
+        .then((m) => m.compileCode(code, lang))
         .then(
           (
             result
@@ -43,6 +46,11 @@ export const useCodeCompilation = (
     keepPreviousData: true,
     ...options,
   });
+
+  return {
+    ...result,
+    isCompiling: result.isLoading || result.isFetching,
+  };
 };
 
 const nonLocalRegex = /^[a-z][a-zA-Z\-\/]+/;

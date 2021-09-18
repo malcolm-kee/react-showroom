@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.5.0
+
+### New Features
+
+- Standalone view now is a separate page for better compatibility.
+- Improve docs to demo standalone view behavior.
+
 ## 0.4.1
 
 ### Bug Fixes

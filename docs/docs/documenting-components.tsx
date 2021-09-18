@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { useQueryClient } from 'react-query';
 import {
   BrowserWindow,
-  ComponentDocArticle,
   ComponentMeta,
   mdxComponents,
 } from 'react-showroom/client';
+import { ComponentDocRoute } from '../components/component-doc-route';
 import AnotherButtonDocs from './button-other-example.mdx';
 import anotherbuttonDocsSource from './button-other-example.mdx?showroomRaw';
 import anotherButtonCodeBlocks from './button-other-example.mdx?showroomRemarkCodeblocks';
@@ -20,22 +19,12 @@ import buttonData from './button?showroomComponent';
 import buttonSource from './button?showroomRaw';
 import oldButtonData from './old-button?showroomComponent';
 import oldButtonSource from './old-button?showroomRaw';
+import { useSetCompilationCaches } from './set-compilation-caches';
 
 const { pre: Pre, code: Code } = mdxComponents;
 
 export const DocumentingComponentPropsSource = () => {
-  const queryClient = useQueryClient();
-
-  React.useEffect(() => {
-    [buttonCodeblocks, anotherButtonCodeBlocks].forEach((blocks) => {
-      Object.keys(blocks).forEach((soureCode) =>
-        queryClient.setQueryData(
-          ['codeCompilation', soureCode],
-          blocks[soureCode]
-        )
-      );
-    });
-  }, []);
+  useSetCompilationCaches([buttonCodeblocks, anotherButtonCodeBlocks]);
 
   return (
     <Pre>
@@ -98,23 +87,14 @@ export const MarkdownSource = () => (
   </Pre>
 );
 
-export const MarkdownResult = () => (
-  <BrowserWindow url="http://localhost:6969" className="mb-4">
-    <div className="p-6">
-      <ComponentDocArticle
-        doc={{
-          type: 'component',
-          slug: buttonWithCommentsData.slug,
-          data: {
-            component: buttonWithCommentsData,
-            doc: ButtonDocs,
-            imports: buttonImports,
-          },
-        }}
-      />
-    </div>
-  </BrowserWindow>
-);
+const markdownData = {
+  component: buttonWithCommentsData,
+  doc: ButtonDocs,
+  imports: buttonImports,
+  codeblocks: buttonCodeblocks,
+};
+
+export const MarkdownResult = () => <ComponentDocRoute data={markdownData} />;
 
 export const AnotherMarkdownSource = () => (
   <Pre>
@@ -124,20 +104,13 @@ export const AnotherMarkdownSource = () => (
   </Pre>
 );
 
+const anotherMarkdownData = {
+  component: buttonWithCommentsData,
+  doc: AnotherButtonDocs,
+  imports: buttonWithCommentsImports,
+  codeblocks: anotherButtonCodeBlocks,
+};
+
 export const AnotherMarkdownResult = () => (
-  <BrowserWindow url="http://localhost:6969" className="mb-4">
-    <div className="p-6">
-      <ComponentDocArticle
-        doc={{
-          type: 'component',
-          slug: buttonWithCommentsData.slug,
-          data: {
-            component: buttonWithCommentsData,
-            doc: AnotherButtonDocs,
-            imports: buttonWithCommentsImports,
-          },
-        }}
-      />
-    </div>
-  </BrowserWindow>
+  <ComponentDocRoute data={anotherMarkdownData} />
 );

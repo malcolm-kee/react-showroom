@@ -1,4 +1,4 @@
-import { Ssr, flattenArray, NestedArray } from '@showroomjs/core';
+import { Ssr, flattenArray, NestedArray, isDefined } from '@showroomjs/core';
 import * as ReactDOMServer from 'react-dom/server';
 import { Helmet } from 'react-helmet';
 import { QueryClientProvider } from 'react-query';
@@ -28,11 +28,27 @@ export const getRoutes: Ssr['getRoutes'] = () =>
       }
 
       if (section.type === 'component') {
-        return section.slug;
+        const standaloneRoutes = Object.values(section.data.codeblocks)
+          .map((block) => block?.initialCodeHash)
+          .filter(isDefined);
+
+        return [section.slug].concat(
+          standaloneRoutes.map(
+            (route) => `${section.slug}/_standalone/${route}`
+          )
+        );
       }
 
       if (section.type === 'markdown') {
-        return section.slug;
+        const standaloneRoutes = Object.values(section.codeblocks)
+          .map((block) => block?.initialCodeHash)
+          .filter(isDefined);
+
+        return [section.slug].concat(
+          standaloneRoutes.map(
+            (route) => `${section.slug}/_standalone/${route}`
+          )
+        );
       }
 
       return [];

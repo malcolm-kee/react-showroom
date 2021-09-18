@@ -97,10 +97,8 @@ export const Code = ({
       {heading}
       <CodeLiveEditor
         code={code}
-        theme={theme}
-        language={lang}
+        lang={lang}
         id={props.id}
-        hasDialog
         hasHeading={!!heading}
         noEditor={noEditor}
       />
