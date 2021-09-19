@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.7.2
+
+### Bug Fixes
+
+- Fix SEO for real.
+
 ## 0.7.1
 
 ### Bug Fixes

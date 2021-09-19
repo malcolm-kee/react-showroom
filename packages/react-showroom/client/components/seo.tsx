@@ -20,6 +20,7 @@ export const Seo = (props: {
 
 export const Head = ({
   description,
+  children,
   ...props
 }: HelmetProps & {
   description?: string;
@@ -30,7 +31,7 @@ export const Head = ({
   const realUrl = SITE_URL && `${SITE_URL}${pathname === '/' ? '' : pathname}`;
 
   return (
-    <Helmet>
+    <Helmet {...props}>
       {realUrl && <link rel="canonical" href={realUrl} />}
       {props.title && <meta name="twitter:title" content={props.title}></meta>}
       <meta name="twitter:card" content="summary"></meta>
@@ -42,7 +43,7 @@ export const Head = ({
       {realUrl && <meta property="og:url" content={realUrl} />}
       {props.title && <meta property="og:title" content={props.title} />}
       {description && <meta property="og:description" content={description} />}
-      {props.children}
+      {children}
     </Helmet>
   );
 };
