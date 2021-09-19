@@ -1,9 +1,8 @@
-import { ComponentDocItem } from '@showroomjs/core/react';
 import { Collapsible, styled, Table } from '@showroomjs/ui';
 import * as React from 'react';
-import type { Props } from 'react-docgen-typescript';
+import type { ComponentDoc, Props } from 'react-docgen-typescript';
 import snarkdown from 'snarkdown';
-import { Div, H1 } from './base';
+import { Div, H1, NavLink } from './base';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -11,13 +10,15 @@ const hasTag = (tags: Record<string, unknown>, tag: string) =>
   hasOwnProperty.call(tags, tag);
 
 export interface ComponentMetaProps {
-  componentData: ComponentDocItem['component'];
+  componentData: ComponentDoc;
   propsDefaultOpen?: boolean;
+  slug: string;
 }
 
 export const ComponentMeta = ({
   componentData,
   propsDefaultOpen,
+  slug,
 }: ComponentMetaProps) => {
   const [propsIsOpen, setPropsIsOpen] = React.useState(propsDefaultOpen);
 
@@ -37,7 +38,16 @@ export const ComponentMeta = ({
             : {}
         }
       >
-        {doc.displayName}
+        <NavLink
+          to={`/${slug}`}
+          css={{
+            '&:hover': {
+              textDecoration: 'underline',
+            },
+          }}
+        >
+          {doc.displayName}
+        </NavLink>
       </H1>
       {doc.description && (
         <Div

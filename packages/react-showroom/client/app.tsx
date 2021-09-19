@@ -1,15 +1,89 @@
 import { IdProvider } from '@radix-ui/react-id';
-import { Route, Switch, useLocation } from '@showroomjs/bundles/routing';
+import {
+  matchPath,
+  Route,
+  Switch,
+  useLocation,
+} from '@showroomjs/bundles/routing';
+import type { ReactShowroomSection } from '@showroomjs/core/react';
 import { QueryParamProvider } from '@showroomjs/ui';
 import * as React from 'react';
 import sections from 'react-showroom-sections';
 import Wrapper from 'react-showroom-wrapper';
+import { Div } from './components/base';
+import { Header } from './components/header';
+import { Sidebar } from './components/sidebar';
 import { CodeThemeContext } from './lib/code-theme-context';
-import { SubRootRoute } from './lib/routing';
 import { ComponentDocRoute } from './pages/component-doc-route';
 import { DefaultHomePage } from './pages/index';
 import { MarkdownRoute } from './pages/markdown-route';
 import { colorTheme, THEME } from './theme';
+
+const routes = sections.map(function SectionRoute(section) {
+  if (section.type === 'link') {
+    return null;
+  }
+
+  if (section.type === 'group') {
+    return (
+      <Route
+        path={`/${section.slug}`}
+        exact={section.slug === ''}
+        key={section.slug}
+      >
+        {section.items.map((item) => SectionRoute(item))}
+      </Route>
+    );
+  }
+
+  if (section.type === 'component') {
+    return (
+      <Route path={`/${section.slug}`} key={section.slug}>
+        <ComponentDocRoute section={section} />
+      </Route>
+    );
+  }
+
+  if (section.type === 'markdown') {
+    return (
+      <Route
+        path={`/${section.slug}`}
+        exact={section.slug === ''}
+        key={section.slug}
+      >
+        <MarkdownRoute section={section} />
+      </Route>
+    );
+  }
+
+  return null;
+});
+
+const routeMapping: Array<{
+  path: string;
+  section: ReactShowroomSection;
+}> = [];
+
+(function collectMapping(sections: Array<ReactShowroomSection>) {
+  sections.forEach((section) => {
+    switch (section.type) {
+      case 'group':
+        collectMapping(section.items);
+        break;
+
+      case 'component':
+      case 'markdown':
+        routeMapping.push({
+          path: `/${section.slug}`,
+          section,
+        });
+        break;
+
+      default:
+        break;
+    }
+  });
+})(sections);
 
 export const App = () => {
   const location = useLocation();
@@ -48,59 +122,54 @@ export const App = () => {
     }
   }, [location]);
 
+  const matchedSection = React.useMemo(() => {
+    for (const mapping of routeMapping) {
+      const match = matchPath(location.pathname, {
+        path: mapping.path,
+        exact: true,
+      });
+
+      if (match) {
+        return mapping.section;
+      }
+    }
+  }, [location.pathname]);
+
+  const shouldHideHeader =
+    matchedSection &&
+    matchedSection.type === 'markdown' &&
+    matchedSection.frontmatter.hideHeader;
+
+  const shouldHideSidebar =
+    !matchedSection ||
+    (matchedSection &&
+      matchedSection.type === 'markdown' &&
+      matchedSection.frontmatter.hideSidebar);
+
   return (
     <Wrapper>
       <IdProvider>
         <div className={colorTheme}>
           <QueryParamProvider>
             <CodeThemeContext.Provider value={THEME.codeTheme}>
-              <Switch>
-                {sections.map(function SectionRoute(section) {
-                  if (section.type === 'link') {
-                    return null;
-                  }
-
-                  if (section.type === 'group') {
-                    return (
-                      <Route
-                        path={`/${section.slug}`}
-                        exact={section.slug === ''}
-                        key={section.slug}
-                      >
-                        {section.items.map((item) => SectionRoute(item))}
-                      </Route>
-                    );
-                  }
-
-                  if (section.type === 'component') {
-                    return (
-                      <SubRootRoute
-                        path={`/${section.slug}`}
-                        key={section.slug}
-                      >
-                        <ComponentDocRoute section={section} />
-                      </SubRootRoute>
-                    );
-                  }
-
-                  if (section.type === 'markdown') {
-                    return (
-                      <SubRootRoute
-                        path={`/${section.slug}`}
-                        exact={section.slug === ''}
-                        key={section.slug}
-                      >
-                        <MarkdownRoute section={section} />
-                      </SubRootRoute>
-                    );
-                  }
-
-                  return null;
-                })}
-                <Route path="/" exact>
-                  <DefaultHomePage />
-                </Route>
-              </Switch>
+              <Div
+                css={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                {!shouldHideHeader && <Header />}
+                <Div css={{ display: 'flex', flex: 1 }}>
+                  {!shouldHideSidebar && <Sidebar sections={sections} />}
+                  <Switch>
+                    {routes}
+                    <Route path="/" exact>
+                      <DefaultHomePage />
+                    </Route>
+                  </Switch>
+                </Div>
+              </Div>
             </CodeThemeContext.Provider>
           </QueryParamProvider>
         </div>

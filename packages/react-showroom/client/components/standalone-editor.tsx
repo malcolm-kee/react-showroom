@@ -1,9 +1,11 @@
 import { useParams } from '@showroomjs/bundles/routing';
 import * as React from 'react';
-import { Div } from '../components/base';
-import { StandaloneCodeLiveEditor } from '../components/standalone-code-live-editor';
 import { useCodeBlocks } from '../lib/codeblocks-context';
+import { StandaloneCodeLiveEditor } from './standalone-code-live-editor';
 
+/**
+ * `<StandaloneEditor />` is a component that get the code from the codeHash from route params.
+ */
 export const StandaloneEditor = () => {
   const codeblocks = useCodeBlocks();
 
@@ -16,12 +18,12 @@ export const StandaloneEditor = () => {
   }, [codeHash, codeblocks]);
 
   return (
-    <Div css={{ flex: 1 }}>
+    <>
       {codeData && codeData[1] ? (
         <StandaloneCodeLiveEditor code={codeData[0]} lang={codeData[1].lang} />
       ) : (
-        <p>Invalid path</p>
+        <p>Invalid codeHash</p>
       )}
-    </Div>
+    </>
   );
 };

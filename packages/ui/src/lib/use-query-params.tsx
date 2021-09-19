@@ -28,6 +28,15 @@ const useQueryParamsState = () => {
     });
   }, []);
 
+  React.useEffect(() => {
+    if (isReady) {
+      setParamValue((value) => ({
+        value: parseQueryString(location.search) as any,
+        isReady: value.isReady,
+      }));
+    }
+  }, [location.search]);
+
   const setQueryParams = React.useCallback(
     (newState: { [key: string]: string | undefined }) => {
       const newValue = {
@@ -35,10 +44,6 @@ const useQueryParamsState = () => {
         ...newState,
       };
 
-      setParamValue((value) => ({
-        value: newValue,
-        isReady: value.isReady,
-      }));
       history.replace({
         search: stringifyQueryString(newValue),
       });

@@ -1,8 +1,15 @@
 # CHANGELOG
 
-## Unrelease Changes
+## 0.8.0
+
+### New Features
 
 - Support `remark-gfm` syntaxes.
+- Support customizing standalone editor views.
+
+### Bug Fixes
+
+- Fix canonical URL to include `basePath`.
 
 ## 0.7.3
 

@@ -6,7 +6,7 @@ import {
   QueryParamProvider,
   Route,
   StandaloneEditor,
-  SubRootRoute,
+  ComponentMeta,
   Switch,
 } from 'react-showroom/client';
 import { BrowserWindowInRouter } from './browser-window-in-router';
@@ -19,24 +19,21 @@ export const ComponentDocRoute = (props: {
       <BrowserWindowInRouter className="mb-4">
         <div className="p-6">
           <ComponentDataProvider data={props.data}>
-            <SubRootRoute path="/">
-              <div>
-                <Switch>
-                  <Route path="/_standalone/:codeHash">
-                    <StandaloneEditor />
-                  </Route>
-                  <Route>
-                    <ComponentDocArticle
-                      doc={{
-                        type: 'component',
-                        slug: props.data.component.slug,
-                        data: props.data,
-                      }}
-                    />
-                  </Route>
-                </Switch>
-              </div>
-            </SubRootRoute>
+            <Switch>
+              <Route path="/_standalone/:codeHash">
+                <ComponentMeta componentData={props.data.component} slug="" />
+                <StandaloneEditor />
+              </Route>
+              <Route>
+                <ComponentDocArticle
+                  doc={{
+                    type: 'component',
+                    slug: props.data.component.slug,
+                    data: props.data,
+                  }}
+                />
+              </Route>
+            </Switch>
           </ComponentDataProvider>
         </div>
       </BrowserWindowInRouter>

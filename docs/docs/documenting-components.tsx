@@ -42,7 +42,7 @@ export const DocumentingComponentPropsSource = () => {
 export const DocumentingComponentPropsResult = () => (
   <BrowserWindow url="http://localhost:6969" className="mb-4">
     <article className="p-6">
-      <ComponentMeta componentData={buttonData} propsDefaultOpen />
+      <ComponentMeta componentData={buttonData} propsDefaultOpen slug="" />
     </article>
   </BrowserWindow>
 );
@@ -58,7 +58,11 @@ export const DocumentingComponentCommentsSource = () => (
 export const DocumentingComponentCommentsResult = () => (
   <BrowserWindow url="http://localhost:6969" className="mb-4">
     <article className="p-6">
-      <ComponentMeta componentData={buttonWithCommentsData} propsDefaultOpen />
+      <ComponentMeta
+        componentData={buttonWithCommentsData}
+        propsDefaultOpen
+        slug=""
+      />
     </article>
   </BrowserWindow>
 );
@@ -74,7 +78,7 @@ export const DeprecatedExampleSource = () => (
 export const DeprecatedExampleResult = () => (
   <BrowserWindow url="http://localhost:6969" className="mb-4">
     <article className="p-6">
-      <ComponentMeta componentData={oldButtonData} propsDefaultOpen />
+      <ComponentMeta componentData={oldButtonData} propsDefaultOpen slug="" />
     </article>
   </BrowserWindow>
 );

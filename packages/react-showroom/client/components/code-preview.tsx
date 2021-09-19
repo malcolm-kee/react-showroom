@@ -65,7 +65,20 @@ export const CodePreview = (props: CodePreviewProps) => {
   });
 
   React.useEffect(() => {
-    evalCode(props.code, props.importNames, props.imports || imports, setUi);
+    let isLatest = true;
+    evalCode(
+      props.code,
+      props.importNames,
+      props.imports || imports,
+      (newUi) => {
+        if (isLatest) {
+          setUi(newUi);
+        }
+      }
+    );
+    return () => {
+      isLatest = false;
+    };
   }, [props.code]);
 
   return ui;
