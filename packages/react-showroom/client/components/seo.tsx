@@ -3,6 +3,7 @@ import { Helmet, HelmetProps } from 'react-helmet';
 import { THEME } from '../theme';
 
 const SITE_URL = process.env.SITE_URL;
+const BASE_PATH = process.env.BASE_PATH;
 
 export const Seo = (props: {
   title?: string;
@@ -28,7 +29,8 @@ export const Head = ({
 }) => {
   const { pathname } = useLocation();
 
-  const realUrl = SITE_URL && `${SITE_URL}${pathname === '/' ? '' : pathname}`;
+  const realUrl =
+    SITE_URL && `${SITE_URL}${BASE_PATH}${pathname === '/' ? '' : pathname}`;
 
   return (
     <Helmet {...props}>
