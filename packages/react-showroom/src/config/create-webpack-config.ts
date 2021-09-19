@@ -55,7 +55,7 @@ export const createWebpackConfig = (
       output: {
         path: resolveApp(outDir),
         publicPath: prerenderConfig
-          ? basePath === '/' || !isProd
+          ? !isProd
             ? '/'
             : `${basePath}/` // need to add trailing slash
           : 'auto',
@@ -161,6 +161,7 @@ const createBaseWebpackConfig = (
   mode: Environment,
   {
     prerender: prerenderConfig,
+    url,
     basePath,
     theme,
     sections,
@@ -342,8 +343,9 @@ const createBaseWebpackConfig = (
       new webpack.EnvironmentPlugin({
         PRERENDER: String(options.prerender),
         MULTI_PAGES: String(prerenderConfig),
-        BASE_PATH: isProd && basePath !== '/' ? basePath : '',
+        BASE_PATH: isProd ? basePath : '',
         REACT_SHOWROOM_THEME: JSON.stringify(theme),
+        ...(url ? { SITE_URL: url } : {}),
       }),
       virtualModules,
       isDev ? new ReactRefreshWebpackPlugin() : undefined,

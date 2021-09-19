@@ -137,6 +137,12 @@ export interface DocgenConfiguration {
 
 export interface ReactShowroomConfiguration {
   /**
+   * URL for the site.
+   *
+   * @example 'https://react-showroom.js.org'
+   */
+  url?: string;
+  /**
    * a glob pattern string to search for all your components.
    *
    * If you want to organize your components in a nested structure, use `items`.
@@ -205,7 +211,7 @@ export interface ReactShowroomConfiguration {
      *
      * @example '/docs'
      *
-     * @default '/''
+     * @default ''
      */
     basePath?: string;
   };

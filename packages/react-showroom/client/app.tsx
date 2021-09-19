@@ -10,7 +10,6 @@ import { ComponentDocRoute } from './pages/component-doc-route';
 import { DefaultHomePage } from './pages/index';
 import { MarkdownRoute } from './pages/markdown-route';
 import { colorTheme, THEME } from './theme';
-import { headerHeight } from './components/base';
 
 export const App = () => {
   const location = useLocation();
