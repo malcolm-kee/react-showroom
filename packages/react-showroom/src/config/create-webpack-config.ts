@@ -16,6 +16,7 @@ import {
 } from '../lib/generate-showroom-data';
 import { logToStdout } from '../lib/log-to-stdout';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
+import remarkGfm from 'remark-gfm';
 import {
   moduleFileExtensions,
   resolveApp,
@@ -318,6 +319,7 @@ const createBaseWebpackConfig = (
                     remarkPlugins: [
                       remarkFrontmatter,
                       [remarkMdxFrontmatter, { name: 'frontmatter' }],
+                      remarkGfm,
                     ],
                   },
                 },

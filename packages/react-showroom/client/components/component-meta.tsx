@@ -1,5 +1,5 @@
 import { ComponentDocItem } from '@showroomjs/core/react';
-import { Collapsible, styled } from '@showroomjs/ui';
+import { Collapsible, styled, Table } from '@showroomjs/ui';
 import * as React from 'react';
 import type { Props } from 'react-docgen-typescript';
 import snarkdown from 'snarkdown';
@@ -95,22 +95,22 @@ const ComponentPropsTable = (props: {
       <Collapsible.Content>
         <Table>
           <thead>
-            <tr>
-              <Th>NAME</Th>
-              <Th>TYPE</Th>
-              <Th>DESCRIPTION</Th>
-            </tr>
+            <Table.Tr>
+              <Table.Th>NAME</Table.Th>
+              <Table.Th>TYPE</Table.Th>
+              <Table.Th>DESCRIPTION</Table.Th>
+            </Table.Tr>
           </thead>
           <tbody>
             {Object.keys(componentProps).map((prop) => {
               const propData = componentProps[prop];
 
               return (
-                <tr key={prop}>
-                  <Td>{propData.name}</Td>
-                  <Td>{propData.type.raw}</Td>
-                  <Td>{propData.description}</Td>
-                </tr>
+                <Table.Tr key={prop}>
+                  <Table.Td>{propData.name}</Table.Td>
+                  <Table.Td>{propData.type.raw}</Table.Td>
+                  <Table.Td>{propData.description}</Table.Td>
+                </Table.Tr>
               );
             })}
           </tbody>
@@ -143,28 +143,4 @@ const TagKey = styled('b', {
       },
     },
   },
-});
-
-const Table = styled('table', {
-  borderRadius: '$base',
-  overflow: 'hidden',
-  width: '100%',
-});
-
-const Td = styled('td', {
-  px: '$3',
-  py: '$1',
-  fontSize: '$sm',
-  lineHeight: '$sm',
-  textAlign: 'left',
-});
-
-const Th = styled('th', {
-  px: '$3',
-  py: '$1',
-  fontSize: '$sm',
-  lineHeight: '$sm',
-  color: '$gray-600',
-  backgroundColor: '$gray-100',
-  textAlign: 'left',
 });

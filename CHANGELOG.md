@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Unrelease Changes
+
+- Support `remark-gfm` syntaxes.
+
 ## 0.7.3
 
 ### Bug Fixes

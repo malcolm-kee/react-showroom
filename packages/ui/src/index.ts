@@ -5,6 +5,7 @@ export * from './components/dialog';
 export { DropdownMenu } from './components/dropdown-menu';
 export * from './components/icon-button';
 export * from './components/search-dialog';
+export { Table } from './components/table';
 export * from './components/text-input';
 export * from './lib';
 export { createNameContext } from './lib/create-named-context';

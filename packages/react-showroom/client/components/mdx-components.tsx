@@ -1,4 +1,4 @@
-import { styled } from '@showroomjs/ui';
+import { styled, Table } from '@showroomjs/ui';
 import { H1, headerHeight } from './base';
 import { Code, Pre } from './code-block';
 import { GenericLink } from './generic-link';
@@ -92,4 +92,8 @@ export const mdxComponents = {
   ul: Ul,
   li: Li,
   ol: Ol,
+  table: Table,
+  th: Table.Th,
+  td: Table.Td,
+  tr: Table.Tr,
 };
