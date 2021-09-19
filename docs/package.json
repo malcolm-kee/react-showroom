@@ -2,11 +2,11 @@
   "name": "react-showroom-docs",
   "private": true,
   "license": "MIT",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "dependencies": {
     "esbuild-loader": "^2.15.1",
     "react-hook-form": "^7.15.3",
-    "react-showroom": "^0.7.0"
+    "react-showroom": "^0.7.1"
   },
   "scripts": {
     "start": "react-showroom dev",
