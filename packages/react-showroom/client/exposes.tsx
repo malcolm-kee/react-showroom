@@ -17,6 +17,6 @@ export type { ComponentMetaProps } from './components/component-meta';
 export { MarkdownArticle } from './components/markdown-article';
 export { MarkdownDataProvider } from './components/markdown-data-provider';
 export { mdxComponents } from './components/mdx-components';
-export { Seo as Head } from './components/seo';
+export { Head } from './components/seo';
 export { SubRootRoute } from './lib/routing';
 export { StandaloneEditor } from './pages/standalone-editor';
