@@ -9,7 +9,9 @@ export const BrowserWindowInRouter = (props: {
 
   return (
     <BrowserWindow
-      url={`http://localhost:6969${location.pathname}`}
+      url={`http://localhost:6969${location.pathname}${
+        location.search === '?' ? '' : location.search
+      }`}
       {...props}
     />
   );

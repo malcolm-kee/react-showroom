@@ -196,14 +196,14 @@ const SidebarSection = ({
 
     case 'component':
       return (
-        <Link to={`/${section.slug}`} root={level === 0}>
+        <Link to={`/${section.slug}`} root={level === 0} exact>
           {section.data.component.displayName}
         </Link>
       );
 
     case 'markdown':
       return (
-        <Link to={`/${section.slug}`} root={level === 0}>
+        <Link to={`/${section.slug}`} root={level === 0} exact>
           {section.title}
         </Link>
       );

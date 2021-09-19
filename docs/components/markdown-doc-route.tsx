@@ -6,7 +6,6 @@ import {
   QueryParamProvider,
   Route,
   StandaloneEditor,
-  SubRootRoute,
   Switch,
 } from 'react-showroom/client';
 import { BrowserWindowInRouter } from './browser-window-in-router';
@@ -19,18 +18,16 @@ export const MarkdownDocRoute = (props: {
       <BrowserWindowInRouter className="mb-4">
         <div className="p-6">
           <MarkdownDataProvider data={props.data}>
-            <SubRootRoute path="/">
-              <div>
-                <Switch>
-                  <Route path="/_standalone/:codeHash">
-                    <StandaloneEditor />
-                  </Route>
-                  <Route>
-                    <MarkdownArticle section={props.data} />
-                  </Route>
-                </Switch>
-              </div>
-            </SubRootRoute>
+            <div>
+              <Switch>
+                <Route path="/_standalone/:codeHash">
+                  <StandaloneEditor />
+                </Route>
+                <Route>
+                  <MarkdownArticle section={props.data} />
+                </Route>
+              </Switch>
+            </div>
           </MarkdownDataProvider>
         </div>
       </BrowserWindowInRouter>

@@ -1,10 +1,11 @@
 import { Route, Switch, useRouteMatch } from '@showroomjs/bundles/routing';
 import { ReactShowroomMarkdownSection } from '@showroomjs/core/react';
+import { Div, H1, NavLink } from '../components/base';
 import { DetailsPageContainer } from '../components/details-page-container';
 import { MarkdownArticle } from '../components/markdown-article';
 import { MarkdownDataProvider } from '../components/markdown-data-provider';
+import { StandaloneEditor } from '../components/standalone-editor';
 import { StandalonePageContainer } from '../components/standalone-page-container';
-import { StandaloneEditor } from './standalone-editor';
 
 export const MarkdownRoute = ({
   section,
@@ -18,6 +19,20 @@ export const MarkdownRoute = ({
       <Switch>
         <Route path={`${url}/_standalone/:codeHash`}>
           <StandalonePageContainer>
+            <Div css={{ px: '$4', paddingTop: '$6' }}>
+              <H1>
+                <NavLink
+                  to={url}
+                  css={{
+                    '&:hover': {
+                      textDecoration: 'underline',
+                    },
+                  }}
+                >
+                  {section.title}
+                </NavLink>
+              </H1>
+            </Div>
             <StandaloneEditor />
           </StandalonePageContainer>
         </Route>
@@ -25,8 +40,6 @@ export const MarkdownRoute = ({
           <DetailsPageContainer
             title={section.slug === '' ? undefined : section.title}
             description={section.frontmatter.description}
-            hideSidebar={section.frontmatter.hideSidebar}
-            hideHeader={section.frontmatter.hideHeader}
           >
             <MarkdownArticle
               section={section}

@@ -1,6 +1,14 @@
-import { TerminalIcon } from '@heroicons/react/outline';
+import { TerminalIcon, DotsVerticalIcon } from '@heroicons/react/outline';
 import { SupportedLanguage } from '@showroomjs/core';
-import { Alert, css, icons, useDebounce, useQueryParams } from '@showroomjs/ui';
+import {
+  Alert,
+  css,
+  icons,
+  useDebounce,
+  useQueryParams,
+  DropdownMenu,
+  styled,
+} from '@showroomjs/ui';
 import lzString from 'lz-string';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
@@ -10,6 +18,7 @@ import { useCodeCompilation } from '../lib/use-code-compilation';
 import { Div, Span } from './base';
 import { CodeEditor } from './code-editor';
 import { CodePreview } from './code-preview';
+import { RadioDropdown } from './radio-dropdown';
 
 export interface StandaloneCodeLiveEditorProps {
   code: string;
@@ -26,10 +35,16 @@ export const StandaloneCodeLiveEditor = ({
   const [queryParams, setQueryParams, isReady] = useQueryParams();
 
   const [code, setCode] = React.useState(props.code);
+  const [editorView, setEditorView] = React.useState<EditorView>('both');
 
   React.useEffect(() => {
-    if (isReady && queryParams.code) {
-      setCode(safeDecompress(queryParams.code as string, props.code));
+    if (isReady) {
+      if (queryParams.code) {
+        setCode(safeDecompress(queryParams.code as string, props.code));
+      }
+      if (queryParams.editorView) {
+        setEditorView(queryParams.editorView as EditorView);
+      }
     }
   }, [isReady]);
 
@@ -57,98 +72,154 @@ export const StandaloneCodeLiveEditor = ({
   );
 
   return (
-    <Div
-      className={className}
-      css={{
-        padding: '$2',
-        height: '100%',
-        '@xl': {
-          display: 'flex',
-          flexDirection: 'row-reverse',
-          gap: '$4',
-        },
-      }}
-    >
+    <>
       <Div
         css={{
-          flex: 1,
-          position: 'relative',
-          minHeight: 48,
-          border: '1px solid',
-          borderColor: '$gray-300',
-          padding: '$1',
+          textAlign: 'right',
+          px: '$3',
+          paddingTop: '$2',
         }}
       >
-        {isError ? (
-          <Alert variant="error">
-            {typeof error === 'string' ? error : 'Compilation error'}
-          </Alert>
-        ) : (
-          data &&
-          (data.type === 'success' ? (
-            <ErrorBoundary
-              FallbackComponent={ErrorFallback}
-              ref={errorBoundaryRef}
-            >
-              <CodePreview {...data} />
-            </ErrorBoundary>
-          ) : (
-            <Alert variant="error">{formatError(data.error)}</Alert>
-          ))
-        )}
-        {isCompiling && (
-          <Div
-            css={{
-              position: 'absolute',
-              right: 0,
-              top: 0,
-              bottom: 0,
-              px: '$4',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: 'rgba(229, 231, 235, 0.1)',
-              gap: '$2',
-              '@xl': {
-                top: '50%',
-                left: '50%',
-                bottom: 'auto',
-                right: 'auto',
-                transform: 'translate(-50%, -50%)',
-              },
+        <DropdownMenu>
+          <DropdownMenu.Trigger asChild>
+            <MenuButton>
+              Views <DotsVerticalIcon width={16} height={16} />
+            </MenuButton>
+          </DropdownMenu.Trigger>
+          <RadioDropdown
+            value={editorView}
+            onChangeValue={(newView) => {
+              setEditorView(newView);
+              setQueryParams({
+                editorView: newView,
+              });
             }}
-          >
-            <TerminalIcon width="20" height="20" className={icons()} />
-            <Span
-              css={{
-                color: '$gray-500',
-              }}
-            >
-              Compiling...
-            </Span>
-          </Div>
-        )}
+            options={[
+              {
+                value: 'both',
+                label: 'Editor + Preview',
+              },
+              {
+                value: 'editorOnly',
+                label: 'Editor only',
+              },
+              {
+                value: 'previewOnly',
+                label: 'Preview only',
+              },
+            ]}
+          />
+        </DropdownMenu>
       </Div>
-
       <Div
+        className={className}
         css={{
+          padding: '$2',
           '@xl': {
-            flex: 1,
+            display: 'flex',
+            flexDirection: 'row-reverse',
+            gap: '$4',
           },
         }}
       >
-        <CodeEditor
-          code={code}
-          onChange={setCode}
-          language={props.lang as Language}
-          theme={theme}
-          className={editor()}
-          wrapperClass={editorWrapper()}
-        />
+        {editorView !== 'editorOnly' && (
+          <Div
+            css={{
+              flex: 1,
+              position: 'relative',
+              minHeight: 48,
+              border: '1px solid',
+              borderColor: '$gray-300',
+              padding: '$1',
+            }}
+          >
+            {isError ? (
+              <Alert variant="error">
+                {typeof error === 'string' ? error : 'Compilation error'}
+              </Alert>
+            ) : (
+              data &&
+              (data.type === 'success' ? (
+                <ErrorBoundary
+                  FallbackComponent={ErrorFallback}
+                  ref={errorBoundaryRef}
+                >
+                  <CodePreview {...data} />
+                </ErrorBoundary>
+              ) : (
+                <Alert variant="error">{formatError(data.error)}</Alert>
+              ))
+            )}
+            {isCompiling && (
+              <Div
+                css={{
+                  position: 'absolute',
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  px: '$4',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: 'rgba(229, 231, 235, 0.1)',
+                  gap: '$2',
+                  '@xl': {
+                    top: '50%',
+                    left: '50%',
+                    bottom: 'auto',
+                    right: 'auto',
+                    transform: 'translate(-50%, -50%)',
+                  },
+                }}
+              >
+                <TerminalIcon width="20" height="20" className={icons()} />
+                <Span
+                  css={{
+                    color: '$gray-500',
+                  }}
+                >
+                  Compiling...
+                </Span>
+              </Div>
+            )}
+          </Div>
+        )}
+
+        {editorView !== 'previewOnly' && (
+          <Div
+            css={{
+              '@xl': {
+                flex: 1,
+              },
+            }}
+          >
+            <CodeEditor
+              code={code}
+              onChange={setCode}
+              language={props.lang as Language}
+              theme={theme}
+              className={editor()}
+              wrapperClass={editorWrapper()}
+            />
+          </Div>
+        )}
       </Div>
-    </Div>
+    </>
   );
 };
+
+type EditorView = 'both' | 'previewOnly' | 'editorOnly';
+
+const MenuButton = styled('button', {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '$1',
+  fontSize: '$sm',
+  lineHeight: '$sm',
+  px: '$2',
+  py: '$1',
+  borderRadius: '$sm',
+});
 
 const editorWrapper = css({
   height: '100%',

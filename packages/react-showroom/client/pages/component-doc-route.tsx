@@ -1,10 +1,11 @@
 import { Route, Switch, useRouteMatch } from '@showroomjs/bundles/routing';
 import { ReactShowroomComponentSection } from '@showroomjs/core/react';
+import { Div } from '../components/base';
 import { ComponentDataProvider } from '../components/component-data-provider';
 import { ComponentDocArticle } from '../components/component-doc-article';
+import { ComponentDocStandaloneEditor } from '../components/component-doc-standalone-editor';
 import { DetailsPageContainer } from '../components/details-page-container';
 import { StandalonePageContainer } from '../components/standalone-page-container';
-import { StandaloneEditor } from './standalone-editor';
 
 export const ComponentDocRoute = ({
   section,
@@ -18,7 +19,9 @@ export const ComponentDocRoute = ({
       <Switch>
         <Route path={`${url}/_standalone/:codeHash`}>
           <StandalonePageContainer>
-            <StandaloneEditor />
+            <Div css={{ flex: 1 }}>
+              <ComponentDocStandaloneEditor componentData={section} />
+            </Div>
           </StandalonePageContainer>
         </Route>
         <Route path={url}>
