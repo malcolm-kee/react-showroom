@@ -68,10 +68,11 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
       </Div>
       <Portal
         style={{
+          position: 'fixed',
           top: 'auto',
           left: 'auto',
-          right: 24,
-          bottom: 24,
+          right: 'calc(1rem + env(safe-area-inset-right, 24px))',
+          bottom: 'calc(1rem + env(safe-area-inset-bottom, 24px))',
         }}
         className={colorTheme}
       >

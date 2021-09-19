@@ -77,6 +77,8 @@ const BrowserWindowHeader = styled('div', {
 
 const Buttons = styled('div', {
   whiteSpace: 'nowrap',
+  display: 'flex',
+  alignItems: 'center',
 });
 
 const Dot = styled('span', {
@@ -84,7 +86,6 @@ const Dot = styled('span', {
   height: 12,
   width: 12,
   marginRight: 6,
-  marginTop: 4,
   backgroundColor: '#bbb',
   borderRadius: '50%',
 });
@@ -99,5 +100,6 @@ const BrowserWindowAddressBar = styled('div', {
   font: '400 13px Arial',
   userSelect: 'none',
   textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
   overflow: 'hidden',
 });

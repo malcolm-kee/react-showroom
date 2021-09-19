@@ -24,6 +24,7 @@ export const DetailsPageContainer = (props: DetailsPageContainerProps) => {
           as="main"
           css={{
             flex: '1',
+            minWidth: 0,
             paddingBottom: '$12',
           }}
         >
