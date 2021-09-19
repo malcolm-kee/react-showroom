@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.7.3
+
+### Bug Fixes
+
+- Fix error when `url` is not provided.
+
 ## 0.7.2
 
 ### Bug Fixes

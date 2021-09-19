@@ -29,6 +29,7 @@ const DEFAULT_IGNORES = [
 
 const defaultConfig = {
   basePath: '',
+  url: '',
   codeTheme: nightOwlTheme,
   resetCss: true,
 };

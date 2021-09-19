@@ -271,6 +271,7 @@ export interface NormalizedReactShowroomConfiguration
   devServerPort: number;
   docgen: DocgenConfiguration;
   theme: ThemeConfiguration;
+  url: string;
 }
 
 export interface ComponentDocItem {

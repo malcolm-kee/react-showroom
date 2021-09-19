@@ -345,7 +345,7 @@ const createBaseWebpackConfig = (
         MULTI_PAGES: String(prerenderConfig),
         BASE_PATH: isProd ? basePath : '',
         REACT_SHOWROOM_THEME: JSON.stringify(theme),
-        ...(url ? { SITE_URL: url } : {}),
+        SITE_URL: url,
       }),
       virtualModules,
       isDev ? new ReactRefreshWebpackPlugin() : undefined,
