@@ -10,13 +10,11 @@ export const Seo = (props: {
   children?: React.ReactNode;
 }) => {
   return (
-    <Helmet
-      title={props.title}
+    <Head
       defaultTitle={THEME.title}
       titleTemplate={`%s | ${THEME.title}`}
-    >
-      {props.children}
-    </Helmet>
+      {...props}
+    />
   );
 };
 

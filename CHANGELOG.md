@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.7.1
+
+### Bug Fixes
+
+- Canonical URL bug.
+
 ## 0.7.0
 
 ### New Features
