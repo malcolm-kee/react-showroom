@@ -63,7 +63,7 @@ async function prerenderSite(
 
   const routes = getRoutes();
 
-  if (config.basePath !== '/') {
+  if (config.basePath !== '') {
     logToStdout(`Prerender with basePath: ${config.basePath}`);
   }
 

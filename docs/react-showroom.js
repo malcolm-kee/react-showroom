@@ -5,6 +5,7 @@ const path = require('path');
 const reactShowRoomPath = path.resolve(__dirname, '../packages/react-showroom');
 
 module.exports = defineConfig({
+  url: 'https://react-showroom.js.org',
   items: [
     {
       type: 'content',

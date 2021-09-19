@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 0.7.0
+
+### New Features
+
+- Add canonical URL in header if `url` is set.
+
+### Bug Fixes
+
+- Fix UI not mobile friendly
+
 ## 0.6.0
 
 ### New Features

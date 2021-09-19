@@ -28,7 +28,7 @@ const DEFAULT_IGNORES = [
 ];
 
 const defaultConfig = {
-  basePath: '/',
+  basePath: '',
   codeTheme: nightOwlTheme,
   resetCss: true,
 };
@@ -129,9 +129,7 @@ export const getConfig = (
     webpackConfig: webpackConfig || getUserWebpackConfig(),
     sections,
     basePath: providedBuildConfig.basePath
-      ? providedBuildConfig.basePath === '/'
-        ? '/'
-        : removeTrailingSlash(providedBuildConfig.basePath)
+      ? removeTrailingSlash(providedBuildConfig.basePath)
       : defaultConfig.basePath,
     assetDirs: providedConfig.assetDirs
       ? providedConfig.assetDirs.map((dir) => resolveApp(dir))

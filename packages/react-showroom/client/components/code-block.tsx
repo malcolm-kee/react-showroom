@@ -81,7 +81,7 @@ export const Code = ({
             position: 'relative',
             display: inlineBlock ? 'inline-block' : 'block',
             px: inlineBlock ? '$6' : 10,
-            overflowX: 'auto',
+            overflow: 'auto',
           }}
           className={props.className}
         >
