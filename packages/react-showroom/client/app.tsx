@@ -46,11 +46,7 @@ const routes = sections.map(function SectionRoute(section) {
 
   if (section.type === 'markdown') {
     return (
-      <Route
-        path={`/${section.slug}`}
-        exact={section.slug === ''}
-        key={section.slug}
-      >
+      <Route path={`/${section.slug}`} key={section.slug}>
         <MarkdownRoute section={section} />
       </Route>
     );

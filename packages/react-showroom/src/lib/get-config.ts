@@ -1,4 +1,4 @@
-import { flattenArray, isString } from '@showroomjs/core';
+import { Environment, flattenArray, isString } from '@showroomjs/core';
 import {
   ItemConfiguration,
   NormalizedReactShowroomConfiguration,
@@ -67,6 +67,7 @@ const defaultThemeConfiguration: ThemeConfiguration = {
 
 let _normalizedConfig: NormalizedReactShowroomConfiguration;
 export const getConfig = (
+  env: Environment,
   userConfig?: ReactShowroomConfiguration
 ): NormalizedReactShowroomConfiguration => {
   if (_normalizedConfig) {
@@ -84,7 +85,7 @@ export const getConfig = (
     imports: providedImports,
     ignores = DEFAULT_IGNORES,
     ...providedConfig
-  } = userConfig || getUserConfig();
+  } = userConfig || getUserConfig(env);
 
   const sections: Array<ReactShowroomSectionConfig> = [];
   const components: Array<ReactShowroomComponentSectionConfig> = [];
@@ -341,31 +342,57 @@ export const getConfig = (
 
         case 'docs': {
           const docsFolder = sectionConfig.folder;
+          const docGroupTitle = sectionConfig.title;
 
           const pagesPaths = glob.sync(`${docsFolder}/**/*.{md,mdx}`, {
             cwd: paths.appPath,
+            ignore: sectionConfig.ignores,
           });
 
-          pagesPaths.forEach((pagePath) => {
-            const pathInfo = path.parse(pagePath);
+          if (docGroupTitle) {
+            const docPathPrefix =
+              sectionConfig.path || slugify(docGroupTitle, { lower: true });
+            const slugParts = parentSlugs.concat(docPathPrefix);
+            const section: ReactShowroomSectionConfig = {
+              type: 'group',
+              title: docGroupTitle,
+              slug: slugParts.join('/'),
+              items: [],
+            };
 
-            const slug = pathInfo.name === 'index' ? '' : pathInfo.name;
+            collectDocs(section.items, slugParts);
 
-            if (slug.startsWith('_')) {
-              logToStdout(
-                chalk.yellow(
-                  'Having path starts with _ may causes unexpected behavior.'
-                )
-              );
-              logToStdout(`Path is "${slug}" for ${pagePath}`);
-            }
+            parent.push(section);
+          } else {
+            collectDocs(parent, parentSlugs);
+          }
 
-            parent.push({
-              type: 'markdown',
-              sourcePath: path.resolve(paths.appPath, pagePath),
-              slug: parentSlugs.concat(slug).join('/'),
+          function collectDocs(
+            targetItems: Array<ReactShowroomSectionConfig>,
+            pathToDoc: Array<string>
+          ) {
+            pagesPaths.forEach((pagePath) => {
+              const pathInfo = path.parse(pagePath);
+
+              const slug = pathInfo.name === 'index' ? '' : pathInfo.name;
+
+              if (slug.startsWith('_')) {
+                logToStdout(
+                  chalk.yellow(
+                    'Having path starts with _ may causes unexpected behavior.'
+                  )
+                );
+                logToStdout(`Path is "${slug}" for ${pagePath}`);
+              }
+
+              targetItems.push({
+                type: 'markdown',
+                sourcePath: path.resolve(paths.appPath, pagePath),
+                slug: pathToDoc.concat(slug).join('/'),
+              });
             });
-          });
+          }
+
           return;
         }
 
@@ -376,7 +403,7 @@ export const getConfig = (
   }
 };
 
-const getUserConfig = (): ReactShowroomConfiguration => {
+const getUserConfig = (env: Environment): ReactShowroomConfiguration => {
   if (!fs.existsSync(paths.appShowroomConfig)) {
     return {};
   }
@@ -385,7 +412,9 @@ const getUserConfig = (): ReactShowroomConfiguration => {
     typeof defineConfig
   > = require(paths.appShowroomConfig);
 
-  return typeof provided === 'function' ? provided() : provided;
+  return typeof provided === 'function'
+    ? provided(env === 'development' ? 'dev' : 'build')
+    : provided;
 };
 
 const removeTrailingSlash = (path: string) => path.replace(/\/$/, '');

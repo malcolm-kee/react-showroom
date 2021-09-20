@@ -22,7 +22,7 @@ const { openBrowser } = require(path.resolve(
 ));
 
 export async function startDevServer(userConfig?: ReactShowroomConfiguration) {
-  const config = getConfig(userConfig);
+  const config = getConfig('development', userConfig);
   const { assetDirs, devServerPort } = config;
 
   const PORT = Number((argv as any).port ?? process.env.PORT ?? devServerPort);

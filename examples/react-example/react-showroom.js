@@ -15,8 +15,10 @@ module.exports = defineConfig({
       href: 'https://github.com/malcolm-kee/react-showroom',
     },
     {
+      title: 'Others',
       type: 'docs',
       folder: 'docs',
+      ignores: ['**/index.mdx'],
     },
   ],
   theme: {

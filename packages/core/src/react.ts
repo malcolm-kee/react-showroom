@@ -51,6 +51,7 @@ export interface DocSectionConfiguration extends ItemConfigurationWithPath {
    * relative path to the folder that contents all the markdown files.
    */
   folder: string;
+  ignores?: Array<string>;
 }
 
 export interface GroupSectionConfiguration extends ItemConfigurationWithPath {
