@@ -7,8 +7,6 @@ export const StandalonePageContainer = (props: {
     <Div
       css={{
         flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
       }}
     >
       {props.children}

@@ -27,7 +27,11 @@ module.exports = defineConfig({
 const { defineConfig } = require('react-showroom');
 const webpackConfig = require('./webpack.config');
 
-module.exports = defineConfig(() => {
+module.exports = defineConfig((command) => {
+  // command will be either 'dev' or 'build', depending
+  // if you are running react-showroom dev or react-showroom build
+
+  }
   return {
     webpackConfig,
   };

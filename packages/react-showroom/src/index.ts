@@ -7,7 +7,9 @@ import type { buildShowroom as BuildShowRoomDef } from './node-api/build-showroo
 import type { startDevServer as StartDevServerDef } from './node-api/start-dev-server';
 
 export const defineConfig = (
-  config: ReactShowroomConfiguration | (() => ReactShowroomConfiguration)
+  config:
+    | ReactShowroomConfiguration
+    | ((command: 'dev' | 'build') => ReactShowroomConfiguration)
 ) => config;
 
 export const buildShowroom: typeof BuildShowRoomDef = (userConfig) =>

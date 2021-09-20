@@ -19,9 +19,7 @@ export const ComponentDocRoute = ({
       <Switch>
         <Route path={`${url}/_standalone/:codeHash`}>
           <StandalonePageContainer>
-            <Div css={{ flex: 1 }}>
-              <ComponentDocStandaloneEditor componentData={section} />
-            </Div>
+            <ComponentDocStandaloneEditor componentData={section} />
           </StandalonePageContainer>
         </Route>
         <Route path={url}>

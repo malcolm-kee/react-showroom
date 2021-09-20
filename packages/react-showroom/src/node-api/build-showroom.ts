@@ -104,7 +104,7 @@ async function prerenderSite(
 
 export async function buildShowroom(userConfig?: ReactShowroomConfiguration) {
   const tmpDir = await temp.mkdir('react-showroom-ssr');
-  const config = getConfig(userConfig);
+  const config = getConfig('production', userConfig);
 
   await Promise.all([
     buildStaticSite(config),

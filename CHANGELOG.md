@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.8.1
+
+### Bug Fixes
+
+- Config file function should receives the command (`dev`/`build`).
+- Docs section `title` and `path` should be applied.
+
 ## 0.8.0
 
 ### New Features

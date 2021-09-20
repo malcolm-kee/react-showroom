@@ -9,7 +9,7 @@
     "react",
     "styleguide"
   ],
-  "homepage": "https://react-showroom.netlify.app/",
+  "homepage": "https://react-showroom.js.org/",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {
