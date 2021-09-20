@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/react-showroom.svg)](https://badge.fury.io/js/react-showroom)
 
-https://react-showroom.netlify.app/
+https://react-showroom.js.org/
 
 Document React components by declaring props definition and writing markdown.
 
