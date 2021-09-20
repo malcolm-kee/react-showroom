@@ -36,6 +36,9 @@ jobs:
       - name: Test
         run: yarn test
 
+      - name: Build Example
+        run: yarn example:build
+
       - name: Deploy Docs to Netlify
         uses: nwtgck/actions-netlify@v1.2
         with:
