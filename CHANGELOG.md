@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.9.0
+
+### New Features
+
+- Add `theme.favicon` configuration.
+
 ## 0.8.1
 
 ### Bug Fixes

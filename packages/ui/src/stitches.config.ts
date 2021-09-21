@@ -3,8 +3,8 @@ import { createStitches } from '@stitches/react';
 
 const SPACE_UNIT = 4;
 const SPACE_VARIANTS = [
-  0, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 24, 28, 32, 36,
-  40,
+  0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 24, 28, 32,
+  36, 40,
 ] as const;
 
 const spaces = SPACE_VARIANTS.reduce<
@@ -162,6 +162,29 @@ export const {
         outlineWidth: '2px',
       },
     }),
+    srOnly: (applied: boolean) =>
+      applied
+        ? {
+            position: 'absolute',
+            width: 1,
+            height: 1,
+            padding: 0,
+            margin: -1,
+            overflow: 'hidden',
+            clip: 'rect(0, 0, 0, 0)',
+            whiteSpace: 'nowrap',
+            borderWidth: 0,
+          }
+        : {
+            position: 'static',
+            width: 'auto',
+            height: 'auto',
+            padding: 0,
+            margin: 0,
+            overflow: 'visible',
+            clip: 'auto',
+            whiteSpace: 'normal',
+          },
   },
 });
 

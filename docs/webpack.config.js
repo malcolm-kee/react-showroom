@@ -56,6 +56,10 @@ const config = (env) => {
             },
           ],
         },
+        {
+          test: /\.png$/,
+          type: 'asset',
+        },
       ],
     },
     plugins: [

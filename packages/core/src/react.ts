@@ -87,7 +87,7 @@ export interface ThemeConfiguration {
    *
    * @default 'React Showroom'
    */
-  title?: string;
+  title: string;
   /**
    * One of the themes provided by `'prism-react-renderer'`.
    */
@@ -126,6 +126,7 @@ export interface ThemeConfiguration {
       label: string;
     }>;
   };
+  favicon?: string;
 }
 
 export interface DocgenConfiguration {

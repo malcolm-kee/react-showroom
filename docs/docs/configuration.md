@@ -95,6 +95,7 @@ Output folder for the generated site.
 ### `build.prerender`
 
 - Type: `boolean`
+- Default: `false`
 
 Enable pre-rendering when generating site.
 
@@ -229,9 +230,9 @@ Modules that are required for your style guide. Useful for third-party styles or
 
 ### `wrapper`
 
-- Type: `string`
+- Type: `string | undefined`
 
-Path to a module/file that export default a React component that should wrap the entire showroom.
+Path to a module/file that export default a React component to wrap the entire showroom.
 
 Use this to render context providers that your application need, e.g. Redux Provider.
 
@@ -241,6 +242,23 @@ Use this to render context providers that your application need, e.g. Redux Prov
 - Default: `['**/__tests__/**', '**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}','**/*.d.ts']`
 
 Patterns to ignore for components.
+
+### `theme.favicon`
+
+- Type: `string | undefined`
+
+Path to your site favicon.
+
+Example, if your favicon is in `asset/img/favicon.ico`:
+
+```js fileName="react-showroom.js"
+module.exports = {
+  assetDirs: ['asset'],
+  theme: {
+    favicon: '/img/favicon.ico',
+  },
+};
+```
 
 ### `theme.codeTheme`
 

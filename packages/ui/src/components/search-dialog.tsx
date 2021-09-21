@@ -202,6 +202,7 @@ export const SearchDialog = Object.assign(SearchDialogImpl, {
           css={{
             width: 'auto',
             color: '$gray-400',
+            height: 38,
           }}
           {...props}
         >
@@ -241,8 +242,11 @@ const InputWrapper = styled('div', {
 const SearchIcon = styled(PlainSearchIcon, {
   position: 'absolute',
   left: '$3',
-  top: '$3',
+  top: 14,
   color: '$primary-300',
+  '@md': {
+    top: '$3',
+  },
 });
 
 const OptionItem = styled('div', {
