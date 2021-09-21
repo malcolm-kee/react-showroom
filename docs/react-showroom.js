@@ -1,8 +1,6 @@
 // @ts-check
 const { defineConfig } = require('react-showroom');
 const libPackageJson = require('react-showroom/package.json');
-const path = require('path');
-const reactShowRoomPath = path.resolve(__dirname, '../packages/react-showroom');
 
 module.exports = defineConfig({
   url: 'https://react-showroom.js.org',
@@ -10,7 +8,7 @@ module.exports = defineConfig({
     {
       type: 'content',
       path: '',
-      content: path.resolve(reactShowRoomPath, 'README.md'),
+      content: 'docs/index.mdx',
     },
     {
       type: 'group',
@@ -48,10 +46,20 @@ module.exports = defineConfig({
       version: libPackageJson.version,
       items: [
         {
+          to: '/getting-started/installation',
+          label: 'Docs',
+        },
+        {
           to: libPackageJson.repository.url.replace(/^git\+/, ''),
           label: 'GitHub',
         },
       ],
+      logo: {
+        src: '/react-showroom.png',
+        alt: '',
+        height: '83',
+        width: '79',
+      },
     },
     colors: {
       'primary-50': '#ECFDF5',
@@ -65,6 +73,7 @@ module.exports = defineConfig({
       'primary-800': '#065F46',
       'primary-900': '#064E3B',
     },
+    favicon: '/icon.png',
   },
   devServer: {
     port: 8989,
@@ -73,4 +82,5 @@ module.exports = defineConfig({
     prerender: true,
   },
   wrapper: 'components/wrapper.tsx',
+  assetDirs: ['assets'],
 });

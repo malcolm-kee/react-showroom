@@ -10,7 +10,11 @@ module.exports = {
   mode: 'jit',
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        react: '#61dafb',
+      },
+    },
   },
   variants: {},
   plugins: [require('@tailwindcss/forms')],

@@ -43,5 +43,8 @@ export const TextInput = styled(
       outline: 'none',
       borderColor: '$primary-300',
     },
+    '&::placeholder': {
+      color: '$gray-400',
+    },
   }
 );

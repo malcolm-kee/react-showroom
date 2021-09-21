@@ -24,12 +24,15 @@ const options = (function (allItems: Array<ReactShowroomSection>) {
           collectOption(item.items);
           return;
 
-        case 'markdown':
-          result.push({
-            label: item.title,
-            value: item.slug,
-            description: item.frontmatter.description,
-          });
+        case 'markdown': {
+          if (item.slug && item.title) {
+            result.push({
+              label: item.title,
+              value: item.slug,
+              description: item.frontmatter.description,
+            });
+          }
+        }
       }
     });
   }
@@ -52,18 +55,20 @@ export const Header = (props: HeaderProps) => {
   return (
     <HeaderRoot>
       <HeaderInner>
-        <ItemWrapper>
+        <TitleWrapper>
           {props.backUrl && (
             <HeaderLink href={props.backUrl}>
               <ArrowLeftIcon aria-label="Back" width={20} height={20} />
             </HeaderLink>
           )}
-          {navbarOptions.logo && <img {...navbarOptions.logo} />}
+          {navbarOptions.logo && <Logo {...navbarOptions.logo} />}
           <Title to="/">
             {THEME.title}{' '}
-            {navbarOptions.version && <small>v{navbarOptions.version}</small>}
+            {navbarOptions.version && (
+              <Version>v{navbarOptions.version}</Version>
+            )}
           </Title>
-        </ItemWrapper>
+        </TitleWrapper>
         <ItemWrapper>
           {navbarOptions.items &&
             navbarOptions.items.map((item, i) => (
@@ -75,7 +80,7 @@ export const Header = (props: HeaderProps) => {
             <SearchDialog.Trigger
               autoFocus={!!(location.state && location.state.searchNavigated)}
             >
-              Search
+              <SearchText>Search</SearchText>
             </SearchDialog.Trigger>
             <SearchDialog
               options={options}
@@ -93,6 +98,29 @@ export const Header = (props: HeaderProps) => {
     </HeaderRoot>
   );
 };
+
+const Logo = styled('img', {
+  maxHeight: '40px',
+  width: 'auto',
+});
+
+const TitleWrapper = styled('div', {
+  display: 'flex',
+  gap: '$2',
+  alignItems: 'center',
+});
+
+const SearchText = styled('span', {
+  srOnly: true,
+  '@sm': {
+    srOnly: false,
+  },
+});
+
+const Version = styled('small', {
+  fontSize: '$sm',
+  lineHeight: '$sm',
+});
 
 const ItemWrapper = styled('div', {
   display: 'flex',

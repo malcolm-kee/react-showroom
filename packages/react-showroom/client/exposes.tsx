@@ -1,5 +1,6 @@
 export { useQueryClient } from '@showroomjs/bundles/query';
 export {
+  Link,
   MemoryRouter,
   Route,
   Switch,
@@ -7,7 +8,7 @@ export {
 } from '@showroomjs/bundles/routing';
 export { getCompilationKey } from '@showroomjs/core';
 export type { CodeBlocks } from '@showroomjs/core';
-export { QueryParamProvider } from '@showroomjs/ui';
+export { QueryParamProvider, styled } from '@showroomjs/ui';
 export { BrowserWindow } from './components/browser-window';
 export type { BrowserWindowProps } from './components/browser-window';
 export { ComponentDataProvider } from './components/component-data-provider';

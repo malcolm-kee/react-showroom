@@ -1,5 +1,11 @@
 # react-showroom
 
+<div style="text-align:center;">
+    
+![React Showroom](docs/assets/react-showroom.png)
+
+</div>
+
 [![npm version](https://badge.fury.io/js/react-showroom.svg)](https://badge.fury.io/js/react-showroom)
 
 https://react-showroom.js.org/
