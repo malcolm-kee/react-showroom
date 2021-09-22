@@ -45,4 +45,25 @@ export default defineConfig([
     ],
     external: ['react', 'react-dom', 'prop-types', 'tslib'],
   },
+  {
+    input: 'src/react-simple-code-editor.ts',
+    output: {
+      file: 'dist/react-simple-code-editor.js',
+      format: 'esm',
+      sourcemap: true,
+    },
+    plugins: [
+      nodeResolve(),
+      commonjs(),
+      typescript(),
+      replace({
+        values: {
+          'process.env.NODE_ENV': JSON.stringify('production'),
+          global: 'globalThis',
+        },
+        preventAssignment: true,
+      }),
+    ],
+    external: ['react', 'react-dom', 'prop-types', 'tslib'],
+  },
 ]);
