@@ -18,7 +18,12 @@ const { defineConfig } = require('react-showroom');
 const webpackConfig = require('./webpack.config');
 
 module.exports = defineConfig({
-  webpackConfig,
+  imports: [
+    {
+      name: 'components',
+      path: './src/components',
+    },
+  ],
 });
 ```
 
@@ -31,9 +36,13 @@ module.exports = defineConfig((command) => {
   // command will be either 'dev' or 'build', depending
   // if you are running react-showroom dev or react-showroom build
 
-  }
   return {
-    webpackConfig,
+    imports: [
+      {
+        name: 'components',
+        path: './src/components',
+      },
+    ],
   };
 });
 ```
@@ -45,13 +54,6 @@ Use `defineConfig` [identity function](https://en.wikipedia.org/wiki/Identity_fu
 It is also recommended (but not required) to add `// @ts-check` comment at the top of the file so any misconfiguration will be reported by your editor.
 
 ## Config Options
-
-### `webpackConfig`
-
-- Type: `webpack.Configuration | ((env: 'development' | 'production') => webpack.Configuration)`
-- Default: Load from `webpack.config.js` from project root if the file is available.
-
-Webpack configuration to load your components (or any other resources that are needed by the components, e.g. CSS)
 
 ### `components`
 
@@ -214,9 +216,17 @@ Example:
 }
 ```
 
-### `assetDirs`
+### `resolve.alias`
 
-- Type: `Array<string>`
+- Type: `Record<string, string>`
+
+Will be passed to @rollup/plugin-alias as its [entries option](https://github.com/rollup/plugins/tree/master/packages/alias#entries).
+
+When aliasing to file system paths, always use absolute paths. Relative alias values will be used as-is and will not be resolved into file system paths.
+
+### `assetDir`
+
+- Type: `string`
 
 Your application static assets folder to be accessible at "/" in the style guide server.
 
