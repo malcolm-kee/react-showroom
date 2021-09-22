@@ -1,4 +1,3 @@
-// @ts-ignore
 import { dataToEsm } from '@rollup/pluginutils';
 import fs from 'fs';
 import type { Code as MdCode } from 'mdast';

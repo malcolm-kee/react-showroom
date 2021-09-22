@@ -1,4 +1,3 @@
-// @ts-ignore
 import { getSafeName, isString } from '@showroomjs/core';
 import { ImportConfig } from '@showroomjs/core/react';
 import fs from 'fs';
