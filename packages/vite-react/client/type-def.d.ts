@@ -41,6 +41,5 @@ declare namespace NodeJS {
     readonly PRERENDER: boolean;
     readonly SITE_URL: string;
     readonly BASE_PATH: string;
-    readonly MULTI_PAGES: boolean;
   }
 }

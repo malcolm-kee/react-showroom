@@ -7,11 +7,12 @@ import { createQueryClient } from './lib/create-query-client';
 
 const queryClient = createQueryClient();
 
-const render =
-  process.env.PRERENDER === true ? ReactDOM.hydrate : ReactDOM.render;
+const isPrerender = process.env.PRERENDER;
+
+const render = isPrerender ? ReactDOM.hydrate : ReactDOM.render;
 
 const Router: React.ComponentType<{ children: React.ReactNode }> = (props) =>
-  process.env.MULTI_PAGES === true ? (
+  isPrerender ? (
     <BrowserRouter basename={process.env.BASE_PATH}>
       {props.children}
     </BrowserRouter>
