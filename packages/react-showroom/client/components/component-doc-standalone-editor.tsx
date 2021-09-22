@@ -1,4 +1,5 @@
 import { ReactShowroomComponentSection } from '@showroomjs/core/react';
+import * as React from 'react';
 import { Div } from './base';
 import { ComponentMeta } from './component-meta';
 import { StandaloneEditor } from './standalone-editor';

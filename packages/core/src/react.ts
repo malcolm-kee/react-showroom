@@ -1,11 +1,11 @@
 import type { PrismTheme } from 'prism-react-renderer';
 import type { ComponentType } from 'react';
+import { UserConfig as ViteUserConfig } from 'vite';
 import type {
   ComponentDoc as DocgenComponentDoc,
   ParserOptions,
 } from 'react-docgen-typescript';
-import type { Configuration } from 'webpack';
-import { Environment, CodeBlocks } from './index';
+import { CodeBlocks } from './index';
 
 export interface ItemConfigurationWithPath {
   title?: string;
@@ -137,7 +137,8 @@ export interface DocgenConfiguration {
   options: ParserOptions;
 }
 
-export interface ReactShowroomConfiguration {
+export interface ReactShowroomConfiguration
+  extends Pick<ViteUserConfig, 'css' | 'resolve'> {
   /**
    * URL for the site.
    *
@@ -158,10 +159,6 @@ export interface ReactShowroomConfiguration {
   ignores?: Array<string>;
   items?: Array<ItemConfiguration>;
   /**
-   * Webpack configuration to load your components (or any other resources that are needed by the components, e.g. CSS)
-   */
-  webpackConfig?: Configuration | ((env: Environment) => Configuration);
-  /**
    * modules to be available in examples via `import`.
    *
    * Pass 'name' (how it is imported) and 'path' (relative path from project root).
@@ -175,9 +172,9 @@ export interface ReactShowroomConfiguration {
   /**
    * Your application static assets folder will be accessible as / in the style guide dev server.
    *
-   * @example ['public']
+   * @example 'public'
    */
-  assetDirs?: Array<string>;
+  assetDir?: string;
   /**
    * path to a module/file that export default a React component that should wrap the entire showroom.
    *
@@ -269,7 +266,6 @@ export interface NormalizedReactShowroomConfiguration
   /**
    * assetDirs in absolute paths
    */
-  assetDirs: Array<string>;
   devServerPort: number;
   docgen: DocgenConfiguration;
   theme: ThemeConfiguration;

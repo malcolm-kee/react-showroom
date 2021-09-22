@@ -1,5 +1,6 @@
 import type { Language } from 'prism-react-renderer';
 import { Div } from './base';
+import * as React from 'react';
 
 export const LanguageTag = (props: { language: Language }) => (
   <Div

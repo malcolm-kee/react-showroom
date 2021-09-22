@@ -2,6 +2,7 @@ import { ArrowLeftIcon } from '@heroicons/react/outline';
 import { Link, useHistory, useLocation } from '@showroomjs/bundles/routing';
 import { ReactShowroomSection } from '@showroomjs/core/react';
 import { Option, SearchDialog, styled } from '@showroomjs/ui';
+import * as React from 'react';
 import sections from 'react-showroom-sections';
 import { colorTheme, THEME } from '../theme';
 import { GenericLink } from './generic-link';

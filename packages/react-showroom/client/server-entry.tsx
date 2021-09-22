@@ -1,6 +1,7 @@
 import { QueryClientProvider } from '@showroomjs/bundles/query';
 import { StaticRouter } from '@showroomjs/bundles/routing';
 import { flattenArray, isDefined, NestedArray, Ssr } from '@showroomjs/core';
+import * as React from 'react';
 import * as ReactDOMServer from 'react-dom/server';
 import { Helmet } from 'react-helmet';
 import sections from 'react-showroom-sections';

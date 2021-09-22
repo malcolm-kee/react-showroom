@@ -8,56 +8,61 @@ import {
   ReactShowroomConfiguration,
 } from '@showroomjs/core/react';
 import * as fs from 'fs-extra';
-import * as temp from 'temp';
-import webpack from 'webpack';
-import { createWebpackConfig } from '../config/create-webpack-config';
-import { createPrerenderBundle } from '../lib/create-prerender-bundle';
+import { build } from 'vite';
+import { createViteConfig } from '../config/create-vite-config';
 import { getConfig } from '../lib/get-config';
 import { logToStdout } from '../lib/log-to-stdout';
-import { resolveApp } from '../lib/paths';
+import { resolveApp, resolveShowroom } from '../lib/paths';
 
-temp.track();
+export interface StartServerOptions extends ReactShowroomConfiguration {
+  configFile?: string;
+}
 
-async function buildStaticSite(config: NormalizedReactShowroomConfiguration) {
-  const webpackConfig = createWebpackConfig('production', config, {
-    outDir: config.outDir,
-    prerender: config.prerender,
+export async function buildShowroom(
+  userConfig?: ReactShowroomConfiguration,
+  configFile?: string
+) {
+  logToStdout('Generating client bundle...');
+
+  const config = getConfig('production', configFile, userConfig);
+
+  const { prerender } = config;
+
+  await build({
+    ...(await createViteConfig('production', config)),
+    configFile: false,
   });
 
-  const compiler = webpack(webpackConfig);
+  if (prerender) {
+    logToStdout('Generating prerender bundle...');
 
-  try {
-    await new Promise<void>((fulfill, reject) => {
-      compiler.run((err, stats) => {
-        if (err || stats?.hasErrors()) {
-          if (err) {
-            console.error(err);
-          }
-          compiler.close(() => {
-            console.error('Fix the error and try again.');
-          });
-          reject(err);
-        }
+    const ssrDir = resolveShowroom('ssr-result');
 
-        compiler.close(() => {
-          fulfill();
-        });
-      });
+    await build({
+      ...(await createViteConfig('production', config, {
+        ssr: {
+          outDir: ssrDir,
+        },
+      })),
+      configFile: false,
     });
-  } catch (err) {
-    console.error(err);
+
+    try {
+      prerenderSite(config, ssrDir);
+    } finally {
+      fs.remove(ssrDir);
+    }
   }
 }
 
 async function prerenderSite(
   config: NormalizedReactShowroomConfiguration,
-  tmpDir: string
+  ssrDir: string
 ) {
-  const prerenderCodePath = `${tmpDir}/server/prerender.js`;
+  const serverEntry: Ssr = require(`${ssrDir}/server-entry.js`);
   const htmlPath = resolveApp(`${config.outDir}/index.html`);
 
-  const { render, getCssText, getHelmet, getRoutes } =
-    require(prerenderCodePath) as Ssr;
+  const { render, getCssText, getHelmet, getRoutes } = serverEntry;
 
   const template = await fs.readFile(htmlPath, 'utf-8');
 
@@ -99,21 +104,5 @@ async function prerenderSite(
       .replace('<!--SSR-target-->', prerenderContent);
 
     return finalHtml;
-  }
-}
-
-export async function buildShowroom(userConfig?: ReactShowroomConfiguration) {
-  const tmpDir = await temp.mkdir('react-showroom-ssr');
-  const config = getConfig('production', userConfig);
-
-  await Promise.all([
-    buildStaticSite(config),
-    config.prerender
-      ? createPrerenderBundle(config, tmpDir)
-      : Promise.resolve(),
-  ]);
-
-  if (config.prerender) {
-    await prerenderSite(config, tmpDir);
   }
 }

@@ -4,6 +4,12 @@ declare module '*?showroomRaw' {
   export default value;
 }
 
+declare module '*?raw' {
+  var value: string;
+
+  export default value;
+}
+
 declare module '*.mdx?showroomRemarkCodeblocks' {
   import { CodeBlocks } from '@showroomjs/core';
 

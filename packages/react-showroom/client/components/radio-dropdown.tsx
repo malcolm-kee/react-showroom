@@ -1,5 +1,6 @@
 import { CheckIcon } from '@heroicons/react/outline';
 import { DropdownMenu } from '@showroomjs/ui';
+import * as React from 'react';
 
 export interface RadioDropdownProps<Value extends string> {
   value: Value;

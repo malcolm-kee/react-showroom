@@ -13,12 +13,7 @@ yargs
   .scriptName(pkgJson.name)
   .version(pkgJson.version)
   .usage('$0 <cmd> [args]')
-  .command(
-    '$0',
-    false,
-    () => {},
-    () => yargs.showHelp('log')
-  )
+  .command('$0', false, () => yargs.showHelp('log'))
   .command(
     'dev',
     'Start showroom development server',
@@ -27,6 +22,11 @@ yargs
         type: 'number',
         describe: 'Port number for the dev server',
         default: 6969,
+      },
+      config: {
+        type: 'string',
+        describe: 'Config file name',
+        default: 'react-showroom.js',
       },
     },
     () => spawnScript('dev', process.argv.slice(3))

@@ -1,6 +1,6 @@
 import { Route, Switch, useRouteMatch } from '@showroomjs/bundles/routing';
 import { ReactShowroomComponentSection } from '@showroomjs/core/react';
-import { Div } from '../components/base';
+import * as React from 'react';
 import { ComponentDataProvider } from '../components/component-data-provider';
 import { ComponentDocArticle } from '../components/component-doc-article';
 import { ComponentDocStandaloneEditor } from '../components/component-doc-standalone-editor';

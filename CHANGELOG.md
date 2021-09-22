@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.10.0
+
+### Breaking Changes
+
+- Change underlying bundler from `webpack` to `vite`.
+
 ## 0.9.0
 
 ### New Features

@@ -1,5 +1,6 @@
 import { Route, Switch, useRouteMatch } from '@showroomjs/bundles/routing';
 import { ReactShowroomMarkdownSection } from '@showroomjs/core/react';
+import * as React from 'react';
 import { Div, H1, NavLink } from '../components/base';
 import { DetailsPageContainer } from '../components/details-page-container';
 import { MarkdownArticle } from '../components/markdown-article';

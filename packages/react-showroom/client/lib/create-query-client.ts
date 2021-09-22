@@ -17,8 +17,8 @@ export const createQueryClient = () => {
   });
 
   Data.items.forEach((item) => {
-    Object.keys(item.codeBlocks).forEach((sourceCode) => {
-      const codeData = item.codeBlocks[sourceCode];
+    Object.keys(item).forEach((sourceCode) => {
+      const codeData = item[sourceCode];
 
       if (codeData) {
         queryClient.setQueryData(

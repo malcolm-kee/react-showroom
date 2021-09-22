@@ -1,3 +1,4 @@
 import { startDevServer } from '../node-api/start-dev-server';
+import { argv } from 'yargs';
 
-startDevServer();
+startDevServer(undefined, (argv as any).config);

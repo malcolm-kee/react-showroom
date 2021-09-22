@@ -2,11 +2,11 @@ import * as React from 'react';
 import {
   ComponentDataProvider,
   ComponentDocArticle,
+  ComponentMeta,
   MemoryRouter,
   QueryParamProvider,
   Route,
   StandaloneEditor,
-  ComponentMeta,
   Switch,
 } from 'react-showroom/client';
 import { BrowserWindowInRouter } from './browser-window-in-router';
