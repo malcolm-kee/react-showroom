@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.10.1
+
+### Bug Fixes
+
+- SEO handling on home page.
+
 ## 0.10.0
 
 ### Breaking Changes

@@ -23,6 +23,7 @@ export const Seo = (props: {
 export const Head = ({
   description,
   children,
+  title,
   ...props
 }: HelmetProps & {
   description?: string;
@@ -30,13 +31,15 @@ export const Head = ({
 }) => {
   const { pathname } = useLocation();
 
+  const isHomepage = pathname === '/';
+
   const realUrl =
     SITE_URL && `${SITE_URL}${BASE_PATH}${pathname === '/' ? '' : pathname}`;
 
   return (
-    <Helmet {...props}>
+    <Helmet title={isHomepage ? undefined : title} {...props}>
       {realUrl && <link rel="canonical" href={realUrl} />}
-      {props.title && <meta name="twitter:title" content={props.title}></meta>}
+      {title && <meta name="twitter:title" content={title}></meta>}
       <meta name="twitter:card" content="summary"></meta>
       {description && <meta name="description" content={description}></meta>}
       {description && (
@@ -44,7 +47,7 @@ export const Head = ({
       )}
       <meta property="og:type" content="article" />
       {realUrl && <meta property="og:url" content={realUrl} />}
-      {props.title && <meta property="og:title" content={props.title} />}
+      {title && <meta property="og:title" content={title} />}
       {description && <meta property="og:description" content={description} />}
       {children}
     </Helmet>

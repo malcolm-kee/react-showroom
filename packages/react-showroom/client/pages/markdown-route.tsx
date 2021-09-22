@@ -39,7 +39,7 @@ export const MarkdownRoute = ({
         </Route>
         <Route path={url}>
           <DetailsPageContainer
-            title={section.slug === '' ? undefined : section.title}
+            title={section.title || section.frontmatter.title}
             description={section.frontmatter.description}
           >
             <MarkdownArticle

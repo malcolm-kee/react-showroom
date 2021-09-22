@@ -167,7 +167,7 @@ export const generateSections = (
           return `{
               type: 'markdown',
               Component: ${name}.default,
-              title: ${name}.title || '${section.title}',
+              title: ${name}.title || '${section.title || ''}',
               slug: '${section.slug}',
               frontmatter: ${name}.frontmatter || {},
               headings: ${name}.headings || [],
