@@ -7,13 +7,13 @@ import rehypeSlug from 'rehype-slug';
 import remarkFrontmatter from 'remark-frontmatter';
 import remarkGfm from 'remark-gfm';
 import { remarkMdxFrontmatter } from 'remark-mdx-frontmatter';
-import type { Plugin, UserConfig } from 'vite';
+import type { Plugin, UserConfig as ViteConfig } from 'vite';
 import {
   generateCodeblocksData,
   generateSections,
   generateWrapper,
 } from '../lib/generate-showroom-data';
-import { paths, resolveApp } from '../lib/paths';
+import { paths, resolveApp, resolveShowroom } from '../lib/paths';
 import { rehypeCodeAutoId } from '../plugins/rehype-code-auto-id';
 import { rehypeMdxHeadings } from '../plugins/rehype-mdx-headings';
 import { rehypeMetaAsAttribute } from '../plugins/rehype-meta-as-attribute';
@@ -32,10 +32,17 @@ const defaultConfig = {
   },
 };
 
+export interface CreateViteConfigOptions {
+  ssr?: {
+    outDir: string;
+  };
+}
+
 export const createViteConfig = async (
   env: Environment,
-  config: NormalizedReactShowroomConfiguration
-): Promise<UserConfig> => {
+  config: NormalizedReactShowroomConfiguration,
+  { ssr }: CreateViteConfigOptions = {}
+): Promise<ViteConfig> => {
   const isProd = env === 'production';
 
   const codeBlocksOptions: RollupPluginShowroomCodeblocksOptions = {
@@ -56,6 +63,7 @@ export const createViteConfig = async (
     publicDir: config.assetDir || false,
     base: `${config.basePath}/`,
     css: config.css || defaultConfig.css,
+    logLevel: 'warn',
     define: {
       'process.env.MULTI_PAGES': String(config.prerender),
       'process.env.BASE_PATH': `'${isProd ? config.basePath : ''}'`,
@@ -63,12 +71,18 @@ export const createViteConfig = async (
       'process.env.NODE_ENV': `'${env}'`,
     },
     build: {
-      outDir: resolveApp(config.outDir),
+      outDir: ssr ? ssr.outDir : resolveApp(config.outDir),
+      assetsDir: '_assets',
       emptyOutDir: true,
-      minify: false,
-    },
-    optimizeDeps: {
-      exclude: ['esbuild-wasm'],
+      ...(ssr
+        ? {
+            ssr: true,
+            ssrManifest: true,
+            rollupOptions: {
+              input: resolveShowroom('client/server-entry.tsx'),
+            },
+          }
+        : {}),
     },
     plugins: [
       virtual({

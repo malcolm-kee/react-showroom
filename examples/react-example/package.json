@@ -9,7 +9,8 @@
     "build:doc": "yarn run build:doc-ssr && yarn run build:doc-spa",
     "build:doc-ssr": "react-showroom build",
     "build:doc-spa": "node react-showroom-script.js",
-    "doc:vite": "react-showroom-vite dev --config react-showroom-vite.js"
+    "doc:vite": "react-showroom-vite dev --config react-showroom-vite.js",
+    "build:vite": "react-showroom-vite build --config react-showroom-vite.js"
   },
   "dependencies": {
     "@showroomjs/vite-react": "^0.9.0",
