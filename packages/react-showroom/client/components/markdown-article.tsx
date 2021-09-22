@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Article } from './article';
 import { Div } from './base';
 import { mdxComponents } from './mdx-components';
+import { isSpa } from '../lib/config';
 
 export const MarkdownArticle = (props: {
   section: ReactShowroomMarkdownSection;
@@ -95,10 +96,14 @@ export const MarkdownArticle = (props: {
                     {heading.id ? (
                       <A
                         href={`#${heading.id}`}
-                        onClick={(ev) => {
-                          ev.preventDefault();
-                          scrollToAnchor(heading.id!);
-                        }}
+                        onClick={
+                          isSpa
+                            ? (ev) => {
+                                ev.preventDefault();
+                                scrollToAnchor(heading.id!);
+                              }
+                            : undefined
+                        }
                       >
                         {heading.text}
                       </A>
@@ -164,10 +169,14 @@ export const MarkdownArticle = (props: {
                     {heading.id ? (
                       <A
                         href={`#${heading.id}`}
-                        onClick={(ev) => {
-                          ev.preventDefault();
-                          scrollToAnchor(heading.id!);
-                        }}
+                        onClick={
+                          isSpa
+                            ? (ev) => {
+                                ev.preventDefault();
+                                scrollToAnchor(heading.id!);
+                              }
+                            : undefined
+                        }
                       >
                         {heading.text}
                       </A>
