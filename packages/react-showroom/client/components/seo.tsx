@@ -1,4 +1,5 @@
 import { useLocation } from '@showroomjs/bundles/routing';
+import * as React from 'react';
 import { Helmet, HelmetProps } from 'react-helmet';
 import { THEME } from '../theme';
 

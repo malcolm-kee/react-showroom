@@ -91,10 +91,10 @@ export const loadRemotePackage = (pkgName: string) => {
     return Promise.resolve(cached);
   }
 
-  return import(
-    /* webpackIgnore: true */ `https://cdn.skypack.dev/${pkgName}`
-  ).then((result) => {
-    remotePackageMap.set(pkgName, result);
-    return result;
-  });
+  return import(/* @vite-ignore */ `https://cdn.skypack.dev/${pkgName}`).then(
+    (result) => {
+      remotePackageMap.set(pkgName, result);
+      return result;
+    }
+  );
 };

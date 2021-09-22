@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { mdxComponents } from '@showroomjs/vite-react/client';
+import { mdxComponents } from 'react-showroom/client';
 import { MarkdownDocRoute } from '../components/markdown-doc-route';
 import * as markdownExampleResult from './markdown-example.mdx';
 import markdownExampleSource from './markdown-example.mdx?raw';

@@ -1,11 +1,11 @@
 import type { PrismTheme } from 'prism-react-renderer';
 import type { ComponentType } from 'react';
+import { UserConfig as ViteUserConfig } from 'vite';
 import type {
   ComponentDoc as DocgenComponentDoc,
   ParserOptions,
 } from 'react-docgen-typescript';
-import type { Configuration } from 'webpack';
-import { Environment, CodeBlocks } from './index';
+import { CodeBlocks } from './index';
 
 export interface ItemConfigurationWithPath {
   title?: string;
@@ -137,7 +137,8 @@ export interface DocgenConfiguration {
   options: ParserOptions;
 }
 
-export interface ReactShowroomConfiguration {
+export interface ReactShowroomConfiguration
+  extends Pick<ViteUserConfig, 'css'> {
   /**
    * URL for the site.
    *
@@ -157,10 +158,6 @@ export interface ReactShowroomConfiguration {
    */
   ignores?: Array<string>;
   items?: Array<ItemConfiguration>;
-  /**
-   * Webpack configuration to load your components (or any other resources that are needed by the components, e.g. CSS)
-   */
-  webpackConfig?: Configuration | ((env: Environment) => Configuration);
   /**
    * modules to be available in examples via `import`.
    *

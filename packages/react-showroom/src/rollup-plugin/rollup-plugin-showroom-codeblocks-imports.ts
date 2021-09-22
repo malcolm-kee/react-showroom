@@ -1,6 +1,6 @@
 // @ts-ignore
 import { getSafeName, isString } from '@showroomjs/core';
-import { ImportConfig } from '@showroomjs/core/react-vite';
+import { ImportConfig } from '@showroomjs/core/react';
 import fs from 'fs';
 import { mdToCodeBlocks } from '../lib/codeblocks';
 import { paths, resolveApp } from '../lib/paths';

@@ -1,3 +1,4 @@
 import { buildShowroom } from '../node-api/build-showroom';
+import { argv } from 'yargs';
 
-buildShowroom();
+buildShowroom(undefined, (argv as any).config);

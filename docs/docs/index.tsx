@@ -5,7 +5,7 @@ import {
   ExternalLinkIcon,
 } from '@heroicons/react/outline';
 import * as React from 'react';
-import { Link, styled } from '@showroomjs/vite-react/client';
+import { Link, styled } from 'react-showroom/client';
 
 export const HomePage = () => {
   return (

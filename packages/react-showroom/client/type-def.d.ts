@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 declare module '*.wasm' {
   const src: string;
   export default src;
@@ -7,9 +9,7 @@ declare module 'react-showroom-codeblocks' {
   import type { CodeBlocks } from '@showroomjs/core';
 
   interface ReactShowroomData {
-    items: Array<{
-      codeBlocks: CodeBlocks;
-    }>;
+    items: Array<CodeBlocks>;
   }
 
   var data: ReactShowroomData;
@@ -34,8 +34,11 @@ declare module 'react-showroom-wrapper' {
 }
 
 declare namespace NodeJS {
+  import type { ThemeConfiguration } from '@showroomjs/core/react';
+
   interface ProcessEnv {
-    readonly REACT_SHOWROOM_THEME: string;
+    readonly REACT_SHOWROOM_THEME: ThemeConfiguration;
+    readonly PRERENDER: boolean;
     readonly SITE_URL: string;
     readonly BASE_PATH: string;
   }

@@ -1,4 +1,5 @@
 import { Div } from './base';
+import * as React from 'react';
 
 export const StandalonePageContainer = (props: {
   children: React.ReactNode;

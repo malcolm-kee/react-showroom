@@ -1,5 +1,6 @@
 import Editor from '@showroomjs/bundles/react-simple-code-editor';
 import { Language, PrismTheme } from 'prism-react-renderer';
+import * as React from 'react';
 import { CSSProperties, useEffect, useState } from 'react';
 import { Div } from './base';
 import { CodeHighlight } from './code-highlight';

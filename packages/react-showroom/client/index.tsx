@@ -1,29 +1,22 @@
-import { QueryClientProvider } from '@showroomjs/bundles/query';
-import { BrowserRouter, HashRouter } from '@showroomjs/bundles/routing';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { App } from './app';
-import { createQueryClient } from './lib/create-query-client';
-
-const queryClient = createQueryClient();
-
-const render =
-  process.env.PRERENDER === 'true' ? ReactDOM.hydrate : ReactDOM.render;
-
-const Router: React.ComponentType<{ children: React.ReactNode }> = (props) =>
-  process.env.MULTI_PAGES === 'true' ? (
-    <BrowserRouter basename={process.env.BASE_PATH}>
-      {props.children}
-    </BrowserRouter>
-  ) : (
-    <HashRouter>{props.children}</HashRouter>
-  );
-
-render(
-  <Router>
-    <QueryClientProvider client={queryClient}>
-      <App />
-    </QueryClientProvider>
-  </Router>,
-  document.getElementById('target')
-);
+export { useQueryClient } from '@showroomjs/bundles/query';
+export {
+  Link,
+  MemoryRouter,
+  Route,
+  Switch,
+  useLocation,
+} from '@showroomjs/bundles/routing';
+export { getCompilationKey } from '@showroomjs/core';
+export type { CodeBlocks } from '@showroomjs/core';
+export { QueryParamProvider, styled } from '@showroomjs/ui';
+export { BrowserWindow } from './components/browser-window';
+export type { BrowserWindowProps } from './components/browser-window';
+export { ComponentDataProvider } from './components/component-data-provider';
+export { ComponentDocArticle } from './components/component-doc-article';
+export { ComponentMeta } from './components/component-meta';
+export type { ComponentMetaProps } from './components/component-meta';
+export { MarkdownArticle } from './components/markdown-article';
+export { MarkdownDataProvider } from './components/markdown-data-provider';
+export { mdxComponents } from './components/mdx-components';
+export { Head } from './components/seo';
+export { StandaloneEditor } from './components/standalone-editor';

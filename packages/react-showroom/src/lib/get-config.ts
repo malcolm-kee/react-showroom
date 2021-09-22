@@ -14,7 +14,6 @@ import * as path from 'path';
 import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
 import type { ParserOptions } from 'react-docgen-typescript';
 import slugify from 'slugify';
-import type webpack from 'webpack';
 import type { defineConfig } from '../index';
 import { logToStdout } from './log-to-stdout';
 import { paths, resolveApp } from './paths';
@@ -32,6 +31,7 @@ const defaultConfig = {
   url: '',
   codeTheme: nightOwlTheme,
   resetCss: true,
+  outDir: 'showroom',
 };
 
 const defaultDocgenOptions: ParserOptions = {
@@ -68,6 +68,7 @@ const defaultThemeConfiguration: ThemeConfiguration = {
 let _normalizedConfig: NormalizedReactShowroomConfiguration;
 export const getConfig = (
   env: Environment,
+  configFile?: string,
   userConfig?: ReactShowroomConfiguration
 ): NormalizedReactShowroomConfiguration => {
   if (_normalizedConfig) {
@@ -79,13 +80,12 @@ export const getConfig = (
     devServer: providedDevServerConfig = {},
     components: providedComponentGlob,
     items,
-    webpackConfig,
     docgen: providedDocgenConfig = {},
     theme: providedThemeConfig = {},
     imports: providedImports,
     ignores = DEFAULT_IGNORES,
     ...providedConfig
-  } = userConfig || getUserConfig(env);
+  } = userConfig || getUserConfig(env, configFile);
 
   const sections: Array<ReactShowroomSectionConfig> = [];
   const components: Array<ReactShowroomComponentSectionConfig> = [];
@@ -128,7 +128,6 @@ export const getConfig = (
     ...defaultConfig,
     ...providedConfig,
     ignores,
-    webpackConfig: webpackConfig || getUserWebpackConfig(),
     sections,
     basePath: providedBuildConfig.basePath
       ? removeTrailingSlash(providedBuildConfig.basePath)
@@ -401,14 +400,19 @@ export const getConfig = (
   }
 };
 
-const getUserConfig = (env: Environment): ReactShowroomConfiguration => {
-  if (!fs.existsSync(paths.appShowroomConfig)) {
+const getUserConfig = (
+  env: Environment,
+  configFile?: string
+): ReactShowroomConfiguration => {
+  const configFilePath = configFile
+    ? resolveApp(configFile)
+    : paths.appShowroomConfig;
+
+  if (!fs.existsSync(configFilePath)) {
     return {};
   }
 
-  const provided: ReturnType<
-    typeof defineConfig
-  > = require(paths.appShowroomConfig);
+  const provided: ReturnType<typeof defineConfig> = require(configFilePath);
 
   return typeof provided === 'function'
     ? provided(env === 'development' ? 'dev' : 'build')
@@ -418,14 +422,3 @@ const getUserConfig = (env: Environment): ReactShowroomConfiguration => {
 const removeTrailingSlash = (path: string) => path.replace(/\/$/, '');
 
 const COMPONENT_DOC_EXTENSIONS = ['.mdx', '.md'] as const;
-
-const getUserWebpackConfig = (): webpack.Configuration | undefined => {
-  const rootWebpackConfigPath = resolveApp('webpack.config.js');
-
-  if (fs.existsSync(rootWebpackConfigPath)) {
-    logToStdout(`Using webpack config at ${rootWebpackConfigPath}.`);
-    return require(rootWebpackConfigPath);
-  }
-
-  return undefined;
-};

@@ -19,6 +19,32 @@ import { DefaultHomePage } from './pages/index';
 import { MarkdownRoute } from './pages/markdown-route';
 import { colorTheme, THEME } from './theme';
 
+const routeMapping: Array<{
+  path: string;
+  section: ReactShowroomSection;
+}> = [];
+
+(function collectMapping(sections: Array<ReactShowroomSection>) {
+  sections.forEach((section) => {
+    switch (section.type) {
+      case 'group':
+        collectMapping(section.items);
+        break;
+
+      case 'component':
+      case 'markdown':
+        routeMapping.push({
+          path: `/${section.slug}`,
+          section,
+        });
+        break;
+
+      default:
+        break;
+    }
+  });
+})(sections);
+
 const routes = sections.map(function SectionRoute(section) {
   if (section.type === 'link') {
     return null;
@@ -59,32 +85,6 @@ const routes = sections.map(function SectionRoute(section) {
   return null;
 });
 
-const routeMapping: Array<{
-  path: string;
-  section: ReactShowroomSection;
-}> = [];
-
-(function collectMapping(sections: Array<ReactShowroomSection>) {
-  sections.forEach((section) => {
-    switch (section.type) {
-      case 'group':
-        collectMapping(section.items);
-        break;
-
-      case 'component':
-      case 'markdown':
-        routeMapping.push({
-          path: `/${section.slug}`,
-          section,
-        });
-        break;
-
-      default:
-        break;
-    }
-  });
-})(sections);
-
 export const App = () => {
   const location = useLocation();
 
@@ -99,10 +99,7 @@ export const App = () => {
       if (hashTarget) {
         let isCurrent = true;
 
-        import(
-          /* webpackPrefetch: true */
-          'scroll-into-view-if-needed'
-        ).then((scroll) => {
+        import('scroll-into-view-if-needed').then((scroll) => {
           if (isCurrent) {
             scroll.default(hashTarget, {
               scrollMode: 'if-needed',

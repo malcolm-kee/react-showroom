@@ -1,6 +1,6 @@
 import virtual from '@rollup/plugin-virtual';
 import { Environment, isString } from '@showroomjs/core';
-import { NormalizedReactShowroomConfiguration } from '@showroomjs/core/react-vite';
+import { NormalizedReactShowroomConfiguration } from '@showroomjs/core/react';
 import path from 'path';
 import { rehypeMdxTitle } from 'rehype-mdx-title';
 import rehypeSlug from 'rehype-slug';

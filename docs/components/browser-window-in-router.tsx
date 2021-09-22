@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BrowserWindow, useLocation } from '@showroomjs/vite-react/client';
+import { BrowserWindow, useLocation } from 'react-showroom/client';
 
 export const BrowserWindowInRouter = (props: {
   children: React.ReactNode;

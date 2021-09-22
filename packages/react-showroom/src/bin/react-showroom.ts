@@ -23,6 +23,11 @@ yargs
         describe: 'Port number for the dev server',
         default: 6969,
       },
+      config: {
+        type: 'string',
+        describe: 'Config file name',
+        default: 'react-showroom.js',
+      },
     },
     () => spawnScript('dev', process.argv.slice(3))
   )

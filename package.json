@@ -55,7 +55,6 @@
     "core": "yarn workspace @showroomjs/core",
     "ui": "yarn workspace @showroomjs/ui",
     "bundles": "yarn workspace @showroomjs/bundles",
-    "vite": "yarn workspace @showroomjs/vite-react",
     "docs": "yarn workspace react-showroom-docs",
     "clean": "lerna run clean"
   }
