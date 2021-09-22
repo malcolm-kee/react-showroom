@@ -7,6 +7,17 @@ import { createServer } from 'vite';
 import { argv } from 'yargs';
 import { createViteConfig } from '../config/create-vite-config';
 import { getConfig } from '../lib/get-config';
+import { prepareUrls } from '../lib/prepare-url';
+
+import path from 'path';
+
+const { openBrowser } = require(path.resolve(
+  __dirname,
+  '..',
+  '..',
+  'open-browser',
+  'open-browser.js'
+));
 
 export interface StartServerOptions extends ReactShowroomConfiguration {
   configFile?: string;
@@ -32,7 +43,9 @@ export async function startDevServer(
 
   await server.listen();
 
-  // console.log(server.config);
+  const urls = prepareUrls('http', '0.0.0.0', PORT);
+
+  openBrowser(urls.localUrlForBrowser);
 
   return server;
 }
