@@ -82,5 +82,5 @@ module.exports = defineConfig({
     prerender: true,
   },
   wrapper: 'components/wrapper.tsx',
-  assetDirs: ['assets'],
+  assetDir: 'assets',
 });

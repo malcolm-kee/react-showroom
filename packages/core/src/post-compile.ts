@@ -2,7 +2,7 @@ import type { Node } from 'acorn';
 import * as walk from 'acorn-walk';
 import { getSafeName } from './get-safe-name';
 
-const acorn = require('acorn');
+import { parse, Options } from 'acorn';
 
 export interface ImportMapData {
   name: string;
@@ -11,7 +11,7 @@ export interface ImportMapData {
 
 export type Packages = Record<string, ImportMapData>;
 
-const ACORN_OPTIONS = {
+const ACORN_OPTIONS: Options = {
   ecmaVersion: 2018,
   sourceType: 'module',
 };
@@ -33,7 +33,7 @@ export const postCompile = (providedCode: string): PostCompileResult => {
   code = insertRenderIfEndWithJsx(code);
 
   if (hasImports(code)) {
-    const ast = acorn.parse(code, ACORN_OPTIONS);
+    const ast = parse(code, ACORN_OPTIONS);
 
     let offset = 0;
 
@@ -70,7 +70,7 @@ const insertRenderIfEndWithJsx = (code: string): string => {
   let result = code;
 
   try {
-    const ast: ProgramNode = acorn.parse(code, ACORN_OPTIONS);
+    const ast: ProgramNode = parse(code, ACORN_OPTIONS) as any;
 
     if (ast.body && ast.body.length > 0) {
       const lastNode = ast.body[ast.body.length - 1];

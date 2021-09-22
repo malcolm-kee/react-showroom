@@ -7,7 +7,7 @@ import {
   Route,
   StandaloneEditor,
   Switch,
-} from 'react-showroom/client';
+} from '@showroomjs/vite-react/client';
 import { BrowserWindowInRouter } from './browser-window-in-router';
 
 export const MarkdownDocRoute = (props: {

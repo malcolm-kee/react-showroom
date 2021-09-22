@@ -2449,6 +2449,11 @@
     "@rollup/pluginutils" "^3.1.0"
     resolve "^1.17.0"
 
+"@rollup/plugin-virtual@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@rollup/plugin-virtual/-/plugin-virtual-2.0.3.tgz#0afc88d75c1e1378ab290b8e9898d4edb5be0d74"
+  integrity sha512-pw6ziJcyjZtntQ//bkad9qXaBx665SgEL8C8KI5wO8G5iU5MPxvdWrQyVaAvjojGm9tJoS8M9Z/EEepbqieYmw==
+
 "@rollup/pluginutils@^3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@rollup/pluginutils/-/pluginutils-3.1.0.tgz#706b4524ee6dc8b103b3c995533e5ad680c02b9b"
@@ -2458,7 +2463,7 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
-"@rollup/pluginutils@^4.0.0":
+"@rollup/pluginutils@^4.0.0", "@rollup/pluginutils@^4.1.1":
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/@rollup/pluginutils/-/pluginutils-4.1.1.tgz#1d4da86dd4eded15656a57d933fda2b9a08d47ec"
   integrity sha512-clDjivHqWGXi7u+0d2r2sBi4Ie6VLEAzWMIkvJLnDmxoOhBYOTfzGbOQBA32THHm11/LiJbd01tJUpJsbshSWQ==
@@ -5230,7 +5235,7 @@ esbuild-wasm@^0.12.24:
   resolved "https://registry.yarnpkg.com/esbuild-wasm/-/esbuild-wasm-0.12.28.tgz#4142a6bb1aeb1987c4b3596b247327d7bc6aa4a2"
   integrity sha512-SiIIPHyPWaXRQ+IkAHeF5Pd9+n86mPqQG7mZAhGKn7Y6NfPqP1H+svVEG72pN8aoBZKxblB0ah210qQfhbQIfA==
 
-esbuild@^0.12.21, esbuild@^0.12.25:
+esbuild@^0.12.17, esbuild@^0.12.21, esbuild@^0.12.25:
   version "0.12.28"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.12.28.tgz#84da0d2a0d0dee181281545271e0d65cf6fab1ef"
   integrity sha512-pZ0FrWZXlvQOATlp14lRSk1N9GkeJ3vLIwOcUoo3ICQn9WNR4rWoNi81pbn6sC1iYUy7QPqNzI3+AEzokwyVcA==
@@ -10355,11 +10360,6 @@ relateurl@^0.2.7:
   resolved "https://registry.yarnpkg.com/relateurl/-/relateurl-0.2.7.tgz#54dbf377e51440aca90a4cd274600d3ff2d888a9"
   integrity sha1-VNvzd+UUQKypCkzSdGANP/LYiKk=
 
-remark-code-blocks@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/remark-code-blocks/-/remark-code-blocks-2.0.1.tgz#582205e01bb4aa8249db652939846b962740fedb"
-  integrity sha512-eZ6vfhv6Sv4TNbNYG6kG3ApQp6MRYc9fT4NT9QBPkuYQf51+TAbuMqApZdJdrsjeI9O8TP7noZF1KbadbLk5Lg==
-
 remark-frontmatter@3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/remark-frontmatter/-/remark-frontmatter-3.0.0.tgz#ca5d996361765c859bd944505f377d6b186a6ec6"
@@ -10573,7 +10573,7 @@ rimraf@~2.6.2:
   dependencies:
     glob "^7.1.3"
 
-rollup@^2.56.3:
+rollup@^2.38.5, rollup@^2.56.3:
   version "2.56.3"
   resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.56.3.tgz#b63edadd9851b0d618a6d0e6af8201955a77aeff"
   integrity sha512-Au92NuznFklgQCUcV96iXlxUbHuB1vQMaH76DHl5M11TotjOHwqk9CwcrT78+Tnv4FN9uTBxq6p4EJoYkpyekg==
@@ -11671,7 +11671,7 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^4.4.2:
+typescript@^4.4.2, typescript@^4.4.3:
   version "4.4.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.4.3.tgz#bdc5407caa2b109efd4f82fe130656f977a29324"
   integrity sha512-4xfscpisVgqqDfPaJo5vkd+Qd/ItkoagnHpufr+i2QCHBsNYp+G7UAoyFl8aPtx879u38wPV65rZ8qbGZijalA==
@@ -12073,6 +12073,18 @@ vfile@^5.0.0:
     is-buffer "^2.0.0"
     unist-util-stringify-position "^3.0.0"
     vfile-message "^3.0.0"
+
+vite@^2.5.10:
+  version "2.5.10"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-2.5.10.tgz#c598e3b5a7e1956ffc52eb3b3420d177fc2ed2a5"
+  integrity sha512-0ObiHTi5AHyXdJcvZ67HMsDgVpjT5RehvVKv6+Q0jFZ7zDI28PF5zK9mYz2avxdA+4iJMdwCz6wnGNnn4WX5Gg==
+  dependencies:
+    esbuild "^0.12.17"
+    postcss "^8.3.6"
+    resolve "^1.20.0"
+    rollup "^2.38.5"
+  optionalDependencies:
+    fsevents "~2.3.2"
 
 w3c-hr-time@^1.0.2:
   version "1.0.2"

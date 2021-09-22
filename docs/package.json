@@ -5,13 +5,15 @@
   "version": "0.9.0",
   "dependencies": {
     "@heroicons/react": "^1.0.4",
+    "@showroomjs/vite-react": "^0.9.0",
     "esbuild-loader": "^2.15.1",
     "react-hook-form": "^7.15.3",
     "react-showroom": "^0.9.0"
   },
   "scripts": {
     "start": "react-showroom dev",
-    "build": "react-showroom build && echo react-showroom.js.org > showroom/CNAME"
+    "build": "react-showroom build && echo react-showroom.js.org > showroom/CNAME",
+    "start:vite": "react-showroom-vite dev --config react-showroom-vite.js"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.3.3",

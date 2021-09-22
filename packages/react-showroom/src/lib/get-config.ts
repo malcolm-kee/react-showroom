@@ -133,9 +133,7 @@ export const getConfig = (
     basePath: providedBuildConfig.basePath
       ? removeTrailingSlash(providedBuildConfig.basePath)
       : defaultConfig.basePath,
-    assetDirs: providedConfig.assetDirs
-      ? providedConfig.assetDirs.map((dir) => resolveApp(dir))
-      : [],
+    assetDir: providedConfig.assetDir && resolveApp(providedConfig.assetDir),
     wrapper: providedConfig.wrapper && resolveApp(providedConfig.wrapper),
     outDir: providedBuildConfig.outDir || 'showroom',
     prerender: providedBuildConfig.prerender || false,

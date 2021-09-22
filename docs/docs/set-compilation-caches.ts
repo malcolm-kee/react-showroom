@@ -3,7 +3,7 @@ import {
   CodeBlocks,
   getCompilationKey,
   useQueryClient,
-} from 'react-showroom/client';
+} from '@showroomjs/vite-react/client';
 
 export const useSetCompilationCaches = (codeblocks: Array<CodeBlocks>) => {
   const qClient = useQueryClient();

@@ -8,7 +8,7 @@ import {
   StandaloneEditor,
   ComponentMeta,
   Switch,
-} from 'react-showroom/client';
+} from '@showroomjs/vite-react/client';
 import { BrowserWindowInRouter } from './browser-window-in-router';
 
 export const ComponentDocRoute = (props: {

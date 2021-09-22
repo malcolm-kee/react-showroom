@@ -175,9 +175,9 @@ export interface ReactShowroomConfiguration {
   /**
    * Your application static assets folder will be accessible as / in the style guide dev server.
    *
-   * @example ['public']
+   * @example 'public'
    */
-  assetDirs?: Array<string>;
+  assetDir?: string;
   /**
    * path to a module/file that export default a React component that should wrap the entire showroom.
    *
@@ -269,7 +269,6 @@ export interface NormalizedReactShowroomConfiguration
   /**
    * assetDirs in absolute paths
    */
-  assetDirs: Array<string>;
   devServerPort: number;
   docgen: DocgenConfiguration;
   theme: ThemeConfiguration;

@@ -23,7 +23,7 @@ const { openBrowser } = require(path.resolve(
 
 export async function startDevServer(userConfig?: ReactShowroomConfiguration) {
   const config = getConfig('development', userConfig);
-  const { assetDirs, devServerPort } = config;
+  const { assetDir, devServerPort } = config;
 
   const PORT = Number((argv as any).port ?? process.env.PORT ?? devServerPort);
   const HOST = '0.0.0.0';
@@ -38,10 +38,10 @@ export async function startDevServer(userConfig?: ReactShowroomConfiguration) {
     },
     hot: true, // hot reload replacement not supported for module federation
     historyApiFallback: true,
-    static: assetDirs.map((dir) => ({
-      directory: dir,
+    static: assetDir && {
+      directory: assetDir,
       watch: true,
-    })),
+    },
   };
 
   const compiler = webpack(webpackConfig);

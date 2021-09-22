@@ -41,7 +41,7 @@ export const createWebpackConfig = (
   const {
     webpackConfig: userConfig,
     prerender: prerenderConfig,
-    assetDirs,
+    assetDir,
     basePath,
     theme,
   } = config;
@@ -110,9 +110,9 @@ export const createWebpackConfig = (
           name: 'showroom',
           logger: logToStdout,
         }),
-        isProd && assetDirs.length > 0
+        isProd && assetDir
           ? new CopyWebpackPlugin({
-              patterns: assetDirs.map((dir) => ({
+              patterns: [assetDir].map((dir) => ({
                 from: path.posix.join(dir.replace(/\\/g, '/'), '**/*'),
                 to: resolveApp(outDir),
                 context: dir,

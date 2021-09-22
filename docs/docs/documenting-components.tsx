@@ -3,22 +3,22 @@ import {
   BrowserWindow,
   ComponentMeta,
   mdxComponents,
-} from 'react-showroom/client';
+} from '@showroomjs/vite-react/client';
 import { ComponentDocRoute } from '../components/component-doc-route';
 import AnotherButtonDocs from './button-other-example.mdx';
-import anotherbuttonDocsSource from './button-other-example.mdx?showroomRaw';
+import anotherbuttonDocsSource from './button-other-example.mdx?raw';
 import anotherButtonCodeBlocks from './button-other-example.mdx?showroomRemarkCodeblocks';
 import { imports as buttonWithCommentsImports } from './button-other-example.mdx?showroomRemarkImports';
 import buttonWithCommentsData from './button-with-comments?showroomComponent';
-import buttonWithCommentsSource from './button-with-comments?showroomRaw';
+import buttonWithCommentsSource from './button-with-comments?raw';
 import ButtonDocs from './button.mdx';
-import docsSource from './button.mdx?showroomRaw';
+import docsSource from './button.mdx?raw';
 import buttonCodeblocks from './button.mdx?showroomRemarkCodeblocks';
 import { imports as buttonImports } from './button.mdx?showroomRemarkImports';
 import buttonData from './button?showroomComponent';
-import buttonSource from './button?showroomRaw';
+import buttonSource from './button?raw';
 import oldButtonData from './old-button?showroomComponent';
-import oldButtonSource from './old-button?showroomRaw';
+import oldButtonSource from './old-button?raw';
 import { useSetCompilationCaches } from './set-compilation-caches';
 
 const { pre: Pre, code: Code } = mdxComponents;
