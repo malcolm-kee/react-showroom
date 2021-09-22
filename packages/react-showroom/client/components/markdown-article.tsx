@@ -92,7 +92,19 @@ export const MarkdownArticle = (props: {
                     }}
                     key={index}
                   >
-                    <A href={`#${heading.id}`}>{heading.text}</A>
+                    {heading.id ? (
+                      <A
+                        href={`#${heading.id}`}
+                        onClick={(ev) => {
+                          ev.preventDefault();
+                          scrollToAnchor(heading.id!);
+                        }}
+                      >
+                        {heading.text}
+                      </A>
+                    ) : (
+                      heading.text
+                    )}
                   </Item>
                 ))}
               </ul>
@@ -149,7 +161,19 @@ export const MarkdownArticle = (props: {
                     }}
                     key={index}
                   >
-                    <A href={`#${heading.id}`}>{heading.text}</A>
+                    {heading.id ? (
+                      <A
+                        href={`#${heading.id}`}
+                        onClick={(ev) => {
+                          ev.preventDefault();
+                          scrollToAnchor(heading.id!);
+                        }}
+                      >
+                        {heading.text}
+                      </A>
+                    ) : (
+                      heading.text
+                    )}
                   </Item>
                 ))}
               </ul>
@@ -211,3 +235,15 @@ const A = styled('a', {
   py: '$2',
   fontSize: '$sm',
 });
+
+const scrollToAnchor = (id: string) => {
+  const target = document.getElementById(id);
+
+  if (target) {
+    import('scroll-into-view-if-needed').then((scroll) =>
+      scroll.default(target, {
+        scrollMode: 'if-needed',
+      })
+    );
+  }
+};

@@ -3,11 +3,10 @@ import { BrowserRouter, HashRouter } from '@showroomjs/bundles/routing';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { App } from './app';
+import { isPrerender } from './lib/config';
 import { createQueryClient } from './lib/create-query-client';
 
 const queryClient = createQueryClient();
-
-const isPrerender = process.env.PRERENDER;
 
 const render = isPrerender ? ReactDOM.hydrate : ReactDOM.render;
 

@@ -36,6 +36,6 @@ module.exports = defineConfig({
   docgen: {
     tsconfigPath: path.resolve(__dirname, 'tsconfig.build.json'),
   },
-  assetDirs: ['public'],
+  assetDir: 'public',
   wrapper: 'docs/provider.tsx',
 });

@@ -138,7 +138,7 @@ export interface DocgenConfiguration {
 }
 
 export interface ReactShowroomConfiguration
-  extends Pick<ViteUserConfig, 'css'> {
+  extends Pick<ViteUserConfig, 'css' | 'resolve'> {
   /**
    * URL for the site.
    *

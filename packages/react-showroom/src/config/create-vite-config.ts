@@ -70,6 +70,7 @@ export const createViteConfig = async (
       'process.env.REACT_SHOWROOM_THEME': JSON.stringify(config.theme),
       'process.env.NODE_ENV': `'${env}'`,
     },
+    resolve: config.resolve,
     build: {
       outDir: ssr ? ssr.outDir : resolveApp(config.outDir),
       assetsDir: '_assets',
