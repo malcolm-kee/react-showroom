@@ -31,6 +31,7 @@ const defaultConfig = {
   url: '',
   codeTheme: nightOwlTheme,
   resetCss: true,
+  outDir: 'showroom',
 };
 
 const defaultDocgenOptions: ParserOptions = {

@@ -2,6 +2,7 @@ import typescript from '@rollup/plugin-typescript';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import { defineConfig } from 'rollup';
+import replace from '@rollup/plugin-replace';
 
 export default defineConfig([
   {
@@ -11,7 +12,17 @@ export default defineConfig([
       format: 'esm',
       sourcemap: true,
     },
-    plugins: [nodeResolve(), commonjs(), typescript()],
+    plugins: [
+      nodeResolve(),
+      commonjs(),
+      typescript(),
+      replace({
+        values: {
+          'process.env.NODE_ENV': JSON.stringify('production'),
+        },
+        preventAssignment: true,
+      }),
+    ],
     external: ['react', 'react-dom', 'prop-types', 'tslib'],
   },
   {
@@ -21,7 +32,17 @@ export default defineConfig([
       format: 'esm',
       sourcemap: true,
     },
-    plugins: [nodeResolve(), commonjs(), typescript()],
+    plugins: [
+      nodeResolve(),
+      commonjs(),
+      typescript(),
+      replace({
+        values: {
+          'process.env.NODE_ENV': JSON.stringify('production'),
+        },
+        preventAssignment: true,
+      }),
+    ],
     external: ['react', 'react-dom', 'prop-types', 'tslib'],
   },
 ]);

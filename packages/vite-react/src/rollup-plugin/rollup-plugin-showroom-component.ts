@@ -1,6 +1,6 @@
 import { DocgenConfiguration } from '@showroomjs/core/react';
 import * as docgen from 'react-docgen-typescript';
-import { PluginImpl } from 'rollup';
+import { Plugin } from 'vite';
 import slugify from 'slugify';
 import { logToStdout } from '../lib/log-to-stdout';
 
@@ -10,8 +10,10 @@ export interface RollupPluginShowroomComponentOptions {
   debug?: boolean;
 }
 
-export const RollupPluginShowroomComponent: PluginImpl<RollupPluginShowroomComponentOptions> =
-  function RollupPluginShowroomComponent(providedOptions) {
+export const RollupPluginShowroomComponent =
+  function RollupPluginShowroomComponent(
+    providedOptions: RollupPluginShowroomComponentOptions
+  ): Plugin {
     const options = providedOptions as RollupPluginShowroomComponentOptions;
 
     const docGenerator = docgen.withCustomConfig(

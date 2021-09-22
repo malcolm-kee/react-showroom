@@ -1,18 +1,19 @@
 import virtual from '@rollup/plugin-virtual';
 import { Environment, isString } from '@showroomjs/core';
 import { NormalizedReactShowroomConfiguration } from '@showroomjs/core/react-vite';
+import path from 'path';
 import { rehypeMdxTitle } from 'rehype-mdx-title';
 import rehypeSlug from 'rehype-slug';
 import remarkFrontmatter from 'remark-frontmatter';
 import remarkGfm from 'remark-gfm';
 import { remarkMdxFrontmatter } from 'remark-mdx-frontmatter';
-import { UserConfig } from 'vite';
+import type { Plugin, UserConfig } from 'vite';
 import {
   generateCodeblocksData,
   generateSections,
   generateWrapper,
 } from '../lib/generate-showroom-data';
-import { paths } from '../lib/paths';
+import { paths, resolveApp } from '../lib/paths';
 import { rehypeCodeAutoId } from '../plugins/rehype-code-auto-id';
 import { rehypeMdxHeadings } from '../plugins/rehype-mdx-headings';
 import { rehypeMetaAsAttribute } from '../plugins/rehype-meta-as-attribute';
@@ -20,9 +21,8 @@ import {
   RollupPluginShowroomCodeblocks,
   RollupPluginShowroomCodeblocksOptions,
 } from '../rollup-plugin/rollup-plugin-showroom-codeblocks';
-import { RollupPluginShowroomComponent } from '../rollup-plugin/rollup-plugin-showroom-component';
 import { RollupPluginShowroomCodeblocksImports } from '../rollup-plugin/rollup-plugin-showroom-codeblocks-imports';
-import path from 'path';
+import { RollupPluginShowroomComponent } from '../rollup-plugin/rollup-plugin-showroom-component';
 
 const { getXdm } = require(path.resolve(__dirname, '../../esm-bridge/get-xdm'));
 
@@ -55,20 +55,27 @@ export const createViteConfig = async (
     root: paths.showroomPath,
     publicDir: config.assetDir || false,
     base: `${config.basePath}/`,
-    logLevel: 'info',
     css: config.css || defaultConfig.css,
     define: {
       'process.env.MULTI_PAGES': String(config.prerender),
       'process.env.BASE_PATH': `'${isProd ? config.basePath : ''}'`,
       'process.env.REACT_SHOWROOM_THEME': JSON.stringify(config.theme),
-      global: '{}',
+      'process.env.NODE_ENV': `'${env}'`,
+    },
+    build: {
+      outDir: resolveApp(config.outDir),
+      emptyOutDir: true,
+      minify: false,
+    },
+    optimizeDeps: {
+      exclude: ['esbuild-wasm'],
     },
     plugins: [
       virtual({
         'react-showroom-codeblocks': generateCodeblocksData(config.sections),
         'react-showroom-sections': generateSections(config.sections),
         'react-showroom-wrapper': generateWrapper(config.wrapper),
-      }),
+      }) as Plugin,
       xdm.default({
         rehypePlugins: [
           rehypeSlug,
@@ -82,7 +89,7 @@ export const createViteConfig = async (
           [remarkMdxFrontmatter, { name: 'frontmatter' }],
           remarkGfm,
         ],
-      }),
+      }) as Plugin,
       RollupPluginShowroomComponent({
         resourceQuery: 'showroomComponent',
         docgenConfig: config.docgen,

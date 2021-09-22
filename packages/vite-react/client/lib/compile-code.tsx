@@ -11,6 +11,9 @@ let id = 0;
 
 export const compileCode = (code: string, lang: SupportedLanguage) =>
   new Promise<CompileResult>((fulfill) => {
+    // hack to make vite copy esbuild.wasm
+    import('esbuild-wasm/esbuild.wasm?url');
+
     const messageId = id++;
 
     const compileEvent: RequestCompileData = {

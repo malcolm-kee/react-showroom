@@ -99,12 +99,7 @@ export const App = () => {
       if (hashTarget) {
         let isCurrent = true;
 
-        import(
-          /* webpackPrefetch: true */
-          'scroll-into-view-if-needed'
-        ).then((scroll) => {
-          console.log({ scroll });
-
+        import('scroll-into-view-if-needed').then((scroll) => {
           if (isCurrent) {
             scroll.default(hashTarget, {
               scrollMode: 'if-needed',

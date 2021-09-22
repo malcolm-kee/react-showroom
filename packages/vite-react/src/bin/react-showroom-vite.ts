@@ -13,12 +13,7 @@ yargs
   .scriptName(pkgJson.name)
   .version(pkgJson.version)
   .usage('$0 <cmd> [args]')
-  .command(
-    '$0',
-    false,
-    () => {},
-    () => yargs.showHelp('log')
-  )
+  .command('$0', false, () => yargs.showHelp('log'))
   .command(
     'dev',
     'Start showroom development server',

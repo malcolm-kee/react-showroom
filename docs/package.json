@@ -13,7 +13,8 @@
   "scripts": {
     "start": "react-showroom dev",
     "build": "react-showroom build && echo react-showroom.js.org > showroom/CNAME",
-    "start:vite": "react-showroom-vite dev --config react-showroom-vite.js"
+    "start:vite": "react-showroom-vite dev --config react-showroom-vite.js",
+    "build:vite": "react-showroom-vite build --config react-showroom-vite.js"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.3.3",
