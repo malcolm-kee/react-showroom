@@ -66,47 +66,51 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
           <SidebarSection section={section} key={i} />
         ))}
       </Div>
-      <Portal
-        style={{
-          position: 'fixed',
-          top: 'auto',
-          left: 'auto',
-          right: 'calc(1rem + env(safe-area-inset-right, 24px))',
-          bottom: 'calc(1rem + env(safe-area-inset-bottom, 24px))',
-        }}
-        className={colorTheme}
-      >
-        <DropdownMenu>
-          <DropdownMenu.Trigger asChild>
-            <IconButton
-              css={{
-                width: 48,
-                height: 48,
-                backgroundColor: '$primary-700',
-                color: 'White',
-                boxShadow:
-                  '0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)',
-                '&:hover': {
-                  backgroundColor: '$primary-900',
-                },
-                '@md': {
-                  display: 'none',
-                },
-              }}
-            >
-              <MenuIcon width={24} height={24} />
-            </IconButton>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content>
-            {mobileSections.map((section, i) => (
-              <DropdownSection section={section} key={i} index={i} />
-            ))}
-          </DropdownMenu.Content>
-        </DropdownMenu>
-      </Portal>
+      <MobileSidebar sections={mobileSections} />
     </>
   );
 };
+
+const MobileSidebar = (props: { sections: Array<ReactShowroomSection> }) => (
+  <Portal
+    style={{
+      position: 'fixed',
+      top: 'auto',
+      left: 'auto',
+      right: 'calc(1rem + env(safe-area-inset-right, 24px))',
+      bottom: 'calc(1rem + env(safe-area-inset-bottom, 24px))',
+    }}
+    className={colorTheme}
+  >
+    <DropdownMenu>
+      <DropdownMenu.Trigger asChild>
+        <IconButton
+          css={{
+            width: 48,
+            height: 48,
+            backgroundColor: '$primary-700',
+            color: 'White',
+            boxShadow:
+              '0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)',
+            '&:hover': {
+              backgroundColor: '$primary-900',
+            },
+            '@md': {
+              display: 'none',
+            },
+          }}
+        >
+          <MenuIcon width={24} height={24} />
+        </IconButton>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content>
+        {props.sections.map((section, i) => (
+          <DropdownSection section={section} key={i} index={i} />
+        ))}
+      </DropdownMenu.Content>
+    </DropdownMenu>
+  </Portal>
+);
 
 const DropdownSection = (props: {
   section: ReactShowroomSection;

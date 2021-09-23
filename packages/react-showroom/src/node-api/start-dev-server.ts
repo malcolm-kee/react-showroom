@@ -8,6 +8,7 @@ import { argv } from 'yargs';
 import { createViteConfig } from '../config/create-vite-config';
 import { getConfig } from '../lib/get-config';
 import { prepareUrls } from '../lib/prepare-url';
+import { writeIndexHtml } from '../lib/write-index-html';
 
 import path from 'path';
 
@@ -28,6 +29,8 @@ export async function startDevServer(
   configFile?: string
 ) {
   const config = getConfig('development', configFile, userConfig);
+
+  writeIndexHtml(config.theme);
 
   const { devServerPort } = config;
 

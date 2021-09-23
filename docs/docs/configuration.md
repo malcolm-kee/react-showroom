@@ -97,13 +97,11 @@ Output folder for the generated site.
 ### `build.prerender`
 
 - Type: `boolean`
-- Default: `false`
+- Default: `true`
 
 Enable pre-rendering when generating site.
 
 This is useful to ensure your components are SSR-friendly.
-
-Note that this would increase time to generate the static site because we will need to generate separate bundle for pre-rendering.
 
 ### `build.basePath`
 
@@ -263,7 +261,7 @@ Example, if your favicon is in `asset/img/favicon.ico`:
 
 ```js fileName="react-showroom.js"
 module.exports = {
-  assetDirs: ['asset'],
+  assetDir: 'asset',
   theme: {
     favicon: '/img/favicon.ico',
   },

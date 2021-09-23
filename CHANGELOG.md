@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.10.2
+
+### Bug Fixes
+
+- Support `favicon` and `resetCss` config options again.
+
 ## 0.10.1
 
 ### Bug Fixes

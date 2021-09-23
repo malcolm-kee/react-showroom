@@ -5,6 +5,7 @@ buildShowroom({
   ...config,
   build: {
     outDir: 'showroom-spa',
+    prerender: false,
   },
   theme: {
     title: 'React Showroom SPA',
