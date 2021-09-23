@@ -30,9 +30,6 @@ module.exports = defineConfig({
       path: './src/components',
     },
   ],
-  build: {
-    prerender: true,
-  },
   docgen: {
     tsconfigPath: path.resolve(__dirname, 'tsconfig.build.json'),
   },

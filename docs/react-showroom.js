@@ -78,9 +78,6 @@ module.exports = defineConfig({
   devServer: {
     port: 8989,
   },
-  build: {
-    prerender: true,
-  },
   wrapper: 'components/wrapper.tsx',
   assetDir: 'assets',
 });

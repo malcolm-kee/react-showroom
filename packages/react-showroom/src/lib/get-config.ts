@@ -124,6 +124,8 @@ export const getConfig = (
     }
   }
 
+  const { outDir = 'showroom', prerender = true } = providedBuildConfig;
+
   _normalizedConfig = {
     ...defaultConfig,
     ...providedConfig,
@@ -134,8 +136,8 @@ export const getConfig = (
       : defaultConfig.basePath,
     assetDir: providedConfig.assetDir && resolveApp(providedConfig.assetDir),
     wrapper: providedConfig.wrapper && resolveApp(providedConfig.wrapper),
-    outDir: providedBuildConfig.outDir || 'showroom',
-    prerender: providedBuildConfig.prerender || false,
+    outDir,
+    prerender,
     devServerPort: providedDevServerConfig.port || 6969,
     docgen: {
       tsconfigPath: providedDocgenConfig.tsconfigPath || paths.appTsConfig,

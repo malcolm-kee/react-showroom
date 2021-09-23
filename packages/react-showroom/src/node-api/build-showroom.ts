@@ -13,6 +13,7 @@ import { createViteConfig } from '../config/create-vite-config';
 import { getConfig } from '../lib/get-config';
 import { logToStdout } from '../lib/log-to-stdout';
 import { resolveApp, resolveShowroom } from '../lib/paths';
+import { writeIndexHtml } from '../lib/write-index-html';
 
 export interface StartServerOptions extends ReactShowroomConfiguration {
   configFile?: string;
@@ -25,6 +26,8 @@ export async function buildShowroom(
   logToStdout('Generating client bundle...');
 
   const config = getConfig('production', configFile, userConfig);
+
+  writeIndexHtml(config.theme);
 
   const { prerender } = config;
 
