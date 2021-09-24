@@ -11,33 +11,25 @@ jobs:
       - name: Begin CI...
         uses: actions/checkout@v2
 
-      - name: Use Node 14
-        uses: actions/setup-node@v1
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
         with:
-          node-version: 14.x
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Use cached node_modules
-        uses: actions/cache@v1
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: nodeModules-${{ hashFiles('**/yarn.lock') }}
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            nodeModules-
+            ${{ runner.os }}-
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-        env:
-          CI: true
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.15.1
+          run_install: true
 
       - name: Test
-        run: yarn test
+        run: pnpm run test
 
       - name: Build Example
-        run: yarn example:build
+        run: pnpm run example:build
 
       - name: Deploy Docs to Netlify
         uses: nwtgck/actions-netlify@v1.2
