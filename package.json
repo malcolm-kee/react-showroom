@@ -45,8 +45,7 @@
     "prepare": "pnpm run build -r",
     "build": "pnpm run build -r",
     "test": "pnpm run test:ci -r",
-    "example:build": "pnpm run build:doc --filter=\"react-example\"",
-    "docs:build": "yarn docs build",
+    "docs:build": "pnpm run build --filter=\"react-showroom-docs\"",
     "dev": "pnpm run dev -r --stream --parallel",
     "clean": "pnpm run clean -r",
     "preinstall": "npx only-allow pnpm"

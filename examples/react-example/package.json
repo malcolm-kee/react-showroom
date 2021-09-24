@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "doc": "react-showroom dev",
-    "build:doc": "yarn run build:doc-ssr && yarn run build:doc-spa",
+    "build": "pnpm run build:doc-ssr && pnpm run build:doc-spa",
     "build:doc-ssr": "react-showroom build",
     "build:doc-spa": "node react-showroom-script.js"
   },

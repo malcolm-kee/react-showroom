@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -b .",
-    "dev": "yarn build --watch",
+    "dev": "pnpm build -- --watch",
     "clean": "rimraf dist *.tsbuildinfo"
   },
   "devDependencies": {

@@ -34,11 +34,9 @@ jobs:
       - name: Test
         run: pnpm run test
 
-      - name: Build Example
-        run: pnpm run example:build
-
       - name: Deploy Docs to Netlify
         uses: nwtgck/actions-netlify@v1.2
+        if: matrix.node-version == 14
         with:
           publish-dir: docs/showroom
           production-deploy: ${{ github.ref == 'refs/heads/main'}}
@@ -49,9 +47,28 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.ref == 'refs/heads/main' }}
+      - name: Deploy SSR Example to Netlify
+        uses: nwtgck/actions-netlify@v1.2
+        if: matrix.node-version == 14
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/showroom
+          publish-dir: examples/react-example/showroom
+          production-deploy: ${{ github.ref == 'refs/heads/main'}}
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: 'Deploy from GitHub Actions'
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SSR_EXAMPLE_SITE_ID }}
+
+      - name: Deploy SPA Example to Netlify
+        uses: nwtgck/actions-netlify@v1.2
+        if: matrix.node-version == 14
+        with:
+          publish-dir: examples/react-example/showroom-spa
+          production-deploy: ${{ github.ref == 'refs/heads/main'}}
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: 'Deploy from GitHub Actions'
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SPA_EXAMPLE_SITE_ID }}
