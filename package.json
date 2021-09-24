@@ -42,10 +42,11 @@
     "type-fest": "^2.1.0"
   },
   "scripts": {
-    "prepare": "pnpm run build -r",
-    "build": "pnpm run build -r",
+    "prepare": "pnpm run build --filter=\"{packages}\"",
+    "build": "pnpm run build --filter=\"{packages}\"",
     "test": "pnpm run test:ci -r",
     "docs:build": "pnpm run build --filter=\"react-showroom-docs\"",
+    "example:build": "pnpm run build --filter=\"react-example\"",
     "dev": "pnpm run dev -r --stream --parallel",
     "clean": "pnpm run clean -r",
     "preinstall": "npx only-allow pnpm"

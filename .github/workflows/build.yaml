@@ -34,6 +34,12 @@ jobs:
       - name: Test
         run: pnpm run test
 
+      - name: Build Docs
+        run: pnpm run docs:build
+
+      - name: Build Example
+        run: pnpm run example:build
+
       - name: Deploy Docs to Netlify
         uses: nwtgck/actions-netlify@v1.2
         if: matrix.node-version == 14
