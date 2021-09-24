@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -b .",
-    "dev": "yarn build --watch",
+    "dev": "pnpm build -- --watch",
     "clean": "rimraf dist *.tsbuildinfo"
   },
   "devDependencies": {
@@ -20,8 +20,8 @@
     "@radix-ui/react-dialog": "^0.1.0",
     "@radix-ui/react-dropdown-menu": "^0.1.0",
     "@radix-ui/react-portal": "^0.1.0",
-    "@showroomjs/bundles": "^0.10.0",
-    "@showroomjs/core": "^0.10.3",
+    "@showroomjs/bundles": "workspace:*",
+    "@showroomjs/core": "workspace:*",
     "@stitches/react": "^1.0.0",
     "classnames": "^2.3.1",
     "downshift": "^6.1.7",

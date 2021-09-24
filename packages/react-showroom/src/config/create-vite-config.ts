@@ -99,14 +99,14 @@ export const createViteConfig = async (
       }) as Plugin,
       xdm.default({
         rehypePlugins: [
-          rehypeSlug,
+          rehypeSlug as any,
           rehypeMetaAsAttribute,
           rehypeMdxTitle,
           rehypeCodeAutoId,
           rehypeMdxHeadings,
         ],
         remarkPlugins: [
-          remarkFrontmatter,
+          remarkFrontmatter as any,
           [remarkMdxFrontmatter, { name: 'frontmatter' }],
           remarkGfm,
         ],

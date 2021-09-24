@@ -14,7 +14,7 @@
     "react-simple-code-editor": "^0.11.0"
   },
   "scripts": {
-    "build": "yarn run typedef && yarn run bundle",
+    "build": "pnpm run typedef && pnpm run bundle",
     "bundle": "rollup --config rollup.config.js",
     "typedef": "tsc --declaration --emitDeclarationOnly"
   }

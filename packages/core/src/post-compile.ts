@@ -1,8 +1,6 @@
-import type { Node } from 'acorn';
+import { Node, Options, parse } from 'acorn';
 import * as walk from 'acorn-walk';
 import { getSafeName } from './get-safe-name';
-
-import { parse, Options } from 'acorn';
 
 export interface ImportMapData {
   name: string;

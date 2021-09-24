@@ -3,6 +3,9 @@ on: ['push', 'pull_request']
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14, 16]
 
     steps:
       - name: Branch Name
@@ -11,36 +14,35 @@ jobs:
       - name: Begin CI...
         uses: actions/checkout@v2
 
-      - name: Use Node 14
-        uses: actions/setup-node@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: ${{ matrix.node-version }}
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Use cached node_modules
-        uses: actions/cache@v1
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: nodeModules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            nodeModules-
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-node${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-        env:
-          CI: true
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.15.1
+          run_install: true
 
       - name: Test
-        run: yarn test
+        run: pnpm run test
+
+      - name: Build Docs
+        run: pnpm run docs:build
 
       - name: Build Example
-        run: yarn example:build
+        run: pnpm run example:build
 
       - name: Deploy Docs to Netlify
         uses: nwtgck/actions-netlify@v1.2
+        if: matrix.node-version == 14
         with:
           publish-dir: docs/showroom
           production-deploy: ${{ github.ref == 'refs/heads/main'}}
@@ -51,9 +53,28 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.ref == 'refs/heads/main' }}
+      - name: Deploy SSR Example to Netlify
+        uses: nwtgck/actions-netlify@v1.2
+        if: matrix.node-version == 14
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/showroom
+          publish-dir: examples/react-example/showroom
+          production-deploy: ${{ github.ref == 'refs/heads/main'}}
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: 'Deploy from GitHub Actions'
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SSR_EXAMPLE_SITE_ID }}
+
+      - name: Deploy SPA Example to Netlify
+        uses: nwtgck/actions-netlify@v1.2
+        if: matrix.node-version == 14
+        with:
+          publish-dir: examples/react-example/showroom-spa
+          production-deploy: ${{ github.ref == 'refs/heads/main'}}
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: 'Deploy from GitHub Actions'
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SPA_EXAMPLE_SITE_ID }}
