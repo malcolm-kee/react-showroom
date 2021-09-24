@@ -1,6 +1,6 @@
 {
   "name": "react-showroom",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "license": "MIT",
   "bin": {
     "react-showroom": "react-showroom.js"
@@ -22,8 +22,8 @@
     "@rollup/plugin-virtual": "^2.0.3",
     "@rollup/pluginutils": "^4.1.1",
     "@showroomjs/bundles": "^0.10.0",
-    "@showroomjs/core": "^0.10.0",
-    "@showroomjs/ui": "^0.10.0",
+    "@showroomjs/core": "^0.10.3",
+    "@showroomjs/ui": "^0.10.3",
     "chalk": "^4.1.2",
     "cross-spawn": "^7.0.3",
     "esbuild": "^0.12.25",

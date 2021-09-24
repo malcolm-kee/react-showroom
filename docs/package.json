@@ -2,12 +2,12 @@
   "name": "react-showroom-docs",
   "private": true,
   "license": "MIT",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "dependencies": {
     "@heroicons/react": "^1.0.4",
     "esbuild-loader": "^2.15.1",
     "react-hook-form": "^7.15.3",
-    "react-showroom": "^0.10.2"
+    "react-showroom": "^0.10.3"
   },
   "scripts": {
     "start": "react-showroom dev",

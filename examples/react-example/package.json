@@ -1,6 +1,6 @@
 {
   "name": "react-example",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "license": "MIT",
   "main": "index.js",
   "private": true,
@@ -19,7 +19,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.15.2",
-    "react-showroom": "^0.10.2"
+    "react-showroom": "^0.10.3"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
