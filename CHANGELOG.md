@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.10.3
+
+### Bug Fixes
+
+- Make the Vite implementation work by working around Vite behavior that ignore entry in `node_modules` folder.
+
 ## 0.10.2
 
 ### Bug Fixes

@@ -206,8 +206,6 @@ export interface ReactShowroomConfiguration
     /**
      * Set a prefix for the static site.
      *
-     * Note that this only takes effect if `prerender` is set to `true`.
-     *
      * @example '/docs'
      *
      * @default ''

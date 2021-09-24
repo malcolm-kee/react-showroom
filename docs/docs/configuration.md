@@ -109,9 +109,7 @@ This is useful to ensure your components are SSR-friendly.
 - Default: `'/'`
 - Example: `'/docs'`
 
-Set a prefix for the static site if your site is hosted at a site path.
-
-Note that this only matters if `prerender` is set to `true`.
+Set a prefix for the static site if your site is hosted at a subpath.
 
 ### `theme.title`
 

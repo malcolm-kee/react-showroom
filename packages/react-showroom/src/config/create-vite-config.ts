@@ -75,15 +75,21 @@ export const createViteConfig = async (
       outDir: ssr ? ssr.outDir : resolveApp(config.outDir),
       assetsDir: '_assets',
       emptyOutDir: true,
+      manifest: true,
       ...(ssr
         ? {
             ssr: true,
-            ssrManifest: true,
             rollupOptions: {
               input: resolveShowroom('client/server-entry.tsx'),
             },
           }
-        : {}),
+        : {
+            rollupOptions: {
+              input: isProd
+                ? resolveShowroom('client/ssr-client-entry.tsx')
+                : resolveShowroom('client/client-entry.tsx'),
+            },
+          }),
     },
     plugins: [
       virtual({

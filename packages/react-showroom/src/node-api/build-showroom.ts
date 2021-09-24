@@ -8,12 +8,12 @@ import {
   ReactShowroomConfiguration,
 } from '@showroomjs/core/react';
 import * as fs from 'fs-extra';
-import { build } from 'vite';
+import { build, Manifest } from 'vite';
 import { createViteConfig } from '../config/create-vite-config';
 import { getConfig } from '../lib/get-config';
 import { logToStdout } from '../lib/log-to-stdout';
 import { resolveApp, resolveShowroom } from '../lib/paths';
-import { writeIndexHtml } from '../lib/write-index-html';
+import { generateHtml } from '../lib/write-index-html';
 
 export interface StartServerOptions extends ReactShowroomConfiguration {
   configFile?: string;
@@ -23,51 +23,65 @@ export async function buildShowroom(
   userConfig?: ReactShowroomConfiguration,
   configFile?: string
 ) {
-  logToStdout('Generating client bundle...');
+  logToStdout('Generating bundle...');
 
   const config = getConfig('production', configFile, userConfig);
 
-  writeIndexHtml(config.theme);
-
   const { prerender } = config;
+  const ssrDir = resolveShowroom('ssr-result');
 
-  await build({
-    ...(await createViteConfig('production', config)),
-    configFile: false,
-  });
-
-  if (prerender) {
-    logToStdout('Generating prerender bundle...');
-
-    const ssrDir = resolveShowroom('ssr-result');
-
-    await build({
+  await Promise.all([
+    build({
+      ...(await createViteConfig('production', config)),
+      configFile: false,
+    }),
+    build({
       ...(await createViteConfig('production', config, {
         ssr: {
           outDir: ssrDir,
         },
       })),
       configFile: false,
-    });
+    }),
+  ]);
 
-    try {
-      prerenderSite(config, ssrDir);
-    } finally {
-      fs.remove(ssrDir);
-    }
+  try {
+    // we always write our HTML manually because vite will ignore HTML in node_modules folder
+    // see https://github.com/vitejs/vite/issues/5042
+    outputHtml(config, ssrDir, prerender);
+  } finally {
+    fs.remove(ssrDir);
   }
 }
 
-async function prerenderSite(
+async function outputHtml(
   config: NormalizedReactShowroomConfiguration,
-  ssrDir: string
+  ssrDir: string,
+  ssg: boolean
 ) {
+  logToStdout('Generating HTML...');
   const serverEntry: Ssr = require(`${ssrDir}/server-entry.js`);
+  const manifestPath = resolveApp(`${config.outDir}/manifest.json`);
+
+  const manifest: Manifest = await fs.readJson(manifestPath);
+
   const htmlPath = resolveApp(`${config.outDir}/index.html`);
 
   const { render, getCssText, getHelmet, getRoutes } = serverEntry;
 
-  const template = await fs.readFile(htmlPath, 'utf-8');
+  const clientEntryManifest = manifest['client/ssr-client-entry.tsx'];
+  const template = generateHtml(
+    `<script type="module" src="${`${config.basePath}/${clientEntryManifest.file}`}"></script>`,
+    clientEntryManifest.css
+      ? clientEntryManifest.css
+          .map(
+            (css) =>
+              `<link rel="stylesheet" href="${`${config.basePath}/${css}`}" />`
+          )
+          .join('')
+      : '',
+    config.theme
+  );
 
   const routes = getRoutes();
 
@@ -75,20 +89,22 @@ async function prerenderSite(
     logToStdout(`Prerender with basePath: ${config.basePath}`);
   }
 
-  logToStdout('Prerendering...');
+  if (ssg) {
+    logToStdout('Prerendering...');
 
-  for (const route of routes) {
-    if (route !== '') {
-      logToStdout(` - /${route}`);
+    for (const route of routes) {
+      if (route !== '') {
+        logToStdout(` - /${route}`);
 
-      await fs.outputFile(
-        resolveApp(`${config.outDir}/${route}/index.html`),
-        getHtml(`/${route}`)
-      );
+        await fs.outputFile(
+          resolveApp(`${config.outDir}/${route}/index.html`),
+          getHtml(`/${route}`)
+        );
+      }
     }
-  }
 
-  logToStdout(` - /`);
+    logToStdout(` - /`);
+  }
 
   await fs.outputFile(htmlPath, getHtml('/'));
 
