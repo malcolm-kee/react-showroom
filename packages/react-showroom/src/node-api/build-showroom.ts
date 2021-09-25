@@ -122,7 +122,7 @@ async function outputHtml(
         '<!--SSR-helmet-->',
         `${helmet.title.toString()}${helmet.meta.toString()}${helmet.link.toString()}`
       )
-      .replace('<!--SSR-target-->', prerenderContent);
+      .replace('<!--SSR-target-->', ssg ? prerenderContent : '');
 
     return finalHtml;
   }
