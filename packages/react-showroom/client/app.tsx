@@ -5,7 +5,6 @@ import {
   Switch,
   useLocation,
 } from '@showroomjs/bundles/routing';
-import type { ReactShowroomSection } from '@showroomjs/core/react';
 import { QueryParamProvider } from '@showroomjs/ui';
 import * as React from 'react';
 import sections from 'react-showroom-sections';
@@ -14,76 +13,10 @@ import { Div } from './components/base';
 import { Header } from './components/header';
 import { Sidebar } from './components/sidebar';
 import { CodeThemeContext } from './lib/code-theme-context';
-import { ComponentDocRoute } from './pages/component-doc-route';
+import { Suspense } from './lib/lazy';
 import { DefaultHomePage } from './pages/index';
-import { MarkdownRoute } from './pages/markdown-route';
+import { routes, routeMapping } from './route-mapping';
 import { colorTheme, THEME } from './theme';
-
-const routeMapping: Array<{
-  path: string;
-  section: ReactShowroomSection;
-}> = [];
-
-(function collectMapping(sections: Array<ReactShowroomSection>) {
-  sections.forEach((section) => {
-    switch (section.type) {
-      case 'group':
-        collectMapping(section.items);
-        break;
-
-      case 'component':
-      case 'markdown':
-        routeMapping.push({
-          path: `/${section.slug}`,
-          section,
-        });
-        break;
-
-      default:
-        break;
-    }
-  });
-})(sections);
-
-const routes = sections.map(function SectionRoute(section) {
-  if (section.type === 'link') {
-    return null;
-  }
-
-  if (section.type === 'group') {
-    return (
-      <Route
-        path={`/${section.slug}`}
-        exact={section.slug === ''}
-        key={section.slug}
-      >
-        {section.items.map((item) => SectionRoute(item))}
-      </Route>
-    );
-  }
-
-  if (section.type === 'component') {
-    return (
-      <Route path={`/${section.slug}`} key={section.slug}>
-        <ComponentDocRoute section={section} />
-      </Route>
-    );
-  }
-
-  if (section.type === 'markdown') {
-    return (
-      <Route
-        path={`/${section.slug}`}
-        exact={section.slug === ''}
-        key={section.slug}
-      >
-        <MarkdownRoute section={section} />
-      </Route>
-    );
-  }
-
-  return null;
-});
 
 export const App = () => {
   const location = useLocation();
@@ -159,12 +92,30 @@ export const App = () => {
                 {!shouldHideHeader && <Header />}
                 <Div css={{ display: 'flex', flex: 1 }}>
                   {!shouldHideSidebar && <Sidebar sections={sections} />}
-                  <Switch>
-                    {routes}
-                    <Route path="/" exact>
-                      <DefaultHomePage />
-                    </Route>
-                  </Switch>
+                  <Suspense fallback={null}>
+                    <Switch>
+                      {routes.map(function dataToRoute(route) {
+                        if (!route) {
+                          return null;
+                        }
+
+                        const Ui = route.ui;
+
+                        return (
+                          <Route
+                            path={route.path}
+                            exact={route.exact}
+                            key={route.path}
+                          >
+                            {Array.isArray(Ui) ? Ui.map(dataToRoute) : <Ui />}
+                          </Route>
+                        );
+                      })}
+                      <Route path="/" exact>
+                        <DefaultHomePage />
+                      </Route>
+                    </Switch>
+                  </Suspense>
                 </Div>
               </Div>
             </CodeThemeContext.Provider>

@@ -1,15 +1,22 @@
 import { QueryClientProvider } from '@showroomjs/bundles/query';
 import { StaticRouter } from '@showroomjs/bundles/routing';
 import { flattenArray, isDefined, NestedArray, Ssr } from '@showroomjs/core';
+import { ReactShowroomSection } from '@showroomjs/core/react';
 import * as React from 'react';
 import * as ReactDOMServer from 'react-dom/server';
 import { Helmet } from 'react-helmet';
 import sections from 'react-showroom-sections';
 import { App } from './app';
 import { createQueryClient } from './lib/create-query-client';
+import { factoryMap } from './lib/lazy';
 
-export const render: Ssr['render'] = ({ pathname }) =>
-  ReactDOMServer.renderToString(
+export const render: Ssr['render'] = async ({ pathname }) => {
+  for (const [fn] of factoryMap) {
+    const result = await fn();
+    factoryMap.set(fn, result.default);
+  }
+
+  const result = ReactDOMServer.renderToString(
     <StaticRouter location={{ pathname }} basename={process.env.BASE_PATH}>
       <QueryClientProvider client={createQueryClient()}>
         <App />
@@ -17,41 +24,57 @@ export const render: Ssr['render'] = ({ pathname }) =>
     </StaticRouter>
   );
 
+  return result;
+};
+
 export { getCssText } from '@showroomjs/ui';
 
 export const getHelmet: Ssr['getHelmet'] = () => Helmet.renderStatic();
 
-export const getRoutes: Ssr['getRoutes'] = () =>
-  flattenArray(
-    sections.map(function getRoute(section): string | NestedArray<string> {
-      if (section.type === 'group') {
-        return section.items.map(getRoute);
-      }
+export const getRoutes: Ssr['getRoutes'] = async () => {
+  const result: NestedArray<string> = [];
 
-      if (section.type === 'component') {
-        const standaloneRoutes = Object.values(section.data.codeblocks)
-          .map((block) => block?.initialCodeHash)
-          .filter(isDefined);
+  async function getRoute(section: ReactShowroomSection): Promise<void> {
+    if (section.type === 'group') {
+      await Promise.all(section.items.map(getRoute));
+    }
 
-        return [section.slug].concat(
+    if (section.type === 'component') {
+      const { codeblocks } = await section.data.load();
+
+      const standaloneRoutes = Object.values(codeblocks)
+        .map((block) => block?.initialCodeHash)
+        .filter(isDefined);
+
+      result.push(
+        [section.slug].concat(
           standaloneRoutes.map(
             (route) => `${section.slug}/_standalone/${route}`
           )
-        );
-      }
+        )
+      );
+    }
 
-      if (section.type === 'markdown') {
-        const standaloneRoutes = Object.values(section.codeblocks)
-          .map((block) => block?.initialCodeHash)
-          .filter(isDefined);
+    if (section.type === 'markdown') {
+      const { codeblocks } = await section.load();
 
-        return [section.slug].concat(
+      const standaloneRoutes = Object.values(codeblocks)
+        .map((block) => block?.initialCodeHash)
+        .filter(isDefined);
+
+      result.push(
+        [section.slug].concat(
           standaloneRoutes.map(
             (route) => `${section.slug}/_standalone/${route}`
           )
-        );
-      }
+        )
+      );
+    }
+  }
 
-      return [];
-    })
-  );
+  for (const section of sections) {
+    await getRoute(section);
+  }
+
+  return flattenArray(result);
+};

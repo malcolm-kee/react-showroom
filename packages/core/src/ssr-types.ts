@@ -1,8 +1,8 @@
 import { HelmetData } from 'react-helmet';
 
 export interface Ssr {
-  render: (options: { pathname: string }) => string;
+  render: (options: { pathname: string }) => Promise<string>;
   getCssText: () => string;
   getHelmet: () => HelmetData;
-  getRoutes: () => Array<string>;
+  getRoutes: () => Promise<Array<string>>;
 }

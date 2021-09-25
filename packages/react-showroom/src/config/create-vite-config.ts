@@ -23,6 +23,7 @@ import {
 } from '../rollup-plugin/rollup-plugin-showroom-codeblocks';
 import { RollupPluginShowroomCodeblocksImports } from '../rollup-plugin/rollup-plugin-showroom-codeblocks-imports';
 import { RollupPluginShowroomComponent } from '../rollup-plugin/rollup-plugin-showroom-component';
+import { RollupPluginShowroomFrontmatter } from '../rollup-plugin/rollup-plugin-showroom-frontmatter';
 
 const { getXdm } = require(path.resolve(__dirname, '../../esm-bridge/get-xdm'));
 
@@ -94,7 +95,10 @@ export const createViteConfig = async (
     plugins: [
       virtual({
         'react-showroom-codeblocks': generateCodeblocksData(config.sections),
-        'react-showroom-sections': generateSections(config.sections),
+        'react-showroom-sections': generateSections(
+          config.sections,
+          paths.showroomPath
+        ),
         'react-showroom-wrapper': generateWrapper(config.wrapper),
       }) as Plugin,
       xdm.default({
@@ -126,6 +130,9 @@ export const createViteConfig = async (
         ...docsCodeBlocksOptions,
         resourceQuery: 'showroomRemarkDocImports',
         imports: config.imports,
+      }),
+      RollupPluginShowroomFrontmatter({
+        resourceQuery: 'showroomFrontmatter',
       }),
     ],
   };

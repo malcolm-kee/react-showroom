@@ -1,10 +1,10 @@
-import { ReactShowroomMarkdownSection } from '@showroomjs/core/react';
+import { ReactShowroomMarkdownContent } from '@showroomjs/core/react';
 import * as React from 'react';
 import { CodeImportsContextProvider } from '../lib/code-imports-context';
 import { CodeblocksContext } from '../lib/codeblocks-context';
 
 export const MarkdownDataProvider = (props: {
-  data: ReactShowroomMarkdownSection;
+  data: ReactShowroomMarkdownContent;
   children: React.ReactNode;
 }) => {
   return (

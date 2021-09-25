@@ -8,6 +8,7 @@ export {
 } from '@showroomjs/bundles/routing';
 export { getCompilationKey } from '@showroomjs/core';
 export type { CodeBlocks } from '@showroomjs/core';
+export type { ComponentDocItem } from '@showroomjs/core/react';
 export { QueryParamProvider, styled } from '@showroomjs/ui';
 export { BrowserWindow } from './components/browser-window';
 export type { BrowserWindowProps } from './components/browser-window';

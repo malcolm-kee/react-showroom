@@ -24,12 +24,8 @@ export const MarkdownExampleSource = () => {
 export const MarkdownExampleResult = () => (
   <MarkdownDocRoute
     data={{
-      type: 'markdown',
       Component: markdownExampleResult.default,
-      title: markdownExampleResult.title,
-      slug: 'content',
       headings: markdownExampleResult.headings,
-      frontmatter: {},
       codeblocks: markdownExampleCodeblocks,
       imports: markdownExampleImports.imports,
     }}

@@ -3,6 +3,7 @@ import {
   ReactShowroomComponentSectionConfig,
   ReactShowroomSectionConfig,
 } from '@showroomjs/core/react';
+import path from 'path';
 
 let _nameIndex = 0;
 const getName = (name: string) => getSafeName(name) + '_' + _nameIndex++;
@@ -70,37 +71,33 @@ const compileToComponentMetadata = (
 
 function compileComponentSection(
   component: ReactShowroomComponentSectionConfig,
-  imports: Array<ImportDefinition>
+  imports: Array<ImportDefinition>,
+  rootDir: string
 ): string {
   const { docPath } = component;
 
-  const name = getName('componentSection');
+  const load = docPath
+    ? `async () => {
+  const loadDoc = import('${docPath}');
+  const loadImports = import('${docPath}?showroomRemarkImports');
+  const loadCodeBlocks = import('${docPath}?showroomRemarkCodeblocks');
 
-  if (docPath) {
-    imports.push(
-      {
-        name,
-        type: 'default',
-        path: docPath,
-      },
-      {
-        name: `${name}_codeblocks`,
-        type: 'default',
-        path: `${docPath}?showroomRemarkCodeblocks`,
-      },
-      {
-        name: `${name}_imports`,
-        type: 'star',
-        path: `${docPath}?showroomRemarkImports`,
-      }
-    );
-  }
+  return {
+    doc: (await loadDoc).default,
+    imports: (await loadImports).imports || {},
+    codeblocks: (await loadCodeBlocks).default || {},
+  }    
+}`
+    : `() => Promise.resolve({
+  doc: null,
+  imports: {},
+  codeblocks: {},
+})`;
 
   return `{
-      doc: ${docPath ? name : 'null'},
-      codeblocks: ${docPath ? `${name}_codeblocks` : `{}`},
       component: ${compileToComponentMetadata(component, imports)},
-      imports: ${docPath ? `${name}_imports.imports` : '{}'},
+      preloadUrl: ${docPath ? `'${path.relative(rootDir, docPath)}'` : 'null'},
+      load: ${load},
     }`;
 }
 
@@ -111,7 +108,8 @@ interface ImportDefinition {
 }
 
 export const generateSections = (
-  sections: Array<ReactShowroomSectionConfig>
+  sections: Array<ReactShowroomSectionConfig>,
+  rootDir: string
 ) => {
   const imports: Array<ImportDefinition> = [];
 
@@ -130,7 +128,7 @@ export const generateSections = (
         if (section.type === 'component') {
           return `{
               type: 'component',
-              data: ${compileComponentSection(section, imports)},
+              data: ${compileComponentSection(section, imports, rootDir)},
               get slug() {
                 const parentSlugs = '${section.parentSlugs.join('/')}';
   
@@ -146,33 +144,36 @@ export const generateSections = (
         if (section.type === 'markdown') {
           const name = getName('markdown');
 
-          imports.push(
-            {
-              type: 'star',
-              name,
-              path: section.sourcePath,
-            },
-            {
-              type: 'star',
-              name: `${name}_imports`,
-              path: `${section.sourcePath}?showroomRemarkDocImports`,
-            },
-            {
-              type: 'default',
-              name: `${name}_codeblocks`,
-              path: `${section.sourcePath}?showroomRemarkDocCodeblocks`,
-            }
-          );
+          imports.push({
+            type: 'default',
+            name: `${name}_frontmatter`,
+            path: `${section.sourcePath}?showroomFrontmatter`,
+          });
 
           return `{
               type: 'markdown',
-              Component: ${name}.default,
-              title: ${name}.title || '${section.title || ''}',
+              fallbackTitle: '${section.title || ''}',
               slug: '${section.slug}',
-              frontmatter: ${name}.frontmatter || {},
-              headings: ${name}.headings || [],
-              imports: ${name}_imports.imports || {},
-              codeblocks: ${name}_codeblocks || {}
+              frontmatter: ${name}_frontmatter || {},
+              preloadUrl: '${path.relative(rootDir, section.sourcePath)}',
+              load: async () => {
+                const loadComponent = import('${section.sourcePath}');
+                const loadImports = import('${
+                  section.sourcePath
+                }?showroomRemarkDocImports');
+                const loadCodeblocks = import('${
+                  section.sourcePath
+                }?showroomRemarkDocCodeblocks');
+
+                const { default: Component, headings } = await loadComponent;
+
+                return {
+                  Component,
+                  headings,
+                  imports: (await loadImports).imports || {},
+                  codeblocks: (await loadCodeblocks).default || {},
+                }
+              },
             }`;
         }
 

@@ -1,4 +1,7 @@
-import { ReactShowroomMarkdownSection } from '@showroomjs/core/react';
+import {
+  ReactShowroomMarkdownSection,
+  ReactShowroomMarkdownContent,
+} from '@showroomjs/core/react';
 import { Collapsible, styled } from '@showroomjs/ui';
 import * as React from 'react';
 import { Article } from './article';
@@ -7,12 +10,14 @@ import { mdxComponents } from './mdx-components';
 import { isSpa } from '../lib/config';
 
 export const MarkdownArticle = (props: {
-  section: ReactShowroomMarkdownSection;
+  slug: string;
   showLinkToDetails?: boolean;
   center?: boolean;
+  content: ReactShowroomMarkdownContent;
 }) => {
   const {
-    section: { Component, headings, slug },
+    slug,
+    content: { Component, headings },
   } = props;
 
   const hasHeadings = headings && headings.length > 0 && slug !== '';
