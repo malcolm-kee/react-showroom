@@ -211,6 +211,12 @@ export interface ReactShowroomConfiguration
      * @default ''
      */
     basePath?: string;
+    /**
+     * Preload all CSS to avoid possible screen flashing.
+     *
+     * @default true
+     */
+    preloadAllCss?: boolean;
   };
   debug?: boolean;
 }
@@ -261,6 +267,7 @@ export interface NormalizedReactShowroomConfiguration
   outDir: string;
   prerender: boolean;
   basePath: string;
+  preloadAllCss: boolean;
   /**
    * assetDirs in absolute paths
    */
@@ -270,13 +277,18 @@ export interface NormalizedReactShowroomConfiguration
   url: string;
 }
 
+export interface ReactShowroomComponentContent {
+  doc: null | ComponentType<any>;
+  imports: Record<string, any>;
+  codeblocks: CodeBlocks;
+}
+
 export interface ComponentDocItem {
   component: DocgenComponentDoc & { slug: string } & {
     Component: ComponentType<any> | undefined;
   };
-  doc: null | ComponentType<any>;
-  imports: Record<string, any>;
-  codeblocks: CodeBlocks;
+  load: () => Promise<ReactShowroomComponentContent>;
+  preloadUrl: string;
 }
 
 export interface ReactShowroomComponentSection {
@@ -299,15 +311,20 @@ export interface ReactShowroomMarkdownHeading {
   rank: number;
 }
 
-export interface ReactShowroomMarkdownSection {
-  type: 'markdown';
+export interface ReactShowroomMarkdownContent {
   Component: ComponentType<any>;
-  title: string;
-  slug: string;
-  frontmatter: ReactShowroomMarkdownFrontmatter;
   headings: Array<ReactShowroomMarkdownHeading>;
   imports: Record<string, any>;
   codeblocks: CodeBlocks;
+}
+
+export interface ReactShowroomMarkdownSection {
+  type: 'markdown';
+  fallbackTitle: string;
+  slug: string;
+  frontmatter: ReactShowroomMarkdownFrontmatter;
+  preloadUrl: string;
+  load: () => Promise<ReactShowroomMarkdownContent>;
 }
 
 interface ReactShowroomLinkSection {

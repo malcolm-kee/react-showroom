@@ -18,14 +18,9 @@ import { GenericLink } from './generic-link';
 const navBarItems = THEME.navbar.items;
 
 export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
-  const sections = React.useMemo(
-    () => props.sections.filter((sec) => 'slug' in sec && sec.slug !== ''),
-    [props.sections]
-  );
-
   const mobileSections = React.useMemo(() => {
     if (navBarItems) {
-      return sections.concat({
+      return props.sections.concat({
         type: 'group',
         items: navBarItems.map((item) => ({
           type: 'link',
@@ -37,8 +32,8 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
       } as ReactShowroomSection);
     }
 
-    return sections;
-  }, [sections]);
+    return props.sections;
+  }, [props.sections]);
 
   return (
     <>
@@ -62,7 +57,7 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
           overflowY: 'auto',
         }}
       >
-        {sections.map((section, i) => (
+        {props.sections.map((section, i) => (
           <SidebarSection section={section} key={i} />
         ))}
       </Div>
@@ -132,7 +127,7 @@ const DropdownSection = (props: {
     case 'markdown':
       return (
         <DropdownMenu.Item onSelect={() => history.push(`/${section.slug}`)}>
-          {section.title}
+          {section.frontmatter.title || section.fallbackTitle}
         </DropdownMenu.Item>
       );
 
@@ -208,7 +203,7 @@ const SidebarSection = ({
     case 'markdown':
       return (
         <Link to={`/${section.slug}`} root={level === 0} exact>
-          {section.title}
+          {section.frontmatter.title || section.fallbackTitle}
         </Link>
       );
 
@@ -218,7 +213,7 @@ const SidebarSection = ({
           href={section.href}
           target="_blank"
           rel="noopener"
-          as="a"
+          as={GenericLink}
           css={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -227,7 +222,9 @@ const SidebarSection = ({
           root={level === 0}
         >
           {section.title}
-          <ExternalLinkIcon className={icons()} width={20} height={20} />
+          {isExternalLink(section.href) && (
+            <ExternalLinkIcon className={icons()} width={20} height={20} />
+          )}
         </Link>
       );
 

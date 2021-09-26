@@ -24,7 +24,7 @@ export const MarkdownDocRoute = (props: {
                   <StandaloneEditor />
                 </Route>
                 <Route>
-                  <MarkdownArticle section={props.data} />
+                  <MarkdownArticle slug="/docs" content={props.data} />
                 </Route>
               </Switch>
             </div>

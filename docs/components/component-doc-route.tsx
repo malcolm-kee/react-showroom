@@ -11,14 +11,20 @@ import {
 } from 'react-showroom/client';
 import { BrowserWindowInRouter } from './browser-window-in-router';
 
-export const ComponentDocRoute = (props: {
-  data: React.ComponentPropsWithRef<typeof ComponentDataProvider>['data'];
-}) => (
+type ComponentDataProviderProps = React.ComponentPropsWithRef<
+  typeof ComponentDataProvider
+>;
+
+export const ComponentDocRoute = (
+  props: Omit<ComponentDataProviderProps, 'children'> & {
+    slug: string;
+  }
+) => (
   <MemoryRouter>
     <QueryParamProvider>
       <BrowserWindowInRouter className="mb-4">
         <div className="p-6">
-          <ComponentDataProvider data={props.data}>
+          <ComponentDataProvider {...props}>
             <Switch>
               <Route path="/_standalone/:codeHash">
                 <ComponentMeta componentData={props.data.component} slug="" />
@@ -26,11 +32,9 @@ export const ComponentDocRoute = (props: {
               </Route>
               <Route>
                 <ComponentDocArticle
-                  doc={{
-                    type: 'component',
-                    slug: props.data.component.slug,
-                    data: props.data,
-                  }}
+                  doc={props.data.component}
+                  slug={props.slug}
+                  content={props.content}
                 />
               </Route>
             </Switch>

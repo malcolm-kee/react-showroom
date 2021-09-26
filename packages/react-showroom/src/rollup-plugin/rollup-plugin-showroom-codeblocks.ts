@@ -1,5 +1,5 @@
 import { dataToEsm } from '@rollup/pluginutils';
-import fs from 'fs';
+import fs from 'fs-extra';
 import type { Code as MdCode } from 'mdast';
 import { mdToCodeBlocks } from '../lib/codeblocks';
 
@@ -22,12 +22,12 @@ export const RollupPluginShowroomCodeblocks = function ({
 
   return {
     name: 'rollup-plugin-showroom-codeblocks',
-    load(id: string) {
+    async load(id: string) {
       const match = fileSpecs.find((spec) => id.endsWith(spec.ending));
       if (match) {
         const oriPath = id.slice(0, -match.query.length);
         return dataToEsm(
-          mdToCodeBlocks(fs.readFileSync(oriPath, 'utf-8'), filter)
+          mdToCodeBlocks(await fs.readFile(oriPath, 'utf-8'), filter)
         );
       }
       return null;

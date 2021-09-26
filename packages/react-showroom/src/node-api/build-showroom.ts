@@ -70,6 +70,17 @@ async function outputHtml(
   const { render, getCssText, getHelmet, getRoutes } = serverEntry;
 
   const clientEntryManifest = manifest['client/ssr-client-entry.tsx'];
+
+  const cssToPreload = new Set<string>();
+
+  if (config.preloadAllCss) {
+    Object.values(manifest).forEach((chunk) => {
+      if (chunk.css) {
+        chunk.css.forEach((css) => cssToPreload.add(css));
+      }
+    });
+  }
+
   const template = generateHtml(
     `<script type="module" src="${`${config.basePath}/${clientEntryManifest.file}`}"></script>`,
     clientEntryManifest.css
@@ -80,10 +91,16 @@ async function outputHtml(
           )
           .join('')
       : '',
+    [...cssToPreload]
+      .map(
+        (link) =>
+          `<link rel="preload stylesheet" href="${config.basePath}/${link}" as="style" />`
+      )
+      .join(''),
     config.theme
   );
 
-  const routes = getRoutes();
+  const routes = await getRoutes();
 
   if (config.basePath !== '') {
     logToStdout(`Prerender with basePath: ${config.basePath}`);
@@ -98,7 +115,7 @@ async function outputHtml(
 
         await fs.outputFile(
           resolveApp(`${config.outDir}/${route}/index.html`),
-          getHtml(`/${route}`)
+          await getHtml(`/${route}`)
         );
       }
     }
@@ -106,10 +123,10 @@ async function outputHtml(
     logToStdout(` - /`);
   }
 
-  await fs.outputFile(htmlPath, getHtml('/'));
+  await fs.outputFile(htmlPath, await getHtml('/'));
 
-  function getHtml(pathname: string) {
-    const prerenderContent = render({ pathname });
+  async function getHtml(pathname: string) {
+    const prerenderContent = await render({ pathname });
     const helmet = getHelmet();
     const finalHtml = template
       .replace(
@@ -120,7 +137,7 @@ async function outputHtml(
         '<!--SSR-helmet-->',
         `${helmet.title.toString()}${helmet.meta.toString()}${helmet.link.toString()}`
       )
-      .replace('<!--SSR-target-->', prerenderContent);
+      .replace('<!--SSR-target-->', ssg ? prerenderContent : '');
 
     return finalHtml;
   }

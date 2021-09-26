@@ -1,5 +1,8 @@
 import { Route, Switch, useRouteMatch } from '@showroomjs/bundles/routing';
-import { ReactShowroomMarkdownSection } from '@showroomjs/core/react';
+import {
+  ReactShowroomMarkdownSection,
+  ReactShowroomMarkdownContent,
+} from '@showroomjs/core/react';
 import * as React from 'react';
 import { Div, H1, NavLink } from '../components/base';
 import { DetailsPageContainer } from '../components/details-page-container';
@@ -10,13 +13,17 @@ import { StandalonePageContainer } from '../components/standalone-page-container
 
 export const MarkdownRoute = ({
   section,
+  content,
+  title,
 }: {
+  title: string;
   section: ReactShowroomMarkdownSection;
+  content: ReactShowroomMarkdownContent;
 }) => {
   const { url } = useRouteMatch();
 
   return (
-    <MarkdownDataProvider data={section}>
+    <MarkdownDataProvider data={content}>
       <Switch>
         <Route path={`${url}/_standalone/:codeHash`}>
           <StandalonePageContainer>
@@ -30,7 +37,7 @@ export const MarkdownRoute = ({
                     },
                   }}
                 >
-                  {section.title}
+                  {title}
                 </NavLink>
               </H1>
             </Div>
@@ -39,12 +46,13 @@ export const MarkdownRoute = ({
         </Route>
         <Route path={url}>
           <DetailsPageContainer
-            title={section.title || section.frontmatter.title}
+            title={title}
             description={section.frontmatter.description}
           >
             <MarkdownArticle
-              section={section}
+              slug={section.slug}
               center={!section.frontmatter.hideSidebar}
+              content={content}
             />
           </DetailsPageContainer>
         </Route>

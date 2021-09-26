@@ -1,6 +1,6 @@
 import { getSafeName, isString } from '@showroomjs/core';
 import { ImportConfig } from '@showroomjs/core/react';
-import fs from 'fs';
+import fs from 'fs-extra';
 import { mdToCodeBlocks } from '../lib/codeblocks';
 import { paths, resolveApp } from '../lib/paths';
 import { RollupPluginShowroomCodeblocksOptions } from './rollup-plugin-showroom-codeblocks';
@@ -75,13 +75,13 @@ export const RollupPluginShowroomCodeblocksImports = function ({
 
   return {
     name: 'rollup-plugin-showroom-codeblocks-imports',
-    load(id: string) {
+    async load(id: string) {
       const match = fileSpecs.find((spec) => id.endsWith(spec.ending));
       if (match) {
         const oriPath = id.slice(0, -match.query.length);
 
         const codeBlocks = mdToCodeBlocks(
-          fs.readFileSync(oriPath, 'utf-8'),
+          await fs.readFile(oriPath, 'utf-8'),
           filter
         );
 

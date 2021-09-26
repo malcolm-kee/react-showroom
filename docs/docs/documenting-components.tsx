@@ -91,14 +91,20 @@ export const MarkdownSource = () => (
   </Pre>
 );
 
-const markdownData = {
+const markdownContent = {
   component: buttonWithCommentsData,
   doc: ButtonDocs,
   imports: buttonImports,
   codeblocks: buttonCodeblocks,
 };
 
-export const MarkdownResult = () => <ComponentDocRoute data={markdownData} />;
+export const MarkdownResult = () => (
+  <ComponentDocRoute
+    data={{ component: buttonWithCommentsData }}
+    content={markdownContent}
+    slug=""
+  />
+);
 
 export const AnotherMarkdownSource = () => (
   <Pre>
@@ -108,13 +114,18 @@ export const AnotherMarkdownSource = () => (
   </Pre>
 );
 
-const anotherMarkdownData = {
-  component: buttonWithCommentsData,
+const anotherMarkdownContent = {
   doc: AnotherButtonDocs,
   imports: buttonWithCommentsImports,
   codeblocks: anotherButtonCodeBlocks,
 };
 
 export const AnotherMarkdownResult = () => (
-  <ComponentDocRoute data={anotherMarkdownData} />
+  <ComponentDocRoute
+    data={{
+      component: buttonWithCommentsData,
+    }}
+    content={anotherMarkdownContent}
+    slug=""
+  />
 );

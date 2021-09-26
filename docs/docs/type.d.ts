@@ -27,7 +27,7 @@ declare module '*?showroomRemarkDocImports' {
 }
 
 declare module '*?showroomComponent' {
-  import { ComponentDocItem } from '@showroomjs/core/react';
+  import { ComponentDocItem } from 'react-showroom/client';
 
   const data: ComponentDocItem['component'];
 
