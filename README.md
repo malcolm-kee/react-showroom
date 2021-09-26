@@ -20,12 +20,12 @@ Document React components by declaring props definition and writing markdown.
 
 ## Built With
 
+- [Vite](https://vitejs.dev/)
 - [esbuild](https://esbuild.github.io/)
 - [react-docgen-typescript](https://www.npmjs.com/package/react-docgen-typescript)
 - [Stitches](https://stitches.dev/)
 - [Radix Primitives](https://www.radix-ui.com/)
 - [xdm](https://github.com/wooorm/xdm)
-- [webpack](https://webpack.js.org/)
 
 ## Inspired by
 
@@ -44,7 +44,4 @@ We believe that compared to languages (TypeScript and markdown), libraries are g
 Following are the ideas that I want to implement as enhancements (but I not sure if they are possible):
 
 - Run jest tests in the Showroom
-- Code splitting with SSR
 - Vue support
-- Rollup support
-- Vite support
