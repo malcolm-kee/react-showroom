@@ -222,7 +222,6 @@ importers:
       unist-util-visit: 2.0.3
       vfile: 4.2.1
       vite: ^2.5.10
-      vite-plugin-virtual-html: ^0.0.11
       xdm: ^2.0.4
       yargs: ^17.2.0
     dependencies:
@@ -268,7 +267,6 @@ importers:
       unist-util-visit: 2.0.3
       vfile: 4.2.1
       vite: 2.5.10
-      vite-plugin-virtual-html: 0.0.11
       xdm: 2.0.4
       yargs: 17.2.0
     devDependencies:
@@ -9295,10 +9293,6 @@ packages:
       is-buffer: 2.0.5
       unist-util-stringify-position: 3.0.0
       vfile-message: 3.0.2
-    dev: false
-
-  /vite-plugin-virtual-html/0.0.11:
-    resolution: {integrity: sha512-3LIoNqFVhrdLGgJub9H6EqXPjEDFPytO8YLPo6iaArxdTWhlVWmmAR8iY1dNAUdtsojF5urvW4nktCd3iuPjsA==}
     dev: false
 
   /vite/2.5.10:
