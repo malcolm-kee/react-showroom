@@ -48,10 +48,17 @@ const render = isPrerender
       Promise.resolve(
         matchSection && matchSection.load ? matchSection.load() : undefined
       ).then(() => {
-        ReactDOM.hydrate(
-          <BrowserRouter basename={process.env.BASE_PATH}>{ui}</BrowserRouter>,
-          target
+        const el = document.createElement('div');
+
+        const uiEl = (
+          <BrowserRouter basename={process.env.BASE_PATH}>{ui}</BrowserRouter>
         );
+
+        // we do this render on a virtual div to avoid lazy loading show the flashing fallback
+        ReactDOM.render(uiEl, el, () => {
+          ReactDOM.unmountComponentAtNode(el);
+          ReactDOM.hydrate(uiEl, target);
+        });
       });
     }
   : function render(ui: React.ReactElement<any>, target: HTMLElement | null) {

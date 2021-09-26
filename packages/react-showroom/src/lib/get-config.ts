@@ -124,11 +124,16 @@ export const getConfig = (
     }
   }
 
-  const { outDir = 'showroom', prerender = true } = providedBuildConfig;
+  const {
+    outDir = 'showroom',
+    prerender = true,
+    preloadAllCss = true,
+  } = providedBuildConfig;
 
   _normalizedConfig = {
     ...defaultConfig,
     ...providedConfig,
+    preloadAllCss,
     ignores,
     sections,
     basePath: providedBuildConfig.basePath

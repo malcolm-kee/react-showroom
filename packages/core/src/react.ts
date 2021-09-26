@@ -211,6 +211,12 @@ export interface ReactShowroomConfiguration
      * @default ''
      */
     basePath?: string;
+    /**
+     * Preload all CSS to avoid possible screen flashing.
+     *
+     * @default true
+     */
+    preloadAllCss?: boolean;
   };
   debug?: boolean;
 }
@@ -261,6 +267,7 @@ export interface NormalizedReactShowroomConfiguration
   outDir: string;
   prerender: boolean;
   basePath: string;
+  preloadAllCss: boolean;
   /**
    * assetDirs in absolute paths
    */

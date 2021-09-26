@@ -70,10 +70,19 @@ async function outputHtml(
   const { render, getCssText, getHelmet, getRoutes } = serverEntry;
 
   const clientEntryManifest = manifest['client/ssr-client-entry.tsx'];
+
+  const cssToPreload = new Set<string>();
+
+  if (config.preloadAllCss) {
+    Object.values(manifest).forEach((chunk) => {
+      if (chunk.css) {
+        chunk.css.forEach((css) => cssToPreload.add(css));
+      }
+    });
+  }
+
   const template = generateHtml(
-    `<script>var manifest = ${JSON.stringify(
-      manifest
-    )};</script><script type="module" src="${`${config.basePath}/${clientEntryManifest.file}`}"></script>`,
+    `<script type="module" src="${`${config.basePath}/${clientEntryManifest.file}`}"></script>`,
     clientEntryManifest.css
       ? clientEntryManifest.css
           .map(
@@ -82,6 +91,12 @@ async function outputHtml(
           )
           .join('')
       : '',
+    [...cssToPreload]
+      .map(
+        (link) =>
+          `<link rel="preload stylesheet" href="${config.basePath}/${link}" as="style" />`
+      )
+      .join(''),
     config.theme
   );
 

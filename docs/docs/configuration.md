@@ -103,6 +103,15 @@ Enable pre-rendering when generating site.
 
 This is useful to ensure your components are SSR-friendly.
 
+### `build.preloadAllCss`
+
+- Type: `boolean`
+- Default: `true`
+
+Preload all CSS.
+
+This is to minimize the flash of unstyled content.
+
 ### `build.basePath`
 
 - Type: `string`
