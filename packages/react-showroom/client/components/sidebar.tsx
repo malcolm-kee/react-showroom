@@ -22,11 +22,13 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
     if (navBarItems) {
       return props.sections.concat({
         type: 'group',
-        items: navBarItems.map((item) => ({
-          type: 'link',
-          href: item.to,
-          title: item.label,
-        })),
+        items: navBarItems
+          .filter((item) => item.showInMobileMenu)
+          .map((item) => ({
+            type: 'link',
+            href: item.to,
+            title: item.label,
+          })),
         slug: '',
         title: '',
       } as ReactShowroomSection);
@@ -120,7 +122,7 @@ const DropdownSection = (props: {
     case 'component':
       return (
         <DropdownMenu.Item onSelect={() => history.push(`/${section.slug}`)}>
-          {section.data.component.displayName}
+          {section.title}
         </DropdownMenu.Item>
       );
 
@@ -198,7 +200,7 @@ const SidebarSection = ({
     case 'component':
       return (
         <Link to={`/${section.slug}`} root={level === 0} exact>
-          {section.data.component.displayName}
+          {section.title}
         </Link>
       );
 

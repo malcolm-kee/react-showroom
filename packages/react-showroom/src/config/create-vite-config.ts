@@ -7,6 +7,7 @@ import rehypeSlug from 'rehype-slug';
 import remarkFrontmatter from 'remark-frontmatter';
 import remarkGfm from 'remark-gfm';
 import { remarkMdxFrontmatter } from 'remark-mdx-frontmatter';
+import * as docgen from 'react-docgen-typescript';
 import type { Plugin, UserConfig as ViteConfig } from 'vite';
 import {
   generateCodeblocksData,
@@ -58,6 +59,11 @@ export const createViteConfig = async (
 
   const xdm = (await getXdm()) as typeof import('xdm/rollup');
 
+  const docgenParser = docgen.withCustomConfig(
+    config.docgen.tsconfigPath,
+    config.docgen.options
+  );
+
   return {
     ...defaultConfig,
     root: paths.showroomPath,
@@ -97,7 +103,8 @@ export const createViteConfig = async (
         'react-showroom-codeblocks': generateCodeblocksData(config.sections),
         'react-showroom-sections': generateSections(
           config.sections,
-          paths.showroomPath
+          paths.showroomPath,
+          docgenParser
         ),
         'react-showroom-wrapper': generateWrapper(config.wrapper),
       }) as Plugin,
@@ -117,7 +124,7 @@ export const createViteConfig = async (
       }) as Plugin,
       RollupPluginShowroomComponent({
         resourceQuery: 'showroomComponent',
-        docgenConfig: config.docgen,
+        docgenParser,
       }),
       RollupPluginShowroomCodeblocks(codeBlocksOptions),
       RollupPluginShowroomCodeblocks(docsCodeBlocksOptions),

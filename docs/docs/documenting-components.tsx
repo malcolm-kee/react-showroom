@@ -8,7 +8,7 @@ import { ComponentDocRoute } from '../components/component-doc-route';
 import AnotherButtonDocs from './button-other-example.mdx';
 import anotherbuttonDocsSource from './button-other-example.mdx?raw';
 import anotherButtonCodeBlocks from './button-other-example.mdx?showroomRemarkCodeblocks';
-import { imports as buttonWithCommentsImports } from './button-other-example.mdx?showroomRemarkImports';
+import { imports as anotherButtonImports } from './button-other-example.mdx?showroomRemarkImports';
 import buttonWithCommentsSource from './button-with-comments?raw';
 import buttonWithCommentsData from './button-with-comments?showroomComponent';
 import ButtonDocs from './button.mdx';
@@ -92,18 +92,14 @@ export const MarkdownSource = () => (
 );
 
 const markdownContent = {
-  component: buttonWithCommentsData,
+  metadata: buttonWithCommentsData,
   doc: ButtonDocs,
   imports: buttonImports,
   codeblocks: buttonCodeblocks,
 };
 
 export const MarkdownResult = () => (
-  <ComponentDocRoute
-    data={{ component: buttonWithCommentsData }}
-    content={markdownContent}
-    slug=""
-  />
+  <ComponentDocRoute content={markdownContent} slug="" />
 );
 
 export const AnotherMarkdownSource = () => (
@@ -116,16 +112,11 @@ export const AnotherMarkdownSource = () => (
 
 const anotherMarkdownContent = {
   doc: AnotherButtonDocs,
-  imports: buttonWithCommentsImports,
+  imports: anotherButtonImports,
   codeblocks: anotherButtonCodeBlocks,
+  metadata: buttonWithCommentsData,
 };
 
 export const AnotherMarkdownResult = () => (
-  <ComponentDocRoute
-    data={{
-      component: buttonWithCommentsData,
-    }}
-    content={anotherMarkdownContent}
-    slug=""
-  />
+  <ComponentDocRoute content={anotherMarkdownContent} slug="" />
 );

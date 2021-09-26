@@ -15,9 +15,9 @@ const options = (function (allItems: Array<ReactShowroomSection>) {
       switch (item.type) {
         case 'component':
           result.push({
-            label: item.data.component.displayName,
+            label: item.title,
             value: item.slug,
-            description: item.data.component.description,
+            description: item.description,
           });
           return;
 

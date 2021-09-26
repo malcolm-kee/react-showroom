@@ -9,27 +9,25 @@ import { CodeblocksContext } from '../lib/codeblocks-context';
 import { ComponentPropsContext } from '../lib/component-props-context';
 
 export const ComponentDataProvider = (props: {
-  data: Pick<ComponentDocItem, 'component'>;
   children: React.ReactNode;
   content: ReactShowroomComponentContent;
 }) => {
   const {
-    data: { component },
-    content: { imports, codeblocks },
+    content: { imports, codeblocks, metadata },
   } = props;
 
   const codeVariables = React.useMemo(() => {
-    if (component.displayName && component.Component) {
+    if (metadata.displayName && metadata.Component) {
       return {
-        [component.displayName]: component.Component,
+        [metadata.displayName]: metadata.Component,
       };
     }
     return {};
-  }, [component]);
+  }, [metadata]);
 
   return (
     <CodeImportsContextProvider value={imports}>
-      <ComponentPropsContext.Provider value={component.props}>
+      <ComponentPropsContext.Provider value={metadata.props}>
         <CodeVariablesContextProvider value={codeVariables}>
           <CodeblocksContext.Provider value={codeblocks}>
             {props.children}

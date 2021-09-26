@@ -133,6 +133,7 @@ export interface ThemeConfiguration {
     items?: Array<{
       to: string;
       label: string;
+      showInMobileMenu?: boolean;
     }>;
   };
   favicon?: string;
@@ -226,6 +227,12 @@ export interface ReactShowroomConfiguration
      * @default true
      */
     preloadAllCss?: boolean;
+    /**
+     * Prefetch all resources using `<link rel="prefetch">` resource hints.
+     *
+     * @default true
+     */
+    prefetchAll?: boolean;
   };
   debug?: boolean;
 }
@@ -278,6 +285,7 @@ export interface NormalizedReactShowroomConfiguration
   prerender: boolean;
   basePath: string;
   preloadAllCss: boolean;
+  prefetchAll: boolean;
   /**
    * assetDirs in absolute paths
    */
@@ -288,15 +296,15 @@ export interface NormalizedReactShowroomConfiguration
 }
 
 export interface ReactShowroomComponentContent {
+  metadata: DocgenComponentDoc & {
+    Component: ComponentType<any> | undefined;
+  };
   doc: null | ComponentType<any>;
   imports: Record<string, any>;
   codeblocks: CodeBlocks;
 }
 
 export interface ComponentDocItem {
-  component: DocgenComponentDoc & { slug: string } & {
-    Component: ComponentType<any> | undefined;
-  };
   load: () => Promise<ReactShowroomComponentContent>;
   preloadUrl: string;
 }
@@ -304,6 +312,8 @@ export interface ComponentDocItem {
 export interface ReactShowroomComponentSection {
   type: 'component';
   data: ComponentDocItem;
+  title: string;
+  description: string;
   slug: string;
 }
 

@@ -52,6 +52,7 @@ module.exports = defineConfig({
         {
           to: libPackageJson.repository.url.replace(/^git\+/, ''),
           label: 'GitHub',
+          showInMobileMenu: true,
         },
       ],
       logo: {
