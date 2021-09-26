@@ -5,6 +5,7 @@ import {
 } from '@showroomjs/core/react';
 import * as React from 'react';
 import { Div, H1, NavLink } from '../components/base';
+import { Seo } from '../components/seo';
 import { DetailsPageContainer } from '../components/details-page-container';
 import { MarkdownArticle } from '../components/markdown-article';
 import { MarkdownDataProvider } from '../components/markdown-data-provider';
@@ -27,6 +28,7 @@ export const MarkdownRoute = ({
       <Switch>
         <Route path={`${url}/_standalone/:codeHash`}>
           <StandalonePageContainer>
+            <Seo title={title} description={section.frontmatter.description} />
             <Div css={{ px: '$4', paddingTop: '$6' }}>
               <H1>
                 <NavLink

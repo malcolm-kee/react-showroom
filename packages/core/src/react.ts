@@ -52,6 +52,15 @@ export interface DocSectionConfiguration extends ItemConfigurationWithPath {
    */
   folder: string;
   ignores?: Array<string>;
+  /**
+   * Formatting the label for the title in the sidebar.
+   *
+   * By default it will use the first h1 tag of the markdown file if available.
+   *
+   * Note that this function must be pure and do not use any outer scope variable as
+   * we will stringify it and run it on client side.
+   */
+  formatLabel?: (oriTitle: string) => string;
 }
 
 export interface GroupSectionConfiguration extends ItemConfigurationWithPath {
@@ -233,6 +242,7 @@ interface ReactShowroomMarkdownSectionConfig {
   sourcePath: string;
   slug: string;
   title?: string;
+  formatLabel: (oriTitle: string) => string;
 }
 
 interface ReactShowroomLinkSectionConfig {
@@ -325,6 +335,7 @@ export interface ReactShowroomMarkdownSection {
   frontmatter: ReactShowroomMarkdownFrontmatter;
   preloadUrl: string;
   load: () => Promise<ReactShowroomMarkdownContent>;
+  formatLabel: (oriTitle: string) => string;
 }
 
 interface ReactShowroomLinkSection {
