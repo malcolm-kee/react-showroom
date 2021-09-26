@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 0.11.2
+
+### Patch Changes
+
+- 4edde8b: Improve dev performance and prefetch resources
+
 ## 0.11.1
 
 ### Patch Changes

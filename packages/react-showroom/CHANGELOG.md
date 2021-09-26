@@ -1,5 +1,15 @@
 # react-showroom
 
+## 0.11.2
+
+### Patch Changes
+
+- 56819fc: Remove unused package
+- 4edde8b: Improve dev performance and prefetch resources
+- Updated dependencies [4edde8b]
+  - @showroomjs/core@0.11.2
+  - @showroomjs/ui@0.11.2
+
 ## 0.11.1
 
 ### Patch Changes
