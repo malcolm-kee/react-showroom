@@ -1,11 +1,15 @@
-import { ReactShowroomComponentSection } from '@showroomjs/core/react';
+import {
+  ReactShowroomComponentContent,
+  ReactShowroomComponentSection,
+} from '@showroomjs/core/react';
 import * as React from 'react';
 import { Div } from './base';
 import { ComponentMeta } from './component-meta';
 import { StandaloneEditor } from './standalone-editor';
 
 export interface ComponentDocStandaloneEditorProps {
-  componentData: ReactShowroomComponentSection;
+  slug: string;
+  content: ReactShowroomComponentContent;
 }
 
 export const ComponentDocStandaloneEditor = (
@@ -15,8 +19,8 @@ export const ComponentDocStandaloneEditor = (
     <>
       <Div css={{ px: '$4', paddingTop: '$6' }}>
         <ComponentMeta
-          componentData={props.componentData.data.component}
-          slug={props.componentData.slug}
+          componentData={props.content.metadata}
+          slug={props.slug}
         />
       </Div>
       <Div css={{ flex: 1 }}>

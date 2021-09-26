@@ -81,6 +81,15 @@ async function outputHtml(
     });
   }
 
+  const scriptsToPrefetch = config.prefetchAll
+    ? Object.entries(manifest)
+        .filter(
+          ([key, chunk]) =>
+            key !== 'client/ssr-client-entry.tsx' && chunk.file.endsWith('.js')
+        )
+        .map(([, chunk]) => chunk.file)
+    : [];
+
   const template = generateHtml(
     `<script type="module" src="${`${config.basePath}/${clientEntryManifest.file}`}"></script>`,
     clientEntryManifest.css
@@ -95,6 +104,12 @@ async function outputHtml(
       .map(
         (link) =>
           `<link rel="preload stylesheet" href="${config.basePath}/${link}" as="style" />`
+      )
+      .concat(
+        scriptsToPrefetch.map(
+          (link) =>
+            `<link rel="prefetch" as="script" href="${config.basePath}/${link}" />`
+        )
       )
       .join(''),
     config.theme

@@ -27,12 +27,11 @@ export const ComponentDocRoute = (
           <ComponentDataProvider {...props}>
             <Switch>
               <Route path="/_standalone/:codeHash">
-                <ComponentMeta componentData={props.data.component} slug="" />
+                <ComponentMeta componentData={props.content.metadata} slug="" />
                 <StandaloneEditor />
               </Route>
               <Route>
                 <ComponentDocArticle
-                  doc={props.data.component}
                   slug={props.slug}
                   content={props.content}
                 />

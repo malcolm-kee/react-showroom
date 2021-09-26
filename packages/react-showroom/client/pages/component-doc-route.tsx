@@ -21,27 +21,26 @@ export const ComponentDocRoute = ({
   const { url } = useRouteMatch();
 
   return (
-    <ComponentDataProvider data={section.data} content={content}>
+    <ComponentDataProvider content={content}>
       <Switch>
         <Route path={`${url}/_standalone/:codeHash`}>
           <StandalonePageContainer>
             <Seo
-              title={section.data.component.displayName}
-              description={section.data.component.description}
+              title={content.metadata.displayName}
+              description={content.metadata.description}
             />
-            <ComponentDocStandaloneEditor componentData={section} />
+            <ComponentDocStandaloneEditor
+              slug={section.slug}
+              content={content}
+            />
           </StandalonePageContainer>
         </Route>
         <Route path={url}>
           <DetailsPageContainer
-            title={section.data.component.displayName}
-            description={section.data.component.description}
+            title={content.metadata.displayName}
+            description={content.metadata.description}
           >
-            <ComponentDocArticle
-              doc={section.data.component}
-              slug={section.slug}
-              content={content}
-            />
+            <ComponentDocArticle slug={section.slug} content={content} />
           </DetailsPageContainer>
         </Route>
       </Switch>

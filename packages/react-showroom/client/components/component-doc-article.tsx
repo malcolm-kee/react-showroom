@@ -6,16 +6,15 @@ import { ComponentMeta } from './component-meta';
 import { mdxComponents } from './mdx-components';
 
 export const ComponentDocArticle = (props: {
-  doc: ComponentDoc;
   slug: string;
   content: ReactShowroomComponentContent;
 }) => {
-  const { doc: Doc } = props.content;
+  const { doc: Doc, metadata } = props.content;
 
   return (
     <Article>
       <ComponentMeta
-        componentData={props.doc}
+        componentData={metadata}
         slug={props.slug}
         propsDefaultOpen={!Doc}
       />

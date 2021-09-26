@@ -4,6 +4,8 @@ import {
   ReactShowroomSectionConfig,
 } from '@showroomjs/core/react';
 import path from 'path';
+import { FileParser } from 'react-docgen-typescript';
+import slugify from 'slugify';
 
 let _nameIndex = 0;
 const getName = (name: string) => getSafeName(name) + '_' + _nameIndex++;
@@ -54,48 +56,34 @@ export const generateCodeblocksData = (
     }`;
 };
 
-const compileToComponentMetadata = (
-  component: ReactShowroomComponentSectionConfig,
-  imports: Array<ImportDefinition>
-): string => {
-  const name = getName('componentMetadata');
-
-  imports.push({
-    name,
-    path: `${component.sourcePath}?showroomComponent`,
-    type: 'default',
-  });
-
-  return name;
-};
-
 function compileComponentSection(
   component: ReactShowroomComponentSectionConfig,
-  imports: Array<ImportDefinition>,
   rootDir: string
 ): string {
-  const { docPath } = component;
+  const { docPath, sourcePath } = component;
 
   const load = docPath
     ? `async () => {
   const loadDoc = import('${docPath}');
+  const loadMetadata = import('${docPath}');
   const loadImports = import('${docPath}?showroomRemarkImports');
   const loadCodeBlocks = import('${docPath}?showroomRemarkCodeblocks');
 
   return {
     doc: (await loadDoc).default,
+    metadata: (await import('${sourcePath}?showroomComponent')).default,
     imports: (await loadImports).imports || {},
     codeblocks: (await loadCodeBlocks).default || {},
   }    
 }`
-    : `() => Promise.resolve({
+    : `async () => ({
+  metadata: (await import('${sourcePath}?showroomComponent')).default,
   doc: null,
   imports: {},
   codeblocks: {},
 })`;
 
   return `{
-      component: ${compileToComponentMetadata(component, imports)},
       preloadUrl: ${docPath ? `'${path.relative(rootDir, docPath)}'` : 'null'},
       load: ${load},
     }`;
@@ -109,7 +97,8 @@ interface ImportDefinition {
 
 export const generateSections = (
   sections: Array<ReactShowroomSectionConfig>,
-  rootDir: string
+  rootDir: string,
+  docgenParser: FileParser
 ) => {
   const imports: Array<ImportDefinition> = [];
 
@@ -126,17 +115,24 @@ export const generateSections = (
         }
 
         if (section.type === 'component') {
+          const compMetadata = docgenParser.parse(section.sourcePath)[0];
+
           return `{
               type: 'component',
-              data: ${compileComponentSection(section, imports, rootDir)},
-              get slug() {
-                const parentSlugs = '${section.parentSlugs.join('/')}';
-  
-                return (parentSlugs && (parentSlugs + '/')) + slugify(this.data.component.slug, {lower: true})
-              },
-              get shouldIgnore() {
-                return !this.data.component.Component;
-              }
+              data: ${compileComponentSection(section, rootDir)},
+              title: '${compMetadata && compMetadata.displayName}',
+              description: \`${
+                compMetadata && compMetadata.description.replace(/`/g, '\\`')
+              }\`,
+              slug: '${
+                compMetadata
+                  ? [
+                      ...section.parentSlugs,
+                      slugify(compMetadata.displayName, { lower: true }),
+                    ].join('/')
+                  : ''
+              }',
+              shouldIgnore: ${!compMetadata}
             }`;
           // because the component parsing may return nothing, so need to set a flag here and filter it at bottom
         }
@@ -185,8 +181,7 @@ export const generateSections = (
 
   const result = collect(sections);
 
-  return `import slugify from 'slugify';
-  ${imports
+  return `${imports
     .map((imp) =>
       imp.type === 'default'
         ? `import ${imp.name} from '${imp.path}';`
@@ -198,7 +193,7 @@ export const generateSections = (
 
 export const generateWrapper = (wrapper: string | undefined) => {
   if (wrapper) {
-    return `import Wrapper from '${wrapper}?showroomCompile';
+    return `import Wrapper from '${wrapper}';
       export default Wrapper`;
   }
 
