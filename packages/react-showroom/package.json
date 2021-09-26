@@ -70,8 +70,9 @@
   },
   "scripts": {
     "dev": "tsc -b . --watch",
-    "build": "tsc",
-    "clean": "rimraf dist client-dist *.tsbuildinfo"
+    "build": "pnpm typecheck:client && tsc",
+    "clean": "rimraf dist client-dist *.tsbuildinfo",
+    "typecheck:client": "tsc --noEmit --project tsconfig.client.json"
   },
   "devDependencies": {
     "typescript": "^4.4.3"

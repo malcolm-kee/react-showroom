@@ -26,9 +26,12 @@ const options = (function (allItems: Array<ReactShowroomSection>) {
           return;
 
         case 'markdown': {
-          if (item.slug && item.title) {
+          const title = item.formatLabel(
+            item.frontmatter.title || item.fallbackTitle
+          );
+          if (item.slug && title) {
             result.push({
-              label: item.title,
+              label: title,
               value: item.slug,
               description: item.frontmatter.description,
             });

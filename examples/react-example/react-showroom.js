@@ -19,6 +19,7 @@ module.exports = defineConfig({
       type: 'docs',
       folder: 'docs',
       ignores: ['**/index.mdx'],
+      formatLabel: (t) => `Docs: ${t}`,
     },
   ],
   theme: {

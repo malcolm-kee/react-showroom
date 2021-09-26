@@ -1,4 +1,9 @@
-import { Environment, flattenArray, isString } from '@showroomjs/core';
+import {
+  Environment,
+  flattenArray,
+  isString,
+  removeTrailingSlash,
+} from '@showroomjs/core';
 import {
   ItemConfiguration,
   NormalizedReactShowroomConfiguration,
@@ -120,6 +125,7 @@ export const getConfig = (
         type: 'markdown',
         sourcePath: readmePath,
         slug: '',
+        formatLabel: (x) => x,
       });
     }
   }
@@ -335,6 +341,7 @@ export const getConfig = (
             title: sectionConfig.title,
             sourcePath: docPath,
             slug: parentSlugs.concat(slug).join('/'),
+            formatLabel: (x) => x,
           });
           return;
         }
@@ -347,6 +354,7 @@ export const getConfig = (
         case 'docs': {
           const docsFolder = sectionConfig.folder;
           const docGroupTitle = sectionConfig.title;
+          const formatLabel = sectionConfig.formatLabel || ((x: string) => x);
 
           const pagesPaths = glob.sync(`${docsFolder}/**/*.{md,mdx}`, {
             cwd: paths.appPath,
@@ -364,16 +372,17 @@ export const getConfig = (
               items: [],
             };
 
-            collectDocs(section.items, slugParts);
+            collectDocs(section.items, slugParts, formatLabel);
 
             parent.push(section);
           } else {
-            collectDocs(parent, parentSlugs);
+            collectDocs(parent, parentSlugs, formatLabel);
           }
 
           function collectDocs(
             targetItems: Array<ReactShowroomSectionConfig>,
-            pathToDoc: Array<string>
+            pathToDoc: Array<string>,
+            formatLabel: (ori: string) => string
           ) {
             pagesPaths.forEach((pagePath) => {
               const pathInfo = path.parse(pagePath);
@@ -393,6 +402,7 @@ export const getConfig = (
                 type: 'markdown',
                 sourcePath: path.resolve(paths.appPath, pagePath),
                 slug: pathToDoc.concat(slug).join('/'),
+                formatLabel,
               });
             });
           }
@@ -425,7 +435,5 @@ const getUserConfig = (
     ? provided(env === 'development' ? 'dev' : 'build')
     : provided;
 };
-
-const removeTrailingSlash = (path: string) => path.replace(/\/$/, '');
 
 const COMPONENT_DOC_EXTENSIONS = ['.mdx', '.md'] as const;

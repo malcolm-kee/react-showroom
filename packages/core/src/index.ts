@@ -8,6 +8,7 @@ export { getSafeName } from './get-safe-name';
 export { omit } from './object';
 export { ImportMapData, Packages, postCompile } from './post-compile';
 export { parseQueryString, stringifyQueryString } from './query-string';
+export { removeTrailingSlash } from './remove-trailing-slash';
 export { safeEval } from './safe-eval';
 export type { Ssr } from './ssr-types';
 export { isDefined, isNil, isNumber, isString } from './type-guard';

@@ -1,6 +1,6 @@
 import { ArrowsExpandIcon, TerminalIcon } from '@heroicons/react/outline';
 import { Link, useRouteMatch } from '@showroomjs/bundles/routing';
-import { SupportedLanguage } from '@showroomjs/core';
+import { SupportedLanguage, removeTrailingSlash } from '@showroomjs/core';
 import {
   Alert,
   Collapsible,
@@ -174,7 +174,7 @@ const LinkToStandaloneView = (props: { code: string }) => {
   return matchCodeData ? (
     <Button
       as={Link}
-      to={`${url === '/' ? '' : url}/_standalone/${
+      to={`${removeTrailingSlash(url)}/_standalone/${
         matchCodeData.initialCodeHash
       }`}
     >

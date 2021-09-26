@@ -8,6 +8,7 @@ import { ComponentDataProvider } from '../components/component-data-provider';
 import { ComponentDocArticle } from '../components/component-doc-article';
 import { ComponentDocStandaloneEditor } from '../components/component-doc-standalone-editor';
 import { DetailsPageContainer } from '../components/details-page-container';
+import { Seo } from '../components/seo';
 import { StandalonePageContainer } from '../components/standalone-page-container';
 
 export const ComponentDocRoute = ({
@@ -24,6 +25,10 @@ export const ComponentDocRoute = ({
       <Switch>
         <Route path={`${url}/_standalone/:codeHash`}>
           <StandalonePageContainer>
+            <Seo
+              title={section.data.component.displayName}
+              description={section.data.component.description}
+            />
             <ComponentDocStandaloneEditor componentData={section} />
           </StandalonePageContainer>
         </Route>

@@ -155,6 +155,7 @@ export const generateSections = (
               fallbackTitle: '${section.title || ''}',
               slug: '${section.slug}',
               frontmatter: ${name}_frontmatter || {},
+              formatLabel: ${section.formatLabel.toString()},
               preloadUrl: '${path.relative(rootDir, section.sourcePath)}',
               load: async () => {
                 const loadComponent = import('${section.sourcePath}');

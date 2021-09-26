@@ -127,7 +127,9 @@ const DropdownSection = (props: {
     case 'markdown':
       return (
         <DropdownMenu.Item onSelect={() => history.push(`/${section.slug}`)}>
-          {section.frontmatter.title || section.fallbackTitle}
+          {section.formatLabel(
+            section.frontmatter.title || section.fallbackTitle
+          )}
         </DropdownMenu.Item>
       );
 
@@ -203,7 +205,9 @@ const SidebarSection = ({
     case 'markdown':
       return (
         <Link to={`/${section.slug}`} root={level === 0} exact>
-          {section.frontmatter.title || section.fallbackTitle}
+          {section.formatLabel(
+            section.frontmatter.title || section.fallbackTitle
+          )}
         </Link>
       );
 
