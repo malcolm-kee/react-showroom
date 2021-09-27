@@ -132,6 +132,7 @@ export const generateSections = (
                     ].join('/')
                   : ''
               }',
+              id: '${section.id}',
               shouldIgnore: ${!compMetadata}
             }`;
           // because the component parsing may return nothing, so need to set a flag here and filter it at bottom

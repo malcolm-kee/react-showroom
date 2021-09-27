@@ -3,14 +3,14 @@ process.env.BABEL_ENV = 'development';
 process.env.NODE_ENV = 'development';
 
 import { ReactShowroomConfiguration } from '@showroomjs/core/react';
+import path from 'path';
 import { createServer } from 'vite';
 import { argv } from 'yargs';
 import { createViteConfig } from '../config/create-vite-config';
 import { getConfig } from '../lib/get-config';
+import { logToStdout } from '../lib/log-to-stdout';
 import { prepareUrls } from '../lib/prepare-url';
 import { writeIndexHtml } from '../lib/write-index-html';
-
-import path from 'path';
 
 const { openBrowser } = require(path.resolve(
   __dirname,
@@ -28,6 +28,8 @@ export async function startDevServer(
   userConfig?: ReactShowroomConfiguration,
   configFile?: string
 ) {
+  logToStdout('Starting dev server...');
+
   const config = getConfig('development', configFile, userConfig);
 
   writeIndexHtml(config.theme);

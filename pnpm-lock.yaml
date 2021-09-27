@@ -186,7 +186,6 @@ importers:
       '@showroomjs/bundles': workspace:*
       '@showroomjs/core': workspace:*
       '@showroomjs/ui': workspace:*
-      chalk: ^4.1.2
       cross-spawn: ^7.0.3
       esbuild: ^0.13.2
       esbuild-wasm: ^0.13.2
@@ -197,6 +196,7 @@ importers:
       hast-util-heading: 1.0.5
       hast-util-heading-rank: 1.0.1
       lz-string: ^1.4.4
+      nanocolors: ^0.2.9
       node-fetch: ^2.6.5
       open: ^8.2.1
       prism-react-renderer: ^1.2.1
@@ -232,7 +232,6 @@ importers:
       '@showroomjs/bundles': link:../bundles
       '@showroomjs/core': link:../core
       '@showroomjs/ui': link:../ui
-      chalk: 4.1.2
       cross-spawn: 7.0.3
       esbuild: 0.13.2
       esbuild-wasm: 0.13.2
@@ -243,6 +242,7 @@ importers:
       hast-util-heading: 1.0.5
       hast-util-heading-rank: 1.0.1
       lz-string: 1.4.4
+      nanocolors: 0.2.9
       node-fetch: 2.6.5
       open: 8.2.1
       prism-react-renderer: 1.2.1_react@17.0.2
@@ -6976,6 +6976,10 @@ packages:
 
   /nanocolors/0.2.3:
     resolution: {integrity: sha512-RxGTOApG8prHMA08UBMOT6qYzcBBW2EMBv7SRBqoXg/Dqp6G3yT7kLy1tpFuYLO+5h7eajmdiIHJA8oewN58XQ==}
+
+  /nanocolors/0.2.9:
+    resolution: {integrity: sha512-aymgS4Xe0LMqHOHl7jSUEkFh/6O/pcF0j61dBtreQZ1nmbyYdYjSYSJzz0iPLbKPkMtSmdRgyBGywNZGjKOEfw==}
+    dev: false
 
   /nanoid/3.1.25:
     resolution: {integrity: sha512-rdwtIXaXCLFAQbnfqDRnI6jaRHp9fTcYBjtFKE8eezcZ7LuLjhUaQGNeMXf1HmRoCH32CLz6XwX0TtxEOS/A3Q==}

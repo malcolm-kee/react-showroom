@@ -242,6 +242,7 @@ export interface ReactShowroomComponentSectionConfig {
   sourcePath: string;
   docPath: string | null;
   parentSlugs: Array<string>;
+  id: string;
 }
 
 interface ReactShowroomMarkdownSectionConfig {
@@ -315,6 +316,7 @@ export interface ReactShowroomComponentSection {
   title: string;
   description: string;
   slug: string;
+  id: string;
 }
 
 export interface ReactShowroomMarkdownFrontmatter {

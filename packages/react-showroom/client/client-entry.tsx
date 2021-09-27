@@ -7,11 +7,22 @@ import {
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { App } from './app';
-import { isPrerender } from './lib/config';
+import { isPrerender, isSpa } from './lib/config';
 import { createQueryClient } from './lib/create-query-client';
 import { routes } from './route-mapping';
 
 const queryClient = createQueryClient();
+
+const Router = function (props: {
+  children: React.ReactNode;
+  basename?: string;
+}) {
+  if (isSpa) {
+    return <HashRouter>{props.children}</HashRouter>;
+  }
+
+  return <BrowserRouter {...props} />;
+};
 
 const render = isPrerender
   ? function hydrate(ui: React.ReactElement<any>, target: HTMLElement | null) {
@@ -50,9 +61,7 @@ const render = isPrerender
       ).then(() => {
         const el = document.createElement('div');
 
-        const uiEl = (
-          <BrowserRouter basename={process.env.BASE_PATH}>{ui}</BrowserRouter>
-        );
+        const uiEl = <Router basename={process.env.BASE_PATH}>{ui}</Router>;
 
         // we do this render on a virtual div to avoid lazy loading show the flashing fallback
         ReactDOM.render(uiEl, el, () => {
@@ -62,7 +71,7 @@ const render = isPrerender
       });
     }
   : function render(ui: React.ReactElement<any>, target: HTMLElement | null) {
-      ReactDOM.render(<HashRouter>{ui}</HashRouter>, target);
+      ReactDOM.render(<Router>{ui}</Router>, target);
     };
 
 render(

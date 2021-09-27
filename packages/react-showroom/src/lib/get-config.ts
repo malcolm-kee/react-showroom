@@ -12,14 +12,15 @@ import {
   ReactShowroomSectionConfig,
   ThemeConfiguration,
 } from '@showroomjs/core/react';
-import chalk from 'chalk';
 import * as fs from 'fs';
 import * as glob from 'glob';
+import { yellow } from 'nanocolors';
 import * as path from 'path';
 import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
 import type { ParserOptions } from 'react-docgen-typescript';
 import slugify from 'slugify';
 import type { defineConfig } from '../index';
+import { createHash } from './create-hash';
 import { logToStdout } from './log-to-stdout';
 import { paths, resolveApp } from './paths';
 
@@ -198,6 +199,7 @@ export const getConfig = (
         sourcePath: comPath,
         docPath,
         parentSlugs,
+        id: createHash(comPath),
       };
 
       components.push(section);
@@ -231,7 +233,7 @@ export const getConfig = (
 
           if (slug.startsWith('_')) {
             logToStdout(
-              chalk.yellow(
+              yellow(
                 'Having path starts with _ may causes unexpected behavior.'
               )
             );
@@ -293,7 +295,7 @@ export const getConfig = (
 
           if (slug.startsWith('_')) {
             logToStdout(
-              chalk.yellow(
+              yellow(
                 'Having path starts with _ may causes unexpected behavior.'
               )
             );
@@ -331,7 +333,7 @@ export const getConfig = (
 
           if (slug.startsWith('_')) {
             logToStdout(
-              chalk.yellow(
+              yellow(
                 'Having path starts with _ may causes unexpected behavior.'
               )
             );
@@ -393,7 +395,7 @@ export const getConfig = (
 
               if (slug.startsWith('_')) {
                 logToStdout(
-                  chalk.yellow(
+                  yellow(
                     'Having path starts with _ may causes unexpected behavior.'
                   )
                 );

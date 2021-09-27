@@ -74,6 +74,7 @@ export const createViteConfig = async (
     define: {
       'process.env.PRERENDER': isProd ? String(config.prerender) : 'false',
       'process.env.BASE_PATH': `'${isProd ? config.basePath : ''}'`,
+      'process.env.IS_SPA': String(!config.prerender),
       'process.env.REACT_SHOWROOM_THEME': JSON.stringify(config.theme),
       'process.env.NODE_ENV': `'${env}'`,
     },
