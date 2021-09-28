@@ -1,5 +1,14 @@
 # react-showroom
 
+## 0.11.3
+
+### Patch Changes
+
+- 484c9ce: Fix dev always use hash router
+- Updated dependencies [484c9ce]
+  - @showroomjs/core@0.11.3
+  - @showroomjs/ui@0.11.3
+
 ## 0.11.2
 
 ### Patch Changes

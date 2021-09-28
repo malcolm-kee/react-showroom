@@ -2,7 +2,7 @@
   "name": "react-showroom-docs",
   "private": true,
   "license": "MIT",
-  "version": "0.10.6",
+  "version": "0.10.7",
   "dependencies": {
     "@heroicons/react": "^1.0.4",
     "esbuild-loader": "^2.15.1",

@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 0.11.3
+
+### Patch Changes
+
+- 484c9ce: Fix dev always use hash router
+
 ## 0.11.2
 
 ### Patch Changes
