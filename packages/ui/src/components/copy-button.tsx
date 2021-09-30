@@ -4,14 +4,14 @@ import { useTransientState } from '../lib/use-transient-state';
 import { styled } from '../stitches.config';
 
 export interface CopyButtonProps {
-  textToCopy: string;
+  getTextToCopy: () => string;
   label?: React.ReactNode;
   successLabel?: React.ReactNode;
   className?: string;
 }
 
 export const CopyButton = ({
-  textToCopy,
+  getTextToCopy,
   label = 'Copy',
   successLabel = 'Copied!',
   className,
@@ -21,7 +21,7 @@ export const CopyButton = ({
   return (
     <Button
       type="button"
-      onClick={() => copyText(textToCopy).then(() => setCopied(true))}
+      onClick={() => copyText(getTextToCopy()).then(() => setCopied(true))}
       className={className}
     >
       {copied ? successLabel : label}

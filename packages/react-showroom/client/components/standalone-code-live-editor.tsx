@@ -93,7 +93,12 @@ export const StandaloneCodeLiveEditor = ({
           }}
         >
           <CopyButton
-            textToCopy={window && window.location.href}
+            getTextToCopy={() => {
+              if (window) {
+                return window.location.href;
+              }
+              return '';
+            }}
             className={btn()}
             label={<StyledShareIcon width={24} height={24} />}
             successLabel={
