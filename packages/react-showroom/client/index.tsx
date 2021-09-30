@@ -25,3 +25,5 @@ export { MarkdownDataProvider } from './components/markdown-data-provider';
 export { mdxComponents } from './components/mdx-components';
 export { Head } from './components/seo';
 export { StandaloneEditor } from './components/standalone-editor';
+export { useComponentList } from './lib/component-list-context';
+export type { ComponentItem } from './lib/component-list-context';

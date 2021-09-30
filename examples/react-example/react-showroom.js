@@ -5,9 +5,21 @@ const { defineConfig } = require('react-showroom');
 module.exports = defineConfig({
   items: [
     {
+      type: 'content',
+      content: 'docs/index.mdx',
+      path: '',
+    },
+    {
       type: 'components',
       title: 'Core',
-      components: 'src/components/**/*.tsx',
+      description: 'Core components',
+      components: 'src/components/*.tsx',
+    },
+    {
+      type: 'components',
+      title: 'Form Control',
+      description: 'Components in Form',
+      components: 'src/components/form-control/**/*.tsx',
     },
     {
       type: 'link',

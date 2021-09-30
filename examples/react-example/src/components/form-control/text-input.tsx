@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import * as React from 'react';
-import { callAll } from '../lib/call-all';
+import { callAll } from '../../lib/call-all';
 
 export interface TextInputProps
   extends React.ComponentPropsWithoutRef<'input'> {

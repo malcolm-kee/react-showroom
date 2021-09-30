@@ -30,18 +30,20 @@ const Tr = styled('tr', {
 });
 
 const Th = styled('th', {
-  py: '$2',
-  px: '$4',
+  py: '$1',
+  px: '$3',
   fontSize: '$sm',
   lineHeight: '$sm',
   backgroundColor: '$gray-200',
-  borderBottom: '1px solid $gray-300',
   textAlign: 'left',
 });
 
 const Td = styled('td', {
   py: '$1',
-  px: '$4',
+  px: '$3',
+  fontSize: '$sm',
+  lineHeight: '$sm',
+  borderBottom: '1px solid white',
 });
 
 export const Table = Object.assign(TableImpl, {
