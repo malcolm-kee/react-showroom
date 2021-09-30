@@ -1,6 +1,5 @@
 import type { ReactShowroomComponentContent } from '@showroomjs/core/react';
 import * as React from 'react';
-import type { ComponentDoc } from 'react-docgen-typescript';
 import { Article } from './article';
 import { ComponentMeta } from './component-meta';
 import { mdxComponents } from './mdx-components';

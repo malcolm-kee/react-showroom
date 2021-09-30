@@ -1,5 +1,6 @@
 export { Root as Portal } from '@radix-ui/react-portal';
 export * from './components/alert';
+export { Breadcrumbs } from './components/breadcrumbs';
 export * as Collapsible from './components/collapsible';
 export * from './components/dialog';
 export { DropdownMenu } from './components/dropdown-menu';

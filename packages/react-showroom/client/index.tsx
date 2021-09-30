@@ -12,11 +12,12 @@ export type {
   ComponentDocItem,
   ReactShowroomComponentContent,
 } from '@showroomjs/core/react';
-export { QueryParamProvider, styled } from '@showroomjs/ui';
+export { Breadcrumbs, QueryParamProvider, styled } from '@showroomjs/ui';
 export { BrowserWindow } from './components/browser-window';
 export type { BrowserWindowProps } from './components/browser-window';
 export { ComponentDataProvider } from './components/component-data-provider';
 export { ComponentDocArticle } from './components/component-doc-article';
+export { ComponentDocStandaloneEditor } from './components/component-doc-standalone-editor';
 export { ComponentMeta } from './components/component-meta';
 export type { ComponentMetaProps } from './components/component-meta';
 export { MarkdownArticle } from './components/markdown-article';

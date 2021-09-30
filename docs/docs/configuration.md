@@ -130,6 +130,7 @@ Title to be displayed for the site.
 ### `devServer.port`
 
 - Type: `number`
+- Default: `6969`
 
 Port for the React Showroom Dev Server.
 

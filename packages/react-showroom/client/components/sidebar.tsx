@@ -54,7 +54,7 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
           paddingBottom: '$10',
           borderRight: '1px solid',
           borderRightColor: '$gray-300',
-          minWidth: 240,
+          width: 240,
           background: '$gray-100',
           overflowY: 'auto',
         }}
@@ -223,13 +223,14 @@ const SidebarSection = ({
           css={{
             display: 'flex',
             justifyContent: 'space-between',
+            gap: '$2',
             alignItems: 'center',
           }}
           root={level === 0}
         >
           {section.title}
           {isExternalLink(section.href) && (
-            <ExternalLinkIcon className={icons()} width={20} height={20} />
+            <ExternalLinkIcon className={icons()} width={16} height={16} />
           )}
         </Link>
       );
@@ -260,6 +261,8 @@ const Link = styled(NavLink, {
   px: '$4',
   py: '$1',
   borderRadius: '$md',
+  fontSize: '$sm',
+  lineHeight: '$sm',
   '&:hover': {
     backgroundColor: '$gray-200',
   },

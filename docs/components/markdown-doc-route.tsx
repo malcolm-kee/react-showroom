@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  Breadcrumbs,
   MarkdownArticle,
   MarkdownDataProvider,
   MemoryRouter,
@@ -12,6 +13,7 @@ import { BrowserWindowInRouter } from './browser-window-in-router';
 
 export const MarkdownDocRoute = (props: {
   data: React.ComponentPropsWithoutRef<typeof MarkdownDataProvider>['data'];
+  title: string;
 }) => (
   <MemoryRouter>
     <QueryParamProvider>
@@ -21,6 +23,17 @@ export const MarkdownDocRoute = (props: {
             <div>
               <Switch>
                 <Route path="/_standalone/:codeHash">
+                  <Breadcrumbs
+                    items={[
+                      {
+                        label: props.title,
+                        url: '/docs',
+                      },
+                      {
+                        label: 'Example',
+                      },
+                    ]}
+                  />
                   <StandaloneEditor />
                 </Route>
                 <Route>

@@ -29,5 +29,6 @@ export const MarkdownExampleResult = () => (
       codeblocks: markdownExampleCodeblocks,
       imports: markdownExampleImports.imports,
     }}
+    title="Title"
   />
 );

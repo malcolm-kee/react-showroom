@@ -38,6 +38,22 @@ module.exports = defineConfig({
         },
       ],
     },
+    {
+      type: 'group',
+      title: 'Examples',
+      items: [
+        {
+          type: 'link',
+          href: 'https://react-showroom-prerender.netlify.app/',
+          title: 'Prerender Example',
+        },
+        {
+          type: 'link',
+          href: 'https://react-showroom-spa.netlify.app/',
+          title: 'Disable Prerender Example',
+        },
+      ],
+    },
   ],
   theme: {
     title: 'React Showroom',

@@ -4,7 +4,6 @@
         "target": "ES2015",
         "moduleResolution": "node",
         "lib": ["DOM", "ESNext"],
-        "declaration": true,
         "sourceMap": true,
         "strict": true,
         "jsx": "react",

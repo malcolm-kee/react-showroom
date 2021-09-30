@@ -2,11 +2,10 @@ import * as React from 'react';
 import {
   ComponentDataProvider,
   ComponentDocArticle,
-  ComponentMeta,
+  ComponentDocStandaloneEditor,
   MemoryRouter,
   QueryParamProvider,
   Route,
-  StandaloneEditor,
   Switch,
 } from 'react-showroom/client';
 import { BrowserWindowInRouter } from './browser-window-in-router';
@@ -23,12 +22,11 @@ export const ComponentDocRoute = (
   <MemoryRouter>
     <QueryParamProvider>
       <BrowserWindowInRouter className="mb-4">
-        <div className="p-6">
+        <div className="px-6 pb-6">
           <ComponentDataProvider {...props}>
             <Switch>
               <Route path="/_standalone/:codeHash">
-                <ComponentMeta componentData={props.content.metadata} slug="" />
-                <StandaloneEditor />
+                <ComponentDocStandaloneEditor slug="" content={props.content} />
               </Route>
               <Route>
                 <ComponentDocArticle
