@@ -1,10 +1,7 @@
-import {
-  ReactShowroomComponentContent,
-  ReactShowroomComponentSection,
-} from '@showroomjs/core/react';
+import { ReactShowroomComponentContent } from '@showroomjs/core/react';
+import { Breadcrumbs } from '@showroomjs/ui';
 import * as React from 'react';
 import { Div } from './base';
-import { ComponentMeta } from './component-meta';
 import { StandaloneEditor } from './standalone-editor';
 
 export interface ComponentDocStandaloneEditorProps {
@@ -17,12 +14,17 @@ export const ComponentDocStandaloneEditor = (
 ) => {
   return (
     <>
-      <Div css={{ px: '$4', paddingTop: '$6' }}>
-        <ComponentMeta
-          componentData={props.content.metadata}
-          slug={props.slug}
-        />
-      </Div>
+      <Breadcrumbs
+        items={[
+          {
+            label: props.content.metadata.displayName,
+            url: `/${props.slug}`,
+          },
+          {
+            label: 'Example',
+          },
+        ]}
+      />
       <Div css={{ flex: 1 }}>
         <StandaloneEditor />
       </Div>

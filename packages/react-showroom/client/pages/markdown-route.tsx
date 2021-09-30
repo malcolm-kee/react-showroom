@@ -1,14 +1,14 @@
 import { Route, Switch, useRouteMatch } from '@showroomjs/bundles/routing';
 import {
-  ReactShowroomMarkdownSection,
   ReactShowroomMarkdownContent,
+  ReactShowroomMarkdownSection,
 } from '@showroomjs/core/react';
+import { Breadcrumbs } from '@showroomjs/ui';
 import * as React from 'react';
-import { Div, H1, NavLink } from '../components/base';
-import { Seo } from '../components/seo';
 import { DetailsPageContainer } from '../components/details-page-container';
 import { MarkdownArticle } from '../components/markdown-article';
 import { MarkdownDataProvider } from '../components/markdown-data-provider';
+import { Seo } from '../components/seo';
 import { StandaloneEditor } from '../components/standalone-editor';
 import { StandalonePageContainer } from '../components/standalone-page-container';
 
@@ -29,20 +29,17 @@ export const MarkdownRoute = ({
         <Route path={`${url}/_standalone/:codeHash`}>
           <StandalonePageContainer>
             <Seo title={title} description={section.frontmatter.description} />
-            <Div css={{ px: '$4', paddingTop: '$6' }}>
-              <H1>
-                <NavLink
-                  to={url}
-                  css={{
-                    '&:hover': {
-                      textDecoration: 'underline',
-                    },
-                  }}
-                >
-                  {title}
-                </NavLink>
-              </H1>
-            </Div>
+            <Breadcrumbs
+              items={[
+                {
+                  label: title,
+                  url,
+                },
+                {
+                  label: 'Example',
+                },
+              ]}
+            />
             <StandaloneEditor />
           </StandalonePageContainer>
         </Route>
