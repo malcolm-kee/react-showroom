@@ -1,5 +1,11 @@
 # @showroomjs/ui
 
+## 0.12.0
+
+### Minor Changes
+
+- 5b25154: Tweak design and bump deps
+
 ## 0.11.3
 
 ### Patch Changes

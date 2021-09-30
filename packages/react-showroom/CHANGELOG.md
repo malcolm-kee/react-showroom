@@ -1,5 +1,16 @@
 # react-showroom
 
+## 0.12.0
+
+### Minor Changes
+
+- 5b25154: Tweak design and bump deps
+
+### Patch Changes
+
+- Updated dependencies [5b25154]
+  - @showroomjs/ui@0.12.0
+
 ## 0.11.3
 
 ### Patch Changes
