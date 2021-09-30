@@ -1,13 +1,19 @@
-import { TerminalIcon, DotsVerticalIcon } from '@heroicons/react/outline';
+import {
+  DotsVerticalIcon,
+  TerminalIcon,
+  ShareIcon,
+} from '@heroicons/react/outline';
+import { CheckCircleIcon } from '@heroicons/react/solid';
 import { SupportedLanguage } from '@showroomjs/core';
 import {
   Alert,
+  CopyButton,
   css,
+  DropdownMenu,
   icons,
+  styled,
   useDebounce,
   useQueryParams,
-  DropdownMenu,
-  styled,
 } from '@showroomjs/ui';
 import lzString from 'lz-string';
 import type { Language } from 'prism-react-renderer';
@@ -80,36 +86,61 @@ export const StandaloneCodeLiveEditor = ({
           paddingTop: '$2',
         }}
       >
-        <DropdownMenu>
-          <DropdownMenu.Trigger asChild>
-            <MenuButton>
-              Views <DotsVerticalIcon width={16} height={16} />
-            </MenuButton>
-          </DropdownMenu.Trigger>
-          <RadioDropdown
-            value={editorView}
-            onChangeValue={(newView) => {
-              setEditorView(newView);
-              setQueryParams({
-                editorView: newView,
-              });
-            }}
-            options={[
-              {
-                value: 'both',
-                label: 'Editor + Preview',
-              },
-              {
-                value: 'editorOnly',
-                label: 'Editor only',
-              },
-              {
-                value: 'previewOnly',
-                label: 'Preview only',
-              },
-            ]}
+        <Div
+          css={{
+            display: 'inline-flex',
+            gap: '$3',
+          }}
+        >
+          <CopyButton
+            textToCopy={window && window.location.href}
+            className={btn()}
+            label={<StyledShareIcon width={24} height={24} />}
+            successLabel={
+              <>
+                <CopiedMessage>Copied to Clipboard</CopiedMessage>
+                <StyledShareIcon
+                  width={24}
+                  height={24}
+                  css={{
+                    color: '$green-400',
+                  }}
+                />
+                <MiniCheckIcon width={16} height={16} />
+              </>
+            }
           />
-        </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenu.Trigger asChild>
+              <MenuButton>
+                Views <DotsVerticalIcon width={16} height={16} />
+              </MenuButton>
+            </DropdownMenu.Trigger>
+            <RadioDropdown
+              value={editorView}
+              onChangeValue={(newView) => {
+                setEditorView(newView);
+                setQueryParams({
+                  editorView: newView,
+                });
+              }}
+              options={[
+                {
+                  value: 'both',
+                  label: 'Editor + Preview',
+                },
+                {
+                  value: 'editorOnly',
+                  label: 'Editor only',
+                },
+                {
+                  value: 'previewOnly',
+                  label: 'Preview only',
+                },
+              ]}
+            />
+          </DropdownMenu>
+        </Div>
       </Div>
       <Div
         className={className}
@@ -210,6 +241,25 @@ export const StandaloneCodeLiveEditor = ({
 
 type EditorView = 'both' | 'previewOnly' | 'editorOnly';
 
+const StyledShareIcon = styled(ShareIcon, {
+  width: 24,
+  height: 24,
+  color: '$gray-400',
+});
+
+const MiniCheckIcon = styled(CheckCircleIcon, {
+  color: '$green-400',
+  width: 16,
+  height: 16,
+  position: 'absolute',
+  top: 0,
+  right: 0,
+});
+
+const CopiedMessage = styled('span', {
+  color: '$green-800',
+});
+
 const MenuButton = styled('button', {
   display: 'inline-flex',
   alignItems: 'center',
@@ -224,6 +274,17 @@ const MenuButton = styled('button', {
 const editorWrapper = css({
   height: '100%',
   overflow: 'hidden',
+});
+
+const btn = css({
+  minWidth: 36,
+  height: 36,
+  px: 6,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 3,
+  position: 'relative',
 });
 
 const editor = css({
