@@ -1,5 +1,18 @@
 # react-showroom
 
+## 0.13.0
+
+### Minor Changes
+
+- 585358f: Add copy button for standalone view
+- ccb725d: Expose useComponentList custom hook to create custom navigation
+
+### Patch Changes
+
+- Updated dependencies [585358f]
+- Updated dependencies [ccb725d]
+  - @showroomjs/ui@0.13.0
+
 ## 0.12.0
 
 ### Minor Changes

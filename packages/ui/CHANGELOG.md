@@ -1,5 +1,12 @@
 # @showroomjs/ui
 
+## 0.13.0
+
+### Minor Changes
+
+- 585358f: Add copy button for standalone view
+- ccb725d: Expose useComponentList custom hook to create custom navigation
+
 ## 0.12.0
 
 ### Minor Changes
