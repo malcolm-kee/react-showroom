@@ -6,6 +6,7 @@ import {
 } from '@showroomjs/bundles/routing';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import 'react-showroom-require';
 import { App } from './app';
 import { isPrerender, isSpa } from './lib/config';
 import { createQueryClient } from './lib/create-query-client';
@@ -71,7 +72,10 @@ const render = isPrerender
       });
     }
   : function render(ui: React.ReactElement<any>, target: HTMLElement | null) {
-      ReactDOM.render(<Router>{ui}</Router>, target);
+      ReactDOM.render(
+        <Router basename={process.env.BASE_PATH}>{ui}</Router>,
+        target
+      );
     };
 
 render(

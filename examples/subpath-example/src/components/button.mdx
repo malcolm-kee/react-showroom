@@ -1,0 +1,44 @@
+```jsx
+<div className="flex items-center gap-3">
+  <Button>Hello</Button>
+  <Button variant="primary">Primary</Button>
+  <Button variant="outline">Outline</Button>
+</div>
+```
+
+### Static Example
+
+Following is a static example.
+
+```jsx static
+<Button>Static</Button>
+```
+
+### Example that fetch data
+
+```jsx
+const Example = () => {
+  const [result, setResult] = React.useState('');
+
+  return (
+    <div>
+      <Button
+        onClick={() =>
+          fetch('/hello')
+            .then((res) => res.json())
+            .then((data) => setResult(data.message))
+        }
+        variant="primary"
+      >
+        Fetch Data
+      </Button>
+      <div>
+        Result:
+        <output>{result}</output>
+      </div>
+    </div>
+  );
+};
+
+render(<Example />);
+```

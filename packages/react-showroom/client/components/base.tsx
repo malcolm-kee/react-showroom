@@ -25,6 +25,8 @@ export const H1 = styled('h1', {
 
 export const NavLink = styled(Link, {
   display: 'inline-block',
+  textDecoration: 'none',
+  color: 'inherit',
 });
 
 export const text = css({

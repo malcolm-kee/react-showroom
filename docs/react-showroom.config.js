@@ -4,6 +4,7 @@ const libPackageJson = require('react-showroom/package.json');
 
 module.exports = defineConfig({
   url: 'https://react-showroom.js.org',
+  require: ['tailwindcss/tailwind.css'],
   items: [
     {
       type: 'content',
@@ -52,6 +53,11 @@ module.exports = defineConfig({
           href: 'https://react-showroom-spa.netlify.app/',
           title: 'Disable Prerender Example',
         },
+        {
+          type: 'link',
+          href: 'https://react-showroom-subpath.netlify.app/',
+          title: 'Subpath Example',
+        },
       ],
     },
   ],
@@ -95,6 +101,5 @@ module.exports = defineConfig({
   devServer: {
     port: 8989,
   },
-  wrapper: 'components/wrapper.tsx',
   assetDir: 'assets',
 });

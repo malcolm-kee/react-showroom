@@ -1,5 +1,6 @@
-import { styled, keyframes } from '../stitches.config';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+import { keyframes, styled } from '../stitches.config';
+import { buttonBase } from './base';
 
 const slideUpAndFade = keyframes({
   '0%': { opacity: 0, transform: 'translateY(2px)' },
@@ -107,9 +108,13 @@ const StyledArrow = styled(DropdownMenuPrimitive.Arrow, {
   fill: 'white',
 });
 
+const Trigger = styled(DropdownMenuPrimitive.Trigger, {
+  ...buttonBase,
+});
+
 // Exports
 export const DropdownMenu = Object.assign(DropdownMenuPrimitive.Root, {
-  Trigger: DropdownMenuPrimitive.Trigger,
+  Trigger,
   Content: StyledContent,
   Item: StyledItem,
   CheckboxItem: StyledCheckboxItem,

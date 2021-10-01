@@ -150,6 +150,31 @@ importers:
       tailwindcss: 2.2.16_d90402d1bb3b165c9c83046beac13a8b
       webpack: 5.55.1
 
+  examples/subpath-example:
+    specifiers:
+      '@tailwindcss/forms': ^0.3.4
+      autoprefixer: ^10.3.6
+      classnames: ^2.3.1
+      msw: ^0.35.0
+      postcss: ^8.3.8
+      postcss-loader: ^6.1.1
+      react: ^17.0.2
+      react-dom: ^17.0.2
+      react-showroom: workspace:*
+      tailwindcss: ^2.2.16
+    dependencies:
+      '@tailwindcss/forms': 0.3.4_tailwindcss@2.2.16
+      classnames: 2.3.1
+      msw: 0.35.0
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+      react-showroom: link:../../packages/react-showroom
+    devDependencies:
+      autoprefixer: 10.3.6_postcss@8.3.8
+      postcss: 8.3.8
+      postcss-loader: 6.1.1_postcss@8.3.8
+      tailwindcss: 2.2.16_d90402d1bb3b165c9c83046beac13a8b
+
   packages/bundles:
     specifiers:
       '@rollup/plugin-replace': ^3.0.0

@@ -15,7 +15,7 @@ import { Sidebar } from './components/sidebar';
 import { CodeThemeContext } from './lib/code-theme-context';
 import { Suspense } from './lib/lazy';
 import { DefaultHomePage } from './pages/index';
-import { routes, routeMapping } from './route-mapping';
+import { routeMapping, routes } from './route-mapping';
 import { colorTheme, THEME } from './theme';
 
 export const App = () => {

@@ -52,5 +52,7 @@ export async function startDevServer(
 
   openBrowser(urls.localUrlForBrowser);
 
+  logToStdout(`Dev server available at ${urls.localUrlForTerminal}`);
+
   return server;
 }

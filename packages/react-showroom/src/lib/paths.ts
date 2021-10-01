@@ -13,7 +13,7 @@ export const resolveShowroom = (relativePath: string) =>
 
 export const paths = {
   appPath: resolveApp('.'),
-  appShowroomConfig: resolveApp('react-showroom.js'),
+  appShowroomConfig: resolveApp('react-showroom.config.js'),
   appTsConfig: resolveApp('tsconfig.json'),
   appPackageJson: resolveApp('package.json'),
   showroomPath: resolveShowroom('.'),

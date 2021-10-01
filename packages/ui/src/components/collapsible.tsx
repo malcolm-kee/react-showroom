@@ -1,8 +1,10 @@
+import { ChevronDownIcon } from '@heroicons/react/outline';
 import * as Collapsible from '@radix-ui/react-collapsible';
 import { keyframes, styled } from '../stitches.config';
-import { ChevronDownIcon } from '@heroicons/react/outline';
+import { buttonBase } from './base';
 
 export const Button = styled(Collapsible.Trigger, {
+  ...buttonBase,
   color: '$gray-500',
   position: 'relative',
   fontWeight: '600',

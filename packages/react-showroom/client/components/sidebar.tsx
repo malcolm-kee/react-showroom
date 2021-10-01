@@ -258,6 +258,7 @@ const DropdownLink = styled(GenericLink, {
 const Link = styled(NavLink, {
   display: 'block',
   color: '$gray-600',
+  textDecoration: 'none',
   px: '$4',
   py: '$1',
   borderRadius: '$md',

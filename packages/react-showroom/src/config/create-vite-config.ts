@@ -2,12 +2,12 @@ import virtual from '@rollup/plugin-virtual';
 import { Environment, isString } from '@showroomjs/core';
 import { NormalizedReactShowroomConfiguration } from '@showroomjs/core/react';
 import path from 'path';
+import * as docgen from 'react-docgen-typescript';
 import { rehypeMdxTitle } from 'rehype-mdx-title';
 import rehypeSlug from 'rehype-slug';
 import remarkFrontmatter from 'remark-frontmatter';
 import remarkGfm from 'remark-gfm';
 import { remarkMdxFrontmatter } from 'remark-mdx-frontmatter';
-import * as docgen from 'react-docgen-typescript';
 import type { Plugin, UserConfig as ViteConfig } from 'vite';
 import {
   generateCodeblocksData,
@@ -15,6 +15,7 @@ import {
   generateWrapper,
 } from '../lib/generate-showroom-data';
 import { paths, resolveApp, resolveShowroom } from '../lib/paths';
+import { requireToModule } from '../lib/require-to-module';
 import { rehypeCodeAutoId } from '../plugins/rehype-code-auto-id';
 import { rehypeMdxHeadings } from '../plugins/rehype-mdx-headings';
 import { rehypeMetaAsAttribute } from '../plugins/rehype-meta-as-attribute';
@@ -73,7 +74,7 @@ export const createViteConfig = async (
     logLevel: 'warn',
     define: {
       'process.env.PRERENDER': isProd ? String(config.prerender) : 'false',
-      'process.env.BASE_PATH': `'${isProd ? config.basePath : ''}'`,
+      'process.env.BASE_PATH': `'${config.basePath}'`,
       'process.env.IS_SPA': String(!config.prerender),
       'process.env.REACT_SHOWROOM_THEME': JSON.stringify(config.theme),
       'process.env.NODE_ENV': `'${env}'`,
@@ -108,6 +109,7 @@ export const createViteConfig = async (
           docgenParser
         ),
         'react-showroom-wrapper': generateWrapper(config.wrapper),
+        'react-showroom-require': requireToModule(config.require),
       }) as Plugin,
       xdm.default({
         rehypePlugins: [

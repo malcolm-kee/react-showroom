@@ -33,6 +33,10 @@ declare module 'react-showroom-wrapper' {
   export default Wrapper;
 }
 
+declare module 'react-showroom-require' {
+  export default {};
+}
+
 declare namespace NodeJS {
   import type { ThemeConfiguration } from '@showroomjs/core/react';
 
