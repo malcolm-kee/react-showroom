@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 0.12.0
+
+### Minor Changes
+
+- 6c59ca6: Bump vite and increase code cache timeout
+
 ## 0.11.3
 
 ### Patch Changes

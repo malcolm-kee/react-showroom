@@ -1,5 +1,17 @@
 # react-showroom
 
+## 0.14.0
+
+### Minor Changes
+
+- 6c59ca6: Bump vite and increase code cache timeout
+
+### Patch Changes
+
+- Updated dependencies [6c59ca6]
+  - @showroomjs/core@0.12.0
+  - @showroomjs/ui@0.13.1
+
 ## 0.13.0
 
 ### Minor Changes
