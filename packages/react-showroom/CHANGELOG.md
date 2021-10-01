@@ -1,5 +1,17 @@
 # react-showroom
 
+## 0.15.0
+
+### Breaking Changes
+
+- Rename config filename from react-showroom.js to react-showroom.config.js
+- Handle basePath correctly so it also works in dev mode
+
+### Patch Changes
+
+- Updated dependencies [b8f15e2]
+  - @showroomjs/ui@0.14.0
+
 ## 0.14.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "subpath-example",
-  "version": "0.10.10",
+  "version": "0.10.11",
   "license": "MIT",
   "main": "index.js",
   "private": true,
