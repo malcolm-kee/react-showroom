@@ -2,6 +2,7 @@ import * as React from 'react';
 import { copyText } from '../lib/copy';
 import { useTransientState } from '../lib/use-transient-state';
 import { styled } from '../stitches.config';
+import { buttonBase } from './base';
 
 export interface CopyButtonProps {
   getTextToCopy: () => string;
@@ -30,6 +31,7 @@ export const CopyButton = ({
 };
 
 const Button = styled('button', {
+  ...buttonBase,
   fontSize: '$sm',
   lineHeight: '$sm',
 });

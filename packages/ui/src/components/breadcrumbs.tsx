@@ -12,27 +12,25 @@ export const Breadcrumbs = (props: BreadcrumbsProps) => (
   <Root aria-label="Breadcrumb">
     <Ol role="list" className="px-4 sm:px-6 lg:px-8">
       {props.items.map((item, i) => (
-        <li key={i} className="flex">
-          <div className="flex items-center">
-            {i > 0 && (
-              <Svg
-                viewBox="0 0 24 44"
-                preserveAspectRatio="none"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
-              </Svg>
-            )}
-            {item.url ? (
-              <Text as={Link} to={item.url}>
-                {item.label}
-              </Text>
-            ) : (
-              <Text>{item.label}</Text>
-            )}
-          </div>
-        </li>
+        <Item key={i}>
+          {i > 0 && (
+            <Svg
+              viewBox="0 0 24 44"
+              preserveAspectRatio="none"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
+            </Svg>
+          )}
+          {item.url ? (
+            <Text as={Link} to={item.url}>
+              {item.label}
+            </Text>
+          ) : (
+            <Text>{item.label}</Text>
+          )}
+        </Item>
       ))}
     </Ol>
   </Root>
@@ -48,6 +46,13 @@ const Ol = styled('ol', {
   display: 'flex',
   gap: '4',
   width: '100%',
+  listStyleType: 'none',
+  margin: 0,
+});
+
+const Item = styled('li', {
+  display: 'flex',
+  alignItems: 'center',
 });
 
 const Svg = styled('svg', {
@@ -64,6 +69,7 @@ const Text = styled('span', {
   fontSize: '$sm',
   lineHeight: '$sm',
   color: '$gray-500',
+  textDecoration: 'none',
   '&:hover': {
     color: '$gray-700',
   },

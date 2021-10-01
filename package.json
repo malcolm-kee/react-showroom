@@ -4,13 +4,6 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "workspaces": {
-    "packages": [
-      "packages/*",
-      "examples/*",
-      "docs"
-    ]
-  },
   "devDependencies": {
     "@changesets/cli": "^2.17.0",
     "@rollup/plugin-commonjs": "^20.0.0",
@@ -47,7 +40,7 @@
     "build": "pnpm run build --filter=\"{packages}\"",
     "test": "pnpm run test:ci -r",
     "docs:build": "pnpm run build --filter=\"react-showroom-docs\"",
-    "example:build": "pnpm run build --filter=\"react-example\"",
+    "example:build": "pnpm run build --filter=\"{examples}\"",
     "dev": "pnpm run dev -r --stream --parallel",
     "clean": "pnpm run clean -r",
     "preinstall": "npx only-allow pnpm",

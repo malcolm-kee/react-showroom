@@ -3,6 +3,7 @@ const path = require('path');
 const { defineConfig } = require('react-showroom');
 
 module.exports = defineConfig({
+  require: ['tailwindcss/tailwind.css'],
   items: [
     {
       type: 'content',

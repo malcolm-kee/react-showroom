@@ -1,0 +1,30 @@
+{
+  "name": "subpath-example",
+  "version": "0.10.10",
+  "license": "MIT",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "doc": "react-showroom dev",
+    "build": "pnpm run build:doc-ssr && pnpm run build:doc-spa",
+    "build:doc-ssr": "react-showroom build",
+    "build:doc-spa": "node react-showroom-script.js"
+  },
+  "dependencies": {
+    "@tailwindcss/forms": "^0.3.4",
+    "classnames": "^2.3.1",
+    "msw": "^0.35.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-showroom": "workspace:*"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.3.6",
+    "postcss": "^8.3.8",
+    "postcss-loader": "^6.1.1",
+    "tailwindcss": "^2.2.16"
+  },
+  "msw": {
+    "workerDirectory": "public"
+  }
+}

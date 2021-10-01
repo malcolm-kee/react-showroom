@@ -12,10 +12,9 @@ Learn how to configure React Showroom to fit your use case.
 
 You can declare a static object or a function call that return the object.
 
-```js fileName="react-showroom.js"
+```js fileName="react-showroom.config.js"
 // @ts-check
 const { defineConfig } = require('react-showroom');
-const webpackConfig = require('./webpack.config');
 
 module.exports = defineConfig({
   imports: [
@@ -27,10 +26,9 @@ module.exports = defineConfig({
 });
 ```
 
-```js fileName="react-showroom.js"
+```js fileName="react-showroom.config.js"
 // @ts-check
 const { defineConfig } = require('react-showroom');
-const webpackConfig = require('./webpack.config');
 
 module.exports = defineConfig((command) => {
   // command will be either 'dev' or 'build', depending
@@ -74,7 +72,7 @@ Pass `name` (how it is imported) and `path` (relative path from project root).
 
 For example, if all your components should be imported with `'@/components'`, which is a file at `src/components/index.ts` in your project, then add the following configuration:
 
-```js fileName="react-showroom.js"
+```js fileName="react-showroom.config.js"
 const { defineConfig } = require('react-showroom');
 
 module.exports = defineConfig({
@@ -102,15 +100,6 @@ Output folder for the generated site.
 Enable pre-rendering when generating site.
 
 This is useful to ensure your components are SSR-friendly.
-
-### `build.preloadAllCss`
-
-- Type: `boolean`
-- Default: `true`
-
-Preload all CSS.
-
-This is to minimize the flash of unstyled content.
 
 ### `build.basePath`
 
@@ -244,6 +233,24 @@ When generate the static site, those files will be copied into the output folder
 
 Modules that are required for your style guide. Useful for third-party styles or polyfills.
 
+This is the preferred way to load global CSS, such as TailwindCSS.
+
+### `build.preloadAllCss`
+
+- Type: `boolean`
+- Default: `false`
+
+Preload all CSS.
+
+This is to minimize the flash of unstyled content.
+
+### `build.prefetchAll`
+
+- Type: `boolean`
+- Default: `true`
+
+Prefetch all resources using `<link rel="prefetch">` resource hints so when you navigate to other page the loading will happen faster.
+
 ### `wrapper`
 
 - Type: `string | undefined`
@@ -267,7 +274,7 @@ Path to your site favicon.
 
 Example, if your favicon is in `asset/img/favicon.ico`:
 
-```js fileName="react-showroom.js"
+```js fileName="react-showroom.config.js"
 module.exports = {
   assetDir: 'asset',
   theme: {
@@ -287,7 +294,7 @@ One of the themes provided by `'prism-react-renderer'`.
 - Type: `boolean`
 - Default: `true`
 
-By default we include [`modern-normalize`](https://github.com/sindresorhus/modern-normalize). You can disable it if you already using your own CSS reset.
+By default we include [`modern-normalize`](https://github.com/sindresorhus/modern-normalize). You can disable it if you already include your own CSS reset.
 
 ### `theme.colors`
 

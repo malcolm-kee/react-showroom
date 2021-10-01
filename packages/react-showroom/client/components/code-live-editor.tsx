@@ -186,6 +186,8 @@ const LinkToStandaloneView = (props: { code: string }) => {
 
 const Button = styled('button', {
   display: 'inline-flex',
+  alignItems: 'center',
+  textDecoration: 'none',
   px: '$1',
   gap: '$1',
   fontSize: '$sm',

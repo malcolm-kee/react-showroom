@@ -134,7 +134,7 @@ export const getConfig = (
   const {
     outDir = 'showroom',
     prerender = true,
-    preloadAllCss = true,
+    preloadAllCss = false,
     prefetchAll = true,
   } = providedBuildConfig;
 
