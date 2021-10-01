@@ -11,7 +11,7 @@ export const createQueryClient = () => {
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
         staleTime: Infinity,
-        cacheTime: 5000,
+        cacheTime: 1000000,
       },
     },
   });

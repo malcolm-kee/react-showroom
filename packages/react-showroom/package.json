@@ -58,7 +58,7 @@
     "unist-util-find": "^1.0.2",
     "unist-util-visit": "2.0.3",
     "vfile": "4.2.1",
-    "vite": "^2.5.10",
+    "vite": "^2.6.2",
     "xdm": "^2.1.0",
     "yargs": "^17.2.1"
   },

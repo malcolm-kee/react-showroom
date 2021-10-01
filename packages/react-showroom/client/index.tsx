@@ -1,3 +1,4 @@
+import { lazy } from './lib/lazy';
 export { useQueryClient } from '@showroomjs/bundles/query';
 export {
   Link,
@@ -24,6 +25,8 @@ export { MarkdownArticle } from './components/markdown-article';
 export { MarkdownDataProvider } from './components/markdown-data-provider';
 export { mdxComponents } from './components/mdx-components';
 export { Head } from './components/seo';
-export { StandaloneEditor } from './components/standalone-editor';
 export { useComponentList } from './lib/component-list-context';
 export type { ComponentItem } from './lib/component-list-context';
+export const StandaloneEditor = lazy(
+  () => import('./components/standalone-editor-lazy')
+);

@@ -1,8 +1,10 @@
 import { ReactShowroomComponentContent } from '@showroomjs/core/react';
 import { Breadcrumbs } from '@showroomjs/ui';
 import * as React from 'react';
+import { lazy } from '../lib/lazy';
 import { Div } from './base';
-import { StandaloneEditor } from './standalone-editor';
+
+const StandaloneEditor = lazy(() => import('./standalone-editor-lazy'));
 
 export interface ComponentDocStandaloneEditorProps {
   slug: string;

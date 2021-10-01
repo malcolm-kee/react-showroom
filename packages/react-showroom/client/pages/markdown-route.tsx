@@ -9,8 +9,12 @@ import { DetailsPageContainer } from '../components/details-page-container';
 import { MarkdownArticle } from '../components/markdown-article';
 import { MarkdownDataProvider } from '../components/markdown-data-provider';
 import { Seo } from '../components/seo';
-import { StandaloneEditor } from '../components/standalone-editor';
 import { StandalonePageContainer } from '../components/standalone-page-container';
+import { lazy } from '../lib/lazy';
+
+const StandaloneEditor = lazy(
+  () => import('../components/standalone-editor-lazy')
+);
 
 export const MarkdownRoute = ({
   section,
