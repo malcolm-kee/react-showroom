@@ -16,15 +16,20 @@ export const render: Ssr['render'] = async ({ pathname }) => {
     factoryMap.set(fn, result.default);
   }
 
+  const queryClient = createQueryClient();
+
   const result = ReactDOMServer.renderToString(
     <StaticRouter location={{ pathname }} basename={process.env.BASE_PATH}>
-      <QueryClientProvider client={createQueryClient()}>
+      <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
     </StaticRouter>
   );
 
-  return result;
+  return {
+    result,
+    cleanup: () => queryClient.clear(),
+  };
 };
 
 export { getCssText } from '@showroomjs/ui';

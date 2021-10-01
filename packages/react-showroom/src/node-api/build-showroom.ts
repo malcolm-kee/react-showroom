@@ -48,7 +48,7 @@ export async function buildShowroom(
   try {
     // we always write our HTML manually because vite will ignore HTML in node_modules folder
     // see https://github.com/vitejs/vite/issues/5042
-    outputHtml(config, ssrDir, prerender);
+    await outputHtml(config, ssrDir, prerender);
   } finally {
     fs.remove(ssrDir);
   }
@@ -141,7 +141,7 @@ async function outputHtml(
   await fs.outputFile(htmlPath, await getHtml('/'));
 
   async function getHtml(pathname: string) {
-    const prerenderContent = await render({ pathname });
+    const { result: renderResult, cleanup } = await render({ pathname });
     const helmet = getHelmet();
     const finalHtml = template
       .replace(
@@ -152,7 +152,9 @@ async function outputHtml(
         '<!--SSR-helmet-->',
         `${helmet.title.toString()}${helmet.meta.toString()}${helmet.link.toString()}`
       )
-      .replace('<!--SSR-target-->', ssg ? prerenderContent : '');
+      .replace('<!--SSR-target-->', ssg ? renderResult : '');
+
+    cleanup();
 
     return finalHtml;
   }
