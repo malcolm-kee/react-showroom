@@ -1,5 +1,11 @@
 # react-showroom
 
+## 0.16.0
+
+### Minor Changes
+
+- 2fa823a: Handle multiple require correctly
+
 ## 0.15.0
 
 ### Breaking Changes
