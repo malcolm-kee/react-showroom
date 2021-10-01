@@ -9,6 +9,7 @@ import remarkFrontmatter from 'remark-frontmatter';
 import remarkGfm from 'remark-gfm';
 import { remarkMdxFrontmatter } from 'remark-mdx-frontmatter';
 import type { Plugin, UserConfig as ViteConfig } from 'vite';
+import { searchForWorkspaceRoot } from 'vite';
 import {
   generateCodeblocksData,
   generateSections,
@@ -80,6 +81,11 @@ export const createViteConfig = async (
       'process.env.NODE_ENV': `'${env}'`,
     },
     resolve: config.resolve,
+    server: {
+      fs: {
+        allow: [searchForWorkspaceRoot(process.cwd()), paths.showroomPath],
+      },
+    },
     build: {
       outDir: ssr ? ssr.outDir : resolveApp(config.outDir),
       assetsDir: '_assets',
