@@ -1,16 +1,12 @@
 import { QueryClientProvider } from '@showroomjs/bundles/query';
-import {
-  BrowserRouter,
-  HashRouter,
-  matchPath,
-} from '@showroomjs/bundles/routing';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import 'react-showroom-require';
 import { App } from './app';
 import { isPrerender, isSpa } from './lib/config';
 import { createQueryClient } from './lib/create-query-client';
-import { routes } from './route-mapping';
+import { BrowserRouter, HashRouter } from './lib/routing';
+import { loadCodeAtPath } from './route-mapping';
 
 const queryClient = createQueryClient();
 
@@ -27,39 +23,7 @@ const Router = function (props: {
 
 const render = isPrerender
   ? function hydrate(ui: React.ReactElement<any>, target: HTMLElement | null) {
-      let pathname = window.location.pathname;
-
-      if (pathname[pathname.length - 1] === '/') {
-        pathname = pathname.substring(0, pathname.length - 1);
-      }
-
-      const matchSection = (function () {
-        const routeItems = routes.slice().reverse();
-
-        for (const mapping of routeItems) {
-          if (!mapping) {
-            continue;
-          }
-
-          if (Array.isArray(mapping.ui)) {
-            routeItems.push(...mapping.ui);
-            continue;
-          }
-
-          const match = matchPath(pathname, {
-            path: mapping.path,
-            exact: true,
-          });
-
-          if (match) {
-            return mapping;
-          }
-        }
-      })();
-
-      Promise.resolve(
-        matchSection && matchSection.load ? matchSection.load() : undefined
-      ).then(() => {
+      loadCodeAtPath(window.location.pathname).then(() => {
         const el = document.createElement('div');
 
         const uiEl = <Router basename={process.env.BASE_PATH}>{ui}</Router>;

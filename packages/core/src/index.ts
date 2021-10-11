@@ -4,6 +4,8 @@ export {
   SUPPORTED_LANGUAGES,
 } from './compilation';
 export { flattenArray, NestedArray } from './flatten-array';
+export { callAll } from './fn-lib';
+export type { Callback } from './fn-lib';
 export { getSafeName } from './get-safe-name';
 export { omit } from './object';
 export { ImportMapData, Packages, postCompile } from './post-compile';

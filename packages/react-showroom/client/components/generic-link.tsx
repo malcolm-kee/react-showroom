@@ -1,6 +1,6 @@
-import { Link } from '@showroomjs/bundles/routing';
 import * as React from 'react';
 import { isExternalLink } from '../lib/is-external-link';
+import { Link } from '../lib/routing';
 
 export const GenericLink = React.forwardRef<
   HTMLAnchorElement,

@@ -1,12 +1,5 @@
 import { lazy } from './lib/lazy';
 export { useQueryClient } from '@showroomjs/bundles/query';
-export {
-  Link,
-  MemoryRouter,
-  Route,
-  Switch,
-  useLocation,
-} from '@showroomjs/bundles/routing';
 export { getCompilationKey } from '@showroomjs/core';
 export type { CodeBlocks } from '@showroomjs/core';
 export type {
@@ -27,6 +20,8 @@ export { mdxComponents } from './components/mdx-components';
 export { Head } from './components/seo';
 export { useComponentList } from './lib/component-list-context';
 export type { ComponentItem } from './lib/component-list-context';
+export { Suspense } from './lib/lazy';
+export { Link, MemoryRouter, Route, Switch, useLocation } from './lib/routing';
 export const StandaloneEditor = lazy(
   () => import('./components/standalone-editor-lazy')
 );

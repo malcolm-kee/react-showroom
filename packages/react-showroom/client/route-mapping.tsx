@@ -1,3 +1,4 @@
+import { matchPath } from '@showroomjs/bundles/routing';
 import type { ReactShowroomSection } from '@showroomjs/core/react';
 import * as React from 'react';
 import sections from 'react-showroom-sections';
@@ -118,3 +119,47 @@ export const routes = sections.map(function mapSectionToRoute(
 
   return null;
 });
+
+const loaded = new Set<string>();
+
+export const loadCodeAtPath = (path: string): Promise<void> => {
+  if (loaded.has(path)) {
+    return Promise.resolve();
+  }
+
+  let pathname = path;
+
+  if (pathname[pathname.length - 1] === '/') {
+    pathname = pathname.substring(0, pathname.length - 1);
+  }
+
+  const matchSection = (function () {
+    const routeItems = routes.slice().reverse();
+
+    for (const mapping of routeItems) {
+      if (!mapping) {
+        continue;
+      }
+
+      if (Array.isArray(mapping.ui)) {
+        routeItems.push(...mapping.ui);
+        continue;
+      }
+
+      const match = matchPath(pathname, {
+        path: mapping.path,
+        exact: true,
+      });
+
+      if (match) {
+        return mapping;
+      }
+    }
+  })();
+
+  return matchSection && matchSection.load
+    ? matchSection.load().then(() => {
+        loaded.add(path);
+      })
+    : Promise.resolve();
+};

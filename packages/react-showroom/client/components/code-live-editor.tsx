@@ -1,6 +1,5 @@
 import { ArrowsExpandIcon, TerminalIcon } from '@heroicons/react/outline';
-import { Link, useRouteMatch } from '@showroomjs/bundles/routing';
-import { SupportedLanguage, removeTrailingSlash } from '@showroomjs/core';
+import { removeTrailingSlash, SupportedLanguage } from '@showroomjs/core';
 import {
   Alert,
   Collapsible,
@@ -14,6 +13,7 @@ import * as React from 'react';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { useCodeBlocks } from '../lib/codeblocks-context';
+import { Link, useRouteMatch } from '../lib/routing';
 import { useCodeCompilation } from '../lib/use-code-compilation';
 import { Div, Span } from './base';
 import { BrowserWindow } from './browser-window';

@@ -1,4 +1,3 @@
-import { Route, Switch, useRouteMatch } from '@showroomjs/bundles/routing';
 import {
   ReactShowroomComponentContent,
   ReactShowroomComponentSection,
@@ -10,6 +9,7 @@ import { ComponentDocStandaloneEditor } from '../components/component-doc-standa
 import { DetailsPageContainer } from '../components/details-page-container';
 import { Seo } from '../components/seo';
 import { StandalonePageContainer } from '../components/standalone-page-container';
+import { Route, Switch, useRouteMatch } from '../lib/routing';
 
 export const ComponentDocRoute = ({
   section,
