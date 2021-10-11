@@ -50,6 +50,7 @@ const defaultDocgenOptions: ParserOptions = {
   shouldExtractLiteralValuesFromEnum: true,
   shouldExtractValuesFromUnion: true,
   shouldRemoveUndefinedFromOptional: true,
+  shouldIncludePropTagMap: true,
 };
 
 const defaultThemeConfiguration: ThemeConfiguration = {

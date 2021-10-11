@@ -5,8 +5,8 @@
   "version": "0.10.12",
   "dependencies": {
     "@heroicons/react": "^1.0.4",
-    "esbuild-loader": "^2.15.1",
-    "react-hook-form": "^7.16.2",
+    "esbuild-loader": "^2.16.0",
+    "react-hook-form": "^7.17.2",
     "react-showroom": "workspace:*"
   },
   "scripts": {
@@ -15,11 +15,11 @@
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.3.4",
-    "autoprefixer": "^10.3.6",
-    "css-loader": "^6.3.0",
-    "css-minimizer-webpack-plugin": "^3.0.2",
-    "mini-css-extract-plugin": "^2.3.0",
-    "postcss": "^8.3.8",
+    "autoprefixer": "^10.3.7",
+    "css-loader": "^6.4.0",
+    "css-minimizer-webpack-plugin": "^3.1.1",
+    "mini-css-extract-plugin": "^2.4.2",
+    "postcss": "^8.3.9",
     "postcss-loader": "^6.1.1",
     "style-loader": "^3.3.0",
     "tailwindcss": "^2.2.16"
