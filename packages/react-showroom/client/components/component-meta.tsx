@@ -28,19 +28,16 @@ export const ComponentMeta = ({
 
   return (
     <>
-      <H1
-        css={
-          hasTag(tags, 'deprecated')
-            ? {
-                textDecorationLine: 'line-through',
-                fontWeight: 'normal',
-              }
-            : {}
-        }
-      >
+      <H1>
         <NavLink
           to={`/${slug}`}
           css={{
+            ...(hasTag(tags, 'deprecated')
+              ? {
+                  textDecorationLine: 'line-through',
+                  fontWeight: 'normal',
+                }
+              : {}),
             '&:hover': {
               textDecoration: 'underline',
             },
@@ -115,11 +112,18 @@ const ComponentPropsTable = (props: {
             {Object.keys(componentProps).map((prop) => {
               const propData = componentProps[prop];
 
+              const isDeprecated =
+                propData.tags && hasTag(propData.tags, 'deprecated');
+
+              const style = isDeprecated
+                ? { textDecorationLine: 'line-through' }
+                : undefined;
+
               return (
                 <Table.Tr key={prop}>
-                  <Table.Td>{propData.name}</Table.Td>
-                  <Table.Td>{propData.type.raw}</Table.Td>
-                  <Table.Td>{propData.description}</Table.Td>
+                  <Table.Td css={style}>{propData.name}</Table.Td>
+                  <Table.Td css={style}>{propData.type.raw}</Table.Td>
+                  <Table.Td css={style}>{propData.description}</Table.Td>
                 </Table.Tr>
               );
             })}

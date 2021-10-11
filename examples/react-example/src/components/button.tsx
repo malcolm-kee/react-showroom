@@ -7,6 +7,11 @@ export interface ButtonProps
    * variant of the button
    */
   variant?: 'primary' | 'outline';
+  /**
+   * Size of the button
+   *
+   * @deprecated
+   */
   size?: 'small' | 'large';
   children: React.ReactNode;
 }
@@ -15,7 +20,7 @@ export interface ButtonProps
  * `<Button />` component wraps a `<button />` element and spread all the props.
  */
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  function Button({ variant, ...props }, ref) {
+  function Button({ variant, size, ...props }, ref) {
     return (
       <button
         className={cx(
