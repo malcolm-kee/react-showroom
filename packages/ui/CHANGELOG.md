@@ -1,5 +1,14 @@
 # @showroomjs/ui
 
+## 0.14.1
+
+### Patch Changes
+
+- fd00c0b: Fix deprecated style
+- Updated dependencies [fd00c0b]
+  - @showroomjs/bundles@0.11.1
+  - @showroomjs/core@0.12.1
+
 ## 0.14.0
 
 ### Breaking Changes

@@ -1,5 +1,15 @@
 # react-showroom
 
+## 0.16.1
+
+### Patch Changes
+
+- fd00c0b: Fix deprecated style
+- Updated dependencies [fd00c0b]
+  - @showroomjs/bundles@0.11.1
+  - @showroomjs/core@0.12.1
+  - @showroomjs/ui@0.14.1
+
 ## 0.16.0
 
 ### Minor Changes

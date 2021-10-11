@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 0.12.1
+
+### Patch Changes
+
+- fd00c0b: Fix deprecated style
+
 ## 0.12.0
 
 ### Minor Changes
