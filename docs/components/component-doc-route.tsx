@@ -7,6 +7,7 @@ import {
   QueryParamProvider,
   Route,
   Switch,
+  Suspense,
 } from 'react-showroom/client';
 import { BrowserWindowInRouter } from './browser-window-in-router';
 
@@ -24,17 +25,22 @@ export const ComponentDocRoute = (
       <BrowserWindowInRouter className="mb-4">
         <div className="px-6 pb-6">
           <ComponentDataProvider {...props}>
-            <Switch>
-              <Route path="/_standalone/:codeHash">
-                <ComponentDocStandaloneEditor slug="" content={props.content} />
-              </Route>
-              <Route>
-                <ComponentDocArticle
-                  slug={props.slug}
-                  content={props.content}
-                />
-              </Route>
-            </Switch>
+            <Suspense fallback={null}>
+              <Switch>
+                <Route path="/_standalone/:codeHash">
+                  <ComponentDocStandaloneEditor
+                    slug=""
+                    content={props.content}
+                  />
+                </Route>
+                <Route>
+                  <ComponentDocArticle
+                    slug={props.slug}
+                    content={props.content}
+                  />
+                </Route>
+              </Switch>
+            </Suspense>
           </ComponentDataProvider>
         </div>
       </BrowserWindowInRouter>

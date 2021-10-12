@@ -1,3 +1,4 @@
+import { matchPath } from '@showroomjs/bundles/routing';
 import type { ReactShowroomSection } from '@showroomjs/core/react';
 import * as React from 'react';
 import sections from 'react-showroom-sections';
@@ -75,11 +76,13 @@ export const routes = sections.map(function mapSectionToRoute(
         };
       });
 
+    const ui = lazy(load);
+
     return {
       path: `/${section.slug}`,
       exact: false,
-      ui: lazy(load),
-      load,
+      ui,
+      load: 'preload' in ui ? ui.preload : load,
     };
   }
 
@@ -108,13 +111,79 @@ export const routes = sections.map(function mapSectionToRoute(
         }
       );
 
+    const ui = lazy(load);
+
     return {
       path: `/${section.slug}`,
       exact: section.slug === '',
-      ui: lazy(load),
-      load,
+      ui,
+      load: 'preload' in ui ? ui.preload : load,
     };
   }
 
   return null;
 });
+
+const loaded = new Set<string>();
+const loadPromiseMap = new Map<string, Promise<void>>();
+
+function noop() {}
+
+export const loadCodeAtPath = (
+  path: string,
+  onLoad: () => void = noop
+): void => {
+  if (loaded.has(path)) {
+    onLoad();
+    return;
+  }
+
+  const prevPromise = loadPromiseMap.get(path);
+
+  if (prevPromise) {
+    prevPromise.then(onLoad);
+    return;
+  }
+
+  let pathname = path;
+
+  if (pathname[pathname.length - 1] === '/') {
+    pathname = pathname.substring(0, pathname.length - 1);
+  }
+
+  const matchSection = (function () {
+    const routeItems = routes.slice().reverse();
+
+    for (const mapping of routeItems) {
+      if (!mapping) {
+        continue;
+      }
+
+      if (Array.isArray(mapping.ui)) {
+        routeItems.push(...mapping.ui);
+        continue;
+      }
+
+      const match = matchPath(pathname, {
+        path: mapping.path,
+        exact: true,
+      });
+
+      if (match) {
+        return mapping;
+      }
+    }
+  })();
+
+  const result =
+    matchSection && matchSection.load
+      ? matchSection.load().then(() => {
+          loaded.add(path);
+          loadPromiseMap.delete(path);
+        })
+      : Promise.resolve();
+
+  loadPromiseMap.set(path, result);
+
+  result.then(onLoad);
+};

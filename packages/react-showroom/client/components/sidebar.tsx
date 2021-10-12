@@ -1,16 +1,17 @@
 import { ExternalLinkIcon, MenuIcon } from '@heroicons/react/outline';
-import { NavLink, useHistory } from '@showroomjs/bundles/routing';
 import type { ReactShowroomSection } from '@showroomjs/core/react';
 import {
   css,
   DropdownMenu,
   IconButton,
   icons,
+  keyframes,
   Portal,
   styled,
 } from '@showroomjs/ui';
 import * as React from 'react';
 import { isExternalLink } from '../lib/is-external-link';
+import { NavLink, useHistory } from '../lib/routing';
 import { colorTheme, THEME } from '../theme';
 import { Div } from './base';
 import { GenericLink } from './generic-link';
@@ -255,6 +256,15 @@ const DropdownLink = styled(GenericLink, {
   alignItems: 'center',
 });
 
+const fadeInOut = keyframes({
+  '0%': {
+    opacity: 1,
+  },
+  '100%': {
+    opacity: 0.6,
+  },
+});
+
 const Link = styled(NavLink, {
   display: 'block',
   color: '$gray-600',
@@ -284,5 +294,8 @@ const Link = styled(NavLink, {
   '&[aria-current="page"]': {
     color: '$primary-900',
     backgroundColor: 'White',
+  },
+  '&[aria-busy]': {
+    animation: `${fadeInOut} 500ms infinite alternate`,
   },
 });

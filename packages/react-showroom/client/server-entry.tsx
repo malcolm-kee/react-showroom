@@ -1,5 +1,4 @@
 import { QueryClientProvider } from '@showroomjs/bundles/query';
-import { StaticRouter } from '@showroomjs/bundles/routing';
 import { flattenArray, isDefined, NestedArray, Ssr } from '@showroomjs/core';
 import { ReactShowroomSection } from '@showroomjs/core/react';
 import * as React from 'react';
@@ -9,6 +8,7 @@ import sections from 'react-showroom-sections';
 import { App } from './app';
 import { createQueryClient } from './lib/create-query-client';
 import { factoryMap } from './lib/lazy';
+import { StaticRouter } from './lib/routing';
 
 export const render: Ssr['render'] = async ({ pathname }) => {
   for (const [fn] of factoryMap) {

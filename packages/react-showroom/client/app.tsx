@@ -1,10 +1,4 @@
 import { IdProvider } from '@radix-ui/react-id';
-import {
-  matchPath,
-  Route,
-  Switch,
-  useLocation,
-} from '@showroomjs/bundles/routing';
 import { QueryParamProvider } from '@showroomjs/ui';
 import * as React from 'react';
 import sections from 'react-showroom-sections';
@@ -14,6 +8,7 @@ import { Header } from './components/header';
 import { Sidebar } from './components/sidebar';
 import { CodeThemeContext } from './lib/code-theme-context';
 import { Suspense } from './lib/lazy';
+import { matchPath, Route, Switch, useLocation } from './lib/routing';
 import { DefaultHomePage } from './pages/index';
 import { routeMapping, routes } from './route-mapping';
 import { colorTheme, THEME } from './theme';

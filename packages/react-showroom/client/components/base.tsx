@@ -1,5 +1,5 @@
-import { Link } from '@showroomjs/bundles/routing';
 import { css, styled } from '@showroomjs/ui';
+import { Link } from '../lib/routing';
 
 export const headerHeight = 58;
 

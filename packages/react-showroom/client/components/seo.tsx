@@ -1,7 +1,7 @@
-import { useLocation } from '@showroomjs/bundles/routing';
 import { omit } from '@showroomjs/core';
 import * as React from 'react';
 import { Helmet, HelmetProps } from 'react-helmet';
+import { useLocation } from '../lib/routing';
 import { THEME } from '../theme';
 
 const SITE_URL = process.env.SITE_URL;

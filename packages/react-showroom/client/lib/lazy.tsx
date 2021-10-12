@@ -1,4 +1,5 @@
 import * as React from 'react';
+import lazyWithPreload from 'react-lazy-with-preload';
 
 const SuspenseComponent = import.meta.env.SSR
   ? function FakeSuspense(props: { children: React.ReactNode }) {
@@ -13,7 +14,8 @@ export const factoryMap = new Map<
   React.ComponentType<any> | undefined
 >();
 
-export const lazy: typeof React.lazy = import.meta.env.SSR
+export const lazy: typeof React.lazy | typeof lazyWithPreload = import.meta.env
+  .SSR
   ? function ssrLazy(factory) {
       factoryMap.set(factory, undefined);
 
@@ -25,4 +27,4 @@ export const lazy: typeof React.lazy = import.meta.env.SSR
         ) : null;
       }) as any;
     }
-  : React.lazy;
+  : lazyWithPreload; // we don't use React.lazy because merely call dynamic import will still cause React to suspend.

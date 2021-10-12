@@ -1,6 +1,6 @@
-import { useParams } from '@showroomjs/bundles/routing';
 import * as React from 'react';
 import { useCodeBlocks } from '../lib/codeblocks-context';
+import { useParams } from '../lib/routing';
 import { StandaloneCodeLiveEditor } from './standalone-code-live-editor';
 
 /**
