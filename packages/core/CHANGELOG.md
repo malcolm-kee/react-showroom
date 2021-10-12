@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 0.13.0
+
+### Minor Changes
+
+- 6c3917a: Suspend navigation until code is loaded
+
 ## 0.12.1
 
 ### Patch Changes

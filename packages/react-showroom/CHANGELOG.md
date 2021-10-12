@@ -1,5 +1,17 @@
 # react-showroom
 
+## 0.17.0
+
+### Minor Changes
+
+- 6c3917a: Suspend navigation until code is loaded
+
+### Patch Changes
+
+- Updated dependencies [6c3917a]
+  - @showroomjs/core@0.13.0
+  - @showroomjs/ui@0.14.2
+
 ## 0.16.1
 
 ### Patch Changes
