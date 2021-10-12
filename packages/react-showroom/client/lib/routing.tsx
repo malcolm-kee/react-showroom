@@ -43,12 +43,13 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
         onClick={callAll(props.onClick, (ev) => {
           ev.preventDefault();
           setIsPending(true);
-          loadCodeAtPath(to).then(() => {
+          loadCodeAtPath(to, () => {
             setIsPending(false);
             const method = replace ? history.replace : history.push;
             method(to);
           });
         })}
+        onMouseEnter={callAll(props.onMouseEnter, () => loadCodeAtPath(to))}
         aria-busy={isPending || undefined}
         href={to}
         ref={ref}

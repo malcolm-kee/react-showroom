@@ -23,7 +23,7 @@ const Router = function (props: {
 
 const render = isPrerender
   ? function hydrate(ui: React.ReactElement<any>, target: HTMLElement | null) {
-      loadCodeAtPath(window.location.pathname).then(() => {
+      loadCodeAtPath(window.location.pathname, () => {
         const el = document.createElement('div');
 
         const uiEl = <Router basename={process.env.BASE_PATH}>{ui}</Router>;

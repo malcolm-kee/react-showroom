@@ -5,8 +5,8 @@ import {
   DropdownMenu,
   IconButton,
   icons,
-  Portal,
   keyframes,
+  Portal,
   styled,
 } from '@showroomjs/ui';
 import * as React from 'react';
@@ -296,6 +296,6 @@ const Link = styled(NavLink, {
     backgroundColor: 'White',
   },
   '&[aria-busy]': {
-    animation: `${fadeInOut} 200ms`,
+    animation: `${fadeInOut} 500ms infinite alternate`,
   },
 });

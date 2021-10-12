@@ -76,11 +76,13 @@ export const routes = sections.map(function mapSectionToRoute(
         };
       });
 
+    const ui = lazy(load);
+
     return {
       path: `/${section.slug}`,
       exact: false,
-      ui: lazy(load),
-      load,
+      ui,
+      load: 'preload' in ui ? ui.preload : load,
     };
   }
 
@@ -109,11 +111,13 @@ export const routes = sections.map(function mapSectionToRoute(
         }
       );
 
+    const ui = lazy(load);
+
     return {
       path: `/${section.slug}`,
       exact: section.slug === '',
-      ui: lazy(load),
-      load,
+      ui,
+      load: 'preload' in ui ? ui.preload : load,
     };
   }
 
@@ -121,10 +125,24 @@ export const routes = sections.map(function mapSectionToRoute(
 });
 
 const loaded = new Set<string>();
+const loadPromiseMap = new Map<string, Promise<void>>();
 
-export const loadCodeAtPath = (path: string): Promise<void> => {
+function noop() {}
+
+export const loadCodeAtPath = (
+  path: string,
+  onLoad: () => void = noop
+): void => {
   if (loaded.has(path)) {
-    return Promise.resolve();
+    onLoad();
+    return;
+  }
+
+  const prevPromise = loadPromiseMap.get(path);
+
+  if (prevPromise) {
+    prevPromise.then(onLoad);
+    return;
   }
 
   let pathname = path;
@@ -157,9 +175,15 @@ export const loadCodeAtPath = (path: string): Promise<void> => {
     }
   })();
 
-  return matchSection && matchSection.load
-    ? matchSection.load().then(() => {
-        loaded.add(path);
-      })
-    : Promise.resolve();
+  const result =
+    matchSection && matchSection.load
+      ? matchSection.load().then(() => {
+          loaded.add(path);
+          loadPromiseMap.delete(path);
+        })
+      : Promise.resolve();
+
+  loadPromiseMap.set(path, result);
+
+  result.then(onLoad);
 };
