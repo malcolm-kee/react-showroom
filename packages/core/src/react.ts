@@ -1,11 +1,12 @@
 import type { PrismTheme } from 'prism-react-renderer';
 import type { ComponentType } from 'react';
-import { UserConfig as ViteUserConfig } from 'vite';
 import type {
   ComponentDoc as DocgenComponentDoc,
   ParserOptions,
 } from 'react-docgen-typescript';
-import { CodeBlocks } from './index';
+import { UserConfig as ViteUserConfig } from 'vite';
+import type { Configuration } from 'webpack';
+import { CodeBlocks, Environment } from './index';
 
 export interface ItemConfigurationWithPath {
   title?: string;
@@ -168,6 +169,10 @@ export interface ReactShowroomConfiguration
    */
   ignores?: Array<string>;
   items?: Array<ItemConfiguration>;
+  /**
+   * Webpack configuration to load your components (or any other resources that are needed by the components, e.g. CSS)
+   */
+  webpackConfig?: Configuration | ((env: Environment) => Configuration);
   /**
    * modules to be available in examples via `import`.
    *
