@@ -1,5 +1,3 @@
-/// <reference types="vite/client" />
-
 declare module '*.wasm' {
   const src: string;
   export default src;
@@ -33,10 +31,6 @@ declare module 'react-showroom-wrapper' {
   export default Wrapper;
 }
 
-declare module 'react-showroom-require' {
-  export default {};
-}
-
 declare namespace NodeJS {
   import type { ThemeConfiguration } from '@showroomjs/core/react';
 
@@ -46,5 +40,6 @@ declare namespace NodeJS {
     readonly IS_SPA: boolean;
     readonly SITE_URL: string;
     readonly BASE_PATH: string;
+    readonly SSR: boolean;
   }
 }

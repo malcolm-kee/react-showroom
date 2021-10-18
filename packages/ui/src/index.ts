@@ -1,3 +1,4 @@
+export { IdProvider } from '@radix-ui/react-id';
 export { Root as Portal } from '@radix-ui/react-portal';
 export * from './components/alert';
 export { Breadcrumbs } from './components/breadcrumbs';

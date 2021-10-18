@@ -23,7 +23,7 @@ const showroomComponentLoader: LoaderDefinition<ShowroomComponentLoaderOptions> 
       return `export default {};`;
     }
 
-    return `imoprt * as MaybeComponent from '${sourcePath}';
+    return `const MaybeComponent = require('${sourcePath}');
   export default {
     Component: MaybeComponent.default || MaybeComponent['${
       compdoc.displayName

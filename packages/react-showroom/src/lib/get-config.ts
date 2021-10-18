@@ -91,6 +91,9 @@ export const getConfig = (
     theme: providedThemeConfig = {},
     imports: providedImports,
     ignores = DEFAULT_IGNORES,
+    css = {
+      postcss: fs.existsSync(path.resolve(paths.appPath, 'postcss.config.js')),
+    },
     ...providedConfig
   } = userConfig || getUserConfig(env, configFile);
 
@@ -142,6 +145,10 @@ export const getConfig = (
   _normalizedConfig = {
     ...defaultConfig,
     ...providedConfig,
+    css: {
+      enabled: !!css,
+      usePostcss: !!(css && css.postcss),
+    },
     preloadAllCss,
     prefetchAll,
     ignores,

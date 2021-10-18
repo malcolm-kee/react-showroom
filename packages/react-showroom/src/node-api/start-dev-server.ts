@@ -4,9 +4,10 @@ process.env.NODE_ENV = 'development';
 
 import { ReactShowroomConfiguration } from '@showroomjs/core/react';
 import path from 'path';
-import { createServer } from 'vite';
+import webpack from 'webpack';
+import webpackDevServer from 'webpack-dev-server';
 import { argv } from 'yargs';
-import { createViteConfig } from '../config/create-vite-config';
+import { createWebpackConfig } from '../config/create-webpack-config';
 import { getConfig } from '../lib/get-config';
 import { logToStdout } from '../lib/log-to-stdout';
 import { prepareUrls } from '../lib/prepare-url';
@@ -34,21 +35,33 @@ export async function startDevServer(
 
   writeIndexHtml(config.theme);
 
-  const { devServerPort } = config;
+  const { devServerPort, assetDir } = config;
 
+  const HOST = '0.0.0.0';
   const PORT = Number((argv as any).port ?? process.env.PORT ?? devServerPort);
 
-  const server = await createServer({
-    ...(await createViteConfig('development', config)),
-    server: {
-      port: PORT,
+  const webpackConfig = createWebpackConfig('development', config);
+  const devServerOptions: webpackDevServer.Configuration = {
+    port: PORT,
+    host: HOST,
+    client: {
+      logging: 'none',
     },
-    configFile: false,
-  });
+    hot: true, // hot reload replacement not supported for module federation
+    historyApiFallback: true,
+    static: {
+      directory: assetDir,
+      watch: true,
+    },
+  };
 
-  await server.listen();
+  const compiler = webpack(webpackConfig);
 
-  const urls = prepareUrls('http', '0.0.0.0', PORT);
+  const server = new webpackDevServer(devServerOptions, compiler);
+
+  await server.start();
+
+  const urls = prepareUrls('http', HOST, PORT);
 
   openBrowser(urls.localUrlForBrowser);
 

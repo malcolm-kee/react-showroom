@@ -21,6 +21,7 @@ import { callAll } from '@showroomjs/core';
 import cx from 'classnames';
 import * as React from 'react';
 import { loadCodeAtPath } from '../route-mapping';
+import { basename } from './config';
 
 export interface LinkProps extends Omit<OriLinkProps, 'to'> {
   to: string;
@@ -51,7 +52,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
         })}
         onMouseEnter={callAll(props.onMouseEnter, () => loadCodeAtPath(to))}
         aria-busy={isPending || undefined}
-        href={to}
+        href={basename && to === '/' ? basename : `${basename}${to}`}
         ref={ref}
       />
     );

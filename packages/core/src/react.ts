@@ -4,7 +4,6 @@ import type {
   ComponentDoc as DocgenComponentDoc,
   ParserOptions,
 } from 'react-docgen-typescript';
-import { UserConfig as ViteUserConfig } from 'vite';
 import type { Configuration } from 'webpack';
 import { CodeBlocks, Environment } from './index';
 
@@ -148,8 +147,7 @@ export interface DocgenConfiguration {
   options: ParserOptions;
 }
 
-export interface ReactShowroomConfiguration
-  extends Pick<ViteUserConfig, 'css' | 'resolve'> {
+export interface ReactShowroomConfiguration {
   /**
    * URL for the site.
    *
@@ -197,6 +195,18 @@ export interface ReactShowroomConfiguration
    */
   wrapper?: string;
   docgen?: Partial<DocgenConfiguration>;
+  /**
+   * Configuration to specify how css should be processed.
+   *
+   * Default to enable `css-loader` and auto inject postcss if `postcss.config.js` is detected.
+   *
+   * Set to `false` if your webpack config already process css.
+   */
+  css?:
+    | {
+        postcss?: boolean;
+      }
+    | false;
   devServer?: {
     port?: number;
   };
@@ -283,7 +293,7 @@ export type ReactShowroomSectionConfig =
 export interface NormalizedReactShowroomConfiguration
   extends Omit<
     ReactShowroomConfiguration,
-    'items' | 'devServer' | 'build' | 'components'
+    'items' | 'devServer' | 'build' | 'components' | 'css'
   > {
   sections: Array<ReactShowroomSectionConfig>;
   ignores: Array<string>;
@@ -299,6 +309,10 @@ export interface NormalizedReactShowroomConfiguration
   docgen: DocgenConfiguration;
   theme: ThemeConfiguration;
   url: string;
+  css: {
+    enabled: boolean;
+    usePostcss: boolean;
+  };
 }
 
 export interface ReactShowroomComponentContent {

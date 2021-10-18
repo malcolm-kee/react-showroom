@@ -20,7 +20,7 @@ Document React components by declaring props definition and writing markdown.
 
 ## Built With
 
-- [Vite](https://vitejs.dev/)
+- [webpack](https://webpack.js.org/)
 - [esbuild](https://esbuild.github.io/)
 - [react-docgen-typescript](https://www.npmjs.com/package/react-docgen-typescript)
 - [Stitches](https://stitches.dev/)

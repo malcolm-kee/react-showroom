@@ -8,112 +8,54 @@ import {
   ReactShowroomConfiguration,
 } from '@showroomjs/core/react';
 import * as fs from 'fs-extra';
-import { build, Manifest } from 'vite';
-import { createViteConfig } from '../config/create-vite-config';
+import webpack from 'webpack';
+import { createWebpackConfig } from '../config/create-webpack-config';
+import { createSSrBundle } from '../lib/create-ssr-bundle';
 import { getConfig } from '../lib/get-config';
 import { logToStdout } from '../lib/log-to-stdout';
 import { resolveApp, resolveShowroom } from '../lib/paths';
-import { generateHtml } from '../lib/write-index-html';
 
-export interface StartServerOptions extends ReactShowroomConfiguration {
-  configFile?: string;
-}
+async function buildStaticSite(config: NormalizedReactShowroomConfiguration) {
+  const webpackConfig = createWebpackConfig('production', config, {
+    outDir: config.outDir,
+  });
 
-export async function buildShowroom(
-  userConfig?: ReactShowroomConfiguration,
-  configFile?: string
-) {
-  logToStdout('Generating bundle...');
-
-  const config = getConfig('production', configFile, userConfig);
-
-  const { prerender } = config;
-  const ssrDir = resolveShowroom('ssr-result');
-
-  await Promise.all([
-    build({
-      ...(await createViteConfig('production', config)),
-      configFile: false,
-    }),
-    build({
-      ...(await createViteConfig('production', config, {
-        ssr: {
-          outDir: ssrDir,
-        },
-      })),
-      configFile: false,
-    }),
-  ]);
+  const compiler = webpack(webpackConfig);
 
   try {
-    // we always write our HTML manually because vite will ignore HTML in node_modules folder
-    // see https://github.com/vitejs/vite/issues/5042
-    await outputHtml(config, ssrDir, prerender);
-  } finally {
-    fs.remove(ssrDir);
+    await new Promise<void>((fulfill, reject) => {
+      compiler.run((err, stats) => {
+        if (err || stats?.hasErrors()) {
+          if (err) {
+            console.error(err);
+          }
+          compiler.close(() => {
+            console.error('Fix the error and try again.');
+          });
+          reject(err);
+        }
+
+        compiler.close(() => {
+          fulfill();
+        });
+      });
+    });
+  } catch (err) {
+    console.error(err);
   }
 }
 
-async function outputHtml(
+async function prerenderSite(
   config: NormalizedReactShowroomConfiguration,
-  ssrDir: string,
-  ssg: boolean
+  tmpDir: string
 ) {
-  logToStdout('Generating HTML...');
-  const serverEntry: Ssr = require(`${ssrDir}/server-entry.js`);
-  const manifestPath = resolveApp(`${config.outDir}/manifest.json`);
-
-  const manifest: Manifest = await fs.readJson(manifestPath);
-
+  const prerenderCodePath = `${tmpDir}/server/prerender.js`;
   const htmlPath = resolveApp(`${config.outDir}/index.html`);
 
-  const { render, getCssText, getHelmet, getRoutes } = serverEntry;
+  const { render, getCssText, getHelmet, getRoutes } =
+    require(prerenderCodePath) as Ssr;
 
-  const clientEntryManifest = manifest['client/ssr-client-entry.tsx'];
-
-  const cssToPreload = new Set<string>();
-
-  if (config.preloadAllCss) {
-    Object.values(manifest).forEach((chunk) => {
-      if (chunk.css) {
-        chunk.css.forEach((css) => cssToPreload.add(css));
-      }
-    });
-  }
-
-  const scriptsToPrefetch = config.prefetchAll
-    ? Object.entries(manifest)
-        .filter(
-          ([key, chunk]) =>
-            key !== 'client/ssr-client-entry.tsx' && chunk.file.endsWith('.js')
-        )
-        .map(([, chunk]) => chunk.file)
-    : [];
-
-  const template = generateHtml(
-    `<script type="module" src="${`${config.basePath}/${clientEntryManifest.file}`}"></script>`,
-    clientEntryManifest.css
-      ? clientEntryManifest.css
-          .map(
-            (css) =>
-              `<link rel="stylesheet" href="${`${config.basePath}/${css}`}" />`
-          )
-          .join('')
-      : '',
-    [...cssToPreload]
-      .map(
-        (link) =>
-          `<link rel="preload stylesheet" href="${config.basePath}/${link}" as="style" />`
-      )
-      .concat(
-        scriptsToPrefetch.map(
-          (link) =>
-            `<link rel="prefetch" as="script" href="${config.basePath}/${link}" />`
-        )
-      )
-      .join(''),
-    config.theme
-  );
+  const template = await fs.readFile(htmlPath, 'utf-8');
 
   const routes = await getRoutes();
 
@@ -121,27 +63,25 @@ async function outputHtml(
     logToStdout(`Prerender with basePath: ${config.basePath}`);
   }
 
-  if (ssg) {
-    logToStdout('Prerendering...');
+  logToStdout('Prerendering...');
 
-    for (const route of routes) {
-      if (route !== '') {
-        logToStdout(` - /${route}`);
+  for (const route of routes) {
+    if (route !== '') {
+      logToStdout(` - /${route}`);
 
-        await fs.outputFile(
-          resolveApp(`${config.outDir}/${route}/index.html`),
-          await getHtml(`/${route}`)
-        );
-      }
+      await fs.outputFile(
+        resolveApp(`${config.outDir}/${route}/index.html`),
+        await getHtml(`/${route}`)
+      );
     }
-
-    logToStdout(` - /`);
   }
+
+  logToStdout(` - /`);
 
   await fs.outputFile(htmlPath, await getHtml('/'));
 
   async function getHtml(pathname: string) {
-    const { result: renderResult, cleanup } = await render({ pathname });
+    const prerenderResult = await render({ pathname });
     const helmet = getHelmet();
     const finalHtml = template
       .replace(
@@ -152,10 +92,29 @@ async function outputHtml(
         '<!--SSR-helmet-->',
         `${helmet.title.toString()}${helmet.meta.toString()}${helmet.link.toString()}`
       )
-      .replace('<!--SSR-target-->', ssg ? renderResult : '');
+      .replace('<!--SSR-target-->', prerenderResult.result);
 
-    cleanup();
+    prerenderResult.cleanup();
 
     return finalHtml;
+  }
+}
+
+export async function buildShowroom(
+  userConfig?: ReactShowroomConfiguration,
+  configFile?: string
+) {
+  const config = getConfig('production', configFile, userConfig);
+
+  const ssrDir = resolveShowroom('ssr-result');
+
+  await Promise.all([
+    buildStaticSite(config),
+    config.prerender ? createSSrBundle(config, ssrDir) : Promise.resolve(),
+  ]);
+
+  if (config.prerender) {
+    await prerenderSite(config, ssrDir);
+    await fs.remove(ssrDir);
   }
 }

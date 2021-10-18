@@ -1,4 +1,4 @@
-import { Environment, isString } from '@showroomjs/core';
+import { Environment, isDefined, isString } from '@showroomjs/core';
 import { NormalizedReactShowroomConfiguration } from '@showroomjs/core/react';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
@@ -7,6 +7,7 @@ import * as docgen from 'react-docgen-typescript';
 import { rehypeMdxTitle } from 'rehype-mdx-title';
 import rehypeSlug from 'rehype-slug';
 import remarkFrontmatter from 'remark-frontmatter';
+import remarkGfm from 'remark-gfm';
 import { remarkMdxFrontmatter } from 'remark-mdx-frontmatter';
 import * as webpack from 'webpack';
 import { merge } from 'webpack-merge';
@@ -17,28 +18,30 @@ import {
 } from '../lib/generate-showroom-data';
 import { logToStdout } from '../lib/log-to-stdout';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
-import remarkGfm from 'remark-gfm';
 import {
   moduleFileExtensions,
+  paths,
   resolveApp,
   resolveShowroom,
-  paths,
 } from '../lib/paths';
 import { rehypeCodeAutoId } from '../plugins/rehype-code-auto-id';
 import { rehypeMdxHeadings } from '../plugins/rehype-mdx-headings';
 import { rehypeMetaAsAttribute } from '../plugins/rehype-meta-as-attribute';
+import type { ShowroomRemarkCodeBlocksLoaderOptions } from '../webpack-loader/showroom-remark-codeblocks-loader';
 import { createBabelPreset } from './create-babel-preset';
 import VirtualModulesPlugin = require('webpack-virtual-modules');
-import type { ShowroomRemarkCodeBlocksLoaderOptions } from '../webpack-loader/showroom-remarks-codeblocks-loader';
+
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const WebpackMessages = require('webpack-messages');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 export const createWebpackConfig = (
   mode: Environment,
   config: NormalizedReactShowroomConfiguration,
-  { outDir = 'showroom', prerender = false } = {}
+  { outDir = 'showroom' } = {}
 ): webpack.Configuration => {
-  const baseConfig = createBaseWebpackConfig(mode, config, { prerender });
+  const baseConfig = createBaseWebpackConfig(mode, config, { ssr: false });
 
   const {
     webpackConfig: userConfig,
@@ -50,7 +53,7 @@ export const createWebpackConfig = (
 
   const isProd = mode === 'production';
 
-  const clientEntry = resolveShowroom('client-dist/index.js');
+  const clientEntry = resolveShowroom('client-dist/client-entry.js');
 
   return mergeWebpackConfig(
     merge(baseConfig, {
@@ -62,9 +65,6 @@ export const createWebpackConfig = (
             ? '/'
             : `${basePath}/` // need to add trailing slash
           : 'auto',
-      },
-      optimization: {
-        minimize: isProd,
       },
       plugins: [
         new HtmlWebpackPlugin({
@@ -82,13 +82,7 @@ export const createWebpackConfig = (
               ? `<style>*,::after,::before{box-sizing:border-box}html{-moz-tab-size:4;tab-size:4}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji'}hr{height:0;color:inherit}abbr[title]{text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Consolas,'Liberation Mono',Menlo,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}::-moz-focus-inner{border-style:none;padding:0}:-moz-focusring{outline:1px dotted ButtonText}:-moz-ui-invalid{box-shadow:none}legend{padding:0}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}</style>`
               : ''
           }
-              <style>
-                html,
-                body,
-                #target {
-                  height: 100%;
-                }
-              </style>
+              <style>html, body, #target { height: 100%; }</style>
               <!--SSR-style-->
             </head>
             <body>
@@ -100,7 +94,7 @@ export const createWebpackConfig = (
                 collapseWhitespace: true,
                 keepClosingSlash: true,
                 removeComments: true,
-                ignoreCustomComments: prerender ? [/SSR-/] : [],
+                ignoreCustomComments: prerenderConfig ? [/SSR-/] : [],
                 removeRedundantAttributes: true,
                 removeScriptTypeAttributes: true,
                 removeStyleLinkTypeAttributes: true,
@@ -133,14 +127,14 @@ export const createWebpackConfig = (
   );
 };
 
-export const createPrerenderWebpackConfig = (
+export const createSsrWebpackConfig = (
   mode: Environment,
   config: NormalizedReactShowroomConfiguration,
   { outDir = 'showroom' } = {}
 ): webpack.Configuration => {
-  const baseConfig = createBaseWebpackConfig(mode, config, { prerender: true });
+  const baseConfig = createBaseWebpackConfig(mode, config, { ssr: true });
 
-  const clientEntry = resolveShowroom('client-dist/prerender.js');
+  const clientEntry = resolveShowroom('client-dist/server-entry.js');
 
   return mergeWebpackConfig(
     merge(baseConfig, {
@@ -156,7 +150,7 @@ export const createPrerenderWebpackConfig = (
       target: 'node14.17',
       plugins: [
         new WebpackMessages({
-          name: 'prerender',
+          name: 'ssr',
           logger: logToStdout,
         }),
       ],
@@ -170,6 +164,7 @@ const createBaseWebpackConfig = (
   mode: Environment,
   {
     prerender: prerenderConfig,
+    css,
     url,
     basePath,
     theme,
@@ -178,8 +173,9 @@ const createBaseWebpackConfig = (
     wrapper,
     docgen: docgenConfig,
     debug,
+    require: requireConfig,
   }: NormalizedReactShowroomConfiguration,
-  options: { prerender: boolean }
+  options: { ssr: boolean }
 ): webpack.Configuration => {
   const isProd = mode === 'production';
   const isDev = mode === 'development';
@@ -226,6 +222,23 @@ const createBaseWebpackConfig = (
     },
     module: {
       rules: [
+        {
+          test: /\.(js|jsx|ts|tsx)$/,
+          resourceQuery: /showroomCompile/,
+          use: [
+            {
+              loader: require.resolve('babel-loader'),
+              options: {
+                presets: [() => babelPreset],
+                plugins: isDev
+                  ? [require.resolve('react-refresh/babel')]
+                  : undefined,
+                babelrc: false,
+                configFile: false,
+              },
+            },
+          ],
+        },
         {
           test: /\.(ts|tsx)$/,
           oneOf: [
@@ -309,7 +322,7 @@ const createBaseWebpackConfig = (
             },
             {
               resourceQuery: {
-                not: [/showroomRaw/],
+                not: [/raw/],
               },
               use: [
                 {
@@ -352,23 +365,72 @@ const createBaseWebpackConfig = (
           resourceQuery: /raw/,
           type: 'asset/source',
         },
-      ],
+        css.enabled
+          ? {
+              test: /\.css$/,
+              sideEffects: true,
+              use: [
+                isProd
+                  ? MiniCssExtractPlugin.loader
+                  : require.resolve('style-loader'),
+                {
+                  loader: require.resolve('css-loader'),
+                  options: {
+                    importLoaders: css.usePostcss ? 1 : 0,
+                    modules: {
+                      auto: true,
+                      localIdentName: isProd
+                        ? '[hash:base64]'
+                        : '[path][name]__[local]',
+                    },
+                  },
+                },
+                css.usePostcss
+                  ? {
+                      loader: require.resolve('postcss-loader'),
+                      options: {
+                        sourceMap: isProd,
+                        postcssOptions: {
+                          config: resolveApp('postcss.config.js'),
+                        },
+                      },
+                    }
+                  : undefined,
+              ].filter(isDefined),
+            }
+          : undefined,
+      ].filter(isDefined),
     },
     resolveLoader: {
       modules: ['node_modules', path.resolve(__dirname, '../webpack-loader')],
     },
     devtool: isProd ? 'source-map' : 'cheap-module-source-map',
     plugins: [
+      isProd
+        ? new MiniCssExtractPlugin({
+            filename: 'static/css/[name].[contenthash].css',
+            chunkFilename: 'static/css/[name].[contenthash].css',
+          })
+        : undefined,
       new webpack.EnvironmentPlugin({
-        PRERENDER: String(options.prerender),
-        MULTI_PAGES: String(prerenderConfig),
+        PRERENDER: isProd ? !!prerenderConfig : false,
+        SSR: options.ssr,
         BASE_PATH: isProd ? basePath : '',
-        REACT_SHOWROOM_THEME: JSON.stringify(theme),
+        IS_SPA: !prerenderConfig,
+        REACT_SHOWROOM_THEME: theme,
+        NODE_ENV: mode,
         SITE_URL: url,
       }),
       virtualModules,
       isDev ? new ReactRefreshWebpackPlugin() : undefined,
     ].filter(isDefined),
+    optimization: {
+      minimize: !options.ssr && isProd,
+      minimizer: [
+        '...', // keep existing minimizer
+        new CssMinimizerPlugin(),
+      ],
+    },
     performance: {
       hints: false,
     },
@@ -378,6 +440,3 @@ const createBaseWebpackConfig = (
     stats: debug ? 'normal' : 'none',
   };
 };
-
-const isDefined = <Value>(value: Value | undefined): value is Value =>
-  typeof value !== 'undefined';

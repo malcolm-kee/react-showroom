@@ -3,25 +3,13 @@ import type {
   RequestCompileData,
   SupportedLanguage,
 } from '@showroomjs/core';
-import CompileWorker from './compile-worker?worker';
 
-let worker: Worker;
+const worker = new Worker(new URL('./compile-worker.js', import.meta.url));
 
 let id = 0;
 
 export const compileCode = (code: string, lang: SupportedLanguage) =>
   new Promise<CompileResult>((fulfill) => {
-    // hack to make vite copy esbuild.wasm
-    import('esbuild-wasm/esbuild.wasm?url');
-
-    const currentWorker = (function getWorker() {
-      if (worker) {
-        return worker;
-      }
-      worker = new CompileWorker();
-      return worker;
-    })();
-
     const messageId = id++;
 
     const compileEvent: RequestCompileData = {
@@ -29,15 +17,15 @@ export const compileCode = (code: string, lang: SupportedLanguage) =>
       lang,
       source: code,
     };
-    currentWorker.postMessage(compileEvent);
+    worker.postMessage(compileEvent);
 
     function handleMessage(ev: MessageEvent) {
       const data: CompileResult = ev.data;
       if (messageId === data.messageId) {
         fulfill(data);
-        currentWorker.removeEventListener('message', handleMessage);
+        worker.removeEventListener('message', handleMessage);
       }
     }
 
-    currentWorker.addEventListener('message', handleMessage);
+    worker.addEventListener('message', handleMessage);
   });
