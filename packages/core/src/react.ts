@@ -1,11 +1,11 @@
 import type { PrismTheme } from 'prism-react-renderer';
 import type { ComponentType } from 'react';
-import { UserConfig as ViteUserConfig } from 'vite';
 import type {
   ComponentDoc as DocgenComponentDoc,
   ParserOptions,
 } from 'react-docgen-typescript';
-import { CodeBlocks } from './index';
+import type { Configuration } from 'webpack';
+import { CodeBlocks, Environment } from './index';
 
 export interface ItemConfigurationWithPath {
   title?: string;
@@ -147,8 +147,7 @@ export interface DocgenConfiguration {
   options: ParserOptions;
 }
 
-export interface ReactShowroomConfiguration
-  extends Pick<ViteUserConfig, 'css' | 'resolve'> {
+export interface ReactShowroomConfiguration {
   /**
    * URL for the site.
    *
@@ -168,6 +167,10 @@ export interface ReactShowroomConfiguration
    */
   ignores?: Array<string>;
   items?: Array<ItemConfiguration>;
+  /**
+   * Webpack configuration to load your components (or any other resources that are needed by the components, e.g. CSS)
+   */
+  webpackConfig?: Configuration | ((env: Environment) => Configuration);
   /**
    * modules to be available in examples via `import`.
    *
@@ -192,6 +195,18 @@ export interface ReactShowroomConfiguration
    */
   wrapper?: string;
   docgen?: Partial<DocgenConfiguration>;
+  /**
+   * Configuration to specify how css should be processed.
+   *
+   * Default to enable `css-loader` and auto inject postcss if `postcss.config.js` is detected.
+   *
+   * Set to `false` if your webpack config already process css.
+   */
+  css?:
+    | {
+        postcss?: boolean;
+      }
+    | false;
   devServer?: {
     port?: number;
   };
@@ -221,18 +236,6 @@ export interface ReactShowroomConfiguration
      * @default ''
      */
     basePath?: string;
-    /**
-     * Preload all CSS to avoid possible screen flashing.
-     *
-     * @default true
-     */
-    preloadAllCss?: boolean;
-    /**
-     * Prefetch all resources using `<link rel="prefetch">` resource hints.
-     *
-     * @default true
-     */
-    prefetchAll?: boolean;
   };
   debug?: boolean;
 }
@@ -278,15 +281,13 @@ export type ReactShowroomSectionConfig =
 export interface NormalizedReactShowroomConfiguration
   extends Omit<
     ReactShowroomConfiguration,
-    'items' | 'devServer' | 'build' | 'components'
+    'items' | 'devServer' | 'build' | 'components' | 'css'
   > {
   sections: Array<ReactShowroomSectionConfig>;
   ignores: Array<string>;
   outDir: string;
   prerender: boolean;
   basePath: string;
-  preloadAllCss: boolean;
-  prefetchAll: boolean;
   /**
    * assetDirs in absolute paths
    */
@@ -294,6 +295,10 @@ export interface NormalizedReactShowroomConfiguration
   docgen: DocgenConfiguration;
   theme: ThemeConfiguration;
   url: string;
+  css: {
+    enabled: boolean;
+    usePostcss: boolean;
+  };
 }
 
 export interface ReactShowroomComponentContent {

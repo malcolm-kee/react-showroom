@@ -1,5 +1,4 @@
-import { IdProvider } from '@radix-ui/react-id';
-import { QueryParamProvider } from '@showroomjs/ui';
+import { IdProvider, QueryParamProvider } from '@showroomjs/ui';
 import * as React from 'react';
 import sections from 'react-showroom-sections';
 import Wrapper from 'react-showroom-wrapper';

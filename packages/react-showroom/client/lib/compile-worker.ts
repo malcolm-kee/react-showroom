@@ -6,7 +6,7 @@ import {
   postCompile,
   RequestCompileData,
 } from '@showroomjs/core';
-import wasmPath from 'esbuild-wasm/esbuild.wasm?url';
+import wasmPath from 'esbuild-wasm/esbuild.wasm';
 import * as esbuild from 'esbuild-wasm/esm/browser';
 
 const esBuildIsReady = esbuild.initialize({

@@ -91,6 +91,9 @@ export const getConfig = (
     theme: providedThemeConfig = {},
     imports: providedImports,
     ignores = DEFAULT_IGNORES,
+    css = {
+      postcss: fs.existsSync(path.resolve(paths.appPath, 'postcss.config.js')),
+    },
     ...providedConfig
   } = userConfig || getUserConfig(env, configFile);
 
@@ -132,18 +135,15 @@ export const getConfig = (
     }
   }
 
-  const {
-    outDir = 'showroom',
-    prerender = true,
-    preloadAllCss = false,
-    prefetchAll = true,
-  } = providedBuildConfig;
+  const { outDir = 'showroom', prerender = true } = providedBuildConfig;
 
   _normalizedConfig = {
     ...defaultConfig,
     ...providedConfig,
-    preloadAllCss,
-    prefetchAll,
+    css: {
+      enabled: !!css,
+      usePostcss: !!(css && css.postcss),
+    },
     ignores,
     sections,
     basePath: providedBuildConfig.basePath

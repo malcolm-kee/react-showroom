@@ -1,7 +1,7 @@
 import * as React from 'react';
 import lazyWithPreload from 'react-lazy-with-preload';
 
-const SuspenseComponent = import.meta.env.SSR
+const SuspenseComponent = process.env.SSR
   ? function FakeSuspense(props: { children: React.ReactNode }) {
       return <React.Fragment>{props.children}</React.Fragment>;
     }
@@ -14,8 +14,7 @@ export const factoryMap = new Map<
   React.ComponentType<any> | undefined
 >();
 
-export const lazy: typeof React.lazy | typeof lazyWithPreload = import.meta.env
-  .SSR
+export const lazy: typeof React.lazy | typeof lazyWithPreload = process.env.SSR
   ? function ssrLazy(factory) {
       factoryMap.set(factory, undefined);
 
