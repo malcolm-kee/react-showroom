@@ -235,22 +235,6 @@ Modules that are required for your style guide. Useful for third-party styles or
 
 This is the preferred way to load global CSS, such as TailwindCSS.
 
-### `build.preloadAllCss`
-
-- Type: `boolean`
-- Default: `false`
-
-Preload all CSS.
-
-This is to minimize the flash of unstyled content.
-
-### `build.prefetchAll`
-
-- Type: `boolean`
-- Default: `true`
-
-Prefetch all resources using `<link rel="prefetch">` resource hints so when you navigate to other page the loading will happen faster.
-
 ### `wrapper`
 
 - Type: `string | undefined`

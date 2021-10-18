@@ -241,6 +241,9 @@ const createBaseWebpackConfig = (
         },
         {
           test: /\.(ts|tsx)$/,
+          resourceQuery: {
+            not: [/raw/],
+          },
           oneOf: [
             {
               resourceQuery: /showroomComponent/,

@@ -236,18 +236,6 @@ export interface ReactShowroomConfiguration {
      * @default ''
      */
     basePath?: string;
-    /**
-     * Preload all CSS to avoid possible screen flashing.
-     *
-     * @default true
-     */
-    preloadAllCss?: boolean;
-    /**
-     * Prefetch all resources using `<link rel="prefetch">` resource hints.
-     *
-     * @default true
-     */
-    prefetchAll?: boolean;
   };
   debug?: boolean;
 }
