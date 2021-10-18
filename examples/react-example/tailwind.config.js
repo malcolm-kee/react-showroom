@@ -11,7 +11,7 @@ module.exports = {
     './docs/**/*.jsx',
     './docs/**/*.tsx',
   ],
-  mode: 'aot',
+  mode: 'jit',
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {},
