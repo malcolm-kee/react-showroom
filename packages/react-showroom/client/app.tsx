@@ -26,7 +26,9 @@ export const App = () => {
       if (hashTarget) {
         let isCurrent = true;
 
-        import('scroll-into-view-if-needed').then((scroll) => {
+        import(
+          /* webpackChunkName: "scrollIntoView" */ 'scroll-into-view-if-needed'
+        ).then((scroll) => {
           if (isCurrent) {
             scroll.default(hashTarget, {
               scrollMode: 'if-needed',

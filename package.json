@@ -31,6 +31,7 @@
     "react-dom": "^17.0.2",
     "rimraf": "^3.0.2",
     "rollup": "^2.58.0",
+    "tailwindcss": "^2.2.17",
     "ts-jest": "^27.0.7",
     "type-fest": "^2.5.1",
     "why-is-node-running": "^2.2.0"

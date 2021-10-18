@@ -11,6 +11,7 @@ import remarkGfm from 'remark-gfm';
 import { remarkMdxFrontmatter } from 'remark-mdx-frontmatter';
 import * as webpack from 'webpack';
 import { merge } from 'webpack-merge';
+import { createHash } from '../lib/create-hash';
 import {
   generateCodeblocksData,
   generateSections,
@@ -24,6 +25,7 @@ import {
   resolveApp,
   resolveShowroom,
 } from '../lib/paths';
+import { pkgData } from '../lib/pkg-data';
 import { rehypeCodeAutoId } from '../plugins/rehype-code-auto-id';
 import { rehypeMdxHeadings } from '../plugins/rehype-mdx-headings';
 import { rehypeMetaAsAttribute } from '../plugins/rehype-meta-as-attribute';
@@ -162,7 +164,10 @@ export const createSsrWebpackConfig = (
 
 const createBaseWebpackConfig = (
   mode: Environment,
-  {
+  config: NormalizedReactShowroomConfiguration,
+  options: { ssr: boolean }
+): webpack.Configuration => {
+  const {
     prerender: prerenderConfig,
     css,
     url,
@@ -173,10 +178,9 @@ const createBaseWebpackConfig = (
     wrapper,
     docgen: docgenConfig,
     debug,
-    require: requireConfig,
-  }: NormalizedReactShowroomConfiguration,
-  options: { ssr: boolean }
-): webpack.Configuration => {
+    cacheDir,
+  } = config;
+
   const isProd = mode === 'production';
   const isDev = mode === 'development';
 
@@ -213,11 +217,11 @@ const createBaseWebpackConfig = (
       extensions: moduleFileExtensions.map((ext) => `.${ext}`),
     },
     output: {
-      filename: isProd ? 'assets/js/[name].[contenthash:8].js' : '[name].js',
+      filename: isProd ? '_assets/js/[name].[contenthash:8].js' : '[name].js',
       chunkFilename: isProd
-        ? 'assets/js/[name].[contenthash:8].js'
+        ? '_assets/js/[name].[contenthash:8].js'
         : '[name].js',
-      assetModuleFilename: 'assets/media/[name]-[contenthash][ext][query]',
+      assetModuleFilename: '_assets/media/[name]-[contenthash][ext][query]',
       clean: isProd,
     },
     module: {
@@ -394,7 +398,7 @@ const createBaseWebpackConfig = (
                       options: {
                         sourceMap: isProd,
                         postcssOptions: {
-                          config: resolveApp('postcss.config.js'),
+                          config: paths.appPostcssConfig,
                         },
                       },
                     }
@@ -408,11 +412,36 @@ const createBaseWebpackConfig = (
       modules: ['node_modules', path.resolve(__dirname, '../webpack-loader')],
     },
     devtool: isProd ? 'source-map' : 'cheap-module-source-map',
+    cache: cacheDir
+      ? {
+          type: 'filesystem',
+          name: `react-showroom-${mode}-${
+            prerenderConfig ? (options.ssr ? 'ssr' : 'client') : 'spa'
+          }`,
+          version: [
+            pkgData.version,
+            createHash(
+              JSON.stringify(config, (_, value) =>
+                typeof value === 'function' ? String(value) : value
+              )
+            ),
+          ].join('-'),
+          buildDependencies: {
+            config: [__filename, paths.appShowroomConfig],
+            ...(css.usePostcss
+              ? {
+                  css: [paths.appPostcssConfig],
+                }
+              : {}),
+          },
+          cacheDirectory: cacheDir,
+        }
+      : undefined,
     plugins: [
       isProd
         ? new MiniCssExtractPlugin({
-            filename: 'static/css/[name].[contenthash].css',
-            chunkFilename: 'static/css/[name].[contenthash].css',
+            filename: '_assets/css/[name].[contenthash].css',
+            chunkFilename: '_assets/css/[name].[contenthash].css',
           })
         : undefined,
       new webpack.EnvironmentPlugin({
@@ -426,6 +455,11 @@ const createBaseWebpackConfig = (
       }),
       virtualModules,
       isDev ? new ReactRefreshWebpackPlugin() : undefined,
+      isProd
+        ? new webpack.optimize.MinChunkSizePlugin({
+            minChunkSize: 1000,
+          })
+        : undefined,
     ].filter(isDefined),
     optimization: {
       minimize: !options.ssr && isProd,

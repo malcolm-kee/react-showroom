@@ -91,8 +91,9 @@ export const getConfig = (
     theme: providedThemeConfig = {},
     imports: providedImports,
     ignores = DEFAULT_IGNORES,
+    cacheDir = '.showroom_cache',
     css = {
-      postcss: fs.existsSync(path.resolve(paths.appPath, 'postcss.config.js')),
+      postcss: fs.existsSync(paths.appPostcssConfig),
     },
     ...providedConfig
   } = userConfig || getUserConfig(env, configFile);
@@ -151,6 +152,7 @@ export const getConfig = (
       : defaultConfig.basePath,
     assetDir: providedConfig.assetDir && resolveApp(providedConfig.assetDir),
     wrapper: providedConfig.wrapper && resolveApp(providedConfig.wrapper),
+    cacheDir: cacheDir ? resolveApp(cacheDir) : null,
     outDir,
     prerender,
     devServerPort: providedDevServerConfig.port || 6969,

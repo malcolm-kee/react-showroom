@@ -21,7 +21,7 @@ export const useCodeCompilation = (
   const result = useQuery({
     queryKey: getCompilationKey(code, lang),
     queryFn: () =>
-      import('./compile-code')
+      import(/* webpackChunkName: "compileCode" */ './compile-code')
         .then((m) => m.compileCode(code, lang))
         .then(
           (

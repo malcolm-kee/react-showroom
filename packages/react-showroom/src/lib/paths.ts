@@ -30,5 +30,6 @@ export const paths = {
   appShowroomConfig: resolveApp('react-showroom.config.js'),
   appTsConfig: resolveApp('tsconfig.json'),
   appPackageJson: resolveApp('package.json'),
+  appPostcssConfig: resolveApp('postcss.config.js'),
   showroomPath: resolveShowroom('.'),
 };

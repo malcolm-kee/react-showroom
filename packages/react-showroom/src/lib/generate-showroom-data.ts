@@ -4,7 +4,7 @@ import {
   ReactShowroomSectionConfig,
 } from '@showroomjs/core/react';
 import path from 'path';
-import { FileParser } from 'react-docgen-typescript';
+import { FileParser, ComponentDoc } from 'react-docgen-typescript';
 import slugify from 'slugify';
 
 let _nameIndex = 0;
@@ -58,26 +58,28 @@ export const generateCodeblocksData = (
 
 function compileComponentSection(
   component: ReactShowroomComponentSectionConfig,
+  componentDoc: ComponentDoc,
   rootDir: string
 ): string {
   const { docPath, sourcePath } = component;
 
   const load = docPath
     ? `async () => {
-  const loadDoc = import('${docPath}');
-  const loadMetadata = import('${docPath}');
-  const loadImports = import('${docPath}?showroomRemarkImports');
-  const loadCodeBlocks = import('${docPath}?showroomRemarkCodeblocks');
+  const loadDoc = import(/* webpackChunkName: "${componentDoc.displayName}-doc" */'${docPath}');
+  const loadImports = import(/* webpackChunkName: "${componentDoc.displayName}-imports" */'${docPath}?showroomRemarkImports');
+  const loadCodeBlocks = import(/* webpackChunkName: "${componentDoc.displayName}-codeblocks" */'${docPath}?showroomRemarkCodeblocks');
 
   return {
     doc: (await loadDoc).default,
-    metadata: (await import('${sourcePath}?showroomComponent')).default,
+    metadata: (await import(/* webpackChunkName: "${componentDoc.displayName}-metadata" */'${sourcePath}?showroomComponent')).default,
     imports: (await loadImports).imports || {},
     codeblocks: (await loadCodeBlocks).default || {},
   }    
 }`
     : `async () => ({
-  metadata: (await import('${sourcePath}?showroomComponent')).default,
+  metadata: (await import(/* webpackChunkName: "${
+    componentDoc ? componentDoc.displayName : ''
+  }-metadata" */'${sourcePath}?showroomComponent')).default,
   doc: null,
   imports: {},
   codeblocks: {},
@@ -119,7 +121,7 @@ export const generateSections = (
 
           return `{
               type: 'component',
-              data: ${compileComponentSection(section, rootDir)},
+              data: ${compileComponentSection(section, compMetadata, rootDir)},
               title: '${compMetadata && compMetadata.displayName}',
               description: \`${
                 compMetadata && compMetadata.description.replace(/`/g, '\\`')
@@ -147,6 +149,8 @@ export const generateSections = (
             path: `${section.sourcePath}?showroomFrontmatter`,
           });
 
+          const chunkName = `${section.title || section.slug || ''}${name}`;
+
           return `{
               type: 'markdown',
               fallbackTitle: '${section.title || ''}',
@@ -155,13 +159,15 @@ export const generateSections = (
               formatLabel: ${section.formatLabel.toString()},
               preloadUrl: '${path.relative(rootDir, section.sourcePath)}',
               load: async () => {
-                const loadComponent = import('${section.sourcePath}');
-                const loadImports = import('${
-                  section.sourcePath
-                }?showroomRemarkDocImports');
-                const loadCodeblocks = import('${
-                  section.sourcePath
-                }?showroomRemarkDocCodeblocks');
+                const loadComponent = import(/* webpackChunkName: "${chunkName}" */'${
+            section.sourcePath
+          }');
+                const loadImports = import(/* webpackChunkName: "${chunkName}-imports" */'${
+            section.sourcePath
+          }?showroomRemarkDocImports');
+                const loadCodeblocks = import(/* webpackChunkName: "${chunkName}-codeblocks" */'${
+            section.sourcePath
+          }?showroomRemarkDocCodeblocks');
 
                 const { default: Component, headings } = await loadComponent;
 

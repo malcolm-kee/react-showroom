@@ -13,7 +13,10 @@ import { StandalonePageContainer } from '../components/standalone-page-container
 import { lazy } from '../lib/lazy';
 
 const StandaloneEditor = lazy(
-  () => import('../components/standalone-editor-lazy')
+  () =>
+    import(
+      /* webpackChunkName: "standaloneEditor" */ '../components/standalone-editor-lazy'
+    )
 );
 
 export const MarkdownRoute = ({
