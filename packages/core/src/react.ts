@@ -237,6 +237,14 @@ export interface ReactShowroomConfiguration {
      */
     basePath?: string;
   };
+  /**
+   * Set cache directory for the build.
+   *
+   * Pass `false` to disable caching.
+   *
+   * @default '.showroom_cache'
+   */
+  cacheDir?: string | false;
   debug?: boolean;
 }
 
@@ -281,11 +289,12 @@ export type ReactShowroomSectionConfig =
 export interface NormalizedReactShowroomConfiguration
   extends Omit<
     ReactShowroomConfiguration,
-    'items' | 'devServer' | 'build' | 'components' | 'css'
+    'items' | 'devServer' | 'build' | 'components' | 'css' | 'cacheDir'
   > {
   sections: Array<ReactShowroomSectionConfig>;
   ignores: Array<string>;
   outDir: string;
+  cacheDir: string | null;
   prerender: boolean;
   basePath: string;
   /**

@@ -60,7 +60,9 @@ export const routes = sections.map(function mapSectionToRoute(
     const load = () =>
       Promise.all([
         section.data.load(),
-        import('./pages/component-doc-route'),
+        import(
+          /* webpackChunkName: "componentDocRoute" */ './pages/component-doc-route'
+        ),
       ]).then(([componentData, { ComponentDocRoute }]) => {
         function LazyComponentRoute() {
           return (
@@ -90,26 +92,30 @@ export const routes = sections.map(function mapSectionToRoute(
     const markdownSection = section;
 
     const load = () =>
-      Promise.all([section.load(), import('./pages/markdown-route')]).then(
-        ([sectionData, { MarkdownRoute }]) => {
-          function LazyMarkdownRoute() {
-            return (
-              <MarkdownRoute
-                section={markdownSection}
-                content={sectionData}
-                title={
-                  markdownSection.frontmatter.title ||
-                  markdownSection.fallbackTitle
-                }
-              />
-            );
-          }
-
-          return {
-            default: LazyMarkdownRoute,
-          };
+      Promise.all([
+        section.load(),
+        import(
+          /* webpackChunkName: "markdownRoute" */
+          './pages/markdown-route'
+        ),
+      ]).then(([sectionData, { MarkdownRoute }]) => {
+        function LazyMarkdownRoute() {
+          return (
+            <MarkdownRoute
+              section={markdownSection}
+              content={sectionData}
+              title={
+                markdownSection.frontmatter.title ||
+                markdownSection.fallbackTitle
+              }
+            />
+          );
         }
-      );
+
+        return {
+          default: LazyMarkdownRoute,
+        };
+      });
 
     const ui = lazy(load);
 

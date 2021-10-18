@@ -1,5 +1,6 @@
 node_modules/
 *.tsbuildinfo
 .DS_Store
+.showroom_cache
 
 yarn-error.log

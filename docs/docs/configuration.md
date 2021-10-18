@@ -243,6 +243,15 @@ Path to a module/file that export default a React component to wrap the entire s
 
 Use this to render context providers that your application need, e.g. Redux Provider.
 
+### `cacheDir`
+
+- Type: `string | false`
+- Default: `'.showroom_cache'`
+
+Cache directory for the build.
+
+Pass `false` to disable caching.
+
 ### `ignores`
 
 - Type: `Array<string>`
