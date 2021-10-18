@@ -1,5 +1,18 @@
 # react-showroom
 
+## 0.18.0
+
+### Minor Changes
+
+- fb83641: Switch back to webpack from vite
+
+### Patch Changes
+
+- Updated dependencies [fb83641]
+  - @showroomjs/bundles@0.12.0
+  - @showroomjs/core@0.14.0
+  - @showroomjs/ui@0.15.0
+
 ## 0.17.0
 
 ### Minor Changes

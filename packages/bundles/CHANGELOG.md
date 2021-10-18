@@ -1,5 +1,11 @@
 # @showroomjs/bundles
 
+## 0.12.0
+
+### Minor Changes
+
+- fb83641: Switch back to webpack from vite
+
 ## 0.11.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 0.14.0
+
+### Minor Changes
+
+- fb83641: Switch back to webpack from vite
+
 ## 0.13.0
 
 ### Minor Changes
