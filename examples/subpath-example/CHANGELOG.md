@@ -1,5 +1,12 @@
 # subpath-example
 
+## 0.10.16
+
+### Patch Changes
+
+- Updated dependencies [e46959b]
+  - react-showroom@0.19.0
+
 ## 0.10.15
 
 ### Patch Changes

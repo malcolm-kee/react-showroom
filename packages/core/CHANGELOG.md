@@ -1,5 +1,14 @@
 # @showroomjs/core
 
+## 0.15.0
+
+### Minor Changes
+
+- e46959b: Performance improvement
+
+  - Add `cacheDir` config options.
+  - Set minimum chunk size to avoid tiny chunk.
+
 ## 0.14.0
 
 ### Minor Changes

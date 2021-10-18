@@ -1,5 +1,20 @@
 # react-showroom
 
+## 0.19.0
+
+### Minor Changes
+
+- e46959b: Performance improvement
+
+  - Add `cacheDir` config options.
+  - Set minimum chunk size to avoid tiny chunk.
+
+### Patch Changes
+
+- Updated dependencies [e46959b]
+  - @showroomjs/core@0.15.0
+  - @showroomjs/ui@0.15.1
+
 ## 0.18.0
 
 ### Minor Changes
