@@ -288,8 +288,6 @@ export interface NormalizedReactShowroomConfiguration
   outDir: string;
   prerender: boolean;
   basePath: string;
-  preloadAllCss: boolean;
-  prefetchAll: boolean;
   /**
    * assetDirs in absolute paths
    */

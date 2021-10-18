@@ -135,12 +135,7 @@ export const getConfig = (
     }
   }
 
-  const {
-    outDir = 'showroom',
-    prerender = true,
-    preloadAllCss = false,
-    prefetchAll = true,
-  } = providedBuildConfig;
+  const { outDir = 'showroom', prerender = true } = providedBuildConfig;
 
   _normalizedConfig = {
     ...defaultConfig,
@@ -149,8 +144,6 @@ export const getConfig = (
       enabled: !!css,
       usePostcss: !!(css && css.postcss),
     },
-    preloadAllCss,
-    prefetchAll,
     ignores,
     sections,
     basePath: providedBuildConfig.basePath
