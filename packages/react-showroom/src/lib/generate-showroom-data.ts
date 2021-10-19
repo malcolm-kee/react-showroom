@@ -4,7 +4,7 @@ import {
   ReactShowroomSectionConfig,
 } from '@showroomjs/core/react';
 import path from 'path';
-import { FileParser, ComponentDoc } from 'react-docgen-typescript';
+import { ComponentDoc, FileParser } from 'react-docgen-typescript';
 import slugify from 'slugify';
 
 let _nameIndex = 0;

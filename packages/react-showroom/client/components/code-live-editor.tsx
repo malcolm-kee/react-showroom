@@ -1,24 +1,16 @@
-import { ArrowsExpandIcon, TerminalIcon } from '@heroicons/react/outline';
+import { ArrowsExpandIcon } from '@heroicons/react/outline';
 import { removeTrailingSlash, SupportedLanguage } from '@showroomjs/core';
-import {
-  Alert,
-  Collapsible,
-  css,
-  icons,
-  styled,
-  useDebounce,
-} from '@showroomjs/ui';
+import { Collapsible, css, icons, styled, useDebounce } from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
-import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { useCodeBlocks } from '../lib/codeblocks-context';
+import { useParentFrame } from '../lib/frame-message';
 import { Link, useRouteMatch } from '../lib/routing';
-import { useCodeCompilation } from '../lib/use-code-compilation';
-import { Div, Span } from './base';
+import { Div } from './base';
 import { BrowserWindow } from './browser-window';
 import { CodeEditor } from './code-editor';
-import { CodePreview } from './code-preview';
+import { CodePreviewFrame } from './code-preview-frame';
 
 export interface CodeLiveEditorProps {
   code: string;
@@ -27,12 +19,14 @@ export interface CodeLiveEditorProps {
   id?: string;
   className?: string;
   noEditor?: boolean;
+  frame?: boolean;
 }
 
 export const CodeLiveEditor = ({
   hasHeading,
   className,
   noEditor,
+  frame,
   ...props
 }: CodeLiveEditorProps) => {
   const theme = useCodeTheme();
@@ -41,21 +35,18 @@ export const CodeLiveEditor = ({
 
   const debouncedCode = useDebounce(code);
 
-  const errorBoundaryRef = React.useRef<ErrorBoundary>(null);
+  const [showCode, setShowCode] = React.useState<boolean | undefined>(false);
 
-  const { data, isCompiling, error, isError } = useCodeCompilation(
-    debouncedCode,
-    props.lang,
-    {
-      onSuccess: () => {
-        if (errorBoundaryRef.current) {
-          errorBoundaryRef.current.reset();
-        }
-      },
-    }
+  const { targetRef, sendMessage } = useParentFrame();
+
+  const encodedCode = React.useMemo(
+    () => encodeURIComponent(props.code),
+    [props.code]
   );
 
-  const [showCode, setShowCode] = React.useState<boolean | undefined>(false);
+  React.useEffect(() => {
+    sendMessage({ type: 'code', code: debouncedCode, lang: props.lang });
+  }, [debouncedCode]);
 
   const content = (
     <>
@@ -67,49 +58,17 @@ export const CodeLiveEditor = ({
           borderColor: '$gray-300',
           padding: '$1',
           roundedT: hasHeading ? '$none' : '$base',
+          resize: frame ? 'horizontal' : 'none',
+          overflow: frame ? 'hidden' : undefined,
         }}
       >
-        {isError ? (
-          <Alert variant="error">
-            {typeof error === 'string' ? error : 'Compilation error'}
-          </Alert>
+        {frame ? (
+          <Frame
+            ref={targetRef}
+            src={`/_preview.html?lang=${props.lang}&code=${encodedCode}`}
+          />
         ) : (
-          data &&
-          (data.type === 'success' ? (
-            <ErrorBoundary
-              FallbackComponent={ErrorFallback}
-              ref={errorBoundaryRef}
-            >
-              <CodePreview {...data} />
-            </ErrorBoundary>
-          ) : (
-            <Alert variant="error">{formatError(data.error)}</Alert>
-          ))
-        )}
-        {isCompiling && (
-          <Div
-            css={{
-              position: 'absolute',
-              right: 0,
-              top: 0,
-              bottom: 0,
-              px: '$4',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: 'rgba(229, 231, 235, 0.1)',
-              gap: '$2',
-            }}
-          >
-            <TerminalIcon width="20" height="20" className={icons()} />
-            <Span
-              css={{
-                color: '$gray-500',
-              }}
-            >
-              Compiling...
-            </Span>
-          </Div>
+          <CodePreviewFrame code={debouncedCode} lang={props.lang} />
         )}
       </Div>
       {!noEditor && (
@@ -199,14 +158,6 @@ const editorBottom = css({
   borderRadius: '$base',
 });
 
-const ErrorFallback = (props: FallbackProps) => {
-  return (
-    <Alert variant="error">
-      {props.error instanceof Error
-        ? props.error.message
-        : JSON.stringify(props.error)}
-    </Alert>
-  );
-};
-
-const formatError = (error: string) => error.replace(/<stdin>:|\"\\x0A\"/g, '');
+const Frame = styled('iframe', {
+  width: '100%',
+});

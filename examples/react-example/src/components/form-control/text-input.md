@@ -1,6 +1,6 @@
 Following is an example in TSX.
 
-```tsx
+```tsx frame
 import { TextInput } from 'components';
 
 const Example = () => {
@@ -11,6 +11,7 @@ const Example = () => {
       value={value}
       onValue={setValue}
       placeholder="Type something..."
+      className="text-lg sm:text-base"
     />
   );
 };

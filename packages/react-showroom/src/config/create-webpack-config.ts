@@ -17,6 +17,7 @@ import {
   generateSections,
   generateWrapper,
 } from '../lib/generate-showroom-data';
+import { getImportsAttach } from '../lib/get-client-import-map';
 import { logToStdout } from '../lib/log-to-stdout';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
 import {
@@ -56,10 +57,15 @@ export const createWebpackConfig = (
   const isProd = mode === 'production';
 
   const clientEntry = resolveShowroom('client-dist/client-entry.js');
+  const previewEntry = resolveShowroom('client-dist/preview.js');
 
   return mergeWebpackConfig(
     merge(baseConfig, {
-      entry: config.require ? config.require.concat(clientEntry) : clientEntry,
+      entry: {
+        ...(config.require ? { requireConfig: config.require } : {}),
+        showroom: clientEntry,
+        preview: previewEntry,
+      },
       output: {
         path: resolveApp(outDir),
         publicPath: prerenderConfig
@@ -91,18 +97,41 @@ export const createWebpackConfig = (
               <div id="target"><!--SSR-target--></div>
             </body>
           </html>`,
-          minify: isProd
-            ? {
-                collapseWhitespace: true,
-                keepClosingSlash: true,
-                removeComments: true,
-                ignoreCustomComments: prerenderConfig ? [/SSR-/] : [],
-                removeRedundantAttributes: true,
-                removeScriptTypeAttributes: true,
-                removeStyleLinkTypeAttributes: true,
-                useShortDoctype: true,
-              }
-            : false,
+          minify: isProd && {
+            collapseWhitespace: true,
+            keepClosingSlash: true,
+            removeComments: true,
+            ignoreCustomComments: prerenderConfig ? [/SSR-/] : [],
+            removeRedundantAttributes: true,
+            removeScriptTypeAttributes: true,
+            removeStyleLinkTypeAttributes: true,
+            useShortDoctype: true,
+          },
+          chunks: [config.require && 'requireConfig', 'showroom'].filter(
+            isDefined
+          ),
+        }),
+        new HtmlWebpackPlugin({
+          filename: '_preview.html',
+          templateContent: `<!DOCTYPE html><html lang="en">
+          <head><title>Preview ${
+            theme && theme.title ? `- ${theme.title}` : ''
+          }</title><meta charset="UTF-8" />
+          <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" /></head>
+          <body><div id="preview"></div></body></html>`,
+          minify: isProd && {
+            collapseWhitespace: true,
+            keepClosingSlash: true,
+            removeComments: true,
+            removeRedundantAttributes: true,
+            removeScriptTypeAttributes: true,
+            removeStyleLinkTypeAttributes: true,
+            useShortDoctype: true,
+          },
+          chunks: [config.require && 'requireConfig', 'preview'].filter(
+            isDefined
+          ),
         }),
         new WebpackMessages({
           name: 'showroom',
@@ -199,6 +228,8 @@ const createBaseWebpackConfig = (
       generateSections(sections, paths.showroomPath, docgenParser),
     [resolveShowroom('node_modules/react-showroom-wrapper.js')]:
       generateWrapper(wrapper),
+    [resolveShowroom('node_modules/react-showroom-imports.js')]:
+      getImportsAttach(imports || []),
   });
 
   const babelPreset = createBabelPreset(mode);
@@ -467,6 +498,9 @@ const createBaseWebpackConfig = (
         '...', // keep existing minimizer
         new CssMinimizerPlugin(),
       ],
+      splitChunks: {
+        chunks: 'all',
+      },
     },
     performance: {
       hints: false,
