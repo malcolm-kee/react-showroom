@@ -5,7 +5,7 @@ import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { useCodeBlocks } from '../lib/codeblocks-context';
-import { useParentFrame } from '../lib/frame-message';
+import { useParentWindow } from '../lib/frame-message';
 import { Link, useRouteMatch } from '../lib/routing';
 import { Div } from './base';
 import { BrowserWindow } from './browser-window';
@@ -37,7 +37,13 @@ export const CodeLiveEditor = ({
 
   const [showCode, setShowCode] = React.useState<boolean | undefined>(false);
 
-  const { targetRef, sendMessage } = useParentFrame();
+  const [frameHeight, setFrameHeight] = React.useState(100);
+
+  const { targetRef, sendMessage } = useParentWindow((ev) => {
+    if (ev.type === 'heightChange') {
+      setFrameHeight(ev.height);
+    }
+  });
 
   const encodedCode = React.useMemo(
     () => encodeURIComponent(props.code),
@@ -56,16 +62,17 @@ export const CodeLiveEditor = ({
           minHeight: 48,
           border: '1px solid',
           borderColor: '$gray-300',
-          padding: '$1',
           roundedT: hasHeading ? '$none' : '$base',
           resize: frame ? 'horizontal' : 'none',
-          overflow: frame ? 'hidden' : undefined,
+          overflow: frame ? 'auto' : undefined,
         }}
       >
         {frame ? (
           <Frame
             ref={targetRef}
             src={`/_preview.html?lang=${props.lang}&code=${encodedCode}`}
+            title="Preview"
+            height={frameHeight}
           />
         ) : (
           <CodePreviewFrame code={debouncedCode} lang={props.lang} />

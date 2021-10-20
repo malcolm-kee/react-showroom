@@ -97,12 +97,16 @@ interface ImportDefinition {
   name: string;
 }
 
-export const generateSections = (
+export const generateSectionsAndImports = (
   sections: Array<ReactShowroomSectionConfig>,
   rootDir: string,
   docgenParser: FileParser
 ) => {
   const imports: Array<ImportDefinition> = [];
+  const codeImportImports: Array<{
+    path: string;
+    name: string;
+  }> = [];
 
   function collect(sectionList: Array<ReactShowroomSectionConfig>): string {
     return `[${sectionList
@@ -118,6 +122,15 @@ export const generateSections = (
 
         if (section.type === 'component') {
           const compMetadata = docgenParser.parse(section.sourcePath)[0];
+
+          const name = getName('component');
+
+          if (section.docPath) {
+            codeImportImports.push({
+              name,
+              path: `${section.docPath}?showroomRemarkImports`,
+            });
+          }
 
           return `{
               type: 'component',
@@ -147,6 +160,11 @@ export const generateSections = (
             type: 'default',
             name: `${name}_frontmatter`,
             path: `${section.sourcePath}?showroomFrontmatter`,
+          });
+
+          codeImportImports.push({
+            name,
+            path: `${section.sourcePath}?showroomRemarkDocImports`,
           });
 
           const chunkName = `${section.title || section.slug || ''}${name}`;
@@ -188,14 +206,22 @@ export const generateSections = (
 
   const result = collect(sections);
 
-  return `${imports
-    .map((imp) =>
-      imp.type === 'default'
-        ? `import ${imp.name} from '${imp.path}';`
-        : `import * as ${imp.name} from '${imp.path}';`
-    )
-    .join('\n')}
-    export default ${result}`;
+  return {
+    sections: `${imports
+      .map((imp) =>
+        imp.type === 'default'
+          ? `import ${imp.name} from '${imp.path}';`
+          : `import * as ${imp.name} from '${imp.path}';`
+      )
+      .join('\n')}
+    export default ${result}`,
+    allImports: `${codeImportImports
+      .map((imp) => `import * as ${imp.name} from '${imp.path}';`)
+      .join('\n')}
+    export default Object.assign({}, ${codeImportImports
+      .map((imp) => `${imp.name}.imports`)
+      .join(', ')});`,
+  };
 };
 
 export const generateWrapper = (wrapper: string | undefined) => {

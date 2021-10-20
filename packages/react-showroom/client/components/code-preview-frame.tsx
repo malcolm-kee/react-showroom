@@ -18,18 +18,17 @@ export const CodePreviewFrame = (props: CodePreviewFrameProps) => {
 
   const { data, isCompiling, error, isError } = useCodeCompilation(
     props.code,
-    props.lang,
-    {
-      onSuccess: () => {
-        if (errorBoundaryRef.current) {
-          errorBoundaryRef.current.reset();
-        }
-      },
-    }
+    props.lang
   );
 
+  React.useEffect(() => {
+    if (errorBoundaryRef.current) {
+      errorBoundaryRef.current.reset();
+    }
+  }, [props.code]);
+
   return (
-    <Div css={{ position: 'relative' }}>
+    <Div css={{ position: 'relative', padding: '$1' }}>
       {isError ? (
         <Alert variant="error">
           {typeof error === 'string' ? error : 'Compilation error'}

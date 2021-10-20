@@ -21,7 +21,7 @@ render(<Example />);
 
 Works with third-party library too.
 
-```tsx
+```tsx frame
 import { TextInput } from 'components';
 import { useForm } from 'react-hook-form';
 

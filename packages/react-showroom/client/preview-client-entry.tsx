@@ -3,12 +3,18 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { createQueryClient } from './lib/create-query-client';
 import { PreviewApp } from './preview-app';
+import { Router } from './lib/routing';
+import { basename, isPrerender } from './lib/config';
 
 const queryClient = createQueryClient();
 
-ReactDOM.render(
-  <QueryClientProvider client={queryClient}>
-    <PreviewApp />
-  </QueryClientProvider>,
+const render = isPrerender ? ReactDOM.hydrate : ReactDOM.render;
+
+render(
+  <Router basename={`${basename}/_preview`}>
+    <QueryClientProvider client={queryClient}>
+      <PreviewApp />
+    </QueryClientProvider>
+  </Router>,
   document.getElementById('preview')
 );

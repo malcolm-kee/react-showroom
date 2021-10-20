@@ -11,7 +11,6 @@ import { createWebpackConfig } from '../config/create-webpack-config';
 import { getConfig } from '../lib/get-config';
 import { logToStdout } from '../lib/log-to-stdout';
 import { prepareUrls } from '../lib/prepare-url';
-import { writeIndexHtml } from '../lib/write-index-html';
 
 const { openBrowser } = require(path.resolve(
   __dirname,
@@ -33,8 +32,6 @@ export async function startDevServer(
 
   const config = getConfig('development', configFile, userConfig);
 
-  writeIndexHtml(config.theme);
-
   const { devServerPort, assetDir } = config;
 
   const HOST = '0.0.0.0';
@@ -48,7 +45,12 @@ export async function startDevServer(
       logging: 'none',
     },
     hot: true, // hot reload replacement not supported for module federation
-    historyApiFallback: true,
+    historyApiFallback: {
+      rewrites: [
+        { from: /^\/_preview/, to: '/_preview.html' },
+        { from: /./, to: '/index.html' },
+      ],
+    },
     static: {
       directory: assetDir,
       watch: true,

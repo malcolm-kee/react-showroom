@@ -3,9 +3,9 @@ import {
   CompilationErrorResult,
   CompilationSuccessResult,
   getCompilationKey,
-  getSafeName,
   SupportedLanguage,
 } from '@showroomjs/core';
+import { addMissingImports } from './add-missing-imports';
 import { useCodeImports } from './code-imports-context';
 
 export const useCodeCompilation = (
@@ -34,13 +34,17 @@ export const useCodeCompilation = (
               return Promise.resolve(result);
             }
 
-            return prepareImports(
-              precompiledImports,
-              result.importedPackages
-            ).then((finalImports) => ({
-              ...result,
-              imports: finalImports,
-            }));
+            return new Promise((fulfill) => {
+              addMissingImports(
+                precompiledImports,
+                result.importedPackages,
+                (imports) =>
+                  fulfill({
+                    ...result,
+                    imports,
+                  })
+              );
+            });
           }
         ),
     keepPreviousData: true,
@@ -51,50 +55,4 @@ export const useCodeCompilation = (
     ...result,
     isCompiling: result.isLoading || result.isFetching,
   };
-};
-
-const nonLocalRegex = /^[a-z][a-zA-Z\-\/]+/;
-
-const hasOwnProperty = Object.prototype.hasOwnProperty;
-
-const prepareImports = (
-  precompiledImports: Record<string, any>,
-  importedPackages: Array<string>
-): Promise<Record<string, any>> => {
-  const newImporteds = importedPackages.filter(
-    (pkg) =>
-      nonLocalRegex.test(pkg) &&
-      !hasOwnProperty.call(precompiledImports, getSafeName(pkg))
-  );
-
-  if (newImporteds.length > 0) {
-    const result = { ...precompiledImports };
-
-    return Promise.all(
-      newImporteds.map((newPkg) =>
-        loadRemotePackage(newPkg).then((newModule) => {
-          result[getSafeName(newPkg)] = newModule;
-        })
-      )
-    ).then(() => result);
-  }
-
-  return Promise.resolve(precompiledImports);
-};
-
-const remotePackageMap = new Map<string, any>();
-
-export const loadRemotePackage = (pkgName: string) => {
-  const cached = remotePackageMap.get(pkgName);
-
-  if (cached) {
-    return Promise.resolve(cached);
-  }
-
-  return import(
-    /* webpackIgnore: true */ `https://cdn.skypack.dev/${pkgName}`
-  ).then((result) => {
-    remotePackageMap.set(pkgName, result);
-    return result;
-  });
 };

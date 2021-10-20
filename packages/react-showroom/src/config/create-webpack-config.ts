@@ -14,10 +14,9 @@ import { merge } from 'webpack-merge';
 import { createHash } from '../lib/create-hash';
 import {
   generateCodeblocksData,
-  generateSections,
+  generateSectionsAndImports,
   generateWrapper,
 } from '../lib/generate-showroom-data';
-import { getImportsAttach } from '../lib/get-client-import-map';
 import { logToStdout } from '../lib/log-to-stdout';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
 import {
@@ -57,7 +56,7 @@ export const createWebpackConfig = (
   const isProd = mode === 'production';
 
   const clientEntry = resolveShowroom('client-dist/client-entry.js');
-  const previewEntry = resolveShowroom('client-dist/preview.js');
+  const previewEntry = resolveShowroom('client-dist/preview-client-entry.js');
 
   return mergeWebpackConfig(
     merge(baseConfig, {
@@ -218,6 +217,12 @@ const createBaseWebpackConfig = (
     docgenConfig.options
   );
 
+  const generated = generateSectionsAndImports(
+    sections,
+    paths.showroomPath,
+    docgenParser
+  );
+
   const virtualModules = new VirtualModulesPlugin({
     // create a virtual module that consists of parsed code blocks
     // so we can pregenerate during build time for better SSR
@@ -225,11 +230,11 @@ const createBaseWebpackConfig = (
       generateCodeblocksData(sections),
     // a virtual module that consists of all the sections and component metadata.
     [resolveShowroom('node_modules/react-showroom-sections.js')]:
-      generateSections(sections, paths.showroomPath, docgenParser),
+      generated.sections,
     [resolveShowroom('node_modules/react-showroom-wrapper.js')]:
       generateWrapper(wrapper),
-    [resolveShowroom('node_modules/react-showroom-imports.js')]:
-      getImportsAttach(imports || []),
+    [resolveShowroom('node_modules/react-showroom-all-imports.js')]:
+      generated.allImports,
   });
 
   const babelPreset = createBabelPreset(mode);

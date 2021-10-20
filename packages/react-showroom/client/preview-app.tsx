@@ -1,11 +1,13 @@
 import { SupportedLanguage } from '@showroomjs/core';
 import { parse } from 'qs-lite';
 import * as React from 'react';
-import { imports } from 'react-showroom-imports';
+import allImports from 'react-showroom-all-imports';
 import Wrapper from 'react-showroom-wrapper';
 import { CodePreviewFrame } from './components/code-preview-frame';
 import { CodeImportsContextProvider } from './lib/code-imports-context';
-import { useChildFrame } from './lib/frame-message';
+import { usePreviewWindow } from './lib/frame-message';
+import { Route, useParams } from './lib/routing';
+import { useHeightChange } from './lib/use-height-change';
 
 export interface CodeState {
   code: string;
@@ -18,11 +20,31 @@ const defaultState: CodeState = {
 };
 
 export const PreviewApp = () => {
+  return (
+    <Wrapper>
+      <CodeImportsContextProvider value={allImports}>
+        {/* TODO: use codeHash to load initial code so can server side rendering */}
+        <Route path="/:codeHash">
+          <PreviewPage />
+        </Route>
+      </CodeImportsContextProvider>
+    </Wrapper>
+  );
+};
+
+const PreviewPage = () => {
   const queryParams = useQueryParams();
   const code = React.useMemo(
     () => queryParams.code && decodeURIComponent(queryParams.code),
     [queryParams.code]
   );
+
+  const params = useParams<{ codeHash: string }>();
+
+  if (!params.codeHash) {
+    console.log(params);
+  }
+
   const [state, setState] = React.useState(
     code && queryParams.lang
       ? {
@@ -32,19 +54,22 @@ export const PreviewApp = () => {
       : defaultState
   );
 
-  useChildFrame((data) => {
+  const { sendParent } = usePreviewWindow((data) => {
     if (data.type === 'code') {
       setState(data as any as CodeState);
     }
   });
 
-  return (
-    <Wrapper>
-      <CodeImportsContextProvider value={imports}>
-        <CodePreviewFrame {...state} />
-      </CodeImportsContextProvider>
-    </Wrapper>
+  useHeightChange(
+    typeof window === 'undefined' ? null : window.document.body,
+    (height) =>
+      sendParent({
+        type: 'heightChange',
+        height,
+      })
   );
+
+  return <CodePreviewFrame {...state} />;
 };
 
 const useQueryParams = <
