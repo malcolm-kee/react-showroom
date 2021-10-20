@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 0.16.0
+
+### Minor Changes
+
+- ef26422: Support render example in iframe
+
 ## 0.15.0
 
 ### Minor Changes

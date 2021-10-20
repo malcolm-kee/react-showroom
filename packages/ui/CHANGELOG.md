@@ -1,5 +1,16 @@
 # @showroomjs/ui
 
+## 0.16.0
+
+### Minor Changes
+
+- ef26422: Support render example in iframe
+
+### Patch Changes
+
+- Updated dependencies [ef26422]
+  - @showroomjs/core@0.16.0
+
 ## 0.15.1
 
 ### Patch Changes
