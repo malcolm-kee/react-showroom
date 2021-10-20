@@ -28,7 +28,12 @@ export const CodePreviewFrame = (props: CodePreviewFrameProps) => {
   }, [props.code]);
 
   return (
-    <Div css={{ position: 'relative', padding: '$1' }}>
+    <Div
+      css={{
+        position: 'relative',
+        padding: '$1',
+      }}
+    >
       {isError ? (
         <Alert variant="error">
           {typeof error === 'string' ? error : 'Compilation error'}

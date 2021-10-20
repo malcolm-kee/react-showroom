@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 export const useHeightChange = (
-  el: HTMLElement | null,
+  el: Element | null,
   onChange: (height: number) => void
 ) => {
   const onChangeCb = React.useMemo(() => debounce(onChange), [onChange]);
@@ -15,7 +15,7 @@ export const useHeightChange = (
     });
 
     if (el) {
-      observer.observe(el);
+      observer.observe(el, { box: 'border-box' });
     }
     return () => observer.disconnect();
   }, [el]);

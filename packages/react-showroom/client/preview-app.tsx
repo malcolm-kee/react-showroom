@@ -1,4 +1,5 @@
 import { SupportedLanguage } from '@showroomjs/core';
+import { Alert } from '@showroomjs/ui';
 import { parse } from 'qs-lite';
 import * as React from 'react';
 import allImports from 'react-showroom-all-imports';
@@ -6,8 +7,26 @@ import Wrapper from 'react-showroom-wrapper';
 import { CodePreviewFrame } from './components/code-preview-frame';
 import { CodeImportsContextProvider } from './lib/code-imports-context';
 import { usePreviewWindow } from './lib/frame-message';
-import { Route, useParams } from './lib/routing';
+import { Route, Switch, useLocation, useParams } from './lib/routing';
 import { useHeightChange } from './lib/use-height-change';
+
+export const PreviewApp = () => {
+  return (
+    <Wrapper>
+      <CodeImportsContextProvider value={allImports}>
+        <Switch>
+          {/* TODO: use codeHash to load initial code so can server side rendering */}
+          <Route path="/:codeHash">
+            <PreviewPage />
+          </Route>
+          <Route>
+            <ErrorPage />
+          </Route>
+        </Switch>
+      </CodeImportsContextProvider>
+    </Wrapper>
+  );
+};
 
 export interface CodeState {
   code: string;
@@ -17,19 +36,6 @@ export interface CodeState {
 const defaultState: CodeState = {
   code: '',
   lang: 'tsx',
-};
-
-export const PreviewApp = () => {
-  return (
-    <Wrapper>
-      <CodeImportsContextProvider value={allImports}>
-        {/* TODO: use codeHash to load initial code so can server side rendering */}
-        <Route path="/:codeHash">
-          <PreviewPage />
-        </Route>
-      </CodeImportsContextProvider>
-    </Wrapper>
-  );
 };
 
 const PreviewPage = () => {
@@ -61,7 +67,7 @@ const PreviewPage = () => {
   });
 
   useHeightChange(
-    typeof window === 'undefined' ? null : window.document.body,
+    typeof window === 'undefined' ? null : window.document.documentElement,
     (height) =>
       sendParent({
         type: 'heightChange',
@@ -72,14 +78,27 @@ const PreviewPage = () => {
   return <CodePreviewFrame {...state} />;
 };
 
+const ErrorPage = () => {
+  return (
+    <div>
+      <Alert variant="error">
+        Something goes wrong. This is probably a bug in{' '}
+        <code>react-showroom</code>.
+      </Alert>
+    </div>
+  );
+};
+
 const useQueryParams = <
   Params extends { [key: string]: string | string[] | undefined } = {
     [key: string]: string | undefined;
   }
 >() => {
+  const location = useLocation();
+
   const params = React.useMemo(
     () => getQueryParams(location.search),
-    [location.search]
+    [location]
   );
 
   return params as Params;

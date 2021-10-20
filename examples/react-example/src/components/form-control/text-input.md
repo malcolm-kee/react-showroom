@@ -16,7 +16,16 @@ const Example = () => {
   );
 };
 
-render(<Example />);
+render(
+  <div>
+    <Example />
+    <Example />
+    <Example />
+    <Example />
+    <Example />
+    <Example />
+  </div>
+);
 ```
 
 Works with third-party library too.

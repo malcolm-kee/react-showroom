@@ -1,10 +1,10 @@
 import { QueryClientProvider } from '@showroomjs/bundles/query';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { createQueryClient } from './lib/create-query-client';
-import { PreviewApp } from './preview-app';
-import { Router } from './lib/routing';
 import { basename, isPrerender } from './lib/config';
+import { createQueryClient } from './lib/create-query-client';
+import { HashRouter as Router } from './lib/routing';
+import { PreviewApp } from './preview-app';
 
 const queryClient = createQueryClient();
 

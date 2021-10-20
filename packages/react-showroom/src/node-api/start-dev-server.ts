@@ -24,6 +24,8 @@ export interface StartServerOptions extends ReactShowroomConfiguration {
   configFile?: string;
 }
 
+type DevServerConfig = webpackDevServer.Configuration;
+
 export async function startDevServer(
   userConfig?: ReactShowroomConfiguration,
   configFile?: string
@@ -38,24 +40,31 @@ export async function startDevServer(
   const PORT = Number((argv as any).port ?? process.env.PORT ?? devServerPort);
 
   const webpackConfig = createWebpackConfig('development', config);
-  const devServerOptions: webpackDevServer.Configuration = {
-    port: PORT,
-    host: HOST,
-    client: {
-      logging: 'none',
+  const devServerOptions = Object.assign<DevServerConfig, DevServerConfig>(
+    {
+      port: PORT,
+      host: HOST,
+      client: {
+        logging: 'none',
+      },
+      hot: true,
+      historyApiFallback: true, // TODO: use the following once we prerender the example
+      // historyApiFallback:  {
+      //   rewrites: [
+      //     { from: /^\/_preview/, to: '/_preview.html' },
+      //     { from: /./, to: '/index.html' },
+      //   ],
+      // },
     },
-    hot: true, // hot reload replacement not supported for module federation
-    historyApiFallback: {
-      rewrites: [
-        { from: /^\/_preview/, to: '/_preview.html' },
-        { from: /./, to: '/index.html' },
-      ],
-    },
-    static: {
-      directory: assetDir,
-      watch: true,
-    },
-  };
+    assetDir
+      ? {
+          static: {
+            directory: assetDir,
+            watch: true,
+          },
+        }
+      : {}
+  );
 
   const compiler = webpack(webpackConfig);
 

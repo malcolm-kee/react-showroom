@@ -1,4 +1,5 @@
 export {
+  HashRouter,
   matchPath,
   MemoryRouter,
   Route,

@@ -1,11 +1,20 @@
 import { ArrowsExpandIcon } from '@heroicons/react/outline';
 import { removeTrailingSlash, SupportedLanguage } from '@showroomjs/core';
-import { Collapsible, css, icons, styled, useDebounce } from '@showroomjs/ui';
+import {
+  Collapsible,
+  css,
+  icons,
+  ResizeIcon,
+  styled,
+  useDebounce,
+} from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
+import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { useCodeBlocks } from '../lib/codeblocks-context';
 import { useParentWindow } from '../lib/frame-message';
+import { getPreviewUrl } from '../lib/preview-url';
 import { Link, useRouteMatch } from '../lib/routing';
 import { Div } from './base';
 import { BrowserWindow } from './browser-window';
@@ -39,6 +48,9 @@ export const CodeLiveEditor = ({
 
   const [frameHeight, setFrameHeight] = React.useState(100);
 
+  const [isResizing, setIsResizing] = React.useState(false);
+  const sizeEl = React.useRef<HTMLDivElement>(null);
+
   const { targetRef, sendMessage } = useParentWindow((ev) => {
     if (ev.type === 'heightChange') {
       setFrameHeight(ev.height);
@@ -59,21 +71,56 @@ export const CodeLiveEditor = ({
       <Div
         css={{
           position: 'relative',
-          minHeight: 48,
-          border: '1px solid',
-          borderColor: '$gray-300',
           roundedT: hasHeading ? '$none' : '$base',
-          resize: frame ? 'horizontal' : 'none',
-          overflow: frame ? 'auto' : undefined,
+          ...(frame
+            ? {
+                backgroundColor: '$gray-400',
+                borderBottomRightRadius: '$base',
+              }
+            : {
+                minHeight: 48,
+                border: '1px solid',
+                borderColor: '$gray-300',
+              }),
         }}
       >
         {frame ? (
-          <Frame
-            ref={targetRef}
-            src={`/_preview.html?lang=${props.lang}&code=${encodedCode}`}
-            title="Preview"
-            height={frameHeight}
-          />
+          <Resizable
+            className={resizable({
+              animate: !isResizing,
+            })}
+            maxHeight={frameHeight}
+            minHeight={frameHeight}
+            minWidth={320 + handleWidth + 2}
+            maxWidth="100%"
+            enable={resizeEnable}
+            handleStyles={{
+              right: {
+                width: 4 + handleWidth,
+              },
+            }}
+            onResizeStart={() => setIsResizing(true)}
+            onResizeStop={() => setIsResizing(false)}
+            onResize={(_, __, el) => {
+              if (sizeEl.current) {
+                sizeEl.current.textContent = `${
+                  el.clientWidth - handleWidth
+                }px`;
+              }
+            }}
+          >
+            <Frame
+              ref={targetRef}
+              src={getPreviewUrl(props.id, encodedCode, props.lang)}
+              title="Preview"
+              height={frameHeight}
+              animate={!isResizing}
+            />
+            <ResizeHandle>
+              <HandleIcon width={16} height={16} />
+            </ResizeHandle>
+            {isResizing && <SizeDisplay ref={sizeEl} />}
+          </Resizable>
         ) : (
           <CodePreviewFrame code={debouncedCode} lang={props.lang} />
         )}
@@ -106,7 +153,7 @@ export const CodeLiveEditor = ({
             </Collapsible.Button>
             <LinkToStandaloneView code={props.code} />
           </Div>
-          <Collapsible.Content>
+          <Collapsible.Content animate>
             <CodeEditor
               code={code}
               onChange={setCode}
@@ -150,6 +197,8 @@ const LinkToStandaloneView = (props: { code: string }) => {
   ) : null;
 };
 
+const handleWidth = 16;
+
 const Button = styled('button', {
   display: 'inline-flex',
   alignItems: 'center',
@@ -165,6 +214,66 @@ const editorBottom = css({
   borderRadius: '$base',
 });
 
+const resizable = css({
+  overflow: 'hidden',
+  display: 'flex',
+  border: '1px solid',
+  borderColor: '$gray-300',
+  borderTopRightRadius: '$base',
+  borderBottomRightRadius: '$base',
+  backgroundColor: 'White',
+  variants: {
+    animate: {
+      true: {
+        transition: 'max-height 300ms ease-in-out',
+      },
+    },
+  },
+});
+
+const resizeEnable: ResizeEnable = {
+  top: false,
+  right: true,
+  bottom: false,
+  left: false,
+  topRight: false,
+  bottomRight: false,
+  bottomLeft: false,
+  topLeft: false,
+};
+
+const SizeDisplay = styled('div', {
+  position: 'absolute',
+  top: 1,
+  right: 16,
+  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+  fontSize: '$xs',
+  lineHeight: '$xs',
+  px: '$3',
+  py: '$1',
+});
+
+const ResizeHandle = styled('div', {
+  flexShrink: 0,
+  width: handleWidth,
+  backgroundColor: '$gray-200',
+  display: 'flex',
+  alignItems: 'center',
+});
+
+const HandleIcon = styled(ResizeIcon, {
+  color: '$gray-500',
+});
+
 const Frame = styled('iframe', {
   width: '100%',
+  flex: 1,
+  border: 0,
+  variants: {
+    animate: {
+      true: {
+        transition: 'height 300ms ease-in-out',
+      },
+    },
+  },
 });

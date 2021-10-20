@@ -99,7 +99,7 @@ const ComponentPropsTable = (props: {
           Props
         </Collapsible.Button>
       </Div>
-      <Collapsible.Content>
+      <Collapsible.Content animate>
         <Table>
           <thead>
             <Table.Tr>
