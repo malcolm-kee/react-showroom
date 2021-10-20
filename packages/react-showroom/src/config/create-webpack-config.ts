@@ -14,7 +14,7 @@ import { merge } from 'webpack-merge';
 import { createHash } from '../lib/create-hash';
 import {
   generateCodeblocksData,
-  generateSections,
+  generateSectionsAndImports,
   generateWrapper,
 } from '../lib/generate-showroom-data';
 import { logToStdout } from '../lib/log-to-stdout';
@@ -56,17 +56,18 @@ export const createWebpackConfig = (
   const isProd = mode === 'production';
 
   const clientEntry = resolveShowroom('client-dist/client-entry.js');
+  const previewEntry = resolveShowroom('client-dist/preview-client-entry.js');
 
   return mergeWebpackConfig(
     merge(baseConfig, {
-      entry: config.require ? config.require.concat(clientEntry) : clientEntry,
+      entry: {
+        ...(config.require ? { requireConfig: config.require } : {}),
+        showroom: clientEntry,
+        preview: previewEntry,
+      },
       output: {
         path: resolveApp(outDir),
-        publicPath: prerenderConfig
-          ? !isProd
-            ? '/'
-            : `${basePath}/` // need to add trailing slash
-          : 'auto',
+        publicPath: !isProd ? '/' : `${basePath}/`, // need to add trailing slash
       },
       plugins: [
         new HtmlWebpackPlugin({
@@ -91,18 +92,46 @@ export const createWebpackConfig = (
               <div id="target"><!--SSR-target--></div>
             </body>
           </html>`,
-          minify: isProd
-            ? {
-                collapseWhitespace: true,
-                keepClosingSlash: true,
-                removeComments: true,
-                ignoreCustomComments: prerenderConfig ? [/SSR-/] : [],
-                removeRedundantAttributes: true,
-                removeScriptTypeAttributes: true,
-                removeStyleLinkTypeAttributes: true,
-                useShortDoctype: true,
-              }
-            : false,
+          minify: isProd && {
+            collapseWhitespace: true,
+            keepClosingSlash: true,
+            removeComments: true,
+            ignoreCustomComments: prerenderConfig ? [/SSR-/] : [],
+            removeRedundantAttributes: true,
+            removeScriptTypeAttributes: true,
+            removeStyleLinkTypeAttributes: true,
+            useShortDoctype: true,
+          },
+          chunks: [config.require && 'requireConfig', 'showroom'].filter(
+            isDefined
+          ),
+        }),
+        new HtmlWebpackPlugin({
+          filename: '_preview.html',
+          templateContent: `<!DOCTYPE html><html lang="en">
+          <head><title>Preview ${
+            theme && theme.title ? `- ${theme.title}` : ''
+          }</title><meta charset="UTF-8" />
+          <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+          ${
+            theme.resetCss
+              ? `<style>*,::after,::before{box-sizing:border-box}html{-moz-tab-size:4;tab-size:4}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji'}hr{height:0;color:inherit}abbr[title]{text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Consolas,'Liberation Mono',Menlo,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}::-moz-focus-inner{border-style:none;padding:0}:-moz-focusring{outline:1px dotted ButtonText}:-moz-ui-invalid{box-shadow:none}legend{padding:0}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}</style>`
+              : ''
+          }</head>
+          <body><div id="preview"></div></body></html>`,
+          minify: isProd && {
+            collapseWhitespace: true,
+            keepClosingSlash: true,
+            removeComments: true,
+            removeRedundantAttributes: true,
+            removeScriptTypeAttributes: true,
+            removeStyleLinkTypeAttributes: true,
+            useShortDoctype: true,
+          },
+          chunks: [config.require && 'requireConfig', 'preview'].filter(
+            isDefined
+          ),
         }),
         new WebpackMessages({
           name: 'showroom',
@@ -136,14 +165,17 @@ export const createSsrWebpackConfig = (
 ): webpack.Configuration => {
   const baseConfig = createBaseWebpackConfig(mode, config, { ssr: true });
 
-  const clientEntry = resolveShowroom('client-dist/server-entry.js');
+  const server = resolveShowroom('client-dist/server-entry.js');
 
   return mergeWebpackConfig(
     merge(baseConfig, {
-      entry: config.require ? config.require.concat(clientEntry) : clientEntry,
+      entry: {
+        ...(config.require ? { requireConfig: config.require } : {}),
+        prerender: server,
+      },
       output: {
         path: resolveApp(`${outDir}/server`),
-        filename: 'prerender.js',
+        filename: '[name].js',
         library: {
           type: 'commonjs',
         },
@@ -189,6 +221,12 @@ const createBaseWebpackConfig = (
     docgenConfig.options
   );
 
+  const generated = generateSectionsAndImports(
+    sections,
+    paths.showroomPath,
+    docgenParser
+  );
+
   const virtualModules = new VirtualModulesPlugin({
     // create a virtual module that consists of parsed code blocks
     // so we can pregenerate during build time for better SSR
@@ -196,9 +234,11 @@ const createBaseWebpackConfig = (
       generateCodeblocksData(sections),
     // a virtual module that consists of all the sections and component metadata.
     [resolveShowroom('node_modules/react-showroom-sections.js')]:
-      generateSections(sections, paths.showroomPath, docgenParser),
+      generated.sections,
     [resolveShowroom('node_modules/react-showroom-wrapper.js')]:
       generateWrapper(wrapper),
+    [resolveShowroom('node_modules/react-showroom-all-imports.js')]:
+      generated.allImports,
   });
 
   const babelPreset = createBabelPreset(mode);
@@ -467,6 +507,9 @@ const createBaseWebpackConfig = (
         '...', // keep existing minimizer
         new CssMinimizerPlugin(),
       ],
+      splitChunks: {
+        chunks: 'all',
+      },
     },
     performance: {
       hints: false,

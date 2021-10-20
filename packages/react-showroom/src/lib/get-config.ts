@@ -24,7 +24,7 @@ import { createHash } from './create-hash';
 import { logToStdout } from './log-to-stdout';
 import { paths, resolveApp } from './paths';
 
-const DEFAULT_COMPONENTS_GLOB = 'src/components/**/*.{ts,tsx}';
+const DEFAULT_COMPONENTS_GLOB = 'src/components/**/*.tsx';
 const DEFAULT_IGNORES = [
   '**/__tests__/**',
   '**/*.test.{ts,tsx}',

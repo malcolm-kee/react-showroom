@@ -1,6 +1,6 @@
 Following is an example in TSX.
 
-```tsx
+```tsx frame
 import { TextInput } from 'components';
 
 const Example = () => {
@@ -11,16 +11,26 @@ const Example = () => {
       value={value}
       onValue={setValue}
       placeholder="Type something..."
+      className="text-lg sm:text-base"
     />
   );
 };
 
-render(<Example />);
+render(
+  <div>
+    <Example />
+    <Example />
+    <Example />
+    <Example />
+    <Example />
+    <Example />
+  </div>
+);
 ```
 
 Works with third-party library too.
 
-```tsx
+```tsx frame
 import { TextInput } from 'components';
 import { useForm } from 'react-hook-form';
 

@@ -28,6 +28,7 @@ export interface CodeProps extends React.ComponentPropsWithoutRef<'code'> {
   inlineBlock?: boolean;
   fileName?: string;
   noEditor?: boolean;
+  frame?: boolean;
 }
 
 export const Code = ({
@@ -35,6 +36,7 @@ export const Code = ({
   inlineBlock,
   fileName,
   noEditor,
+  frame,
   ...props
 }: CodeProps) => {
   const isBlockCode = React.useContext(IsBlockCodeContext);
@@ -101,6 +103,7 @@ export const Code = ({
         id={props.id}
         hasHeading={!!heading}
         noEditor={noEditor}
+        frame={frame}
       />
     </>
   );

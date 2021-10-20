@@ -1,5 +1,4 @@
 export {
-  BrowserRouter,
   HashRouter,
   matchPath,
   MemoryRouter,
@@ -12,6 +11,8 @@ export {
   useRouteMatch,
 } from '@showroomjs/bundles/routing';
 import {
+  BrowserRouter,
+  HashRouter,
   LinkProps as OriLinkProps,
   matchPath,
   useHistory,
@@ -21,7 +22,7 @@ import { callAll } from '@showroomjs/core';
 import cx from 'classnames';
 import * as React from 'react';
 import { loadCodeAtPath } from '../route-mapping';
-import { basename } from './config';
+import { basename, isSpa } from './config';
 
 export interface LinkProps extends Omit<OriLinkProps, 'to'> {
   to: string;
@@ -74,3 +75,14 @@ export const NavLink = React.forwardRef<
     <Link {...props} aria-current={!!match ? 'page' : undefined} ref={ref} />
   );
 });
+
+export const Router = (props: {
+  children: React.ReactNode;
+  basename?: string;
+}) => {
+  if (isSpa) {
+    return <HashRouter>{props.children}</HashRouter>;
+  }
+
+  return <BrowserRouter {...props} />;
+};

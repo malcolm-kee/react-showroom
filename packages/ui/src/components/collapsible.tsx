@@ -24,8 +24,15 @@ const close = keyframes({
 
 export const Content = styled(Collapsible.Content, {
   overflow: 'hidden',
-  '&[data-state="open"]': { animation: `${open} 300ms ease-out` },
-  '&[data-state="closed"]': { animation: `${close} 300ms ease-out` },
+  transition: 'height 300ms ease-out',
+  variants: {
+    animate: {
+      true: {
+        '&[data-state="open"]': { animation: `${open} 300ms ease-out` },
+        '&[data-state="closed"]': { animation: `${close} 300ms ease-out` },
+      },
+    },
+  },
 });
 
 export const Root = styled(Collapsible.Root);

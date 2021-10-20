@@ -11,7 +11,6 @@ import { createWebpackConfig } from '../config/create-webpack-config';
 import { getConfig } from '../lib/get-config';
 import { logToStdout } from '../lib/log-to-stdout';
 import { prepareUrls } from '../lib/prepare-url';
-import { writeIndexHtml } from '../lib/write-index-html';
 
 const { openBrowser } = require(path.resolve(
   __dirname,
@@ -25,6 +24,8 @@ export interface StartServerOptions extends ReactShowroomConfiguration {
   configFile?: string;
 }
 
+type DevServerConfig = webpackDevServer.Configuration;
+
 export async function startDevServer(
   userConfig?: ReactShowroomConfiguration,
   configFile?: string
@@ -33,27 +34,37 @@ export async function startDevServer(
 
   const config = getConfig('development', configFile, userConfig);
 
-  writeIndexHtml(config.theme);
-
   const { devServerPort, assetDir } = config;
 
   const HOST = '0.0.0.0';
   const PORT = Number((argv as any).port ?? process.env.PORT ?? devServerPort);
 
   const webpackConfig = createWebpackConfig('development', config);
-  const devServerOptions: webpackDevServer.Configuration = {
-    port: PORT,
-    host: HOST,
-    client: {
-      logging: 'none',
+  const devServerOptions = Object.assign<DevServerConfig, DevServerConfig>(
+    {
+      port: PORT,
+      host: HOST,
+      client: {
+        logging: 'none',
+      },
+      hot: true,
+      historyApiFallback: true, // TODO: use the following once we prerender the example
+      // historyApiFallback:  {
+      //   rewrites: [
+      //     { from: /^\/_preview/, to: '/_preview.html' },
+      //     { from: /./, to: '/index.html' },
+      //   ],
+      // },
     },
-    hot: true, // hot reload replacement not supported for module federation
-    historyApiFallback: true,
-    static: {
-      directory: assetDir,
-      watch: true,
-    },
-  };
+    assetDir
+      ? {
+          static: {
+            directory: assetDir,
+            watch: true,
+          },
+        }
+      : {}
+  );
 
   const compiler = webpack(webpackConfig);
 
