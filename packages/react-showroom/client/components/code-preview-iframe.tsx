@@ -14,13 +14,17 @@ export interface CodePreviewIframeProps {
   className?: string;
 }
 
+const initialHeightMap = new Map<string, number>();
+
 export const CodePreviewIframe = ({
   code,
   codeHash,
   lang,
   className,
 }: CodePreviewIframeProps) => {
-  const [frameHeight, setFrameHeight] = React.useState(100);
+  const [frameHeight, setFrameHeight] = React.useState(
+    () => (codeHash && initialHeightMap.get(codeHash)) || 100
+  );
 
   const [isResizing, setIsResizing] = React.useState(false);
   const sizeEl = React.useRef<HTMLDivElement>(null);
@@ -28,6 +32,9 @@ export const CodePreviewIframe = ({
   const { targetRef, sendMessage } = useParentWindow((ev) => {
     if (ev.type === 'heightChange') {
       setFrameHeight(ev.height);
+      if (codeHash && !initialHeightMap.has(codeHash)) {
+        initialHeightMap.set(codeHash, ev.height);
+      }
     }
   });
 

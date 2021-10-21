@@ -4,10 +4,10 @@ import * as React from 'react';
 import allImports from 'react-showroom-all-imports';
 import CodeblockData from 'react-showroom-codeblocks';
 import Wrapper from 'react-showroom-wrapper';
+import { AllComponents } from '../all-components';
 import { CodePreviewFrame } from '../components/code-preview-frame';
 import { CodeImportsContextProvider } from '../lib/code-imports-context';
 import { CodeVariablesContextProvider } from '../lib/code-variables-context';
-import { AllComponents } from '../all-components';
 import { usePreviewWindow } from '../lib/frame-message';
 import { Route, Switch, useParams } from '../lib/routing';
 import { useHeightChange } from '../lib/use-height-change';
@@ -21,7 +21,7 @@ export const PreviewApp = () => {
             <ComponentPreviewPage />
           </Route>
           <Route path="/:codeHash">
-            <PreviewPage />
+            <GenericPreviewPage />
           </Route>
           <Route>
             <ErrorPage />
@@ -65,6 +65,10 @@ const ComponentPreviewPage = () => {
       <PreviewPage />
     </CodeVariablesContextProvider>
   );
+};
+
+const GenericPreviewPage = () => {
+  return <PreviewPage />;
 };
 
 const PreviewPage = () => {

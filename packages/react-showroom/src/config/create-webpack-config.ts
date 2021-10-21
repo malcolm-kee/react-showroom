@@ -14,9 +14,9 @@ import * as webpack from 'webpack';
 import { merge } from 'webpack-merge';
 import { createHash } from '../lib/create-hash';
 import {
+  generateAllComponents,
   generateCodeblocksData,
   generateSectionsAndImports,
-  generateAllComponents,
   generateWrapper,
 } from '../lib/generate-showroom-data';
 import { logToStdout } from '../lib/log-to-stdout';
@@ -68,9 +68,12 @@ export const createWebpackConfig = (
   return mergeWebpackConfig(
     merge(baseConfig, {
       entry: {
-        ...(config.require ? { requireConfig: config.require } : {}),
-        showroom: clientEntry,
-        preview: previewEntry,
+        showroom: config.require
+          ? config.require.concat(clientEntry)
+          : clientEntry,
+        preview: config.require
+          ? config.require.concat(previewEntry)
+          : previewEntry,
       },
       output: {
         path: resolveApp(outDir),
@@ -93,9 +96,7 @@ export const createWebpackConfig = (
             removeStyleLinkTypeAttributes: true,
             useShortDoctype: true,
           },
-          chunks: [config.require && 'requireConfig', 'showroom'].filter(
-            isDefined
-          ),
+          chunks: ['showroom'],
         }),
         html.showroom
           ? new HtmlWebpackTagsPlugin({
@@ -109,20 +110,19 @@ export const createWebpackConfig = (
           templateParameters: {
             title: theme.title,
             resetCss: theme.resetCss,
+            prerender: mode === 'production' && !!prerenderConfig,
           },
           minify: isProd && {
             collapseWhitespace: true,
             keepClosingSlash: true,
             removeComments: true,
-            // ignoreCustomComments: prerenderConfig ? [/SSR-/] : [],
+            ignoreCustomComments: prerenderConfig ? [/SSR-/] : [],
             removeRedundantAttributes: true,
             removeScriptTypeAttributes: true,
             removeStyleLinkTypeAttributes: true,
             useShortDoctype: true,
           },
-          chunks: [config.require && 'requireConfig', 'preview'].filter(
-            isDefined
-          ),
+          chunks: ['preview'],
         }),
         html.preview
           ? new HtmlWebpackTagsPlugin({
@@ -162,13 +162,19 @@ export const createSsrWebpackConfig = (
 ): webpack.Configuration => {
   const baseConfig = createBaseWebpackConfig(mode, config, { ssr: true });
 
-  const server = resolveShowroom('client-dist/app/showroom-server-entry.js');
+  const showroomServer = resolveShowroom(
+    'client-dist/app/showroom-server-entry.js'
+  );
+  const previewServer = resolveShowroom(
+    'client-dist/app/preview-server-entry.js'
+  );
 
   return mergeWebpackConfig(
     merge(baseConfig, {
       entry: {
         ...(config.require ? { requireConfig: config.require } : {}),
-        prerender: server,
+        prerender: showroomServer,
+        previewPrerender: previewServer,
       },
       output: {
         path: resolveApp(`${outDir}/server`),

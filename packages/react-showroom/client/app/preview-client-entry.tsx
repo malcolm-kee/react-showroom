@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { basename, isPrerender } from '../lib/config';
 import { createQueryClient } from '../lib/create-query-client';
-import { HashRouter as Router } from '../lib/routing';
+import { Router } from '../lib/routing';
 import { PreviewApp } from './preview-app';
 
 const queryClient = createQueryClient();

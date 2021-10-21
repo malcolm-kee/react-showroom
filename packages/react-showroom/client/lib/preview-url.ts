@@ -1,11 +1,9 @@
-import { basename } from './config';
-
-const isSpa = true; // TODO: change this to based on settings once we prerender the example.
+import { basename, isSpa } from './config';
 
 export const getPreviewUrl = (
   codeHash: string,
   componentDisplayName: string | undefined
 ) =>
-  `${basename}/_preview.html${isSpa ? '/#/' : '/'}${codeHash}${
+  `${basename}/_preview${isSpa ? '.html/#/' : '/'}${codeHash}${
     componentDisplayName ? `/${encodeURIComponent(componentDisplayName)}` : ''
-  }`;
+  }${isSpa ? '' : '/'}`;

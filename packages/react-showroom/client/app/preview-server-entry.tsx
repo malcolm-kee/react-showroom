@@ -9,7 +9,7 @@ import sections from 'react-showroom-sections';
 import { createQueryClient } from '../lib/create-query-client';
 import { factoryMap } from '../lib/lazy';
 import { StaticRouter } from '../lib/routing';
-import { ShowroomApp } from './showroom-app';
+import { PreviewApp } from './preview-app';
 
 export const ssr: Ssr = {
   render: async ({ pathname }) => {
@@ -21,9 +21,12 @@ export const ssr: Ssr = {
     const queryClient = createQueryClient();
 
     const result = ReactDOMServer.renderToString(
-      <StaticRouter location={{ pathname }} basename={process.env.BASE_PATH}>
+      <StaticRouter
+        location={{ pathname }}
+        basename={`${process.env.BASE_PATH}/_preview`}
+      >
         <QueryClientProvider client={queryClient}>
-          <ShowroomApp />
+          <PreviewApp />
         </QueryClientProvider>
       </StaticRouter>
     );
@@ -44,35 +47,31 @@ export const ssr: Ssr = {
       }
 
       if (section.type === 'component') {
-        const { codeblocks } = await section.data.load();
+        const { codeblocks, metadata } = await section.data.load();
 
-        const standaloneRoutes = Object.values(codeblocks)
+        const codeHashes = Object.values(codeblocks)
           .map((block) => block?.initialCodeHash)
           .filter(isDefined);
 
-        result.push(
-          [section.slug].concat(
-            standaloneRoutes.map(
-              (route) => `${section.slug}/_standalone/${route}`
+        if (codeHashes.length > 0) {
+          result.push(
+            codeHashes.map(
+              (hash) => `${hash}/${encodeURIComponent(metadata.displayName)}`
             )
-          )
-        );
+          );
+        }
       }
 
       if (section.type === 'markdown') {
         const { codeblocks } = await section.load();
 
-        const standaloneRoutes = Object.values(codeblocks)
+        const codeHashes = Object.values(codeblocks)
           .map((block) => block?.initialCodeHash)
           .filter(isDefined);
 
-        result.push(
-          [section.slug].concat(
-            standaloneRoutes.map(
-              (route) => `${section.slug}/_standalone/${route}`
-            )
-          )
-        );
+        if (codeHashes.length > 0) {
+          result.push(codeHashes);
+        }
       }
     }
 
