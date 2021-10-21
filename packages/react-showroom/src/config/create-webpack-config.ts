@@ -161,7 +161,7 @@ export const createSsrWebpackConfig = (
 ): webpack.Configuration => {
   const baseConfig = createBaseWebpackConfig(mode, config, { ssr: true });
 
-  const server = resolveShowroom('client-dist/server-entry.js');
+  const server = resolveShowroom('client-dist/app/showroom-server-entry.js');
 
   return mergeWebpackConfig(
     merge(baseConfig, {
