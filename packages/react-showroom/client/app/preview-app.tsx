@@ -1,13 +1,15 @@
 import { SupportedLanguage } from '@showroomjs/core';
 import { Alert } from '@showroomjs/ui';
-import { parse } from 'qs-lite';
 import * as React from 'react';
 import allImports from 'react-showroom-all-imports';
+import CodeblockData from 'react-showroom-codeblocks';
 import Wrapper from 'react-showroom-wrapper';
 import { CodePreviewFrame } from '../components/code-preview-frame';
 import { CodeImportsContextProvider } from '../lib/code-imports-context';
+import { CodeVariablesContextProvider } from '../lib/code-variables-context';
+import { AllComponents } from '../all-components';
 import { usePreviewWindow } from '../lib/frame-message';
-import { Route, Switch, useLocation, useParams } from '../lib/routing';
+import { Route, Switch, useParams } from '../lib/routing';
 import { useHeightChange } from '../lib/use-height-change';
 
 export const PreviewApp = () => {
@@ -15,7 +17,9 @@ export const PreviewApp = () => {
     <Wrapper>
       <CodeImportsContextProvider value={allImports}>
         <Switch>
-          {/* TODO: use codeHash to load initial code so can server side rendering */}
+          <Route path="/:codeHash/:component">
+            <ComponentPreviewPage />
+          </Route>
           <Route path="/:codeHash">
             <PreviewPage />
           </Route>
@@ -38,31 +42,54 @@ const defaultState: CodeState = {
   lang: 'tsx',
 };
 
+const allCodeBlocks = CodeblockData.items.reduce((result, codeblock) =>
+  Object.assign({}, result, codeblock)
+);
+
+const ComponentPreviewPage = () => {
+  const params = useParams<{ component: string }>();
+
+  const variables = React.useMemo(() => {
+    const componentDisplayName = decodeURIComponent(params.component);
+    const Component = AllComponents[componentDisplayName];
+
+    return Component
+      ? {
+          [componentDisplayName]: Component,
+        }
+      : {};
+  }, [params.component]);
+
+  return (
+    <CodeVariablesContextProvider value={variables}>
+      <PreviewPage />
+    </CodeVariablesContextProvider>
+  );
+};
+
 const PreviewPage = () => {
-  const queryParams = useQueryParams();
-  const code = React.useMemo(
-    () => queryParams.code && decodeURIComponent(queryParams.code),
-    [queryParams.code]
+  const params = useParams<{ codeHash: string }>();
+  const codeData = React.useMemo(
+    () =>
+      Object.entries(allCodeBlocks).find(
+        ([_, codeBlock]) =>
+          codeBlock && codeBlock.initialCodeHash === params.codeHash
+      ),
+    [params.codeHash]
   );
 
-  const params = useParams<{ codeHash: string }>();
-
-  if (!params.codeHash) {
-    console.log(params);
-  }
-
   const [state, setState] = React.useState(
-    code && queryParams.lang
+    codeData && codeData[1]
       ? {
-          code,
-          lang: queryParams.lang as SupportedLanguage,
+          code: codeData[0],
+          lang: codeData[1].lang,
         }
       : defaultState
   );
 
   const { sendParent } = usePreviewWindow((data) => {
     if (data.type === 'code') {
-      setState(data as any as CodeState);
+      setState(data);
     }
   });
 
@@ -88,27 +115,3 @@ const ErrorPage = () => {
     </div>
   );
 };
-
-const useQueryParams = <
-  Params extends { [key: string]: string | string[] | undefined } = {
-    [key: string]: string | undefined;
-  }
->() => {
-  const location = useLocation();
-
-  const params = React.useMemo(
-    () => getQueryParams(location.search),
-    [location]
-  );
-
-  return params as Params;
-};
-
-function getQueryParams(search: string) {
-  if (search) {
-    if (search.indexOf('?') === 0) {
-      return parse(search.substring(1));
-    }
-  }
-  return {};
-}

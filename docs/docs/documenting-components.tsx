@@ -11,12 +11,12 @@ import anotherButtonCodeBlocks from './button-other-example.mdx?showroomRemarkCo
 import { imports as anotherButtonImports } from './button-other-example.mdx?showroomRemarkImports';
 import buttonWithCommentsSource from './button-with-comments?raw';
 import buttonWithCommentsData from './button-with-comments?showroomComponent';
-import ButtonDocs from './button.mdx';
-import docsSource from './button.mdx?raw';
-import buttonCodeblocks from './button.mdx?showroomRemarkCodeblocks';
-import { imports as buttonImports } from './button.mdx?showroomRemarkImports';
-import buttonSource from './button?raw';
-import buttonData from './button?showroomComponent';
+import ButtonDocs from './components/button.mdx';
+import docsSource from './components/button.mdx?raw';
+import buttonCodeblocks from './components/button.mdx?showroomRemarkCodeblocks';
+import { imports as buttonImports } from './components/button.mdx?showroomRemarkImports';
+import buttonSource from './components/button?raw';
+import buttonData from './components/button?showroomComponent';
 import oldButtonSource from './old-button?raw';
 import oldButtonData from './old-button?showroomComponent';
 import { useSetCompilationCaches } from './set-compilation-caches';

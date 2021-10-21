@@ -112,7 +112,8 @@ export const generateSectionsAndImports = (
             type: 'group',
             title: '${section.title}',
             items: ${collect(section.items)},
-            slug: '${section.slug}'
+            slug: '${section.slug}',
+            ${section.hideFromSidebar ? 'hideFromSidebar: true,' : ''}
           }`;
         }
 
@@ -143,6 +144,7 @@ export const generateSectionsAndImports = (
                   : ''
               } slugify(${name}.displayName, { lower: true })].join('/'),
               id: '${section.id}',
+              ${section.hideFromSidebar ? 'hideFromSidebar: true,' : ''}
               shouldIgnore: false
             } : {
               shouldIgnore: true,
@@ -171,6 +173,7 @@ export const generateSectionsAndImports = (
               fallbackTitle: '${section.title || ''}',
               slug: '${section.slug}',
               frontmatter: ${name}_frontmatter || {},
+              ${section.hideFromSidebar ? 'hideFromSidebar: true,' : ''}
               formatLabel: ${section.formatLabel.toString()},
               preloadUrl: '${path.relative(rootDir, section.sourcePath)}',
               load: async () => {
@@ -220,6 +223,66 @@ export const generateSectionsAndImports = (
       .map((imp) => `${imp.name}.imports`)
       .join(', ')});`,
   };
+};
+
+export const generateAllComponents = (
+  sections: Array<ReactShowroomSectionConfig>
+) => {
+  const componentImports: Array<{
+    name: string;
+    metadataPath: string;
+    sourcePath: string;
+    codeblockPath: string | null;
+  }> = [];
+
+  function collect(sectionList: Array<ReactShowroomSectionConfig>): void {
+    sectionList.forEach((section) => {
+      if (section.type === 'group') {
+        collect(section.items);
+      }
+      if (section.type === 'component') {
+        const name = getName('component');
+
+        componentImports.push({
+          name,
+          metadataPath: `${section.sourcePath}?showroomComponentMetadata`,
+          sourcePath: section.sourcePath,
+          codeblockPath:
+            section.docPath && `${section.docPath}?showroomRemarkCodeblocks`,
+        });
+      }
+    });
+  }
+
+  collect(sections);
+
+  if (componentImports.length === 0) {
+    return `export const AllComponents = {};`;
+  }
+
+  return `${componentImports
+    .map(
+      (comp) => `const ${comp.name} = require('${comp.sourcePath}');
+  import _showroomMetadata_${comp.name} from '${comp.metadataPath}';
+  ${
+    comp.codeblockPath
+      ? `import _code_${comp.name} from '${comp.codeblockPath}';`
+      : ''
+  }`
+    )
+    .join('\n')}
+
+  export const AllComponents = Object.assign(
+    ${componentImports
+      .map((comp) => {
+        const compVar = comp.name;
+        const metadataVar = `_showroomMetadata_${comp.name}`;
+        return `${metadataVar}.displayName ? {
+      [${metadataVar}.displayName]: ${compVar}.default || ${compVar}[${metadataVar}.displayName] || ${compVar}
+    } : {}`;
+      })
+      .join(', ')}
+  );`;
 };
 
 export const generateWrapper = (wrapper: string | undefined) => {

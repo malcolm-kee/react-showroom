@@ -16,6 +16,7 @@ import { createHash } from '../lib/create-hash';
 import {
   generateCodeblocksData,
   generateSectionsAndImports,
+  generateAllComponents,
   generateWrapper,
 } from '../lib/generate-showroom-data';
 import { logToStdout } from '../lib/log-to-stdout';
@@ -231,6 +232,8 @@ const createBaseWebpackConfig = (
       generateWrapper(wrapper),
     [resolveShowroom('node_modules/react-showroom-all-imports.js')]:
       generated.allImports,
+    [resolveShowroom('node_modules/react-showroom-all-components.js')]:
+      generateAllComponents(sections),
   });
 
   const babelPreset = createBabelPreset(mode);

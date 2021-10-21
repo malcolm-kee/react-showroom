@@ -9,17 +9,16 @@ import {
   useDebounce,
 } from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
-import { Enable as ResizeEnable, Resizable } from 're-resizable';
+import { Enable as ResizeEnable } from 're-resizable';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { useCodeBlocks } from '../lib/codeblocks-context';
-import { useParentWindow } from '../lib/frame-message';
-import { getPreviewUrl } from '../lib/preview-url';
 import { Link, useRouteMatch } from '../lib/routing';
 import { Div } from './base';
 import { BrowserWindow } from './browser-window';
 import { CodeEditor } from './code-editor';
 import { CodePreviewFrame } from './code-preview-frame';
+import { CodePreviewIframe } from './code-preview-iframe';
 
 export interface CodeLiveEditorProps {
   code: string;
@@ -46,25 +45,8 @@ export const CodeLiveEditor = ({
 
   const [showCode, setShowCode] = React.useState<boolean | undefined>(false);
 
-  const [frameHeight, setFrameHeight] = React.useState(100);
-
-  const [isResizing, setIsResizing] = React.useState(false);
-  const sizeEl = React.useRef<HTMLDivElement>(null);
-
-  const { targetRef, sendMessage } = useParentWindow((ev) => {
-    if (ev.type === 'heightChange') {
-      setFrameHeight(ev.height);
-    }
-  });
-
-  const encodedCode = React.useMemo(
-    () => encodeURIComponent(props.code),
-    [props.code]
-  );
-
-  React.useEffect(() => {
-    sendMessage({ type: 'code', code: debouncedCode, lang: props.lang });
-  }, [debouncedCode]);
+  const codeBlocks = useCodeBlocks();
+  const matchedCodeData = codeBlocks[props.code];
 
   const content = (
     <>
@@ -85,42 +67,11 @@ export const CodeLiveEditor = ({
         }}
       >
         {frame ? (
-          <Resizable
-            className={resizable({
-              animate: !isResizing,
-            })}
-            maxHeight={frameHeight}
-            minHeight={frameHeight}
-            minWidth={320 + handleWidth + 2}
-            maxWidth="100%"
-            enable={resizeEnable}
-            handleStyles={{
-              right: {
-                width: 4 + handleWidth,
-              },
-            }}
-            onResizeStart={() => setIsResizing(true)}
-            onResizeStop={() => setIsResizing(false)}
-            onResize={(_, __, el) => {
-              if (sizeEl.current) {
-                sizeEl.current.textContent = `${
-                  el.clientWidth - handleWidth
-                }px`;
-              }
-            }}
-          >
-            <Frame
-              ref={targetRef}
-              src={getPreviewUrl(props.id, encodedCode, props.lang)}
-              title="Preview"
-              height={frameHeight}
-              animate={!isResizing}
-            />
-            <ResizeHandle>
-              <HandleIcon width={16} height={16} />
-            </ResizeHandle>
-            {isResizing && <SizeDisplay ref={sizeEl} />}
-          </Resizable>
+          <CodePreviewIframe
+            code={debouncedCode}
+            lang={props.lang}
+            codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
+          />
         ) : (
           <CodePreviewFrame code={debouncedCode} lang={props.lang} />
         )}
@@ -151,7 +102,9 @@ export const CodeLiveEditor = ({
               />
               Code
             </Collapsible.Button>
-            <LinkToStandaloneView code={props.code} />
+            <LinkToStandaloneView
+              codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
+            />
           </Div>
           <Collapsible.Content animate>
             <CodeEditor
@@ -178,18 +131,13 @@ export const CodeLiveEditor = ({
   );
 };
 
-const LinkToStandaloneView = (props: { code: string }) => {
+const LinkToStandaloneView = (props: { codeHash: string | undefined }) => {
   const { url } = useRouteMatch();
 
-  const codeBlocks = useCodeBlocks();
-  const matchCodeData = codeBlocks[props.code];
-
-  return matchCodeData ? (
+  return props.codeHash ? (
     <Button
       as={Link}
-      to={`${removeTrailingSlash(url)}/_standalone/${
-        matchCodeData.initialCodeHash
-      }`}
+      to={`${removeTrailingSlash(url)}/_standalone/${props.codeHash}`}
     >
       Standalone
       <ArrowsExpandIcon width={20} height={20} className={icons()} />

@@ -14,16 +14,16 @@ export interface HtmlOptions
     'scripts' | 'tags' | 'links' | 'metas'
   > {}
 
-export interface ItemConfigurationWithPath {
+export interface ItemConfigBase {
   title?: string;
   /**
    * path for the section. Will be inferred from title if not provided
    */
   path?: string;
+  hideFromSidebar?: boolean;
 }
 
-export interface ComponentSectionConfiguration
-  extends ItemConfigurationWithPath {
+export interface ComponentSectionConfiguration extends ItemConfigBase {
   type: 'components';
   /**
    * A short description of this section.
@@ -35,7 +35,7 @@ export interface ComponentSectionConfiguration
   components: string | Array<string>;
 }
 
-export interface ContentItemConfiguration extends ItemConfigurationWithPath {
+export interface ContentItemConfiguration extends ItemConfigBase {
   type: 'content';
   /**
    * location of a Markdown file containing the overview content.
@@ -52,7 +52,7 @@ export interface LinkItemConfiguration {
   href: string;
 }
 
-export interface DocSectionConfiguration extends ItemConfigurationWithPath {
+export interface DocSectionConfiguration extends ItemConfigBase {
   type: 'docs';
   /**
    * relative path to the folder that contents all the markdown files.
@@ -70,7 +70,7 @@ export interface DocSectionConfiguration extends ItemConfigurationWithPath {
   formatLabel?: (oriTitle: string) => string;
 }
 
-export interface GroupSectionConfiguration extends ItemConfigurationWithPath {
+export interface GroupSectionConfiguration extends ItemConfigBase {
   type: 'group';
   /**
    * section title
@@ -267,6 +267,7 @@ export interface ReactShowroomComponentSectionConfig {
   docPath: string | null;
   parentSlugs: Array<string>;
   id: string;
+  hideFromSidebar?: boolean;
 }
 
 interface ReactShowroomMarkdownSectionConfig {
@@ -275,12 +276,14 @@ interface ReactShowroomMarkdownSectionConfig {
   slug: string;
   title?: string;
   formatLabel: (oriTitle: string) => string;
+  hideFromSidebar?: boolean;
 }
 
 interface ReactShowroomLinkSectionConfig {
   type: 'link';
   href: string;
   title: string;
+  hideFromSidebar?: boolean;
 }
 
 interface ReactShowroomGroupSectionConfig {
@@ -288,6 +291,7 @@ interface ReactShowroomGroupSectionConfig {
   title: string;
   slug: string;
   items: Array<ReactShowroomSectionConfig>;
+  hideFromSidebar?: boolean;
 }
 
 /**
@@ -345,6 +349,7 @@ export interface ReactShowroomComponentSection {
   description: string;
   slug: string;
   id: string;
+  hideFromSidebar?: boolean;
 }
 
 export interface ReactShowroomMarkdownFrontmatter {
@@ -376,6 +381,7 @@ export interface ReactShowroomMarkdownSection {
   preloadUrl: string;
   load: () => Promise<ReactShowroomMarkdownContent>;
   formatLabel: (oriTitle: string) => string;
+  hideFromSidebar?: boolean;
 }
 
 interface ReactShowroomLinkSection {
@@ -389,6 +395,7 @@ export interface ReactShowroomGroupSection {
   title: string;
   slug: string;
   items: Array<ReactShowroomSection>;
+  hideFromSidebar?: boolean;
 }
 
 export type ReactShowroomSection =

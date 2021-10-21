@@ -1,12 +1,9 @@
-import {
-  ComponentDocItem,
-  ReactShowroomComponentContent,
-} from '@showroomjs/core/react';
+import { ReactShowroomComponentContent } from '@showroomjs/core/react';
 import * as React from 'react';
 import { CodeImportsContextProvider } from '../lib/code-imports-context';
 import { CodeVariablesContextProvider } from '../lib/code-variables-context';
 import { CodeblocksContext } from '../lib/codeblocks-context';
-import { ComponentPropsContext } from '../lib/component-props-context';
+import { ComponentMetaContext } from '../lib/component-props-context';
 
 export const ComponentDataProvider = (props: {
   children: React.ReactNode;
@@ -27,13 +24,13 @@ export const ComponentDataProvider = (props: {
 
   return (
     <CodeImportsContextProvider value={imports}>
-      <ComponentPropsContext.Provider value={metadata.props}>
+      <ComponentMetaContext.Provider value={metadata}>
         <CodeVariablesContextProvider value={codeVariables}>
           <CodeblocksContext.Provider value={codeblocks}>
             {props.children}
           </CodeblocksContext.Provider>
         </CodeVariablesContextProvider>
-      </ComponentPropsContext.Provider>
+      </ComponentMetaContext.Provider>
     </CodeImportsContextProvider>
   );
 };
