@@ -221,11 +221,7 @@ const createBaseWebpackConfig = (
     docgenConfig.options
   );
 
-  const generated = generateSectionsAndImports(
-    sections,
-    paths.showroomPath,
-    docgenParser
-  );
+  const generated = generateSectionsAndImports(sections, paths.showroomPath);
 
   const virtualModules = new VirtualModulesPlugin({
     // create a virtual module that consists of parsed code blocks
@@ -289,6 +285,14 @@ const createBaseWebpackConfig = (
             not: [/raw/],
           },
           oneOf: [
+            {
+              resourceQuery: /showroomComponentMetadata/,
+              loader: 'showroom-component-metadata-loader',
+              options: {
+                docgenParser,
+                debug,
+              },
+            },
             {
               resourceQuery: /showroomComponent/,
               loader: 'showroom-component-loader',
