@@ -1,11 +1,11 @@
 import { QueryClientProvider } from '@showroomjs/bundles/query';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { App } from './app';
-import { basename, isPrerender } from './lib/config';
-import { createQueryClient } from './lib/create-query-client';
-import { Router } from './lib/routing';
-import { loadCodeAtPath } from './route-mapping';
+import { basename, isPrerender } from '../lib/config';
+import { createQueryClient } from '../lib/create-query-client';
+import { Router } from '../lib/routing';
+import { loadCodeAtPath } from '../route-mapping';
+import { ShowroomApp } from './showroom-app';
 
 const queryClient = createQueryClient();
 
@@ -29,7 +29,7 @@ const render = isPrerender
 
 render(
   <QueryClientProvider client={queryClient}>
-    <App />
+    <ShowroomApp />
   </QueryClientProvider>,
   document.getElementById('target')
 );

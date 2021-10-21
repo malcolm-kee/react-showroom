@@ -5,7 +5,14 @@ import type {
   ParserOptions,
 } from 'react-docgen-typescript';
 import type { Configuration } from 'webpack';
+import type { Options as HtmlWebpackTagsPluginOptions } from 'html-webpack-tags-plugin';
 import { CodeBlocks, Environment } from './index';
+
+export interface HtmlOptions
+  extends Pick<
+    HtmlWebpackTagsPluginOptions,
+    'scripts' | 'tags' | 'links' | 'metas'
+  > {}
 
 export interface ItemConfigurationWithPath {
   title?: string;
@@ -147,6 +154,11 @@ export interface DocgenConfiguration {
   options: ParserOptions;
 }
 
+export interface ShowroomHtmlConfiguration {
+  showroom?: HtmlOptions;
+  preview?: HtmlOptions;
+}
+
 export interface ReactShowroomConfiguration {
   /**
    * URL for the site.
@@ -195,6 +207,7 @@ export interface ReactShowroomConfiguration {
    */
   wrapper?: string;
   docgen?: Partial<DocgenConfiguration>;
+  html?: ShowroomHtmlConfiguration;
   /**
    * Configuration to specify how css should be processed.
    *
@@ -308,6 +321,7 @@ export interface NormalizedReactShowroomConfiguration
     enabled: boolean;
     usePostcss: boolean;
   };
+  html: ShowroomHtmlConfiguration;
 }
 
 export interface ReactShowroomComponentContent {

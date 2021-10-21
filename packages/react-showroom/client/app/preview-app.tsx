@@ -4,11 +4,11 @@ import { parse } from 'qs-lite';
 import * as React from 'react';
 import allImports from 'react-showroom-all-imports';
 import Wrapper from 'react-showroom-wrapper';
-import { CodePreviewFrame } from './components/code-preview-frame';
-import { CodeImportsContextProvider } from './lib/code-imports-context';
-import { usePreviewWindow } from './lib/frame-message';
-import { Route, Switch, useLocation, useParams } from './lib/routing';
-import { useHeightChange } from './lib/use-height-change';
+import { CodePreviewFrame } from '../components/code-preview-frame';
+import { CodeImportsContextProvider } from '../lib/code-imports-context';
+import { usePreviewWindow } from '../lib/frame-message';
+import { Route, Switch, useLocation, useParams } from '../lib/routing';
+import { useHeightChange } from '../lib/use-height-change';
 
 export const PreviewApp = () => {
   return (

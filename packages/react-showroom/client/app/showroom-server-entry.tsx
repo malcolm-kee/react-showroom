@@ -5,10 +5,10 @@ import * as React from 'react';
 import * as ReactDOMServer from 'react-dom/server';
 import { Helmet } from 'react-helmet';
 import sections from 'react-showroom-sections';
-import { App } from './app';
-import { createQueryClient } from './lib/create-query-client';
-import { factoryMap } from './lib/lazy';
-import { StaticRouter } from './lib/routing';
+import { createQueryClient } from '../lib/create-query-client';
+import { factoryMap } from '../lib/lazy';
+import { StaticRouter } from '../lib/routing';
+import { ShowroomApp } from './showroom-app';
 
 export const render: Ssr['render'] = async ({ pathname }) => {
   for (const [fn] of factoryMap) {
@@ -21,7 +21,7 @@ export const render: Ssr['render'] = async ({ pathname }) => {
   const result = ReactDOMServer.renderToString(
     <StaticRouter location={{ pathname }} basename={process.env.BASE_PATH}>
       <QueryClientProvider client={queryClient}>
-        <App />
+        <ShowroomApp />
       </QueryClientProvider>
     </StaticRouter>
   );
