@@ -213,7 +213,6 @@ export const StandaloneCodeLiveEditor = ({
       <Div
         className={className}
         css={{
-          width: '100vw',
           flex: 1,
           display: 'flex',
           flexDirection: 'column',

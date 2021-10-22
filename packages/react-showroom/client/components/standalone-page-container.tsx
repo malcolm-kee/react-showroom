@@ -11,6 +11,7 @@ export const StandalonePageContainer = (props: {
         display: 'flex',
         flexDirection: 'column',
         height: 'calc(100vh - 62px)',
+        maxWidth: '100%',
       }}
     >
       {props.children}
