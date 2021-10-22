@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 0.17.0
+
+### Minor Changes
+
+- e410fef: Prerender example in iframe
+
 ## 0.16.0
 
 ### Minor Changes
