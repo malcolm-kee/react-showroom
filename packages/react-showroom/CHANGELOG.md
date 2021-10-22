@@ -1,5 +1,17 @@
 # react-showroom
 
+## 0.22.0
+
+### Minor Changes
+
+- 8a446aa: Support preview multiple screens in standalone view
+
+### Patch Changes
+
+- Updated dependencies [8a446aa]
+  - @showroomjs/core@0.18.0
+  - @showroomjs/ui@0.17.0
+
 ## 0.21.0
 
 ### Minor Changes

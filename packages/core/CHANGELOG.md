@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 0.18.0
+
+### Minor Changes
+
+- 8a446aa: Support preview multiple screens in standalone view
+
 ## 0.17.0
 
 ### Minor Changes

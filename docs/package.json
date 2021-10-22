@@ -2,7 +2,7 @@
   "name": "react-showroom-docs",
   "private": true,
   "license": "MIT",
-  "version": "0.10.18",
+  "version": "0.10.19",
   "dependencies": {
     "@babel/runtime": "^7.15.4",
     "@heroicons/react": "^1.0.4",
