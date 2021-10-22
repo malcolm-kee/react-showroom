@@ -11,6 +11,7 @@ export interface CodePreviewIframeProps {
   code: string;
   lang: SupportedLanguage;
   codeHash: string | undefined;
+  resizable?: boolean;
   className?: string;
 }
 
@@ -20,6 +21,7 @@ export const CodePreviewIframe = ({
   code,
   codeHash,
   lang,
+  resizable,
   className,
 }: CodePreviewIframeProps) => {
   const [frameHeight, setFrameHeight] = React.useState(
@@ -47,16 +49,22 @@ export const CodePreviewIframe = ({
   return (
     <Resizable
       className={cx(
-        resizable({
+        resizableStyle({
           animate: !isResizing,
         }),
         className
       )}
-      maxHeight={frameHeight}
-      minHeight={frameHeight}
-      minWidth={320 + handleWidth + 2}
-      maxWidth="100%"
-      enable={resizeEnable}
+      {...(resizable
+        ? {
+            minHeight: frameHeight,
+            maxHeight: frameHeight,
+            minWidth: 320 + handleWidth + 2,
+            maxWidth: '100%',
+          }
+        : {
+            width: '100%',
+          })}
+      enable={resizable ? resizeEnable : disableResize}
       handleStyles={{
         right: {
           width: 4 + handleWidth,
@@ -78,13 +86,15 @@ export const CodePreviewIframe = ({
             componentMeta && componentMeta.displayName
           )}
           title="Preview"
-          height={frameHeight}
+          height={resizable ? frameHeight : '100%'}
           animate={!isResizing}
         />
       ) : null}
-      <ResizeHandle>
-        <HandleIcon width={16} height={16} />
-      </ResizeHandle>
+      {resizable && (
+        <ResizeHandle>
+          <HandleIcon width={16} height={16} />
+        </ResizeHandle>
+      )}
       {isResizing && <SizeDisplay ref={sizeEl} />}
     </Resizable>
   );
@@ -92,7 +102,7 @@ export const CodePreviewIframe = ({
 
 const handleWidth = 16;
 
-const resizable = css({
+const resizableStyle = css({
   overflow: 'hidden',
   display: 'flex',
   border: '1px solid',
@@ -118,6 +128,11 @@ const resizeEnable: ResizeEnable = {
   bottomRight: false,
   bottomLeft: false,
   topLeft: false,
+};
+
+const disableResize: ResizeEnable = {
+  ...resizeEnable,
+  right: false,
 };
 
 const SizeDisplay = styled('div', {

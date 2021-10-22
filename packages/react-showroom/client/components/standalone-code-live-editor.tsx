@@ -1,16 +1,10 @@
-import {
-  DotsVerticalIcon,
-  TerminalIcon,
-  ShareIcon,
-} from '@heroicons/react/outline';
+import { DotsVerticalIcon, ShareIcon } from '@heroicons/react/outline';
 import { CheckCircleIcon } from '@heroicons/react/solid';
 import { SupportedLanguage } from '@showroomjs/core';
 import {
-  Alert,
   CopyButton,
   css,
   DropdownMenu,
-  icons,
   styled,
   useDebounce,
   useQueryParams,
@@ -18,17 +12,16 @@ import {
 import lzString from 'lz-string';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
-import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import { useCodeTheme } from '../lib/code-theme-context';
-import { useCodeCompilation } from '../lib/use-code-compilation';
-import { Div, Span } from './base';
+import { Div } from './base';
 import { CodeEditor } from './code-editor';
-import { CodePreview } from './code-preview';
+import { CodePreviewIframe } from './code-preview-iframe';
 import { RadioDropdown } from './radio-dropdown';
 
 export interface StandaloneCodeLiveEditorProps {
   code: string;
   lang: SupportedLanguage;
+  codeHash: string;
   className?: string;
 }
 
@@ -62,20 +55,6 @@ export const StandaloneCodeLiveEditor = ({
         debouncedCode === props.code ? undefined : safeCompress(debouncedCode),
     });
   }, [debouncedCode]);
-
-  const errorBoundaryRef = React.useRef<ErrorBoundary>(null);
-
-  const { data, error, isError, isCompiling } = useCodeCompilation(
-    debouncedCode,
-    props.lang,
-    {
-      onSuccess: () => {
-        if (errorBoundaryRef.current) {
-          errorBoundaryRef.current.reset();
-        }
-      },
-    }
-  );
 
   return (
     <>
@@ -159,68 +138,13 @@ export const StandaloneCodeLiveEditor = ({
         }}
       >
         {editorView !== 'editorOnly' && (
-          <Div
-            css={{
-              flex: 1,
-              position: 'relative',
-              minHeight: 48,
-              border: '1px solid',
-              borderColor: '$gray-300',
-              padding: '$1',
-            }}
-          >
-            {isError ? (
-              <Alert variant="error">
-                {typeof error === 'string' ? error : 'Compilation error'}
-              </Alert>
-            ) : (
-              data &&
-              (data.type === 'success' ? (
-                <ErrorBoundary
-                  FallbackComponent={ErrorFallback}
-                  ref={errorBoundaryRef}
-                >
-                  <CodePreview {...data} />
-                </ErrorBoundary>
-              ) : (
-                <Alert variant="error">{formatError(data.error)}</Alert>
-              ))
-            )}
-            {isCompiling && (
-              <Div
-                css={{
-                  position: 'absolute',
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                  px: '$4',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: 'rgba(229, 231, 235, 0.1)',
-                  gap: '$2',
-                  '@xl': {
-                    top: '50%',
-                    left: '50%',
-                    bottom: 'auto',
-                    right: 'auto',
-                    transform: 'translate(-50%, -50%)',
-                  },
-                }}
-              >
-                <TerminalIcon width="20" height="20" className={icons()} />
-                <Span
-                  css={{
-                    color: '$gray-500',
-                  }}
-                >
-                  Compiling...
-                </Span>
-              </Div>
-            )}
-          </Div>
+          <CodePreviewIframe
+            code={debouncedCode}
+            lang={props.lang}
+            codeHash={props.codeHash}
+            className={previewClass()}
+          />
         )}
-
         {editorView !== 'previewOnly' && (
           <Div
             css={{
@@ -245,6 +169,12 @@ export const StandaloneCodeLiveEditor = ({
 };
 
 type EditorView = 'both' | 'previewOnly' | 'editorOnly';
+
+const previewClass = css({
+  '@xl': {
+    flex: 1,
+  },
+});
 
 const StyledShareIcon = styled(ShareIcon, {
   width: 24,
@@ -299,18 +229,6 @@ const editor = css({
     overflowY: 'auto',
   },
 });
-
-const ErrorFallback = (props: FallbackProps) => {
-  return (
-    <Alert variant="error">
-      {props.error instanceof Error
-        ? props.error.message
-        : JSON.stringify(props.error)}
-    </Alert>
-  );
-};
-
-const formatError = (error: string) => error.replace(/<stdin>:|\"\\x0A\"/g, '');
 
 const safeCompress = (oriString: string): string => {
   try {

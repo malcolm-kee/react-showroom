@@ -71,6 +71,7 @@ export const CodeLiveEditor = ({
             code={debouncedCode}
             lang={props.lang}
             codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
+            resizable
           />
         ) : (
           <CodePreviewFrame code={debouncedCode} lang={props.lang} />
