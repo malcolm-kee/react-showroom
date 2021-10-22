@@ -1,4 +1,4 @@
-import { SupportedLanguage } from '@showroomjs/core';
+import { decodeDisplayName, SupportedLanguage } from '@showroomjs/core';
 import { Alert } from '@showroomjs/ui';
 import * as React from 'react';
 import allImports from 'react-showroom-all-imports';
@@ -50,7 +50,7 @@ const ComponentPreviewPage = () => {
   const params = useParams<{ component: string }>();
 
   const variables = React.useMemo(() => {
-    const componentDisplayName = decodeURIComponent(params.component);
+    const componentDisplayName = decodeDisplayName(params.component);
     const Component = AllComponents[componentDisplayName];
 
     return Component

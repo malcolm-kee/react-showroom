@@ -1,5 +1,11 @@
 import { QueryClientProvider } from '@showroomjs/bundles/query';
-import { flattenArray, isDefined, NestedArray, Ssr } from '@showroomjs/core';
+import {
+  encodeDisplayName,
+  flattenArray,
+  isDefined,
+  NestedArray,
+  Ssr,
+} from '@showroomjs/core';
 import { ReactShowroomSection } from '@showroomjs/core/react';
 import { getCssText } from '@showroomjs/ui';
 import * as React from 'react';
@@ -56,7 +62,7 @@ export const ssr: Ssr = {
         if (codeHashes.length > 0) {
           result.push(
             codeHashes.map(
-              (hash) => `${hash}/${encodeURIComponent(metadata.displayName)}`
+              (hash) => `${hash}/${encodeDisplayName(metadata.displayName)}`
             )
           );
         }
