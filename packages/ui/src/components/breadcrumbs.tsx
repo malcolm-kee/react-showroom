@@ -24,7 +24,15 @@ export const Breadcrumbs = (props: BreadcrumbsProps) => (
             </Svg>
           )}
           {item.url ? (
-            <Text as={Link} to={item.url}>
+            <Text
+              as={Link}
+              to={item.url}
+              css={{
+                '&:hover': {
+                  borderBottomColor: '$gray-300',
+                },
+              }}
+            >
               {item.label}
             </Text>
           ) : (
@@ -70,6 +78,7 @@ const Text = styled('span', {
   lineHeight: '$sm',
   color: '$gray-500',
   textDecoration: 'none',
+  borderBlock: '1px solid transparent',
   '&:hover': {
     color: '$gray-700',
   },

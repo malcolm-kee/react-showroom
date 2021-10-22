@@ -154,6 +154,10 @@ export interface DocgenConfiguration {
   options: ParserOptions;
 }
 
+export interface ExampleConfiguration {
+  widths: Array<number>;
+}
+
 export interface ShowroomHtmlConfiguration {
   showroom?: HtmlOptions;
   preview?: HtmlOptions;
@@ -179,6 +183,7 @@ export interface ReactShowroomConfiguration {
    */
   ignores?: Array<string>;
   items?: Array<ItemConfiguration>;
+  example?: Partial<ExampleConfiguration>;
   /**
    * Webpack configuration to load your components (or any other resources that are needed by the components, e.g. CSS)
    */
@@ -326,6 +331,7 @@ export interface NormalizedReactShowroomConfiguration
     usePostcss: boolean;
   };
   html: ShowroomHtmlConfiguration;
+  example: ExampleConfiguration;
 }
 
 export interface ReactShowroomComponentContent {

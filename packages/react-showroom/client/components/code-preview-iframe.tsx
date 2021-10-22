@@ -11,17 +11,19 @@ export interface CodePreviewIframeProps {
   code: string;
   lang: SupportedLanguage;
   codeHash: string | undefined;
+  resizable?: boolean;
   className?: string;
 }
 
 const initialHeightMap = new Map<string, number>();
 
-export const CodePreviewIframe = ({
+export const CodePreviewIframe = styled(function CodePreviewIframe({
   code,
   codeHash,
   lang,
+  resizable,
   className,
-}: CodePreviewIframeProps) => {
+}: CodePreviewIframeProps) {
   const [frameHeight, setFrameHeight] = React.useState(
     () => (codeHash && initialHeightMap.get(codeHash)) || 100
   );
@@ -44,18 +46,29 @@ export const CodePreviewIframe = ({
     sendMessage({ type: 'code', code, lang });
   }, [code, lang]);
 
-  return (
+  const content = codeHash ? (
+    <Frame
+      ref={targetRef}
+      src={getPreviewUrl(codeHash, componentMeta && componentMeta.displayName)}
+      title="Preview"
+      height={resizable ? frameHeight : '100%'}
+      animate={!isResizing}
+      className={resizable ? undefined : className}
+    />
+  ) : null;
+
+  return resizable ? (
     <Resizable
       className={cx(
-        resizable({
+        resizableStyle({
           animate: !isResizing,
         }),
         className
       )}
-      maxHeight={frameHeight}
       minHeight={frameHeight}
+      maxHeight={frameHeight}
       minWidth={320 + handleWidth + 2}
-      maxWidth="100%"
+      maxWidth={'100%'}
       enable={resizeEnable}
       handleStyles={{
         right: {
@@ -70,29 +83,20 @@ export const CodePreviewIframe = ({
         }
       }}
     >
-      {codeHash ? (
-        <Frame
-          ref={targetRef}
-          src={getPreviewUrl(
-            codeHash,
-            componentMeta && componentMeta.displayName
-          )}
-          title="Preview"
-          height={frameHeight}
-          animate={!isResizing}
-        />
-      ) : null}
+      {content}
       <ResizeHandle>
         <HandleIcon width={16} height={16} />
       </ResizeHandle>
       {isResizing && <SizeDisplay ref={sizeEl} />}
     </Resizable>
+  ) : (
+    content
   );
-};
+});
 
 const handleWidth = 16;
 
-const resizable = css({
+const resizableStyle = css({
   overflow: 'hidden',
   display: 'flex',
   border: '1px solid',

@@ -75,7 +75,7 @@ export const ShowroomApp = () => {
   return (
     <Wrapper>
       <IdProvider>
-        <div className={colorTheme}>
+        <Div className={colorTheme}>
           <QueryParamProvider>
             <CodeThemeContext.Provider value={THEME.codeTheme}>
               <Div
@@ -116,7 +116,7 @@ export const ShowroomApp = () => {
               </Div>
             </CodeThemeContext.Provider>
           </QueryParamProvider>
-        </div>
+        </Div>
       </IdProvider>
     </Wrapper>
   );

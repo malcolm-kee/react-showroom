@@ -20,7 +20,11 @@ export const StandaloneEditor = () => {
   return (
     <>
       {codeData && codeData[1] ? (
-        <StandaloneCodeLiveEditor code={codeData[0]} lang={codeData[1].lang} />
+        <StandaloneCodeLiveEditor
+          code={codeData[0]}
+          lang={codeData[1].lang}
+          codeHash={codeHash}
+        />
       ) : (
         <p>Invalid codeHash</p>
       )}

@@ -214,6 +214,7 @@ const createBaseWebpackConfig = (
     docgen: docgenConfig,
     debug,
     cacheDir,
+    example: exampleConfig,
   } = config;
 
   const isProd = mode === 'production';
@@ -500,6 +501,7 @@ const createBaseWebpackConfig = (
         IS_SPA: !prerenderConfig,
         REACT_SHOWROOM_THEME: theme,
         NODE_ENV: mode,
+        EXAMPLE_WIDTHS: exampleConfig.widths,
         SITE_URL: url,
       }),
       virtualModules,
