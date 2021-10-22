@@ -1,10 +1,10 @@
 import { createNameContext } from '@showroomjs/ui';
 import * as React from 'react';
-import { Props } from 'react-docgen-typescript';
+import { ComponentDoc } from 'react-docgen-typescript';
 
-export const ComponentPropsContext = createNameContext<Props>(
-  'ComponentProps',
-  {}
+export const ComponentMetaContext = createNameContext<ComponentDoc | undefined>(
+  'ComponentDoc',
+  undefined
 );
 
-export const useComponentProps = () => React.useContext(ComponentPropsContext);
+export const useComponentMeta = () => React.useContext(ComponentMetaContext);

@@ -47,6 +47,17 @@ module.exports = defineConfig({
   docgen: {
     tsconfigPath: path.resolve(__dirname, 'tsconfig.build.json'),
   },
+  // html: {
+  //   preview: {
+  //     scripts: [
+  //       {
+  //         path: 'http://localhost:8097', // can use this to inject connect to standalone `react-devtools`.
+  //         usePublicPath: false,
+  //         append: false,
+  //       },
+  //     ],
+  //   },
+  // },
   assetDir: 'public',
   wrapper: 'docs/provider.tsx',
 });

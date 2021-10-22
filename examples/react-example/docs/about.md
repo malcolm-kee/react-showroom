@@ -8,7 +8,7 @@ This example is created as a playground and showcase of `react-showroom`.
 
 ## Example in doc
 
-```tsx live
+```tsx live frame
 import { Button } from 'components';
 
 <Button>Hello</Button>;

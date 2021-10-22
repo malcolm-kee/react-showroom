@@ -5,18 +5,25 @@ import type {
   ParserOptions,
 } from 'react-docgen-typescript';
 import type { Configuration } from 'webpack';
+import type { Options as HtmlWebpackTagsPluginOptions } from 'html-webpack-tags-plugin';
 import { CodeBlocks, Environment } from './index';
 
-export interface ItemConfigurationWithPath {
+export interface HtmlOptions
+  extends Pick<
+    HtmlWebpackTagsPluginOptions,
+    'scripts' | 'tags' | 'links' | 'metas'
+  > {}
+
+export interface ItemConfigBase {
   title?: string;
   /**
    * path for the section. Will be inferred from title if not provided
    */
   path?: string;
+  hideFromSidebar?: boolean;
 }
 
-export interface ComponentSectionConfiguration
-  extends ItemConfigurationWithPath {
+export interface ComponentSectionConfiguration extends ItemConfigBase {
   type: 'components';
   /**
    * A short description of this section.
@@ -28,7 +35,7 @@ export interface ComponentSectionConfiguration
   components: string | Array<string>;
 }
 
-export interface ContentItemConfiguration extends ItemConfigurationWithPath {
+export interface ContentItemConfiguration extends ItemConfigBase {
   type: 'content';
   /**
    * location of a Markdown file containing the overview content.
@@ -45,7 +52,7 @@ export interface LinkItemConfiguration {
   href: string;
 }
 
-export interface DocSectionConfiguration extends ItemConfigurationWithPath {
+export interface DocSectionConfiguration extends ItemConfigBase {
   type: 'docs';
   /**
    * relative path to the folder that contents all the markdown files.
@@ -63,7 +70,7 @@ export interface DocSectionConfiguration extends ItemConfigurationWithPath {
   formatLabel?: (oriTitle: string) => string;
 }
 
-export interface GroupSectionConfiguration extends ItemConfigurationWithPath {
+export interface GroupSectionConfiguration extends ItemConfigBase {
   type: 'group';
   /**
    * section title
@@ -147,6 +154,11 @@ export interface DocgenConfiguration {
   options: ParserOptions;
 }
 
+export interface ShowroomHtmlConfiguration {
+  showroom?: HtmlOptions;
+  preview?: HtmlOptions;
+}
+
 export interface ReactShowroomConfiguration {
   /**
    * URL for the site.
@@ -195,6 +207,7 @@ export interface ReactShowroomConfiguration {
    */
   wrapper?: string;
   docgen?: Partial<DocgenConfiguration>;
+  html?: ShowroomHtmlConfiguration;
   /**
    * Configuration to specify how css should be processed.
    *
@@ -254,6 +267,7 @@ export interface ReactShowroomComponentSectionConfig {
   docPath: string | null;
   parentSlugs: Array<string>;
   id: string;
+  hideFromSidebar?: boolean;
 }
 
 interface ReactShowroomMarkdownSectionConfig {
@@ -262,12 +276,14 @@ interface ReactShowroomMarkdownSectionConfig {
   slug: string;
   title?: string;
   formatLabel: (oriTitle: string) => string;
+  hideFromSidebar?: boolean;
 }
 
 interface ReactShowroomLinkSectionConfig {
   type: 'link';
   href: string;
   title: string;
+  hideFromSidebar?: boolean;
 }
 
 interface ReactShowroomGroupSectionConfig {
@@ -275,6 +291,7 @@ interface ReactShowroomGroupSectionConfig {
   title: string;
   slug: string;
   items: Array<ReactShowroomSectionConfig>;
+  hideFromSidebar?: boolean;
 }
 
 /**
@@ -308,6 +325,7 @@ export interface NormalizedReactShowroomConfiguration
     enabled: boolean;
     usePostcss: boolean;
   };
+  html: ShowroomHtmlConfiguration;
 }
 
 export interface ReactShowroomComponentContent {
@@ -331,6 +349,7 @@ export interface ReactShowroomComponentSection {
   description: string;
   slug: string;
   id: string;
+  hideFromSidebar?: boolean;
 }
 
 export interface ReactShowroomMarkdownFrontmatter {
@@ -362,6 +381,7 @@ export interface ReactShowroomMarkdownSection {
   preloadUrl: string;
   load: () => Promise<ReactShowroomMarkdownContent>;
   formatLabel: (oriTitle: string) => string;
+  hideFromSidebar?: boolean;
 }
 
 interface ReactShowroomLinkSection {
@@ -375,6 +395,7 @@ export interface ReactShowroomGroupSection {
   title: string;
   slug: string;
   items: Array<ReactShowroomSection>;
+  hideFromSidebar?: boolean;
 }
 
 export type ReactShowroomSection =

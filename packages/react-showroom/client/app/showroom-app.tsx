@@ -2,17 +2,17 @@ import { IdProvider, QueryParamProvider } from '@showroomjs/ui';
 import * as React from 'react';
 import sections from 'react-showroom-sections';
 import Wrapper from 'react-showroom-wrapper';
-import { Div } from './components/base';
-import { Header } from './components/header';
-import { Sidebar } from './components/sidebar';
-import { CodeThemeContext } from './lib/code-theme-context';
-import { Suspense } from './lib/lazy';
-import { matchPath, Route, Switch, useLocation } from './lib/routing';
-import { DefaultHomePage } from './pages/index';
-import { routeMapping, routes } from './route-mapping';
-import { colorTheme, THEME } from './theme';
+import { Div } from '../components/base';
+import { Header } from '../components/header';
+import { Sidebar } from '../components/sidebar';
+import { CodeThemeContext } from '../lib/code-theme-context';
+import { Suspense } from '../lib/lazy';
+import { matchPath, Route, Switch, useLocation } from '../lib/routing';
+import { DefaultHomePage } from '../pages/index';
+import { routeMapping, routes } from '../route-mapping';
+import { colorTheme, THEME } from '../theme';
 
-export const App = () => {
+export const ShowroomApp = () => {
   const location = useLocation();
 
   const lastPathName = React.useRef(location.pathname);

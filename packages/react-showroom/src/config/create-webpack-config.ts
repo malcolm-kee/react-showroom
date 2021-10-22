@@ -2,6 +2,7 @@ import { Environment, isDefined, isString } from '@showroomjs/core';
 import { NormalizedReactShowroomConfiguration } from '@showroomjs/core/react';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import HtmlWebpackTagsPlugin from 'html-webpack-tags-plugin';
 import * as path from 'path';
 import * as docgen from 'react-docgen-typescript';
 import { rehypeMdxTitle } from 'rehype-mdx-title';
@@ -13,6 +14,7 @@ import * as webpack from 'webpack';
 import { merge } from 'webpack-merge';
 import { createHash } from '../lib/create-hash';
 import {
+  generateAllComponents,
   generateCodeblocksData,
   generateSectionsAndImports,
   generateWrapper,
@@ -51,19 +53,27 @@ export const createWebpackConfig = (
     assetDir,
     basePath,
     theme,
+    html,
   } = config;
 
   const isProd = mode === 'production';
 
-  const clientEntry = resolveShowroom('client-dist/client-entry.js');
-  const previewEntry = resolveShowroom('client-dist/preview-client-entry.js');
+  const clientEntry = resolveShowroom(
+    'client-dist/app/showroom-client-entry.js'
+  );
+  const previewEntry = resolveShowroom(
+    'client-dist/app/preview-client-entry.js'
+  );
 
   return mergeWebpackConfig(
     merge(baseConfig, {
       entry: {
-        ...(config.require ? { requireConfig: config.require } : {}),
-        showroom: clientEntry,
-        preview: previewEntry,
+        showroom: config.require
+          ? config.require.concat(clientEntry)
+          : clientEntry,
+        preview: config.require
+          ? config.require.concat(previewEntry)
+          : previewEntry,
       },
       output: {
         path: resolveApp(outDir),
@@ -71,27 +81,11 @@ export const createWebpackConfig = (
       },
       plugins: [
         new HtmlWebpackPlugin({
-          templateContent: `<!DOCTYPE html>
-          <html lang="en">
-            <head>
-              <meta charset="UTF-8" />
-              <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-              <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />${
-                theme.favicon
-                  ? `<link rel="shortcut icon" href="${theme.favicon}">`
-                  : ''
-              }<!--SSR-helmet-->${
-            theme.resetCss
-              ? `<style>*,::after,::before{box-sizing:border-box}html{-moz-tab-size:4;tab-size:4}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji'}hr{height:0;color:inherit}abbr[title]{text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Consolas,'Liberation Mono',Menlo,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}::-moz-focus-inner{border-style:none;padding:0}:-moz-focusring{outline:1px dotted ButtonText}:-moz-ui-invalid{box-shadow:none}legend{padding:0}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}</style>`
-              : ''
-          }
-              <style>html, body, #target { height: 100%; }</style>
-              <!--SSR-style-->
-            </head>
-            <body>
-              <div id="target"><!--SSR-target--></div>
-            </body>
-          </html>`,
+          template: resolveShowroom('html-template/showroom.html'),
+          templateParameters: {
+            favicon: theme.favicon,
+            resetCss: theme.resetCss,
+          },
           minify: isProd && {
             collapseWhitespace: true,
             keepClosingSlash: true,
@@ -102,37 +96,40 @@ export const createWebpackConfig = (
             removeStyleLinkTypeAttributes: true,
             useShortDoctype: true,
           },
-          chunks: [config.require && 'requireConfig', 'showroom'].filter(
-            isDefined
-          ),
+          chunks: ['showroom'],
         }),
+        html.showroom
+          ? new HtmlWebpackTagsPlugin({
+              ...html.showroom,
+              files: ['**/index.html'],
+            })
+          : undefined,
         new HtmlWebpackPlugin({
           filename: '_preview.html',
-          templateContent: `<!DOCTYPE html><html lang="en">
-          <head><title>Preview ${
-            theme && theme.title ? `- ${theme.title}` : ''
-          }</title><meta charset="UTF-8" />
-          <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-          ${
-            theme.resetCss
-              ? `<style>*,::after,::before{box-sizing:border-box}html{-moz-tab-size:4;tab-size:4}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji'}hr{height:0;color:inherit}abbr[title]{text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Consolas,'Liberation Mono',Menlo,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}::-moz-focus-inner{border-style:none;padding:0}:-moz-focusring{outline:1px dotted ButtonText}:-moz-ui-invalid{box-shadow:none}legend{padding:0}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}</style>`
-              : ''
-          }</head>
-          <body><div id="preview"></div></body></html>`,
+          template: resolveShowroom('html-template/preview.html'),
+          templateParameters: {
+            title: theme.title,
+            resetCss: theme.resetCss,
+            prerender: mode === 'production' && !!prerenderConfig,
+          },
           minify: isProd && {
             collapseWhitespace: true,
             keepClosingSlash: true,
             removeComments: true,
+            ignoreCustomComments: prerenderConfig ? [/SSR-/] : [],
             removeRedundantAttributes: true,
             removeScriptTypeAttributes: true,
             removeStyleLinkTypeAttributes: true,
             useShortDoctype: true,
           },
-          chunks: [config.require && 'requireConfig', 'preview'].filter(
-            isDefined
-          ),
+          chunks: ['preview'],
         }),
+        html.preview
+          ? new HtmlWebpackTagsPlugin({
+              ...html.preview,
+              files: ['**/_preview.html'],
+            })
+          : undefined,
         new WebpackMessages({
           name: 'showroom',
           logger: logToStdout,
@@ -165,13 +162,19 @@ export const createSsrWebpackConfig = (
 ): webpack.Configuration => {
   const baseConfig = createBaseWebpackConfig(mode, config, { ssr: true });
 
-  const server = resolveShowroom('client-dist/server-entry.js');
+  const showroomServer = resolveShowroom(
+    'client-dist/app/showroom-server-entry.js'
+  );
+  const previewServer = resolveShowroom(
+    'client-dist/app/preview-server-entry.js'
+  );
 
   return mergeWebpackConfig(
     merge(baseConfig, {
       entry: {
         ...(config.require ? { requireConfig: config.require } : {}),
-        prerender: server,
+        prerender: showroomServer,
+        previewPrerender: previewServer,
       },
       output: {
         path: resolveApp(`${outDir}/server`),
@@ -221,11 +224,7 @@ const createBaseWebpackConfig = (
     docgenConfig.options
   );
 
-  const generated = generateSectionsAndImports(
-    sections,
-    paths.showroomPath,
-    docgenParser
-  );
+  const generated = generateSectionsAndImports(sections, paths.showroomPath);
 
   const virtualModules = new VirtualModulesPlugin({
     // create a virtual module that consists of parsed code blocks
@@ -239,6 +238,8 @@ const createBaseWebpackConfig = (
       generateWrapper(wrapper),
     [resolveShowroom('node_modules/react-showroom-all-imports.js')]:
       generated.allImports,
+    [resolveShowroom('node_modules/react-showroom-all-components.js')]:
+      generateAllComponents(sections),
   });
 
   const babelPreset = createBabelPreset(mode);
@@ -289,6 +290,14 @@ const createBaseWebpackConfig = (
             not: [/raw/],
           },
           oneOf: [
+            {
+              resourceQuery: /showroomComponentMetadata/,
+              loader: 'showroom-component-metadata-loader',
+              options: {
+                docgenParser,
+                debug,
+              },
+            },
             {
               resourceQuery: /showroomComponent/,
               loader: 'showroom-component-loader',

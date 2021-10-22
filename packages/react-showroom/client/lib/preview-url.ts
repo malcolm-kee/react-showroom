@@ -1,12 +1,10 @@
-import { basename } from './config';
-
-const isSpa = true; // TODO: change this to based on settings once we prerender the example.
+import { encodeDisplayName } from '@showroomjs/core';
+import { basename, isSpa } from './config';
 
 export const getPreviewUrl = (
-  codeHash: string | undefined,
-  code: string,
-  lang: string
+  codeHash: string,
+  componentDisplayName: string | undefined
 ) =>
-  `${basename}/_preview.html${
-    isSpa ? '/#/' : '/'
-  }${codeHash}?code=${code}&lang=${lang}`;
+  `${basename}/_preview${isSpa ? '.html/#/' : '/'}${codeHash}${
+    componentDisplayName ? `/${encodeDisplayName(componentDisplayName)}` : ''
+  }`;

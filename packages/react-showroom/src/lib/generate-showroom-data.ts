@@ -4,8 +4,6 @@ import {
   ReactShowroomSectionConfig,
 } from '@showroomjs/core/react';
 import path from 'path';
-import { ComponentDoc, FileParser } from 'react-docgen-typescript';
-import slugify from 'slugify';
 
 let _nameIndex = 0;
 const getName = (name: string) => getSafeName(name) + '_' + _nameIndex++;
@@ -58,28 +56,27 @@ export const generateCodeblocksData = (
 
 function compileComponentSection(
   component: ReactShowroomComponentSectionConfig,
-  componentDoc: ComponentDoc,
   rootDir: string
 ): string {
   const { docPath, sourcePath } = component;
 
+  const { name: componentName } = path.parse(sourcePath);
+
   const load = docPath
     ? `async () => {
-  const loadDoc = import(/* webpackChunkName: "${componentDoc.displayName}-doc" */'${docPath}');
-  const loadImports = import(/* webpackChunkName: "${componentDoc.displayName}-imports" */'${docPath}?showroomRemarkImports');
-  const loadCodeBlocks = import(/* webpackChunkName: "${componentDoc.displayName}-codeblocks" */'${docPath}?showroomRemarkCodeblocks');
-
-  return {
-    doc: (await loadDoc).default,
-    metadata: (await import(/* webpackChunkName: "${componentDoc.displayName}-metadata" */'${sourcePath}?showroomComponent')).default,
+      const loadDoc = import(/* webpackChunkName: "${componentName}-doc" */'${docPath}');
+      const loadImports = import(/* webpackChunkName: "${componentName}-imports" */'${docPath}?showroomRemarkImports');
+      const loadCodeBlocks = import(/* webpackChunkName: "${componentName}-codeblocks" */'${docPath}?showroomRemarkCodeblocks');
+    
+      return {
+        doc: (await loadDoc).default,
+        metadata: (await import(/* webpackChunkName: "${componentName}-metadata" */'${sourcePath}?showroomComponent')).default,
     imports: (await loadImports).imports || {},
     codeblocks: (await loadCodeBlocks).default || {},
   }    
 }`
     : `async () => ({
-  metadata: (await import(/* webpackChunkName: "${
-    componentDoc ? componentDoc.displayName : ''
-  }-metadata" */'${sourcePath}?showroomComponent')).default,
+  metadata: (await import('${sourcePath}?showroomComponent')).default,
   doc: null,
   imports: {},
   codeblocks: {},
@@ -99,8 +96,7 @@ interface ImportDefinition {
 
 export const generateSectionsAndImports = (
   sections: Array<ReactShowroomSectionConfig>,
-  rootDir: string,
-  docgenParser: FileParser
+  rootDir: string
 ) => {
   const imports: Array<ImportDefinition> = [];
   const codeImportImports: Array<{
@@ -116,13 +112,12 @@ export const generateSectionsAndImports = (
             type: 'group',
             title: '${section.title}',
             items: ${collect(section.items)},
-            slug: '${section.slug}'
+            slug: '${section.slug}',
+            ${section.hideFromSidebar ? 'hideFromSidebar: true,' : ''}
           }`;
         }
 
         if (section.type === 'component') {
-          const compMetadata = docgenParser.parse(section.sourcePath)[0];
-
           const name = getName('component');
 
           if (section.docPath) {
@@ -132,23 +127,27 @@ export const generateSectionsAndImports = (
             });
           }
 
-          return `{
+          imports.push({
+            type: 'default',
+            name,
+            path: `${section.sourcePath}?showroomComponentMetadata`,
+          });
+
+          return `${name}.displayName ? {
               type: 'component',
-              data: ${compileComponentSection(section, compMetadata, rootDir)},
-              title: '${compMetadata && compMetadata.displayName}',
-              description: \`${
-                compMetadata && compMetadata.description.replace(/`/g, '\\`')
-              }\`,
-              slug: '${
-                compMetadata
-                  ? [
-                      ...section.parentSlugs,
-                      slugify(compMetadata.displayName, { lower: true }),
-                    ].join('/')
+              data: ${compileComponentSection(section, rootDir)},
+              title: ${name}.displayName,
+              description: ${name}.description,
+              slug: [${
+                section.parentSlugs.length > 0
+                  ? `'${section.parentSlugs.join('/')}',`
                   : ''
-              }',
+              } slugify(${name}.displayName, { lower: true })].join('/'),
               id: '${section.id}',
-              shouldIgnore: ${!compMetadata}
+              ${section.hideFromSidebar ? 'hideFromSidebar: true,' : ''}
+              shouldIgnore: false
+            } : {
+              shouldIgnore: true,
             }`;
           // because the component parsing may return nothing, so need to set a flag here and filter it at bottom
         }
@@ -174,6 +173,7 @@ export const generateSectionsAndImports = (
               fallbackTitle: '${section.title || ''}',
               slug: '${section.slug}',
               frontmatter: ${name}_frontmatter || {},
+              ${section.hideFromSidebar ? 'hideFromSidebar: true,' : ''}
               formatLabel: ${section.formatLabel.toString()},
               preloadUrl: '${path.relative(rootDir, section.sourcePath)}',
               load: async () => {
@@ -207,7 +207,8 @@ export const generateSectionsAndImports = (
   const result = collect(sections);
 
   return {
-    sections: `${imports
+    sections: `import slugify from 'slugify';
+    ${imports
       .map((imp) =>
         imp.type === 'default'
           ? `import ${imp.name} from '${imp.path}';`
@@ -222,6 +223,66 @@ export const generateSectionsAndImports = (
       .map((imp) => `${imp.name}.imports`)
       .join(', ')});`,
   };
+};
+
+export const generateAllComponents = (
+  sections: Array<ReactShowroomSectionConfig>
+) => {
+  const componentImports: Array<{
+    name: string;
+    metadataPath: string;
+    sourcePath: string;
+    codeblockPath: string | null;
+  }> = [];
+
+  function collect(sectionList: Array<ReactShowroomSectionConfig>): void {
+    sectionList.forEach((section) => {
+      if (section.type === 'group') {
+        collect(section.items);
+      }
+      if (section.type === 'component') {
+        const name = getName('component');
+
+        componentImports.push({
+          name,
+          metadataPath: `${section.sourcePath}?showroomComponentMetadata`,
+          sourcePath: section.sourcePath,
+          codeblockPath:
+            section.docPath && `${section.docPath}?showroomRemarkCodeblocks`,
+        });
+      }
+    });
+  }
+
+  collect(sections);
+
+  if (componentImports.length === 0) {
+    return `export const AllComponents = {};`;
+  }
+
+  return `${componentImports
+    .map(
+      (comp) => `const ${comp.name} = require('${comp.sourcePath}');
+  import _showroomMetadata_${comp.name} from '${comp.metadataPath}';
+  ${
+    comp.codeblockPath
+      ? `import _code_${comp.name} from '${comp.codeblockPath}';`
+      : ''
+  }`
+    )
+    .join('\n')}
+
+  export const AllComponents = Object.assign(
+    ${componentImports
+      .map((comp) => {
+        const compVar = comp.name;
+        const metadataVar = `_showroomMetadata_${comp.name}`;
+        return `${metadataVar}.displayName ? {
+      [${metadataVar}.displayName]: ${compVar}.default || ${compVar}[${metadataVar}.displayName] || ${compVar}
+    } : {}`;
+      })
+      .join(', ')}
+  );`;
 };
 
 export const generateWrapper = (wrapper: string | undefined) => {

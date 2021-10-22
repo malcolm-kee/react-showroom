@@ -36,6 +36,10 @@ declare module 'react-showroom-all-imports' {
   export default imports;
 }
 
+declare module 'react-showroom-all-components' {
+  export const AllComponents: Record<string, any>;
+}
+
 declare namespace NodeJS {
   import type { ThemeConfiguration } from '@showroomjs/core/react';
 

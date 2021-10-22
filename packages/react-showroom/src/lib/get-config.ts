@@ -95,6 +95,7 @@ export const getConfig = (
     css = {
       postcss: fs.existsSync(paths.appPostcssConfig),
     },
+    html = {},
     ...providedConfig
   } = userConfig || getUserConfig(env, configFile);
 
@@ -108,7 +109,7 @@ export const getConfig = (
       ignore: ignores,
     });
 
-    collectComponents(componentPaths, sections, []);
+    collectComponents(componentPaths, sections, [], false);
   } else if (!items) {
     const componentPaths = glob.sync(DEFAULT_COMPONENTS_GLOB, {
       cwd: paths.appPath,
@@ -116,7 +117,7 @@ export const getConfig = (
       ignore: ignores,
     });
 
-    collectComponents(componentPaths, sections, []);
+    collectComponents(componentPaths, sections, [], false);
   }
 
   if (items) {
@@ -141,6 +142,7 @@ export const getConfig = (
   _normalizedConfig = {
     ...defaultConfig,
     ...providedConfig,
+    html,
     css: {
       enabled: !!css,
       usePostcss: !!(css && css.postcss),
@@ -181,7 +183,8 @@ export const getConfig = (
   function collectComponents(
     componentPaths: Array<string>,
     parent: Array<ReactShowroomSectionConfig>,
-    parentSlugs: Array<string>
+    parentSlugs: Array<string>,
+    hideFromSidebar: boolean | undefined
   ) {
     componentPaths.forEach((comPath) => {
       const comPathInfo = path.parse(comPath);
@@ -203,6 +206,7 @@ export const getConfig = (
         docPath,
         parentSlugs,
         id: createHash(comPath),
+        hideFromSidebar,
       };
 
       components.push(section);
@@ -215,7 +219,7 @@ export const getConfig = (
     parent: Array<ReactShowroomSectionConfig>,
     parentSlugs: Array<string>
   ) {
-    sectionConfigs.forEach((sectionConfig, sectionIndex) => {
+    sectionConfigs.forEach((sectionConfig) => {
       switch (sectionConfig.type) {
         case 'group': {
           const title = sectionConfig.title;
@@ -247,6 +251,7 @@ export const getConfig = (
             type: 'group',
             title,
             slug: parentSlugs.concat(slug).join('/'),
+            hideFromSidebar: sectionConfig.hideFromSidebar,
             items: [],
           };
 
@@ -289,7 +294,8 @@ export const getConfig = (
               parent,
               sectionConfig.path
                 ? parentSlugs.concat(sectionConfig.path)
-                : parentSlugs
+                : parentSlugs,
+              sectionConfig.hideFromSidebar
             );
             return;
           }
@@ -310,12 +316,14 @@ export const getConfig = (
             title,
             slug: parentSlugs.concat(slug).join('/'),
             items: [],
+            hideFromSidebar: sectionConfig.hideFromSidebar,
           };
 
           collectComponents(
             componentPaths,
             section.items,
-            parentSlugs.concat(slug)
+            parentSlugs.concat(slug),
+            sectionConfig.hideFromSidebar
           );
           parent.push(section);
 
@@ -348,6 +356,7 @@ export const getConfig = (
             title: sectionConfig.title,
             sourcePath: docPath,
             slug: parentSlugs.concat(slug).join('/'),
+            hideFromSidebar: sectionConfig.hideFromSidebar,
             formatLabel: (x) => x,
           });
           return;
@@ -377,6 +386,7 @@ export const getConfig = (
               title: docGroupTitle,
               slug: slugParts.join('/'),
               items: [],
+              hideFromSidebar: sectionConfig.hideFromSidebar,
             };
 
             collectDocs(section.items, slugParts, formatLabel);

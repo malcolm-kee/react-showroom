@@ -34,7 +34,7 @@ export async function startDevServer(
 
   const config = getConfig('development', configFile, userConfig);
 
-  const { devServerPort, assetDir } = config;
+  const { devServerPort, assetDir, prerender } = config;
 
   const HOST = '0.0.0.0';
   const PORT = Number((argv as any).port ?? process.env.PORT ?? devServerPort);
@@ -48,13 +48,14 @@ export async function startDevServer(
         logging: 'none',
       },
       hot: true,
-      historyApiFallback: true, // TODO: use the following once we prerender the example
-      // historyApiFallback:  {
-      //   rewrites: [
-      //     { from: /^\/_preview/, to: '/_preview.html' },
-      //     { from: /./, to: '/index.html' },
-      //   ],
-      // },
+      historyApiFallback: prerender
+        ? {
+            rewrites: [
+              { from: /^\/_preview/, to: '/_preview.html' },
+              { from: /./, to: '/index.html' },
+            ],
+          }
+        : true,
     },
     assetDir
       ? {

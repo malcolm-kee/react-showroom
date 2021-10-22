@@ -32,6 +32,7 @@ export const CodePreviewFrame = (props: CodePreviewFrameProps) => {
       css={{
         position: 'relative',
         padding: '$1',
+        minHeight: 30,
       }}
     >
       {isError ? (

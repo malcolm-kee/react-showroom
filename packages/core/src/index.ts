@@ -3,6 +3,7 @@ export {
   SupportedLanguage,
   SUPPORTED_LANGUAGES,
 } from './compilation';
+export { decodeDisplayName, encodeDisplayName } from './display-name';
 export { flattenArray, NestedArray } from './flatten-array';
 export { callAll } from './fn-lib';
 export type { Callback } from './fn-lib';

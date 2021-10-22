@@ -121,14 +121,14 @@ const DropdownSection = (props: {
 
   switch (section.type) {
     case 'component':
-      return (
+      return section.hideFromSidebar ? null : (
         <DropdownMenu.Item onSelect={() => history.push(`/${section.slug}`)}>
           {section.title}
         </DropdownMenu.Item>
       );
 
     case 'markdown':
-      return (
+      return section.hideFromSidebar ? null : (
         <DropdownMenu.Item onSelect={() => history.push(`/${section.slug}`)}>
           {section.formatLabel(
             section.frontmatter.title || section.fallbackTitle
@@ -149,7 +149,7 @@ const DropdownSection = (props: {
       );
 
     case 'group':
-      return (
+      return section.hideFromSidebar ? null : (
         <>
           {props.index !== 0 && <DropdownMenu.Separator />}
           <DropdownMenu.Label>{section.title}</DropdownMenu.Label>
@@ -177,7 +177,7 @@ const SidebarSection = ({
 
   switch (section.type) {
     case 'group':
-      return (
+      return section.hideFromSidebar ? null : (
         <Div
           css={{
             borderBottom: '1px solid $gray-200',
@@ -199,14 +199,14 @@ const SidebarSection = ({
       );
 
     case 'component':
-      return (
+      return section.hideFromSidebar ? null : (
         <Link to={`/${section.slug}`} root={level === 0} exact>
           {section.title}
         </Link>
       );
 
     case 'markdown':
-      return (
+      return section.hideFromSidebar ? null : (
         <Link to={`/${section.slug}`} root={level === 0} exact>
           {section.formatLabel(
             section.frontmatter.title || section.fallbackTitle

@@ -1,8 +1,6 @@
 Following is an example in TSX.
 
 ```tsx frame
-import { TextInput } from 'components';
-
 const Example = () => {
   const [value, setValue] = React.useState<string>('');
 
@@ -16,22 +14,12 @@ const Example = () => {
   );
 };
 
-render(
-  <div>
-    <Example />
-    <Example />
-    <Example />
-    <Example />
-    <Example />
-    <Example />
-  </div>
-);
+render(<Example />);
 ```
 
 Works with third-party library too.
 
 ```tsx frame
-import { TextInput } from 'components';
 import { useForm } from 'react-hook-form';
 
 const Example = () => {

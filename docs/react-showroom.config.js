@@ -5,17 +5,17 @@ const libPackageJson = require('react-showroom/package.json');
 module.exports = defineConfig({
   url: 'https://react-showroom.js.org',
   require: ['tailwindcss/tailwind.css'],
-  imports: [
-    {
-      name: '@components',
-      path: './docs/button.tsx',
-    },
-  ],
   items: [
     {
       type: 'content',
       path: '',
       content: 'docs/index.mdx',
+    },
+    {
+      type: 'components',
+      path: 'components',
+      components: './docs/components/*.tsx',
+      hideFromSidebar: true,
     },
     {
       type: 'group',
