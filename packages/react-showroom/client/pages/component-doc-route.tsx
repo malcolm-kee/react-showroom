@@ -2,7 +2,6 @@ import {
   ReactShowroomComponentContent,
   ReactShowroomComponentSection,
 } from '@showroomjs/core/react';
-import { css } from '@showroomjs/ui';
 import * as React from 'react';
 import { ComponentDataProvider } from '../components/component-data-provider';
 import { ComponentDocArticle } from '../components/component-doc-article';
@@ -25,7 +24,7 @@ export const ComponentDocRoute = ({
     <ComponentDataProvider content={content}>
       <Switch>
         <Route path={`${url}/_standalone/:codeHash`}>
-          <StandalonePageContainer className={standalonePageStyle()}>
+          <StandalonePageContainer>
             <Seo
               title={content.metadata.displayName}
               description={content.metadata.description}
@@ -48,7 +47,3 @@ export const ComponentDocRoute = ({
     </ComponentDataProvider>
   );
 };
-
-const standalonePageStyle = css({
-  height: 'calc(100vh - 62px)',
-});

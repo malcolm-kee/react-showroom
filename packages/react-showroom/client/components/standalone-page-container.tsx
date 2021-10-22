@@ -3,7 +3,6 @@ import * as React from 'react';
 
 export const StandalonePageContainer = (props: {
   children: React.ReactNode;
-  className?: string;
 }) => {
   return (
     <Div
@@ -11,8 +10,8 @@ export const StandalonePageContainer = (props: {
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
+        height: 'calc(100vh - 62px)',
       }}
-      className={props.className}
     >
       {props.children}
     </Div>
