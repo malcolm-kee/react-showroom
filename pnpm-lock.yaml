@@ -376,6 +376,7 @@ importers:
       '@radix-ui/react-dropdown-menu': ^0.1.1
       '@radix-ui/react-id': ^0.1.1
       '@radix-ui/react-portal': ^0.1.1
+      '@radix-ui/react-toggle': ^0.1.1
       '@showroomjs/bundles': workspace:*
       '@showroomjs/core': workspace:*
       '@stitches/react': ^1.2.5
@@ -383,6 +384,7 @@ importers:
       classnames: ^2.3.1
       downshift: ^6.1.7
       match-sorter: ^6.3.1
+      mitt: ^3.0.0
       react-highlight-words: ^0.17.0
       tslib: ^2.3.1
       typescript: ^4.4.4
@@ -394,12 +396,14 @@ importers:
       '@radix-ui/react-dropdown-menu': 0.1.1_5e8f0eb23292d5ce2747471996c3c81c
       '@radix-ui/react-id': 0.1.1_react@17.0.2
       '@radix-ui/react-portal': 0.1.1_react-dom@17.0.2+react@17.0.2
+      '@radix-ui/react-toggle': 0.1.1_react@17.0.2
       '@showroomjs/bundles': link:../bundles
       '@showroomjs/core': link:../core
       '@stitches/react': 1.2.5_react@17.0.2
       classnames: 2.3.1
       downshift: 6.1.7_react@17.0.2
       match-sorter: 6.3.1
+      mitt: 3.0.0
       react-highlight-words: 0.17.0_react@17.0.2
       tslib: 2.3.1
     devDependencies:
@@ -2356,6 +2360,18 @@ packages:
     dependencies:
       '@babel/runtime': 7.15.4
       '@radix-ui/react-compose-refs': 0.1.0_react@17.0.2
+      react: 17.0.2
+    dev: false
+
+  /@radix-ui/react-toggle/0.1.1_react@17.0.2:
+    resolution: {integrity: sha512-d19eskU1Q1NIs/OwFbzdqPhRtuvdifcF1flKS28lyrhG0m5ToIeq1AqvBib1XGcxnpCxa7X4FpFGIBsiGBtwtg==}
+    peerDependencies:
+      react: ^16.8 || ^17.0
+    dependencies:
+      '@babel/runtime': 7.15.4
+      '@radix-ui/primitive': 0.1.0
+      '@radix-ui/react-primitive': 0.1.1_react@17.0.2
+      '@radix-ui/react-use-controllable-state': 0.1.0_react@17.0.2
       react: 17.0.2
     dev: false
 
@@ -7784,6 +7800,10 @@ packages:
 
   /minimist/1.2.5:
     resolution: {integrity: sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==}
+
+  /mitt/3.0.0:
+    resolution: {integrity: sha512-7dX2/10ITVyqh4aOSVI9gdape+t9l2/8QxHrFmUXu4EEUpdlxl6RudZUPZoc+zuY2hk1j7XxVroIVIan/pD/SQ==}
+    dev: false
 
   /mixme/0.5.4:
     resolution: {integrity: sha512-3KYa4m4Vlqx98GPdOHghxSdNtTvcP8E0kkaJ5Dlh+h2DRzF7zpuVVcA8B0QpKd11YJeP9QQ7ASkKzOeu195Wzw==}

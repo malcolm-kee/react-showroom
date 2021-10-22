@@ -95,6 +95,7 @@ export const getConfig = (
     css = {
       postcss: fs.existsSync(paths.appPostcssConfig),
     },
+    example: { widths = [320, 768, 1024] } = {},
     html = {},
     ...providedConfig
   } = userConfig || getUserConfig(env, configFile);
@@ -142,6 +143,9 @@ export const getConfig = (
   _normalizedConfig = {
     ...defaultConfig,
     ...providedConfig,
+    example: {
+      widths,
+    },
     html,
     css: {
       enabled: !!css,

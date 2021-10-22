@@ -50,5 +50,6 @@ declare namespace NodeJS {
     readonly SITE_URL: string;
     readonly BASE_PATH: string;
     readonly SSR: boolean;
+    readonly EXAMPLE_WIDTHS: Array<number>;
   }
 }

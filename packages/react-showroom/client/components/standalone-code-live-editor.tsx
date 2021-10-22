@@ -6,17 +6,22 @@ import {
   css,
   DropdownMenu,
   styled,
+  ToggleButton,
   useDebounce,
   useQueryParams,
+  usePersistedState,
 } from '@showroomjs/ui';
 import lzString from 'lz-string';
 import type { Language } from 'prism-react-renderer';
+import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
+import { EXAMPLE_WIDTHS } from '../lib/config';
 import { Div } from './base';
 import { CodeEditor } from './code-editor';
 import { CodePreviewIframe } from './code-preview-iframe';
 import { RadioDropdown } from './radio-dropdown';
+import { CheckboxDropdown } from './checkbox-dropdown';
 
 export interface StandaloneCodeLiveEditorProps {
   code: string;
@@ -56,15 +61,94 @@ export const StandaloneCodeLiveEditor = ({
     });
   }, [debouncedCode]);
 
+  const [hiddenSizes, setHiddenSizes] = usePersistedState<Array<number>>(
+    [],
+    'hiddenScreen'
+  );
+
+  const showPreview = editorView !== 'editorOnly';
+
   return (
-    <>
+    <Div css={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Div
         css={{
-          textAlign: 'right',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           px: '$3',
-          paddingTop: '$2',
+          py: '$2',
         }}
       >
+        <Div
+          css={{
+            display: 'block',
+            '@sm': {
+              display: 'none',
+            },
+          }}
+        >
+          {showMultipleScreens && showPreview && (
+            <DropdownMenu>
+              <DropdownMenu.Trigger asChild>
+                <MenuButton>
+                  Screens <DotsVerticalIcon width={16} height={16} />
+                </MenuButton>
+              </DropdownMenu.Trigger>
+              <CheckboxDropdown>
+                {EXAMPLE_WIDTHS.map((width) => (
+                  <CheckboxDropdown.Item
+                    checked={!hiddenSizes.includes(width)}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        setHiddenSizes(
+                          hiddenSizes.filter(
+                            (s) => s !== width && EXAMPLE_WIDTHS.includes(width)
+                          )
+                        );
+                      } else {
+                        setHiddenSizes(hiddenSizes.concat(width));
+                      }
+                    }}
+                    key={width}
+                  >
+                    {width}px
+                  </CheckboxDropdown.Item>
+                ))}
+              </CheckboxDropdown>
+            </DropdownMenu>
+          )}
+        </Div>
+        <Div
+          css={{
+            display: 'none',
+            '@sm': {
+              display: 'flex',
+              gap: '$1',
+            },
+          }}
+        >
+          {showMultipleScreens &&
+            showPreview &&
+            EXAMPLE_WIDTHS.map((width) => (
+              <ToggleButton
+                pressed={!hiddenSizes.includes(width)}
+                onPressedChange={(isPressed) => {
+                  if (isPressed) {
+                    setHiddenSizes(
+                      hiddenSizes.filter(
+                        (s) => s !== width && EXAMPLE_WIDTHS.includes(width)
+                      )
+                    );
+                  } else {
+                    setHiddenSizes(hiddenSizes.concat(width));
+                  }
+                }}
+                key={width}
+              >
+                {width}
+              </ToggleButton>
+            ))}
+        </Div>
         <Div
           css={{
             display: 'inline-flex',
@@ -97,7 +181,7 @@ export const StandaloneCodeLiveEditor = ({
           <DropdownMenu>
             <DropdownMenu.Trigger asChild>
               <MenuButton>
-                Views <DotsVerticalIcon width={16} height={16} />
+                Sections <DotsVerticalIcon width={16} height={16} />
               </MenuButton>
             </DropdownMenu.Trigger>
             <RadioDropdown
@@ -129,30 +213,30 @@ export const StandaloneCodeLiveEditor = ({
       <Div
         className={className}
         css={{
-          padding: '$2',
-          '@xl': {
-            display: 'flex',
-            flexDirection: 'row-reverse',
-            gap: '$4',
-          },
+          width: '100vw',
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        {editorView !== 'editorOnly' && (
-          <CodePreviewIframe
-            code={debouncedCode}
-            lang={props.lang}
-            codeHash={props.codeHash}
-            className={previewClass()}
-          />
-        )}
+        {showPreview &&
+          (showMultipleScreens ? (
+            <PreviewList
+              code={debouncedCode}
+              lang={props.lang}
+              codeHash={props.codeHash}
+              hiddenSizes={hiddenSizes}
+              previewOnly={editorView === 'previewOnly'}
+            />
+          ) : (
+            <CodePreviewIframe
+              code={debouncedCode}
+              lang={props.lang}
+              codeHash={props.codeHash}
+            />
+          ))}
         {editorView !== 'previewOnly' && (
-          <Div
-            css={{
-              '@xl': {
-                flex: 1,
-              },
-            }}
-          >
+          <Div css={{ flex: 1 }}>
             <CodeEditor
               code={code}
               onChange={setCode}
@@ -164,15 +248,96 @@ export const StandaloneCodeLiveEditor = ({
           </Div>
         )}
       </Div>
-    </>
+    </Div>
+  );
+};
+
+const PreviewList = (props: {
+  code: string;
+  lang: SupportedLanguage;
+  codeHash: string;
+  hiddenSizes: Array<number>;
+  previewOnly: boolean;
+}) => {
+  const content = EXAMPLE_WIDTHS.map((width) =>
+    props.hiddenSizes.includes(width) ? null : (
+      <ScreenWrapper key={width}>
+        <Screen>
+          <CodePreviewIframe
+            code={props.code}
+            lang={props.lang}
+            codeHash={props.codeHash}
+            css={{
+              width: `${width}px`,
+            }}
+          />
+        </Screen>
+        <ScreenSize>{width}px</ScreenSize>
+      </ScreenWrapper>
+    )
+  );
+
+  return props.previewOnly ? (
+    <ScreenList className={resizeStyle()}>{content}</ScreenList>
+  ) : (
+    <Resizable enable={resizeEnable} as="ul" className={resizeStyle()}>
+      {content}
+    </Resizable>
   );
 };
 
 type EditorView = 'both' | 'previewOnly' | 'editorOnly';
 
-const previewClass = css({
-  '@xl': {
-    flex: 1,
+const showMultipleScreens = EXAMPLE_WIDTHS.length > 0;
+
+const resizeEnable: ResizeEnable = {
+  top: false,
+  right: false,
+  bottom: true,
+  left: false,
+  topRight: false,
+  bottomRight: false,
+  bottomLeft: false,
+  topLeft: false,
+};
+
+const ScreenList = styled('ul', {
+  flex: 1,
+});
+
+const resizeStyle = css({
+  display: 'flex',
+  overflowX: 'auto',
+  overflowY: 'hidden',
+  gap: '$3',
+  paddingTop: '$3',
+  paddingBottom: '$6',
+  px: '$3',
+  backgroundColor: '$gray-200',
+});
+
+const ScreenSize = styled('div', {
+  px: '$2',
+  py: '$1',
+  fontSize: '$sm',
+  lineHeight: '$sm',
+  color: '$gray-500',
+});
+
+const Screen = styled('div', {
+  shadow: 'sm',
+  backgroundColor: 'White',
+  transition: 'box-shadow 100ms ease-in-out',
+  height: '100%',
+});
+
+const ScreenWrapper = styled('li', {
+  [`&:hover ${ScreenSize}`]: {
+    color: 'Black',
+    fontWeight: '500',
+  },
+  [`&:hover ${Screen}`]: {
+    shadow: 'lg',
   },
 });
 
@@ -224,10 +389,8 @@ const btn = css({
 
 const editor = css({
   borderRadius: '$base',
-  '@xl': {
-    height: '100%',
-    overflowY: 'auto',
-  },
+  height: '100%',
+  overflowY: 'auto',
 });
 
 const safeCompress = (oriString: string): string => {

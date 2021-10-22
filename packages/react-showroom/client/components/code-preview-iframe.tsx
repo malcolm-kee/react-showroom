@@ -17,13 +17,13 @@ export interface CodePreviewIframeProps {
 
 const initialHeightMap = new Map<string, number>();
 
-export const CodePreviewIframe = ({
+export const CodePreviewIframe = styled(function CodePreviewIframe({
   code,
   codeHash,
   lang,
   resizable,
   className,
-}: CodePreviewIframeProps) => {
+}: CodePreviewIframeProps) {
   const [frameHeight, setFrameHeight] = React.useState(
     () => (codeHash && initialHeightMap.get(codeHash)) || 100
   );
@@ -46,7 +46,18 @@ export const CodePreviewIframe = ({
     sendMessage({ type: 'code', code, lang });
   }, [code, lang]);
 
-  return (
+  const content = codeHash ? (
+    <Frame
+      ref={targetRef}
+      src={getPreviewUrl(codeHash, componentMeta && componentMeta.displayName)}
+      title="Preview"
+      height={resizable ? frameHeight : '100%'}
+      animate={!isResizing}
+      className={resizable ? undefined : className}
+    />
+  ) : null;
+
+  return resizable ? (
     <Resizable
       className={cx(
         resizableStyle({
@@ -54,17 +65,11 @@ export const CodePreviewIframe = ({
         }),
         className
       )}
-      {...(resizable
-        ? {
-            minHeight: frameHeight,
-            maxHeight: frameHeight,
-            minWidth: 320 + handleWidth + 2,
-            maxWidth: '100%',
-          }
-        : {
-            width: '100%',
-          })}
-      enable={resizable ? resizeEnable : disableResize}
+      minHeight={frameHeight}
+      maxHeight={frameHeight}
+      minWidth={320 + handleWidth + 2}
+      maxWidth={'100%'}
+      enable={resizeEnable}
       handleStyles={{
         right: {
           width: 4 + handleWidth,
@@ -78,27 +83,16 @@ export const CodePreviewIframe = ({
         }
       }}
     >
-      {codeHash ? (
-        <Frame
-          ref={targetRef}
-          src={getPreviewUrl(
-            codeHash,
-            componentMeta && componentMeta.displayName
-          )}
-          title="Preview"
-          height={resizable ? frameHeight : '100%'}
-          animate={!isResizing}
-        />
-      ) : null}
-      {resizable && (
-        <ResizeHandle>
-          <HandleIcon width={16} height={16} />
-        </ResizeHandle>
-      )}
+      {content}
+      <ResizeHandle>
+        <HandleIcon width={16} height={16} />
+      </ResizeHandle>
       {isResizing && <SizeDisplay ref={sizeEl} />}
     </Resizable>
+  ) : (
+    content
   );
-};
+});
 
 const handleWidth = 16;
 
@@ -128,11 +122,6 @@ const resizeEnable: ResizeEnable = {
   bottomRight: false,
   bottomLeft: false,
   topLeft: false,
-};
-
-const disableResize: ResizeEnable = {
-  ...resizeEnable,
-  right: false,
 };
 
 const SizeDisplay = styled('div', {
