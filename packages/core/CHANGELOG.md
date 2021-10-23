@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 0.20.0
+
+### Minor Changes
+
+- 66e1d74: Always prerender site now
+
 ## 0.19.0
 
 ### Minor Changes

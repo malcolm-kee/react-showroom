@@ -1,5 +1,18 @@
 # react-showroom
 
+## 0.24.0
+
+### Minor Changes
+
+- 66e1d74: Always prerender site now
+
+### Patch Changes
+
+- 66e1d74: Fix id warning
+- Updated dependencies [66e1d74]
+  - @showroomjs/core@0.20.0
+  - @showroomjs/ui@0.19.0
+
 ## 0.23.0
 
 ### Minor Changes

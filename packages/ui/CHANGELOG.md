@@ -1,5 +1,16 @@
 # @showroomjs/ui
 
+## 0.19.0
+
+### Minor Changes
+
+- 66e1d74: Always prerender site now
+
+### Patch Changes
+
+- Updated dependencies [66e1d74]
+  - @showroomjs/core@0.20.0
+
 ## 0.18.0
 
 ### Minor Changes
