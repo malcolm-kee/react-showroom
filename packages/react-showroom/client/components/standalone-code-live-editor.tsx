@@ -1,26 +1,26 @@
 import {
   AdjustmentsIcon,
+  AnnotationIcon,
   CodeIcon,
   DesktopComputerIcon,
-  ShareIcon,
   ZoomInIcon,
 } from '@heroicons/react/outline';
-import { CheckCircleIcon } from '@heroicons/react/solid';
+import {
+  AnnotationIcon as FilledAnnotationIcon,
+  LocationMarkerIcon,
+} from '@heroicons/react/solid';
 import { SupportedLanguage } from '@showroomjs/core';
 import {
-  CopyButton,
   css,
   DropdownMenu,
   styled,
   ToggleButton,
   useDebounce,
-  useNotification,
   usePersistedState,
   useQueryParams,
 } from '@showroomjs/ui';
 import lzString from 'lz-string';
 import type { Language } from 'prism-react-renderer';
-import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { EXAMPLE_WIDTHS } from '../lib/config';
@@ -29,6 +29,11 @@ import { CheckboxDropdown } from './checkbox-dropdown';
 import { CodeEditor } from './code-editor';
 import { CodePreviewIframe } from './code-preview-iframe';
 import { RadioDropdown } from './radio-dropdown';
+import {
+  BtnText,
+  StandaloneCodeLiveEditorCopyButton,
+} from './standalone-code-live-editor-copy-button';
+import { StandaloneCodeLiveEditorPreviewList } from './standalone-code-live-editor-preview';
 
 export interface StandaloneCodeLiveEditorProps {
   code: string;
@@ -44,7 +49,6 @@ export const StandaloneCodeLiveEditor = ({
   const theme = useCodeTheme();
 
   const [queryParams, setQueryParams, isReady] = useQueryParams();
-  const showMsg = useNotification();
 
   const [code, setCode] = React.useState(props.code);
   const [showEditor, _setShowEditor] = React.useState(true);
@@ -116,6 +120,12 @@ export const StandaloneCodeLiveEditor = ({
     });
   }, [debouncedCode]);
 
+  const [isCommenting, setIsCommenting] = React.useState(false);
+  const previewListRef = React.useRef<HTMLUListElement>(null);
+  const [targetCoord, setTargetCoord] = React.useState<Coord | undefined>(
+    undefined
+  );
+
   return (
     <Div css={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Div
@@ -136,7 +146,7 @@ export const StandaloneCodeLiveEditor = ({
               display: 'flex',
               gap: '$2',
               paddingRight: '$2',
-              borderRight: '1px solid $gray-100',
+              borderRight: '1px solid $gray-200',
             }}
           >
             <ToggleButton
@@ -149,6 +159,7 @@ export const StandaloneCodeLiveEditor = ({
             <ToggleButton
               pressed={showPreview}
               onPressedChange={setShowPreview}
+              disabled={isCommenting}
               aria-label="toggle preview"
             >
               <DesktopComputerIcon width={20} height={20} />
@@ -227,6 +238,21 @@ export const StandaloneCodeLiveEditor = ({
                 </ToggleButton>
               ))}
           </Div>
+          {showPreview && (
+            <Div>
+              <ToggleButton
+                pressed={isCommenting}
+                onPressedChange={setIsCommenting}
+                css={{
+                  '&[data-state=on]': {
+                    backgroundColor: '$primary-700',
+                  },
+                }}
+              >
+                {isCommenting ? <CommentOnIcon /> : <CommentIcon />}
+              </ToggleButton>
+            </Div>
+          )}
         </Div>
         <Div
           css={{
@@ -271,28 +297,7 @@ export const StandaloneCodeLiveEditor = ({
               />
             </DropdownMenu>
           )}
-          <CopyButton
-            getTextToCopy={() => {
-              if (window) {
-                return window.location.href;
-              }
-              return '';
-            }}
-            className={btn()}
-            onCopy={() => showMsg('URL copied')}
-            label={
-              <>
-                <BtnText>Share</BtnText>
-                <StyledShareIcon width={20} height={20} />
-              </>
-            }
-            successLabel={
-              <>
-                <CopiedMessage>Share</CopiedMessage>
-                <MiniCheckIcon width={20} height={20} />
-              </>
-            }
-          />
+          <StandaloneCodeLiveEditorCopyButton />
         </Div>
       </Div>
       <Div
@@ -305,14 +310,42 @@ export const StandaloneCodeLiveEditor = ({
       >
         {showPreview &&
           (showMultipleScreens ? (
-            <PreviewList
+            <StandaloneCodeLiveEditorPreviewList
               code={debouncedCode}
               lang={props.lang}
               codeHash={props.codeHash}
+              isCommenting={isCommenting}
               hiddenSizes={hiddenSizes}
-              previewOnly={!showEditor}
+              fitHeight={!showEditor || isCommenting}
               zoom={zoomLevel}
-            />
+              onClickCommentPoint={(coord) => {
+                if (previewListRef.current) {
+                  const listRect =
+                    previewListRef.current.getBoundingClientRect();
+                  const listX = listRect.left + window.pageXOffset;
+                  const listY = listRect.top + window.pageYOffset;
+                  const elementRelative = {
+                    x: coord.x - listX,
+                    y: coord.y - listY,
+                  };
+
+                  setTargetCoord(elementRelative);
+                }
+              }}
+              ref={previewListRef}
+            >
+              {targetCoord ? (
+                <Marker
+                  width={20}
+                  height={20}
+                  css={{
+                    position: 'absolute',
+                    top: targetCoord.y,
+                    left: targetCoord.x,
+                  }}
+                />
+              ) : null}
+            </StandaloneCodeLiveEditorPreviewList>
           ) : (
             <CodePreviewIframe
               code={debouncedCode}
@@ -320,7 +353,7 @@ export const StandaloneCodeLiveEditor = ({
               codeHash={props.codeHash}
             />
           ))}
-        {showEditor && (
+        {showEditor && !isCommenting && (
           <Div css={{ flex: 1 }}>
             <CodeEditor
               code={code}
@@ -332,117 +365,40 @@ export const StandaloneCodeLiveEditor = ({
             />
           </Div>
         )}
+        {isCommenting && (
+          <Div
+            css={{
+              height: 200,
+            }}
+          ></Div>
+        )}
       </Div>
     </Div>
   );
 };
 
-const PreviewList = (props: {
-  code: string;
-  lang: SupportedLanguage;
-  codeHash: string;
-  hiddenSizes: Array<number>;
-  previewOnly: boolean;
-  zoom: string;
-}) => {
-  const zoomValue = React.useMemo(() => Number(props.zoom), [props.zoom]);
-  const shouldAdjustZoom = !isNaN(zoomValue) && zoomValue !== 100;
-
-  const content = EXAMPLE_WIDTHS.map((width) =>
-    props.hiddenSizes.includes(width) ? null : (
-      <ScreenWrapper key={width}>
-        <Screen
-          css={{
-            width: `${
-              shouldAdjustZoom ? Math.round((width * zoomValue) / 100) : width
-            }px`,
-          }}
-        >
-          <CodePreviewIframe
-            code={props.code}
-            lang={props.lang}
-            codeHash={props.codeHash}
-            css={{
-              width: `${width}px`,
-              ...(shouldAdjustZoom
-                ? {
-                    transform: `scale(${zoomValue / 100})`,
-                    transformOrigin: 'top left',
-                  }
-                : {}),
-            }}
-          />
-        </Screen>
-        <ScreenSize>{width}px</ScreenSize>
-      </ScreenWrapper>
-    )
-  );
-
-  return props.previewOnly ? (
-    <ScreenList className={resizeStyle()}>{content}</ScreenList>
-  ) : (
-    <Resizable enable={resizeEnable} as="ul" className={resizeStyle()}>
-      {content}
-    </Resizable>
-  );
-};
-
 const showMultipleScreens = EXAMPLE_WIDTHS.length > 0;
-
-const resizeEnable: ResizeEnable = {
-  top: false,
-  right: false,
-  bottom: true,
-  left: false,
-  topRight: false,
-  bottomRight: false,
-  bottomLeft: false,
-  topLeft: false,
-};
 
 const zoomDropdown = css({
   minWidth: '80px !important',
 });
 
-const ScreenList = styled('ul', {
-  flex: 1,
-});
-
-const resizeStyle = css({
-  display: 'flex',
-  overflowX: 'auto',
-  overflowY: 'hidden',
-  gap: '$3',
-  paddingTop: '$3',
-  paddingBottom: '$6',
-  px: '$3',
-  backgroundColor: '$gray-200',
-});
-
-const ScreenSize = styled('div', {
-  px: '$2',
-  py: '$1',
-  fontSize: '$sm',
-  lineHeight: '$sm',
+const Marker = styled(LocationMarkerIcon, {
+  width: 20,
+  height: 20,
   color: '$gray-500',
 });
 
-const Screen = styled('div', {
-  shadow: 'sm',
-  backgroundColor: 'White',
-  transition: 'box-shadow 100ms ease-in-out',
-  height: '100%',
-  overflow: 'hidden',
+const CommentIcon = styled(AnnotationIcon, {
+  width: 20,
+  height: 20,
+  color: '$gray-400',
 });
 
-const ScreenWrapper = styled('li', {
-  [`&:hover ${ScreenSize}`]: {
-    color: 'Black',
-    fontWeight: '500',
-  },
-  [`&:hover ${Screen}`]: {
-    shadow: 'lg',
-  },
+const CommentOnIcon = styled(FilledAnnotationIcon, {
+  width: 20,
+  height: 20,
+  color: 'White',
 });
 
 const ZoomIcon = styled(ZoomInIcon, {
@@ -455,22 +411,6 @@ const ScreensIcon = styled(AdjustmentsIcon, {
   width: 20,
   height: 20,
   color: '$gray-400',
-});
-
-const StyledShareIcon = styled(ShareIcon, {
-  width: 20,
-  height: 20,
-  color: '$gray-400',
-});
-
-const MiniCheckIcon = styled(CheckCircleIcon, {
-  width: 20,
-  height: 20,
-  color: '$green-400',
-});
-
-const CopiedMessage = styled('span', {
-  color: '$green-800',
 });
 
 const MenuButton = styled('button', {
@@ -490,29 +430,16 @@ const editorWrapper = css({
   overflow: 'hidden',
 });
 
-const BtnText = styled('span', {
-  srOnly: true,
-  '@sm': {
-    srOnly: false,
-  },
-});
-
-const btn = css({
-  minWidth: 36,
-  height: 36,
-  px: 6,
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 3,
-  position: 'relative',
-});
-
 const editor = css({
   borderRadius: '$base',
   height: '100%',
   overflowY: 'auto',
 });
+
+interface Coord {
+  x: number;
+  y: number;
+}
 
 const safeCompress = (oriString: string): string => {
   try {
