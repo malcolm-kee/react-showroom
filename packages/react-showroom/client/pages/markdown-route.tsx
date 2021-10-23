@@ -10,6 +10,7 @@ import { MarkdownArticle } from '../components/markdown-article';
 import { MarkdownDataProvider } from '../components/markdown-data-provider';
 import { Seo } from '../components/seo';
 import { StandalonePageContainer } from '../components/standalone-page-container';
+import { ExampleRootContextProvider } from '../lib/example-root-context';
 import { lazy } from '../lib/lazy';
 
 const StandaloneEditor = lazy(
@@ -32,37 +33,42 @@ export const MarkdownRoute = ({
 
   return (
     <MarkdownDataProvider data={content}>
-      <Switch>
-        <Route path={`${url}/_standalone/:codeHash`}>
-          <StandalonePageContainer>
-            <Seo title={title} description={section.frontmatter.description} />
-            <Breadcrumbs
-              items={[
-                {
-                  label: title,
-                  url,
-                },
-                {
-                  label: 'Example',
-                },
-              ]}
-            />
-            <StandaloneEditor />
-          </StandalonePageContainer>
-        </Route>
-        <Route path={url}>
-          <DetailsPageContainer
-            title={title}
-            description={section.frontmatter.description}
-          >
-            <MarkdownArticle
-              slug={section.slug}
-              center={!section.frontmatter.hideSidebar}
-              content={content}
-            />
-          </DetailsPageContainer>
-        </Route>
-      </Switch>
+      <ExampleRootContextProvider value={url}>
+        <Switch>
+          <Route path={`${url}/_standalone/:codeHash`}>
+            <StandalonePageContainer>
+              <Seo
+                title={title}
+                description={section.frontmatter.description}
+              />
+              <Breadcrumbs
+                items={[
+                  {
+                    label: title,
+                    url,
+                  },
+                  {
+                    label: 'Example',
+                  },
+                ]}
+              />
+              <StandaloneEditor />
+            </StandalonePageContainer>
+          </Route>
+          <Route path={url}>
+            <DetailsPageContainer
+              title={title}
+              description={section.frontmatter.description}
+            >
+              <MarkdownArticle
+                slug={section.slug}
+                center={!section.frontmatter.hideSidebar}
+                content={content}
+              />
+            </DetailsPageContainer>
+          </Route>
+        </Switch>
+      </ExampleRootContextProvider>
     </MarkdownDataProvider>
   );
 };

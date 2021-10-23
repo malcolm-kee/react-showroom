@@ -30,7 +30,8 @@
     "match-sorter": "^6.3.1",
     "mitt": "^3.0.0",
     "react-highlight-words": "^0.17.0",
-    "tslib": "^2.3.1"
+    "tslib": "^2.3.1",
+    "use-constant": "^1.1.0"
   },
   "peerDependencies": {
     "react": "^17.x",

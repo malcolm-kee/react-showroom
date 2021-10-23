@@ -5,7 +5,7 @@ export {
 } from './compilation';
 export { decodeDisplayName, encodeDisplayName } from './display-name';
 export { flattenArray, NestedArray } from './flatten-array';
-export { callAll } from './fn-lib';
+export { callAll, noop } from './fn-lib';
 export type { Callback } from './fn-lib';
 export { getSafeName } from './get-safe-name';
 export { omit } from './object';
@@ -14,7 +14,7 @@ export { parseQueryString, stringifyQueryString } from './query-string';
 export { removeTrailingSlash } from './remove-trailing-slash';
 export { safeEval } from './safe-eval';
 export type { Ssr } from './ssr-types';
-export { isDefined, isNil, isNumber, isString } from './type-guard';
+export { isDefined, isFunction, isNil, isNumber, isString } from './type-guard';
 
 import { SupportedLanguage } from './compilation';
 export interface RequestCompileData {

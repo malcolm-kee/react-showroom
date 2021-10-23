@@ -1,4 +1,8 @@
-import { DotsVerticalIcon, ShareIcon } from '@heroicons/react/outline';
+import {
+  DotsVerticalIcon,
+  ShareIcon,
+  ZoomInIcon,
+} from '@heroicons/react/outline';
 import { CheckCircleIcon } from '@heroicons/react/solid';
 import { SupportedLanguage } from '@showroomjs/core';
 import {
@@ -8,8 +12,9 @@ import {
   styled,
   ToggleButton,
   useDebounce,
-  useQueryParams,
+  useNotification,
   usePersistedState,
+  useQueryParams,
 } from '@showroomjs/ui';
 import lzString from 'lz-string';
 import type { Language } from 'prism-react-renderer';
@@ -18,10 +23,10 @@ import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { EXAMPLE_WIDTHS } from '../lib/config';
 import { Div } from './base';
+import { CheckboxDropdown } from './checkbox-dropdown';
 import { CodeEditor } from './code-editor';
 import { CodePreviewIframe } from './code-preview-iframe';
 import { RadioDropdown } from './radio-dropdown';
-import { CheckboxDropdown } from './checkbox-dropdown';
 
 export interface StandaloneCodeLiveEditorProps {
   code: string;
@@ -37,9 +42,23 @@ export const StandaloneCodeLiveEditor = ({
   const theme = useCodeTheme();
 
   const [queryParams, setQueryParams, isReady] = useQueryParams();
+  const showMsg = useNotification();
 
   const [code, setCode] = React.useState(props.code);
   const [editorView, setEditorView] = React.useState<EditorView>('both');
+  const [zoomLevel, _setZoomLevel] = React.useState('100');
+  const setZoomLevel = (level: string) => {
+    _setZoomLevel(level);
+    setQueryParams({
+      zoom: level === '100' ? undefined : level,
+    });
+  };
+  const onEditorViewChange = (view: EditorView) => {
+    setEditorView(view);
+    setQueryParams({
+      editorView: view !== 'both' ? view : undefined,
+    });
+  };
 
   React.useEffect(() => {
     if (isReady) {
@@ -48,6 +67,9 @@ export const StandaloneCodeLiveEditor = ({
       }
       if (queryParams.editorView) {
         setEditorView(queryParams.editorView as EditorView);
+      }
+      if (queryParams.zoom) {
+        setZoomLevel(queryParams.zoom);
       }
     }
   }, [isReady]);
@@ -76,78 +98,89 @@ export const StandaloneCodeLiveEditor = ({
           justifyContent: 'space-between',
           alignItems: 'center',
           px: '$3',
-          py: '$2',
         }}
       >
         <Div
           css={{
-            display: 'block',
-            '@sm': {
+            display: 'flex',
+            gap: '$2',
+          }}
+        >
+          <EditorViewDropdown
+            value={editorView}
+            onChange={onEditorViewChange}
+          />
+          <Div
+            css={{
+              display: 'block',
+              '@sm': {
+                display: 'none',
+              },
+            }}
+          >
+            {showMultipleScreens && showPreview && (
+              <DropdownMenu>
+                <DropdownMenu.Trigger asChild>
+                  <MenuButton>
+                    Screens <DotsVerticalIcon width={16} height={16} />
+                  </MenuButton>
+                </DropdownMenu.Trigger>
+                <CheckboxDropdown>
+                  {EXAMPLE_WIDTHS.map((width) => (
+                    <CheckboxDropdown.Item
+                      checked={!hiddenSizes.includes(width)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setHiddenSizes(
+                            hiddenSizes.filter(
+                              (s) =>
+                                s !== width && EXAMPLE_WIDTHS.includes(width)
+                            )
+                          );
+                        } else {
+                          setHiddenSizes(hiddenSizes.concat(width));
+                        }
+                      }}
+                      key={width}
+                    >
+                      {width}px
+                    </CheckboxDropdown.Item>
+                  ))}
+                </CheckboxDropdown>
+              </DropdownMenu>
+            )}
+          </Div>
+          <Div
+            css={{
               display: 'none',
-            },
-          }}
-        >
-          {showMultipleScreens && showPreview && (
-            <DropdownMenu>
-              <DropdownMenu.Trigger asChild>
-                <MenuButton>
-                  Screens <DotsVerticalIcon width={16} height={16} />
-                </MenuButton>
-              </DropdownMenu.Trigger>
-              <CheckboxDropdown>
-                {EXAMPLE_WIDTHS.map((width) => (
-                  <CheckboxDropdown.Item
-                    checked={!hiddenSizes.includes(width)}
-                    onCheckedChange={(checked) => {
-                      if (checked) {
-                        setHiddenSizes(
-                          hiddenSizes.filter(
-                            (s) => s !== width && EXAMPLE_WIDTHS.includes(width)
-                          )
-                        );
-                      } else {
-                        setHiddenSizes(hiddenSizes.concat(width));
-                      }
-                    }}
-                    key={width}
-                  >
-                    {width}px
-                  </CheckboxDropdown.Item>
-                ))}
-              </CheckboxDropdown>
-            </DropdownMenu>
-          )}
-        </Div>
-        <Div
-          css={{
-            display: 'none',
-            '@sm': {
-              display: 'flex',
-              gap: '$1',
-            },
-          }}
-        >
-          {showMultipleScreens &&
-            showPreview &&
-            EXAMPLE_WIDTHS.map((width) => (
-              <ToggleButton
-                pressed={!hiddenSizes.includes(width)}
-                onPressedChange={(isPressed) => {
-                  if (isPressed) {
-                    setHiddenSizes(
-                      hiddenSizes.filter(
-                        (s) => s !== width && EXAMPLE_WIDTHS.includes(width)
-                      )
-                    );
-                  } else {
-                    setHiddenSizes(hiddenSizes.concat(width));
-                  }
-                }}
-                key={width}
-              >
-                {width}
-              </ToggleButton>
-            ))}
+              '@sm': {
+                display: 'flex',
+                gap: '$1',
+              },
+            }}
+          >
+            {showMultipleScreens &&
+              showPreview &&
+              EXAMPLE_WIDTHS.map((width) => (
+                <ToggleButton
+                  pressed={!hiddenSizes.includes(width)}
+                  onPressedChange={(isPressed) => {
+                    if (isPressed) {
+                      setHiddenSizes(
+                        hiddenSizes.filter(
+                          (s) => s !== width && EXAMPLE_WIDTHS.includes(width)
+                        )
+                      );
+                    } else {
+                      setHiddenSizes(hiddenSizes.concat(width));
+                    }
+                  }}
+                  key={width}
+                >
+                  {width}
+                </ToggleButton>
+              ))}
+          </Div>
         </Div>
         <Div
           css={{
@@ -155,6 +188,42 @@ export const StandaloneCodeLiveEditor = ({
             gap: '$3',
           }}
         >
+          {showMultipleScreens && showPreview && (
+            <DropdownMenu>
+              <DropdownMenu.Trigger asChild>
+                <MenuButton>
+                  {zoomLevel}% <ZoomIcon width={20} height={20} />
+                </MenuButton>
+              </DropdownMenu.Trigger>
+              <RadioDropdown
+                value={zoomLevel}
+                onChangeValue={setZoomLevel}
+                options={[
+                  {
+                    value: '50',
+                    label: '50%',
+                  },
+                  {
+                    value: '75',
+                    label: '75%',
+                  },
+                  {
+                    value: '100',
+                    label: '100%',
+                  },
+                  {
+                    value: '110',
+                    label: '110%',
+                  },
+                  {
+                    value: '125',
+                    label: '125%',
+                  },
+                ]}
+                className={zoomDropdown()}
+              />
+            </DropdownMenu>
+          )}
           <CopyButton
             getTextToCopy={() => {
               if (window) {
@@ -163,51 +232,20 @@ export const StandaloneCodeLiveEditor = ({
               return '';
             }}
             className={btn()}
-            label={<StyledShareIcon width={24} height={24} />}
+            onCopy={() => showMsg('URL copied')}
+            label={
+              <>
+                <span>Share</span>
+                <StyledShareIcon width={20} height={20} />
+              </>
+            }
             successLabel={
               <>
-                <CopiedMessage>Copied to Clipboard</CopiedMessage>
-                <StyledShareIcon
-                  width={24}
-                  height={24}
-                  css={{
-                    color: '$green-400',
-                  }}
-                />
-                <MiniCheckIcon width={16} height={16} />
+                <CopiedMessage>Share</CopiedMessage>
+                <MiniCheckIcon width={20} height={20} />
               </>
             }
           />
-          <DropdownMenu>
-            <DropdownMenu.Trigger asChild>
-              <MenuButton>
-                Sections <DotsVerticalIcon width={16} height={16} />
-              </MenuButton>
-            </DropdownMenu.Trigger>
-            <RadioDropdown
-              value={editorView}
-              onChangeValue={(newView) => {
-                setEditorView(newView);
-                setQueryParams({
-                  editorView: newView,
-                });
-              }}
-              options={[
-                {
-                  value: 'both',
-                  label: 'Editor + Preview',
-                },
-                {
-                  value: 'editorOnly',
-                  label: 'Editor only',
-                },
-                {
-                  value: 'previewOnly',
-                  label: 'Preview only',
-                },
-              ]}
-            />
-          </DropdownMenu>
         </Div>
       </Div>
       <Div
@@ -226,6 +264,7 @@ export const StandaloneCodeLiveEditor = ({
               codeHash={props.codeHash}
               hiddenSizes={hiddenSizes}
               previewOnly={editorView === 'previewOnly'}
+              zoom={zoomLevel}
             />
           ) : (
             <CodePreviewIframe
@@ -251,23 +290,72 @@ export const StandaloneCodeLiveEditor = ({
   );
 };
 
+const EditorViewDropdown = (props: {
+  value: EditorView;
+  onChange: (view: EditorView) => void;
+}) => {
+  return (
+    <DropdownMenu>
+      <DropdownMenu.Trigger asChild>
+        <MenuButton>
+          Sections <DotsVerticalIcon width={16} height={16} />
+        </MenuButton>
+      </DropdownMenu.Trigger>
+      <RadioDropdown
+        value={props.value}
+        onChangeValue={props.onChange}
+        options={[
+          {
+            value: 'both',
+            label: 'Editor + Preview',
+          },
+          {
+            value: 'editorOnly',
+            label: 'Editor only',
+          },
+          {
+            value: 'previewOnly',
+            label: 'Preview only',
+          },
+        ]}
+      />
+    </DropdownMenu>
+  );
+};
+
 const PreviewList = (props: {
   code: string;
   lang: SupportedLanguage;
   codeHash: string;
   hiddenSizes: Array<number>;
   previewOnly: boolean;
+  zoom: string;
 }) => {
+  const zoomValue = React.useMemo(() => Number(props.zoom), [props.zoom]);
+  const shouldAdjustZoom = !isNaN(zoomValue) && zoomValue !== 100;
+
   const content = EXAMPLE_WIDTHS.map((width) =>
     props.hiddenSizes.includes(width) ? null : (
       <ScreenWrapper key={width}>
-        <Screen>
+        <Screen
+          css={{
+            width: `${
+              shouldAdjustZoom ? Math.round((width * zoomValue) / 100) : width
+            }px`,
+          }}
+        >
           <CodePreviewIframe
             code={props.code}
             lang={props.lang}
             codeHash={props.codeHash}
             css={{
               width: `${width}px`,
+              ...(shouldAdjustZoom
+                ? {
+                    transform: `scale(${zoomValue / 100})`,
+                    transformOrigin: 'top left',
+                  }
+                : {}),
             }}
           />
         </Screen>
@@ -300,6 +388,10 @@ const resizeEnable: ResizeEnable = {
   topLeft: false,
 };
 
+const zoomDropdown = css({
+  minWidth: '80px !important',
+});
+
 const ScreenList = styled('ul', {
   flex: 1,
 });
@@ -328,6 +420,7 @@ const Screen = styled('div', {
   backgroundColor: 'White',
   transition: 'box-shadow 100ms ease-in-out',
   height: '100%',
+  overflow: 'hidden',
 });
 
 const ScreenWrapper = styled('li', {
@@ -340,19 +433,22 @@ const ScreenWrapper = styled('li', {
   },
 });
 
+const ZoomIcon = styled(ZoomInIcon, {
+  width: 20,
+  height: 20,
+  color: '$gray-400',
+});
+
 const StyledShareIcon = styled(ShareIcon, {
-  width: 24,
-  height: 24,
+  width: 20,
+  height: 20,
   color: '$gray-400',
 });
 
 const MiniCheckIcon = styled(CheckCircleIcon, {
+  width: 20,
+  height: 20,
   color: '$green-400',
-  width: 16,
-  height: 16,
-  position: 'absolute',
-  top: 0,
-  right: 0,
 });
 
 const CopiedMessage = styled('span', {
@@ -368,6 +464,7 @@ const MenuButton = styled('button', {
   px: '$2',
   py: '$1',
   borderRadius: '$sm',
+  outlineRing: '$primary-200',
 });
 
 const editorWrapper = css({

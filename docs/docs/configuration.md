@@ -85,6 +85,13 @@ module.exports = defineConfig({
 });
 ```
 
+### `example.widths`
+
+- Type: `Array<number>`
+- Default: `[320, 768, 1024]`
+
+Widths for the preview in example standalone view.
+
 ### `build.outDir`
 
 - Type: `string`
@@ -210,14 +217,6 @@ Example:
   ]
 }
 ```
-
-### `resolve.alias`
-
-- Type: `Record<string, string>`
-
-Will be passed to @rollup/plugin-alias as its [entries option](https://github.com/rollup/plugins/tree/master/packages/alias#entries).
-
-When aliasing to file system paths, always use absolute paths. Relative alias values will be used as-is and will not be resolved into file system paths.
 
 ### `assetDir`
 

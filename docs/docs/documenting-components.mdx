@@ -61,7 +61,7 @@ Few things to take note:
 
 1. You must tag the code block with `tsx` or `jsx` for it to become live example.
 1. If the last expression in your code block is a JSX, that will be the displayed result of the example.
-1. The component is automatically injected into the scope, so you doesn't need to import it. However, this is not true if you use `frame`. You need to add the [`imports` configuration](/api/configuration#imports) for the component to be available in the example.
+1. The component is automatically injected into the scope, so you doesn't need to import it.
 1. `React` is automatically injected into the scope as well, but it's fine if you want to import it.
 1. Examples with `frame` are not being SSR, and they cause layout shift (which is probably not a big deal). I have some idea how to support them, hopefully have time to work on them sometimes soon.
 

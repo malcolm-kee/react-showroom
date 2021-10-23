@@ -9,13 +9,14 @@ export interface RadioDropdownProps<Value extends string> {
     value: Value;
     label: string;
   }>;
+  className?: string;
 }
 
 export const RadioDropdown = <Value extends string>(
   props: RadioDropdownProps<Value>
 ) => {
   return (
-    <DropdownMenu.Content>
+    <DropdownMenu.Content className={props.className}>
       <DropdownMenu.RadioGroup
         value={props.value}
         onValueChange={props.onChangeValue as any}

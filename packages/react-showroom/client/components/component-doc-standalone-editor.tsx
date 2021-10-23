@@ -1,26 +1,24 @@
 import { ReactShowroomComponentContent } from '@showroomjs/core/react';
 import { Breadcrumbs } from '@showroomjs/ui';
 import * as React from 'react';
+import { useComponentMeta } from '../lib/component-props-context';
+import { useExampleRoot } from '../lib/example-root-context';
 import { lazy } from '../lib/lazy';
 import { Div } from './base';
 
 const StandaloneEditor = lazy(() => import('./standalone-editor-lazy'));
 
-export interface ComponentDocStandaloneEditorProps {
-  slug: string;
-  content: ReactShowroomComponentContent;
-}
+export const ComponentDocStandaloneEditor = () => {
+  const exampleRoot = useExampleRoot();
+  const componentMetadata = useComponentMeta();
 
-export const ComponentDocStandaloneEditor = (
-  props: ComponentDocStandaloneEditorProps
-) => {
   return (
     <>
       <Breadcrumbs
         items={[
           {
-            label: props.content.metadata.displayName,
-            url: `/${props.slug}`,
+            label: componentMetadata ? componentMetadata.displayName : '??',
+            url: exampleRoot,
           },
           {
             label: 'Example',

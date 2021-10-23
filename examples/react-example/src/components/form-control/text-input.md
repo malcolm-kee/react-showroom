@@ -30,10 +30,18 @@ const Example = () => {
   });
 
   return (
-    <form onSubmit={handleSubmit((data) => console.log(data))}>
+    <form
+      onSubmit={handleSubmit((data) => console.log(data))}
+      className="space-y-2"
+    >
       <TextInput {...register('name')} />
       <div>
-        <button type="submit">Submit</button>
+        <button
+          type="submit"
+          className="px-3 py-1 bg-blue-600 text-white rounded"
+        >
+          Submit
+        </button>
       </div>
     </form>
   );

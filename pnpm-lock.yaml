@@ -388,6 +388,7 @@ importers:
       react-highlight-words: ^0.17.0
       tslib: ^2.3.1
       typescript: ^4.4.4
+      use-constant: ^1.1.0
     dependencies:
       '@heroicons/react': 1.0.4_react@17.0.2
       '@radix-ui/react-announce': 0.1.1_react-dom@17.0.2+react@17.0.2
@@ -406,6 +407,7 @@ importers:
       mitt: 3.0.0
       react-highlight-words: 0.17.0_react@17.0.2
       tslib: 2.3.1
+      use-constant: 1.1.0_react@17.0.2
     devDependencies:
       '@types/react-highlight-words': 0.16.3
       typescript: 4.4.4
@@ -10595,6 +10597,14 @@ packages:
         optional: true
     dependencies:
       '@types/react': 17.0.31
+      react: 17.0.2
+    dev: false
+
+  /use-constant/1.1.0_react@17.0.2:
+    resolution: {integrity: sha512-yrflEfv7Xv/W8WlYV6nwRH01K+2BpR4cWxuzY03yPRjYZuHixhGlvnJN5O2bRYrXGpJ4zy8QjFABGIQ2QXeBOA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0
+    dependencies:
       react: 17.0.2
     dev: false
 

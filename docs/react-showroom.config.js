@@ -18,6 +18,12 @@ module.exports = defineConfig({
       hideFromSidebar: true,
     },
     {
+      type: 'content',
+      path: 'markdown-example',
+      content: 'docs/markdown-example.mdx',
+      hideFromSidebar: true,
+    },
+    {
       type: 'group',
       title: 'Getting Started',
       items: [
