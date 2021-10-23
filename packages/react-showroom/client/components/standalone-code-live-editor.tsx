@@ -1,5 +1,7 @@
 import {
-  DotsVerticalIcon,
+  CodeIcon,
+  DesktopComputerIcon,
+  AdjustmentsIcon,
   ShareIcon,
   ZoomInIcon,
 } from '@heroicons/react/outline';
@@ -45,18 +47,25 @@ export const StandaloneCodeLiveEditor = ({
   const showMsg = useNotification();
 
   const [code, setCode] = React.useState(props.code);
-  const [editorView, setEditorView] = React.useState<EditorView>('both');
+  const [showEditor, _setShowEditor] = React.useState(true);
+  const setShowEditor = (show: boolean) => {
+    _setShowEditor(show);
+    setQueryParams({
+      hideEditor: show ? undefined : 'true',
+    });
+  };
+  const [showPreview, _setShowPreview] = React.useState(true);
+  const setShowPreview = (show: boolean) => {
+    _setShowPreview(show);
+    setQueryParams({
+      hidePreview: show ? undefined : 'true',
+    });
+  };
   const [zoomLevel, _setZoomLevel] = React.useState('100');
   const setZoomLevel = (level: string) => {
     _setZoomLevel(level);
     setQueryParams({
       zoom: level === '100' ? undefined : level,
-    });
-  };
-  const onEditorViewChange = (view: EditorView) => {
-    setEditorView(view);
-    setQueryParams({
-      editorView: view !== 'both' ? view : undefined,
     });
   };
 
@@ -65,11 +74,14 @@ export const StandaloneCodeLiveEditor = ({
       if (queryParams.code) {
         setCode(safeDecompress(queryParams.code as string, props.code));
       }
-      if (queryParams.editorView) {
-        setEditorView(queryParams.editorView as EditorView);
-      }
       if (queryParams.zoom) {
         setZoomLevel(queryParams.zoom);
+      }
+      if (queryParams.hideEditor) {
+        _setShowEditor(false);
+      }
+      if (queryParams.hidePreview) {
+        _setShowPreview(false);
       }
     }
   }, [isReady]);
@@ -88,8 +100,6 @@ export const StandaloneCodeLiveEditor = ({
     'hiddenScreen'
   );
 
-  const showPreview = editorView !== 'editorOnly';
-
   return (
     <Div css={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Div
@@ -103,16 +113,35 @@ export const StandaloneCodeLiveEditor = ({
         <Div
           css={{
             display: 'flex',
-            gap: '$2',
           }}
         >
-          <EditorViewDropdown
-            value={editorView}
-            onChange={onEditorViewChange}
-          />
+          <Div
+            css={{
+              display: 'flex',
+              gap: '$2',
+              paddingRight: '$2',
+              borderRight: '1px solid $gray-100',
+            }}
+          >
+            <ToggleButton
+              pressed={showEditor}
+              onPressedChange={setShowEditor}
+              aria-label="toggle editor"
+            >
+              <CodeIcon width={20} height={20} />
+            </ToggleButton>
+            <ToggleButton
+              pressed={showPreview}
+              onPressedChange={setShowPreview}
+              aria-label="toggle preview"
+            >
+              <DesktopComputerIcon width={20} height={20} />
+            </ToggleButton>
+          </Div>
           <Div
             css={{
               display: 'block',
+              px: '$2',
               '@sm': {
                 display: 'none',
               },
@@ -122,7 +151,7 @@ export const StandaloneCodeLiveEditor = ({
               <DropdownMenu>
                 <DropdownMenu.Trigger asChild>
                   <MenuButton>
-                    Screens <DotsVerticalIcon width={16} height={16} />
+                    <ScreensIcon width={20} height={20} />
                   </MenuButton>
                 </DropdownMenu.Trigger>
                 <CheckboxDropdown>
@@ -156,6 +185,7 @@ export const StandaloneCodeLiveEditor = ({
               '@sm': {
                 display: 'flex',
                 gap: '$1',
+                px: '$2',
               },
             }}
           >
@@ -192,7 +222,8 @@ export const StandaloneCodeLiveEditor = ({
             <DropdownMenu>
               <DropdownMenu.Trigger asChild>
                 <MenuButton>
-                  {zoomLevel}% <ZoomIcon width={20} height={20} />
+                  <BtnText>{zoomLevel}% </BtnText>
+                  <ZoomIcon width={20} height={20} />
                 </MenuButton>
               </DropdownMenu.Trigger>
               <RadioDropdown
@@ -235,7 +266,7 @@ export const StandaloneCodeLiveEditor = ({
             onCopy={() => showMsg('URL copied')}
             label={
               <>
-                <span>Share</span>
+                <BtnText>Share</BtnText>
                 <StyledShareIcon width={20} height={20} />
               </>
             }
@@ -263,7 +294,7 @@ export const StandaloneCodeLiveEditor = ({
               lang={props.lang}
               codeHash={props.codeHash}
               hiddenSizes={hiddenSizes}
-              previewOnly={editorView === 'previewOnly'}
+              previewOnly={!showEditor}
               zoom={zoomLevel}
             />
           ) : (
@@ -273,7 +304,7 @@ export const StandaloneCodeLiveEditor = ({
               codeHash={props.codeHash}
             />
           ))}
-        {editorView !== 'previewOnly' && (
+        {showEditor && (
           <Div css={{ flex: 1 }}>
             <CodeEditor
               code={code}
@@ -287,39 +318,6 @@ export const StandaloneCodeLiveEditor = ({
         )}
       </Div>
     </Div>
-  );
-};
-
-const EditorViewDropdown = (props: {
-  value: EditorView;
-  onChange: (view: EditorView) => void;
-}) => {
-  return (
-    <DropdownMenu>
-      <DropdownMenu.Trigger asChild>
-        <MenuButton>
-          Sections <DotsVerticalIcon width={16} height={16} />
-        </MenuButton>
-      </DropdownMenu.Trigger>
-      <RadioDropdown
-        value={props.value}
-        onChangeValue={props.onChange}
-        options={[
-          {
-            value: 'both',
-            label: 'Editor + Preview',
-          },
-          {
-            value: 'editorOnly',
-            label: 'Editor only',
-          },
-          {
-            value: 'previewOnly',
-            label: 'Preview only',
-          },
-        ]}
-      />
-    </DropdownMenu>
   );
 };
 
@@ -364,16 +362,28 @@ const PreviewList = (props: {
     )
   );
 
+  const onlyOne = props.hiddenSizes.length === EXAMPLE_WIDTHS.length - 1;
+
   return props.previewOnly ? (
-    <ScreenList className={resizeStyle()}>{content}</ScreenList>
+    <ScreenList
+      className={resizeStyle({
+        onlyOne,
+      })}
+    >
+      {content}
+    </ScreenList>
   ) : (
-    <Resizable enable={resizeEnable} as="ul" className={resizeStyle()}>
+    <Resizable
+      enable={resizeEnable}
+      as="ul"
+      className={resizeStyle({
+        onlyOne,
+      })}
+    >
       {content}
     </Resizable>
   );
 };
-
-type EditorView = 'both' | 'previewOnly' | 'editorOnly';
 
 const showMultipleScreens = EXAMPLE_WIDTHS.length > 0;
 
@@ -405,6 +415,13 @@ const resizeStyle = css({
   paddingBottom: '$6',
   px: '$3',
   backgroundColor: '$gray-200',
+  variants: {
+    onlyOne: {
+      true: {
+        justifyContent: 'center',
+      },
+    },
+  },
 });
 
 const ScreenSize = styled('div', {
@@ -434,6 +451,12 @@ const ScreenWrapper = styled('li', {
 });
 
 const ZoomIcon = styled(ZoomInIcon, {
+  width: 20,
+  height: 20,
+  color: '$gray-400',
+});
+
+const ScreensIcon = styled(AdjustmentsIcon, {
   width: 20,
   height: 20,
   color: '$gray-400',
@@ -470,6 +493,13 @@ const MenuButton = styled('button', {
 const editorWrapper = css({
   height: '100%',
   overflow: 'hidden',
+});
+
+const BtnText = styled('span', {
+  srOnly: true,
+  '@sm': {
+    srOnly: false,
+  },
 });
 
 const btn = css({
