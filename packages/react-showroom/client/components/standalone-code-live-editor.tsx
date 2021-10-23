@@ -1,7 +1,7 @@
 import {
+  AdjustmentsIcon,
   CodeIcon,
   DesktopComputerIcon,
-  AdjustmentsIcon,
   ShareIcon,
   ZoomInIcon,
 } from '@heroicons/react/outline';
@@ -69,6 +69,17 @@ export const StandaloneCodeLiveEditor = ({
     });
   };
 
+  const [hiddenSizes, _setHiddenSizes] = usePersistedState<Array<number>>(
+    [],
+    'hiddenScreen'
+  );
+  const setHiddenSizes = (sizes: Array<number>) => {
+    _setHiddenSizes(sizes);
+    setQueryParams({
+      hiddenSizes: sizes.length === 0 ? undefined : sizes.join('_'),
+    });
+  };
+
   React.useEffect(() => {
     if (isReady) {
       if (queryParams.code) {
@@ -83,6 +94,16 @@ export const StandaloneCodeLiveEditor = ({
       if (queryParams.hidePreview) {
         _setShowPreview(false);
       }
+      if (queryParams.hiddenSizes) {
+        const serializedHiddenSizes = queryParams.hiddenSizes
+          .split('_')
+          .map(Number)
+          .filter((v) => !isNaN(v) && EXAMPLE_WIDTHS.includes(v));
+
+        if (serializedHiddenSizes.length > 0) {
+          _setHiddenSizes(serializedHiddenSizes);
+        }
+      }
     }
   }, [isReady]);
 
@@ -94,11 +115,6 @@ export const StandaloneCodeLiveEditor = ({
         debouncedCode === props.code ? undefined : safeCompress(debouncedCode),
     });
   }, [debouncedCode]);
-
-  const [hiddenSizes, setHiddenSizes] = usePersistedState<Array<number>>(
-    [],
-    'hiddenScreen'
-  );
 
   return (
     <Div css={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -362,24 +378,10 @@ const PreviewList = (props: {
     )
   );
 
-  const onlyOne = props.hiddenSizes.length === EXAMPLE_WIDTHS.length - 1;
-
   return props.previewOnly ? (
-    <ScreenList
-      className={resizeStyle({
-        onlyOne,
-      })}
-    >
-      {content}
-    </ScreenList>
+    <ScreenList className={resizeStyle()}>{content}</ScreenList>
   ) : (
-    <Resizable
-      enable={resizeEnable}
-      as="ul"
-      className={resizeStyle({
-        onlyOne,
-      })}
-    >
+    <Resizable enable={resizeEnable} as="ul" className={resizeStyle()}>
       {content}
     </Resizable>
   );
@@ -415,13 +417,6 @@ const resizeStyle = css({
   paddingBottom: '$6',
   px: '$3',
   backgroundColor: '$gray-200',
-  variants: {
-    onlyOne: {
-      true: {
-        justifyContent: 'center',
-      },
-    },
-  },
 });
 
 const ScreenSize = styled('div', {
