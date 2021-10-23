@@ -9,6 +9,7 @@ import {
   ReactShowroomConfiguration,
 } from '@showroomjs/core/react';
 import * as fs from 'fs-extra';
+import { performance } from 'perf_hooks';
 import webpack from 'webpack';
 import { createWebpackConfig } from '../config/create-webpack-config';
 import { createSSrBundle } from '../lib/create-ssr-bundle';
@@ -152,7 +153,9 @@ export async function buildShowroom(
 ) {
   const config = getConfig('production', configFile, userConfig);
 
-  const ssrDir = resolveShowroom('ssr-result');
+  const ssrDir = resolveShowroom(
+    `ssr-result-${Date.now() + performance.now()}`
+  );
 
   await Promise.all([buildStaticSite(config), createSSrBundle(config, ssrDir)]);
 
