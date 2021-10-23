@@ -12,3 +12,5 @@ export function callAll<Args extends any[]>(
     );
   };
 }
+
+export function noop() {}

@@ -10,6 +10,7 @@ import {
   useDebounce,
   useQueryParams,
   usePersistedState,
+  useNotification,
 } from '@showroomjs/ui';
 import lzString from 'lz-string';
 import type { Language } from 'prism-react-renderer';
@@ -37,9 +38,16 @@ export const StandaloneCodeLiveEditor = ({
   const theme = useCodeTheme();
 
   const [queryParams, setQueryParams, isReady] = useQueryParams();
+  const showMsg = useNotification();
 
   const [code, setCode] = React.useState(props.code);
   const [editorView, setEditorView] = React.useState<EditorView>('both');
+  const onEditorViewChange = (view: EditorView) => {
+    setEditorView(view);
+    setQueryParams({
+      editorView: view,
+    });
+  };
 
   React.useEffect(() => {
     if (isReady) {
@@ -76,78 +84,89 @@ export const StandaloneCodeLiveEditor = ({
           justifyContent: 'space-between',
           alignItems: 'center',
           px: '$3',
-          py: '$2',
         }}
       >
         <Div
           css={{
-            display: 'block',
-            '@sm': {
+            display: 'flex',
+            gap: '$2',
+          }}
+        >
+          <EditorViewDropdown
+            value={editorView}
+            onChange={onEditorViewChange}
+          />
+          <Div
+            css={{
+              display: 'block',
+              '@sm': {
+                display: 'none',
+              },
+            }}
+          >
+            {showMultipleScreens && showPreview && (
+              <DropdownMenu>
+                <DropdownMenu.Trigger asChild>
+                  <MenuButton>
+                    Screens <DotsVerticalIcon width={16} height={16} />
+                  </MenuButton>
+                </DropdownMenu.Trigger>
+                <CheckboxDropdown>
+                  {EXAMPLE_WIDTHS.map((width) => (
+                    <CheckboxDropdown.Item
+                      checked={!hiddenSizes.includes(width)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setHiddenSizes(
+                            hiddenSizes.filter(
+                              (s) =>
+                                s !== width && EXAMPLE_WIDTHS.includes(width)
+                            )
+                          );
+                        } else {
+                          setHiddenSizes(hiddenSizes.concat(width));
+                        }
+                      }}
+                      key={width}
+                    >
+                      {width}px
+                    </CheckboxDropdown.Item>
+                  ))}
+                </CheckboxDropdown>
+              </DropdownMenu>
+            )}
+          </Div>
+          <Div
+            css={{
               display: 'none',
-            },
-          }}
-        >
-          {showMultipleScreens && showPreview && (
-            <DropdownMenu>
-              <DropdownMenu.Trigger asChild>
-                <MenuButton>
-                  Screens <DotsVerticalIcon width={16} height={16} />
-                </MenuButton>
-              </DropdownMenu.Trigger>
-              <CheckboxDropdown>
-                {EXAMPLE_WIDTHS.map((width) => (
-                  <CheckboxDropdown.Item
-                    checked={!hiddenSizes.includes(width)}
-                    onCheckedChange={(checked) => {
-                      if (checked) {
-                        setHiddenSizes(
-                          hiddenSizes.filter(
-                            (s) => s !== width && EXAMPLE_WIDTHS.includes(width)
-                          )
-                        );
-                      } else {
-                        setHiddenSizes(hiddenSizes.concat(width));
-                      }
-                    }}
-                    key={width}
-                  >
-                    {width}px
-                  </CheckboxDropdown.Item>
-                ))}
-              </CheckboxDropdown>
-            </DropdownMenu>
-          )}
-        </Div>
-        <Div
-          css={{
-            display: 'none',
-            '@sm': {
-              display: 'flex',
-              gap: '$1',
-            },
-          }}
-        >
-          {showMultipleScreens &&
-            showPreview &&
-            EXAMPLE_WIDTHS.map((width) => (
-              <ToggleButton
-                pressed={!hiddenSizes.includes(width)}
-                onPressedChange={(isPressed) => {
-                  if (isPressed) {
-                    setHiddenSizes(
-                      hiddenSizes.filter(
-                        (s) => s !== width && EXAMPLE_WIDTHS.includes(width)
-                      )
-                    );
-                  } else {
-                    setHiddenSizes(hiddenSizes.concat(width));
-                  }
-                }}
-                key={width}
-              >
-                {width}
-              </ToggleButton>
-            ))}
+              '@sm': {
+                display: 'flex',
+                gap: '$1',
+              },
+            }}
+          >
+            {showMultipleScreens &&
+              showPreview &&
+              EXAMPLE_WIDTHS.map((width) => (
+                <ToggleButton
+                  pressed={!hiddenSizes.includes(width)}
+                  onPressedChange={(isPressed) => {
+                    if (isPressed) {
+                      setHiddenSizes(
+                        hiddenSizes.filter(
+                          (s) => s !== width && EXAMPLE_WIDTHS.includes(width)
+                        )
+                      );
+                    } else {
+                      setHiddenSizes(hiddenSizes.concat(width));
+                    }
+                  }}
+                  key={width}
+                >
+                  {width}
+                </ToggleButton>
+              ))}
+          </Div>
         </Div>
         <Div
           css={{
@@ -163,51 +182,20 @@ export const StandaloneCodeLiveEditor = ({
               return '';
             }}
             className={btn()}
-            label={<StyledShareIcon width={24} height={24} />}
+            onCopy={() => showMsg('URL copied')}
+            label={
+              <>
+                <span>Share</span>
+                <StyledShareIcon width={20} height={20} />
+              </>
+            }
             successLabel={
               <>
-                <CopiedMessage>Copied to Clipboard</CopiedMessage>
-                <StyledShareIcon
-                  width={24}
-                  height={24}
-                  css={{
-                    color: '$green-400',
-                  }}
-                />
-                <MiniCheckIcon width={16} height={16} />
+                <CopiedMessage>Share</CopiedMessage>
+                <MiniCheckIcon width={20} height={20} />
               </>
             }
           />
-          <DropdownMenu>
-            <DropdownMenu.Trigger asChild>
-              <MenuButton>
-                Sections <DotsVerticalIcon width={16} height={16} />
-              </MenuButton>
-            </DropdownMenu.Trigger>
-            <RadioDropdown
-              value={editorView}
-              onChangeValue={(newView) => {
-                setEditorView(newView);
-                setQueryParams({
-                  editorView: newView,
-                });
-              }}
-              options={[
-                {
-                  value: 'both',
-                  label: 'Editor + Preview',
-                },
-                {
-                  value: 'editorOnly',
-                  label: 'Editor only',
-                },
-                {
-                  value: 'previewOnly',
-                  label: 'Preview only',
-                },
-              ]}
-            />
-          </DropdownMenu>
         </Div>
       </Div>
       <Div
@@ -248,6 +236,39 @@ export const StandaloneCodeLiveEditor = ({
         )}
       </Div>
     </Div>
+  );
+};
+
+const EditorViewDropdown = (props: {
+  value: EditorView;
+  onChange: (view: EditorView) => void;
+}) => {
+  return (
+    <DropdownMenu>
+      <DropdownMenu.Trigger asChild>
+        <MenuButton>
+          Sections <DotsVerticalIcon width={16} height={16} />
+        </MenuButton>
+      </DropdownMenu.Trigger>
+      <RadioDropdown
+        value={props.value}
+        onChangeValue={props.onChange}
+        options={[
+          {
+            value: 'both',
+            label: 'Editor + Preview',
+          },
+          {
+            value: 'editorOnly',
+            label: 'Editor only',
+          },
+          {
+            value: 'previewOnly',
+            label: 'Preview only',
+          },
+        ]}
+      />
+    </DropdownMenu>
   );
 };
 
@@ -341,18 +362,15 @@ const ScreenWrapper = styled('li', {
 });
 
 const StyledShareIcon = styled(ShareIcon, {
-  width: 24,
-  height: 24,
+  width: 20,
+  height: 20,
   color: '$gray-400',
 });
 
 const MiniCheckIcon = styled(CheckCircleIcon, {
+  width: 20,
+  height: 20,
   color: '$green-400',
-  width: 16,
-  height: 16,
-  position: 'absolute',
-  top: 0,
-  right: 0,
 });
 
 const CopiedMessage = styled('span', {

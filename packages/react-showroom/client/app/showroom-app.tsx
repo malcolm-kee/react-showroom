@@ -1,4 +1,8 @@
-import { IdProvider, QueryParamProvider } from '@showroomjs/ui';
+import {
+  IdProvider,
+  NotificationProvider,
+  QueryParamProvider,
+} from '@showroomjs/ui';
 import * as React from 'react';
 import sections from 'react-showroom-sections';
 import Wrapper from 'react-showroom-wrapper';
@@ -73,51 +77,53 @@ export const ShowroomApp = () => {
       matchedSection.frontmatter.hideSidebar);
 
   return (
-    <Wrapper>
-      <IdProvider>
-        <Div className={colorTheme}>
-          <QueryParamProvider>
-            <CodeThemeContext.Provider value={THEME.codeTheme}>
-              <Div
-                css={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                {!shouldHideHeader && <Header />}
-                <Div css={{ display: 'flex', flex: 1 }}>
-                  {!shouldHideSidebar && <Sidebar sections={sections} />}
-                  <Suspense fallback={null}>
-                    <Switch>
-                      {routes.map(function dataToRoute(route) {
-                        if (!route) {
-                          return null;
-                        }
+    <NotificationProvider>
+      <Wrapper>
+        <IdProvider>
+          <Div className={colorTheme}>
+            <QueryParamProvider>
+              <CodeThemeContext.Provider value={THEME.codeTheme}>
+                <Div
+                  css={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  {!shouldHideHeader && <Header />}
+                  <Div css={{ display: 'flex', flex: 1 }}>
+                    {!shouldHideSidebar && <Sidebar sections={sections} />}
+                    <Suspense fallback={null}>
+                      <Switch>
+                        {routes.map(function dataToRoute(route) {
+                          if (!route) {
+                            return null;
+                          }
 
-                        const Ui = route.ui;
+                          const Ui = route.ui;
 
-                        return (
-                          <Route
-                            path={route.path}
-                            exact={route.exact}
-                            key={route.path}
-                          >
-                            {Array.isArray(Ui) ? Ui.map(dataToRoute) : <Ui />}
-                          </Route>
-                        );
-                      })}
-                      <Route path="/" exact>
-                        <DefaultHomePage />
-                      </Route>
-                    </Switch>
-                  </Suspense>
+                          return (
+                            <Route
+                              path={route.path}
+                              exact={route.exact}
+                              key={route.path}
+                            >
+                              {Array.isArray(Ui) ? Ui.map(dataToRoute) : <Ui />}
+                            </Route>
+                          );
+                        })}
+                        <Route path="/" exact>
+                          <DefaultHomePage />
+                        </Route>
+                      </Switch>
+                    </Suspense>
+                  </Div>
                 </Div>
-              </Div>
-            </CodeThemeContext.Provider>
-          </QueryParamProvider>
-        </Div>
-      </IdProvider>
-    </Wrapper>
+              </CodeThemeContext.Provider>
+            </QueryParamProvider>
+          </Div>
+        </IdProvider>
+      </Wrapper>
+    </NotificationProvider>
   );
 };

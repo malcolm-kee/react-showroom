@@ -1,3 +1,4 @@
+import { noop } from '@showroomjs/core';
 import * as React from 'react';
 import { copyText } from '../lib/copy';
 import { useTransientState } from '../lib/use-transient-state';
@@ -9,6 +10,7 @@ export interface CopyButtonProps {
   label?: React.ReactNode;
   successLabel?: React.ReactNode;
   className?: string;
+  onCopy?: () => void;
 }
 
 export const CopyButton = ({
@@ -16,13 +18,19 @@ export const CopyButton = ({
   label = 'Copy',
   successLabel = 'Copied!',
   className,
+  onCopy = noop,
 }: CopyButtonProps) => {
   const [copied, setCopied] = useTransientState(false);
 
   return (
     <Button
       type="button"
-      onClick={() => copyText(getTextToCopy()).then(() => setCopied(true))}
+      onClick={() =>
+        copyText(getTextToCopy()).then(() => {
+          setCopied(true);
+          onCopy();
+        })
+      }
       className={className}
     >
       {copied ? successLabel : label}
