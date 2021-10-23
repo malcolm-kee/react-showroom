@@ -1,7 +1,6 @@
 import { ReactShowroomMarkdownContent } from '@showroomjs/core/react';
 import { Collapsible, styled } from '@showroomjs/ui';
 import * as React from 'react';
-import { isSpa } from '../lib/config';
 import { Article } from './article';
 import { Div } from './base';
 import { mdxComponents } from './mdx-components';
@@ -96,19 +95,7 @@ export const MarkdownArticle = (props: {
                     key={index}
                   >
                     {heading.id ? (
-                      <A
-                        href={`#${heading.id}`}
-                        onClick={
-                          isSpa
-                            ? (ev) => {
-                                ev.preventDefault();
-                                scrollToAnchor(heading.id!);
-                              }
-                            : undefined
-                        }
-                      >
-                        {heading.text}
-                      </A>
+                      <A href={`#${heading.id}`}>{heading.text}</A>
                     ) : (
                       heading.text
                     )}
@@ -169,19 +156,7 @@ export const MarkdownArticle = (props: {
                     key={index}
                   >
                     {heading.id ? (
-                      <A
-                        href={`#${heading.id}`}
-                        onClick={
-                          isSpa
-                            ? (ev) => {
-                                ev.preventDefault();
-                                scrollToAnchor(heading.id!);
-                              }
-                            : undefined
-                        }
-                      >
-                        {heading.text}
-                      </A>
+                      <A href={`#${heading.id}`}>{heading.text}</A>
                     ) : (
                       heading.text
                     )}

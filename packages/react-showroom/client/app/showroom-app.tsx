@@ -77,9 +77,9 @@ export const ShowroomApp = () => {
       matchedSection.frontmatter.hideSidebar);
 
   return (
-    <NotificationProvider>
-      <Wrapper>
-        <IdProvider>
+    <Wrapper>
+      <IdProvider>
+        <NotificationProvider>
           <Div className={colorTheme}>
             <QueryParamProvider>
               <CodeThemeContext.Provider value={THEME.codeTheme}>
@@ -122,8 +122,8 @@ export const ShowroomApp = () => {
               </CodeThemeContext.Provider>
             </QueryParamProvider>
           </Div>
-        </IdProvider>
-      </Wrapper>
-    </NotificationProvider>
+        </NotificationProvider>
+      </IdProvider>
+    </Wrapper>
   );
 };

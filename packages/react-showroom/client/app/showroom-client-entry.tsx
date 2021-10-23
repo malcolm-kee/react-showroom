@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { basename, isPrerender } from '../lib/config';
 import { createQueryClient } from '../lib/create-query-client';
-import { Router } from '../lib/routing';
+import { BrowserRouter as Router } from '../lib/routing';
 import { loadCodeAtPath } from '../route-mapping';
 import { ShowroomApp } from './showroom-app';
 

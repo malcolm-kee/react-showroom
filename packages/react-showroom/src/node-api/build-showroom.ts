@@ -154,19 +154,14 @@ export async function buildShowroom(
 
   const ssrDir = resolveShowroom('ssr-result');
 
-  await Promise.all([
-    buildStaticSite(config),
-    config.prerender ? createSSrBundle(config, ssrDir) : Promise.resolve(),
-  ]);
+  await Promise.all([buildStaticSite(config), createSSrBundle(config, ssrDir)]);
 
-  if (config.prerender) {
-    try {
-      await Promise.all([
-        prerenderSite(config, ssrDir),
-        prerenderPreview(config, ssrDir),
-      ]);
-    } finally {
-      await fs.remove(ssrDir);
-    }
+  try {
+    await Promise.all([
+      prerenderSite(config, ssrDir),
+      prerenderPreview(config, ssrDir),
+    ]);
+  } finally {
+    await fs.remove(ssrDir);
   }
 }

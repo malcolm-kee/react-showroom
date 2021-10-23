@@ -46,7 +46,7 @@ declare namespace NodeJS {
   interface ProcessEnv {
     readonly REACT_SHOWROOM_THEME: ThemeConfiguration;
     readonly PRERENDER: boolean;
-    readonly IS_SPA: boolean;
+    readonly PRERENDER_EXAMPLE: boolean;
     readonly SITE_URL: string;
     readonly BASE_PATH: string;
     readonly SSR: boolean;

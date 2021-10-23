@@ -4,6 +4,7 @@ import * as ReactDOM from 'react-dom';
 import * as tslib from 'tslib';
 import { useCodeImports } from '../lib/code-imports-context';
 import { useCodeVariables } from '../lib/code-variables-context';
+import { prerenderExample } from '../lib/config';
 export interface CodePreviewProps {
   /**
    * Code that should call `render` to show the UI.
@@ -46,7 +47,7 @@ export const CodePreview = (props: CodePreviewProps) => {
   );
 
   const [ui, setUi] = React.useState<null | React.ReactElement>(() => {
-    if (!props.code) {
+    if (!prerenderExample || !props.code) {
       return null;
     }
 

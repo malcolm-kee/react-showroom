@@ -4,11 +4,11 @@ const config = require('./react-showroom.config');
 buildShowroom({
   ...config,
   build: {
-    basePath: '/showroom-spa',
-    outDir: 'public/showroom-spa',
+    basePath: '/no-prerender',
+    outDir: 'public/no-prerender',
     prerender: false,
   },
   theme: {
-    title: 'React Showroom SPA',
+    title: 'React Showroom Without Prerender',
   },
 });
