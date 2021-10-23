@@ -9,6 +9,7 @@ import {
   ReactShowroomConfiguration,
 } from '@showroomjs/core/react';
 import * as fs from 'fs-extra';
+import { performance } from 'perf_hooks';
 import webpack from 'webpack';
 import { createWebpackConfig } from '../config/create-webpack-config';
 import { createSSrBundle } from '../lib/create-ssr-bundle';
@@ -152,21 +153,18 @@ export async function buildShowroom(
 ) {
   const config = getConfig('production', configFile, userConfig);
 
-  const ssrDir = resolveShowroom('ssr-result');
+  const ssrDir = resolveShowroom(
+    `ssr-result-${Date.now() + performance.now()}`
+  );
 
-  await Promise.all([
-    buildStaticSite(config),
-    config.prerender ? createSSrBundle(config, ssrDir) : Promise.resolve(),
-  ]);
+  await Promise.all([buildStaticSite(config), createSSrBundle(config, ssrDir)]);
 
-  if (config.prerender) {
-    try {
-      await Promise.all([
-        prerenderSite(config, ssrDir),
-        prerenderPreview(config, ssrDir),
-      ]);
-    } finally {
-      await fs.remove(ssrDir);
-    }
+  try {
+    await Promise.all([
+      prerenderSite(config, ssrDir),
+      prerenderPreview(config, ssrDir),
+    ]);
+  } finally {
+    await fs.remove(ssrDir);
   }
 }

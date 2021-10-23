@@ -104,7 +104,7 @@ Output folder for the generated site.
 - Type: `boolean`
 - Default: `true`
 
-Enable pre-rendering when generating site.
+Enable pre-rendering for example.
 
 This is useful to ensure your components are SSR-friendly.
 

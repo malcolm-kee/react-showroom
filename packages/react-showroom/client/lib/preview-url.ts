@@ -1,10 +1,10 @@
 import { encodeDisplayName } from '@showroomjs/core';
-import { basename, isSpa } from './config';
+import { basename } from './config';
 
 export const getPreviewUrl = (
   codeHash: string,
   componentDisplayName: string | undefined
 ) =>
-  `${basename}/_preview${isSpa ? '.html/#/' : '/'}${codeHash}${
+  `${basename}/_preview/${codeHash}${
     componentDisplayName ? `/${encodeDisplayName(componentDisplayName)}` : ''
   }`;

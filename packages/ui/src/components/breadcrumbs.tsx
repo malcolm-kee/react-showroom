@@ -10,7 +10,7 @@ export interface BreadcrumbsProps {
 
 export const Breadcrumbs = (props: BreadcrumbsProps) => (
   <Root aria-label="Breadcrumb">
-    <Ol role="list" className="px-4 sm:px-6 lg:px-8">
+    <Ol role="list">
       {props.items.map((item, i) => (
         <Item key={i}>
           {i > 0 && (
@@ -56,6 +56,12 @@ const Ol = styled('ol', {
   width: '100%',
   listStyleType: 'none',
   margin: 0,
+  '@sm': {
+    px: '$6',
+  },
+  '@lg': {
+    px: '$8',
+  },
 });
 
 const Item = styled('li', {

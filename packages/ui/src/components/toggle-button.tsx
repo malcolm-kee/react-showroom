@@ -4,9 +4,7 @@ import { styled } from '../stitches.config';
 export const ToggleButton = styled(Root, {
   all: 'unset',
   backgroundColor: 'white',
-  color: '$gray-400',
-  height: 35,
-  minWidth: 35,
+  color: '$gray-300',
   px: '$1',
   display: 'flex',
   fontSize: 15,
@@ -19,8 +17,16 @@ export const ToggleButton = styled(Root, {
   transition: '100ms ease-in-out',
   '&:hover': { color: '$gray-600' },
   '&[data-state=on]': {
-    color: '$primary-800',
-    borderBottomColor: '$primary-800',
+    color: '$gray-600',
+    backgroundColor: '$gray-100',
   },
   '&:focus-visible': { outlineRing: '$primary-400' },
+  variants: {
+    text: {
+      true: {
+        height: 35,
+        minWidth: 35,
+      },
+    },
+  },
 });
