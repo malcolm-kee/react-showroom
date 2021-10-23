@@ -9,6 +9,7 @@ import { ComponentDocStandaloneEditor } from '../components/component-doc-standa
 import { DetailsPageContainer } from '../components/details-page-container';
 import { Seo } from '../components/seo';
 import { StandalonePageContainer } from '../components/standalone-page-container';
+import { ExampleRootContextProvider } from '../lib/example-root-context';
 import { Route, Switch, useRouteMatch } from '../lib/routing';
 
 export const ComponentDocRoute = ({
@@ -22,28 +23,27 @@ export const ComponentDocRoute = ({
 
   return (
     <ComponentDataProvider content={content}>
-      <Switch>
-        <Route path={`${url}/_standalone/:codeHash`}>
-          <StandalonePageContainer>
-            <Seo
+      <ExampleRootContextProvider value={url}>
+        <Switch>
+          <Route path={`${url}/_standalone/:codeHash`}>
+            <StandalonePageContainer>
+              <Seo
+                title={content.metadata.displayName}
+                description={content.metadata.description}
+              />
+              <ComponentDocStandaloneEditor />
+            </StandalonePageContainer>
+          </Route>
+          <Route path={url}>
+            <DetailsPageContainer
               title={content.metadata.displayName}
               description={content.metadata.description}
-            />
-            <ComponentDocStandaloneEditor
-              slug={section.slug}
-              content={content}
-            />
-          </StandalonePageContainer>
-        </Route>
-        <Route path={url}>
-          <DetailsPageContainer
-            title={content.metadata.displayName}
-            description={content.metadata.description}
-          >
-            <ComponentDocArticle slug={section.slug} content={content} />
-          </DetailsPageContainer>
-        </Route>
-      </Switch>
+            >
+              <ComponentDocArticle slug={section.slug} content={content} />
+            </DetailsPageContainer>
+          </Route>
+        </Switch>
+      </ExampleRootContextProvider>
     </ComponentDataProvider>
   );
 };

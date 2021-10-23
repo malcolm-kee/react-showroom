@@ -420,6 +420,7 @@ const Screen = styled('div', {
   backgroundColor: 'White',
   transition: 'box-shadow 100ms ease-in-out',
   height: '100%',
+  overflow: 'hidden',
 });
 
 const ScreenWrapper = styled('li', {
