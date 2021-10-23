@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 0.19.0
+
+### Minor Changes
+
+- 2310801: Add ability to zoom in or out of preview
+
 ## 0.18.0
 
 ### Minor Changes
