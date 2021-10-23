@@ -47,7 +47,7 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
           '@md': {
             display: 'block',
             position: 'sticky',
-            top: 58,
+            top: 64,
             left: 0,
             bottom: 0,
             height: 'calc(100vh - 58px)',

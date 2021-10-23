@@ -1,4 +1,8 @@
-import { DotsVerticalIcon, ShareIcon } from '@heroicons/react/outline';
+import {
+  DotsVerticalIcon,
+  ShareIcon,
+  ZoomInIcon,
+} from '@heroicons/react/outline';
 import { CheckCircleIcon } from '@heroicons/react/solid';
 import { SupportedLanguage } from '@showroomjs/core';
 import {
@@ -8,9 +12,9 @@ import {
   styled,
   ToggleButton,
   useDebounce,
-  useQueryParams,
-  usePersistedState,
   useNotification,
+  usePersistedState,
+  useQueryParams,
 } from '@showroomjs/ui';
 import lzString from 'lz-string';
 import type { Language } from 'prism-react-renderer';
@@ -19,10 +23,10 @@ import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { EXAMPLE_WIDTHS } from '../lib/config';
 import { Div } from './base';
+import { CheckboxDropdown } from './checkbox-dropdown';
 import { CodeEditor } from './code-editor';
 import { CodePreviewIframe } from './code-preview-iframe';
 import { RadioDropdown } from './radio-dropdown';
-import { CheckboxDropdown } from './checkbox-dropdown';
 
 export interface StandaloneCodeLiveEditorProps {
   code: string;
@@ -42,10 +46,17 @@ export const StandaloneCodeLiveEditor = ({
 
   const [code, setCode] = React.useState(props.code);
   const [editorView, setEditorView] = React.useState<EditorView>('both');
+  const [zoomLevel, _setZoomLevel] = React.useState('100');
+  const setZoomLevel = (level: string) => {
+    _setZoomLevel(level);
+    setQueryParams({
+      zoom: level === '100' ? undefined : level,
+    });
+  };
   const onEditorViewChange = (view: EditorView) => {
     setEditorView(view);
     setQueryParams({
-      editorView: view,
+      editorView: view !== 'both' ? view : undefined,
     });
   };
 
@@ -56,6 +67,9 @@ export const StandaloneCodeLiveEditor = ({
       }
       if (queryParams.editorView) {
         setEditorView(queryParams.editorView as EditorView);
+      }
+      if (queryParams.zoom) {
+        setZoomLevel(queryParams.zoom);
       }
     }
   }, [isReady]);
@@ -174,6 +188,42 @@ export const StandaloneCodeLiveEditor = ({
             gap: '$3',
           }}
         >
+          {showMultipleScreens && showPreview && (
+            <DropdownMenu>
+              <DropdownMenu.Trigger asChild>
+                <MenuButton>
+                  {zoomLevel}% <ZoomIcon width={20} height={20} />
+                </MenuButton>
+              </DropdownMenu.Trigger>
+              <RadioDropdown
+                value={zoomLevel}
+                onChangeValue={setZoomLevel}
+                options={[
+                  {
+                    value: '50',
+                    label: '50%',
+                  },
+                  {
+                    value: '75',
+                    label: '75%',
+                  },
+                  {
+                    value: '100',
+                    label: '100%',
+                  },
+                  {
+                    value: '110',
+                    label: '110%',
+                  },
+                  {
+                    value: '125',
+                    label: '125%',
+                  },
+                ]}
+                className={zoomDropdown()}
+              />
+            </DropdownMenu>
+          )}
           <CopyButton
             getTextToCopy={() => {
               if (window) {
@@ -214,6 +264,7 @@ export const StandaloneCodeLiveEditor = ({
               codeHash={props.codeHash}
               hiddenSizes={hiddenSizes}
               previewOnly={editorView === 'previewOnly'}
+              zoom={zoomLevel}
             />
           ) : (
             <CodePreviewIframe
@@ -278,17 +329,33 @@ const PreviewList = (props: {
   codeHash: string;
   hiddenSizes: Array<number>;
   previewOnly: boolean;
+  zoom: string;
 }) => {
+  const zoomValue = React.useMemo(() => Number(props.zoom), [props.zoom]);
+  const shouldAdjustZoom = !isNaN(zoomValue) && zoomValue !== 100;
+
   const content = EXAMPLE_WIDTHS.map((width) =>
     props.hiddenSizes.includes(width) ? null : (
       <ScreenWrapper key={width}>
-        <Screen>
+        <Screen
+          css={{
+            width: `${
+              shouldAdjustZoom ? Math.round((width * zoomValue) / 100) : width
+            }px`,
+          }}
+        >
           <CodePreviewIframe
             code={props.code}
             lang={props.lang}
             codeHash={props.codeHash}
             css={{
               width: `${width}px`,
+              ...(shouldAdjustZoom
+                ? {
+                    transform: `scale(${zoomValue / 100})`,
+                    transformOrigin: 'top left',
+                  }
+                : {}),
             }}
           />
         </Screen>
@@ -320,6 +387,10 @@ const resizeEnable: ResizeEnable = {
   bottomLeft: false,
   topLeft: false,
 };
+
+const zoomDropdown = css({
+  minWidth: '80px !important',
+});
 
 const ScreenList = styled('ul', {
   flex: 1,
@@ -361,6 +432,12 @@ const ScreenWrapper = styled('li', {
   },
 });
 
+const ZoomIcon = styled(ZoomInIcon, {
+  width: 20,
+  height: 20,
+  color: '$gray-400',
+});
+
 const StyledShareIcon = styled(ShareIcon, {
   width: 20,
   height: 20,
@@ -386,6 +463,7 @@ const MenuButton = styled('button', {
   px: '$2',
   py: '$1',
   borderRadius: '$sm',
+  outlineRing: '$primary-200',
 });
 
 const editorWrapper = css({
