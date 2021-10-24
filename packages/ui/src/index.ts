@@ -1,3 +1,6 @@
+import useConstantImpl from 'use-constant';
+
+export const useConstant = useConstantImpl;
 export { IdProvider } from '@radix-ui/react-id';
 export { Root as Portal } from '@radix-ui/react-portal';
 export * from './components/alert';
