@@ -1,5 +1,16 @@
 # @showroomjs/ui
 
+## 0.20.0
+
+### Minor Changes
+
+- 023eea8: Support add comment
+
+### Patch Changes
+
+- Updated dependencies [023eea8]
+  - @showroomjs/core@0.21.0
+
 ## 0.19.1
 
 ### Patch Changes

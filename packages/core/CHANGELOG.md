@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 0.21.0
+
+### Minor Changes
+
+- 023eea8: Support add comment
+
 ## 0.20.0
 
 ### Minor Changes
