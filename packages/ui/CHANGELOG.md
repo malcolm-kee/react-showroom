@@ -1,5 +1,11 @@
 # @showroomjs/ui
 
+## 0.19.1
+
+### Patch Changes
+
+- Fix race condition for iframe
+
 ## 0.19.0
 
 ### Minor Changes

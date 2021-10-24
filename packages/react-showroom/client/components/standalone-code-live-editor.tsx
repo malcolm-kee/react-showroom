@@ -352,6 +352,7 @@ const PreviewList = (props: {
                 ? {
                     transform: `scale(${zoomValue / 100})`,
                     transformOrigin: 'top left',
+                    height: `${(100 / zoomValue) * 100}%`,
                   }
                 : {}),
             }}

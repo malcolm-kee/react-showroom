@@ -1,5 +1,13 @@
 # react-showroom
 
+## 0.24.1
+
+### Patch Changes
+
+- Fix race condition for iframe
+- Updated dependencies [undefined]
+  - @showroomjs/ui@0.19.1
+
 ## 0.24.0
 
 ### Minor Changes
