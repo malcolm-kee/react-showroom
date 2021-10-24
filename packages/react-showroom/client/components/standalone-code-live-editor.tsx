@@ -29,6 +29,7 @@ import { CheckboxDropdown } from './checkbox-dropdown';
 import { CodeEditor } from './code-editor';
 import { CodePreviewIframe } from './code-preview-iframe';
 import { RadioDropdown } from './radio-dropdown';
+import { StandaloneCodeLiveEditorCommentPopover } from './standalone-code-live-editor-comment-popover';
 import {
   BtnText,
   StandaloneCodeLiveEditorCopyButton,
@@ -271,28 +272,7 @@ export const StandaloneCodeLiveEditor = ({
               <RadioDropdown
                 value={zoomLevel}
                 onChangeValue={setZoomLevel}
-                options={[
-                  {
-                    value: '50',
-                    label: '50%',
-                  },
-                  {
-                    value: '75',
-                    label: '75%',
-                  },
-                  {
-                    value: '100',
-                    label: '100%',
-                  },
-                  {
-                    value: '110',
-                    label: '110%',
-                  },
-                  {
-                    value: '125',
-                    label: '125%',
-                  },
-                ]}
+                options={zoomOptions}
                 className={zoomDropdown()}
               />
             </DropdownMenu>
@@ -319,14 +299,16 @@ export const StandaloneCodeLiveEditor = ({
               fitHeight={!showEditor || isCommenting}
               zoom={zoomLevel}
               onClickCommentPoint={(coord) => {
-                if (previewListRef.current) {
-                  const listRect =
-                    previewListRef.current.getBoundingClientRect();
+                const previewList = previewListRef.current;
+
+                if (previewList) {
+                  const listRect = previewList.getBoundingClientRect();
+
                   const listX = listRect.left + window.pageXOffset;
                   const listY = listRect.top + window.pageYOffset;
                   const elementRelative = {
-                    x: coord.x - listX,
-                    y: coord.y - listY,
+                    x: coord.x - listX + previewList.scrollLeft,
+                    y: coord.y - listY + previewList.scrollTop,
                   };
 
                   setTargetCoord(elementRelative);
@@ -334,16 +316,27 @@ export const StandaloneCodeLiveEditor = ({
               }}
               ref={previewListRef}
             >
-              {targetCoord ? (
-                <Marker
-                  width={20}
-                  height={20}
-                  css={{
-                    position: 'absolute',
-                    top: targetCoord.y,
-                    left: targetCoord.x,
+              {isCommenting && targetCoord ? (
+                <StandaloneCodeLiveEditorCommentPopover
+                  open
+                  onOpenChange={(shouldOpen) => {
+                    if (!shouldOpen) {
+                      setTargetCoord(undefined);
+                    }
                   }}
-                />
+                  onAdd={(newComment) => {
+                    console.log('add comment', newComment);
+                    setTargetCoord(undefined);
+                  }}
+                >
+                  <Marker
+                    css={{
+                      position: 'absolute',
+                      top: targetCoord.y,
+                      left: targetCoord.x,
+                    }}
+                  />
+                </StandaloneCodeLiveEditorCommentPopover>
               ) : null}
             </StandaloneCodeLiveEditorPreviewList>
           ) : (
@@ -377,16 +370,56 @@ export const StandaloneCodeLiveEditor = ({
   );
 };
 
+const zoomOptions = [
+  {
+    value: '50',
+    label: '50%',
+  },
+  {
+    value: '75',
+    label: '75%',
+  },
+  {
+    value: '100',
+    label: '100%',
+  },
+  {
+    value: '110',
+    label: '110%',
+  },
+  {
+    value: '125',
+    label: '125%',
+  },
+];
+
 const showMultipleScreens = EXAMPLE_WIDTHS.length > 0;
 
 const zoomDropdown = css({
   minWidth: '80px !important',
 });
 
-const Marker = styled(LocationMarkerIcon, {
+const MarkerInner = styled(LocationMarkerIcon, {
   width: 20,
   height: 20,
   color: '$gray-500',
+});
+
+const MarkerSpan = React.forwardRef<
+  HTMLSpanElement,
+  React.ComponentPropsWithoutRef<'span'>
+>(function MarkerSpan(props, forwardedRef) {
+  return (
+    <span {...props} ref={forwardedRef}>
+      <MarkerInner width={20} height={20} />
+    </span>
+  );
+});
+
+const Marker = styled(MarkerSpan, {
+  display: 'inline-block',
+  width: 20,
+  height: 20,
 });
 
 const CommentIcon = styled(AnnotationIcon, {

@@ -155,6 +155,7 @@ export const {
     outlineRing: (value: Stitches.PropertyValue<'color'>) => ({
       '&:focus': {
         outline: 'none',
+        borderColor: 'transparent',
       },
       '&:focus-visible': {
         outlineColor: value || '$primary-200',
