@@ -94,6 +94,7 @@ export const {
       'blue-400': '#60A5FA',
       'blue-800': '#1E40AF',
       'yellow-50': '#FFFBEB',
+      'yellow-200': '#FDE68A',
       'yellow-400': '#FBBF24',
       'yellow-800': '#92400E',
       'primary-50': '#FDF2F8',
@@ -155,6 +156,7 @@ export const {
     outlineRing: (value: Stitches.PropertyValue<'color'>) => ({
       '&:focus': {
         outline: 'none',
+        borderColor: 'transparent',
       },
       '&:focus-visible': {
         outlineColor: value || '$primary-200',

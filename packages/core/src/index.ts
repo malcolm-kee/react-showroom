@@ -8,6 +8,7 @@ export { flattenArray, NestedArray } from './flatten-array';
 export { callAll, noop } from './fn-lib';
 export type { Callback } from './fn-lib';
 export { getSafeName } from './get-safe-name';
+export { isEqualArray } from './is-equal-array';
 export { omit } from './object';
 export { ImportMapData, Packages, postCompile } from './post-compile';
 export { parseQueryString, stringifyQueryString } from './query-string';

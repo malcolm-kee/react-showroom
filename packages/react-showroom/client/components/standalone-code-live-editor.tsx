@@ -1,34 +1,44 @@
 import {
+  AdjustmentsIcon,
+  AnnotationIcon,
   CodeIcon,
   DesktopComputerIcon,
-  AdjustmentsIcon,
-  ShareIcon,
   ZoomInIcon,
 } from '@heroicons/react/outline';
-import { CheckCircleIcon } from '@heroicons/react/solid';
-import { SupportedLanguage } from '@showroomjs/core';
 import {
-  CopyButton,
+  AnnotationIcon as FilledAnnotationIcon,
+  LocationMarkerIcon,
+} from '@heroicons/react/solid';
+import { isEqualArray, SupportedLanguage } from '@showroomjs/core';
+import {
   css,
   DropdownMenu,
   styled,
   ToggleButton,
   useDebounce,
-  useNotification,
   usePersistedState,
   useQueryParams,
 } from '@showroomjs/ui';
 import lzString from 'lz-string';
 import type { Language } from 'prism-react-renderer';
-import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { EXAMPLE_WIDTHS } from '../lib/config';
+import { getScrollFn } from '../lib/scroll-into-view';
+import { useCommentState } from '../lib/use-comment-state';
+import { useStateWithParams } from '../lib/use-state-with-params';
 import { Div } from './base';
 import { CheckboxDropdown } from './checkbox-dropdown';
 import { CodeEditor } from './code-editor';
 import { CodePreviewIframe } from './code-preview-iframe';
 import { RadioDropdown } from './radio-dropdown';
+import { CommentList } from './standalone-code-live-editor-comment';
+import { StandaloneCodeLiveEditorCommentPopover } from './standalone-code-live-editor-comment-popover';
+import {
+  BtnText,
+  StandaloneCodeLiveEditorCopyButton,
+} from './standalone-code-live-editor-copy-button';
+import { StandaloneCodeLiveEditorPreviewList } from './standalone-code-live-editor-preview';
 
 export interface StandaloneCodeLiveEditorProps {
   code: string;
@@ -44,28 +54,49 @@ export const StandaloneCodeLiveEditor = ({
   const theme = useCodeTheme();
 
   const [queryParams, setQueryParams, isReady] = useQueryParams();
-  const showMsg = useNotification();
+
+  const { state: commentState, add, remove } = useCommentState(props.codeHash);
+  const [activeComment, setActiveComment] = React.useState('');
+  React.useEffect(() => {
+    if (activeComment) {
+      let isCurrent = true;
+      getScrollFn().then((scroll) => {
+        if (isCurrent) {
+          const target = document.querySelector('[data-active-comment]');
+          if (target) {
+            scroll(target, {
+              scrollMode: 'if-needed',
+            });
+          }
+        }
+      });
+      return () => {
+        isCurrent = false;
+      };
+    }
+  }, [activeComment]);
 
   const [code, setCode] = React.useState(props.code);
-  const [showEditor, _setShowEditor] = React.useState(true);
-  const setShowEditor = (show: boolean) => {
-    _setShowEditor(show);
+  const [showEditor, setShowEditor] = useStateWithParams(
+    true,
+    'hideEditor',
+    (paramValue) => !paramValue
+  );
+  const [showPreview, setShowPreview] = useStateWithParams(
+    true,
+    'hidePreview',
+    (paramValue) => !paramValue
+  );
+  const [zoomLevel, setZoomLevel] = useStateWithParams('100', 'zoom', (x) => x);
+
+  const [hiddenSizes, _setHiddenSizes] = usePersistedState<Array<number>>(
+    [],
+    'hiddenScreen'
+  );
+  const setHiddenSizes = (sizes: Array<number>) => {
+    _setHiddenSizes(sizes);
     setQueryParams({
-      hideEditor: show ? undefined : 'true',
-    });
-  };
-  const [showPreview, _setShowPreview] = React.useState(true);
-  const setShowPreview = (show: boolean) => {
-    _setShowPreview(show);
-    setQueryParams({
-      hidePreview: show ? undefined : 'true',
-    });
-  };
-  const [zoomLevel, _setZoomLevel] = React.useState('100');
-  const setZoomLevel = (level: string) => {
-    _setZoomLevel(level);
-    setQueryParams({
-      zoom: level === '100' ? undefined : level,
+      hiddenSizes: sizes.length === 0 ? undefined : sizes.join('_'),
     });
   };
 
@@ -74,14 +105,15 @@ export const StandaloneCodeLiveEditor = ({
       if (queryParams.code) {
         setCode(safeDecompress(queryParams.code as string, props.code));
       }
-      if (queryParams.zoom) {
-        setZoomLevel(queryParams.zoom);
-      }
-      if (queryParams.hideEditor) {
-        _setShowEditor(false);
-      }
-      if (queryParams.hidePreview) {
-        _setShowPreview(false);
+      if (queryParams.hiddenSizes) {
+        const serializedHiddenSizes = queryParams.hiddenSizes
+          .split('_')
+          .map(Number)
+          .filter((v) => !isNaN(v) && EXAMPLE_WIDTHS.includes(v));
+
+        if (serializedHiddenSizes.length > 0) {
+          _setHiddenSizes(serializedHiddenSizes);
+        }
       }
     }
   }, [isReady]);
@@ -95,9 +127,24 @@ export const StandaloneCodeLiveEditor = ({
     });
   }, [debouncedCode]);
 
-  const [hiddenSizes, setHiddenSizes] = usePersistedState<Array<number>>(
-    [],
-    'hiddenScreen'
+  const [isCommenting, setIsCommenting] = useStateWithParams(
+    false,
+    'commentMode',
+    (v) => !!v
+  );
+  const previewListRef = React.useRef<HTMLDivElement>(null);
+  const [targetCoord, setTargetCoord] = React.useState<Coord | undefined>(
+    undefined
+  );
+
+  const displayedComments = React.useMemo(
+    () =>
+      commentState.items.filter(
+        (item) =>
+          item.zoomLevel === zoomLevel &&
+          isEqualArray(item.hiddenSizes, hiddenSizes, { ignoreOrder: true })
+      ),
+    [commentState.items, zoomLevel, hiddenSizes]
   );
 
   return (
@@ -120,19 +167,24 @@ export const StandaloneCodeLiveEditor = ({
               display: 'flex',
               gap: '$2',
               paddingRight: '$2',
-              borderRight: '1px solid $gray-100',
+              borderRight: '1px solid $gray-200',
             }}
           >
             <ToggleButton
               pressed={showEditor}
-              onPressedChange={setShowEditor}
+              onPressedChange={(show) =>
+                setShowEditor(show, show ? undefined : 'true')
+              }
               aria-label="toggle editor"
             >
               <CodeIcon width={20} height={20} />
             </ToggleButton>
             <ToggleButton
               pressed={showPreview}
-              onPressedChange={setShowPreview}
+              onPressedChange={(show) =>
+                setShowPreview(show, show ? undefined : 'true')
+              }
+              disabled={isCommenting}
               aria-label="toggle preview"
             >
               <DesktopComputerIcon width={20} height={20} />
@@ -211,6 +263,26 @@ export const StandaloneCodeLiveEditor = ({
                 </ToggleButton>
               ))}
           </Div>
+          {showPreview && (
+            <Div>
+              <ToggleButton
+                pressed={isCommenting}
+                onPressedChange={(isCommentMode) =>
+                  setIsCommenting(
+                    isCommentMode,
+                    isCommentMode ? 'true' : undefined
+                  )
+                }
+                css={{
+                  '&[data-state=on]': {
+                    backgroundColor: '$primary-700',
+                  },
+                }}
+              >
+                {isCommenting ? <CommentOnIcon /> : <CommentIcon />}
+              </ToggleButton>
+            </Div>
+          )}
         </Div>
         <Div
           css={{
@@ -228,54 +300,21 @@ export const StandaloneCodeLiveEditor = ({
               </DropdownMenu.Trigger>
               <RadioDropdown
                 value={zoomLevel}
-                onChangeValue={setZoomLevel}
-                options={[
-                  {
-                    value: '50',
-                    label: '50%',
-                  },
-                  {
-                    value: '75',
-                    label: '75%',
-                  },
-                  {
-                    value: '100',
-                    label: '100%',
-                  },
-                  {
-                    value: '110',
-                    label: '110%',
-                  },
-                  {
-                    value: '125',
-                    label: '125%',
-                  },
-                ]}
+                onChangeValue={(level) =>
+                  setZoomLevel(level, level === '100' ? undefined : level)
+                }
+                options={zoomOptions}
                 className={zoomDropdown()}
               />
             </DropdownMenu>
           )}
-          <CopyButton
+          <StandaloneCodeLiveEditorCopyButton
             getTextToCopy={() => {
               if (window) {
                 return window.location.href;
               }
               return '';
             }}
-            className={btn()}
-            onCopy={() => showMsg('URL copied')}
-            label={
-              <>
-                <BtnText>Share</BtnText>
-                <StyledShareIcon width={20} height={20} />
-              </>
-            }
-            successLabel={
-              <>
-                <CopiedMessage>Share</CopiedMessage>
-                <MiniCheckIcon width={20} height={20} />
-              </>
-            }
           />
         </Div>
       </Div>
@@ -289,14 +328,107 @@ export const StandaloneCodeLiveEditor = ({
       >
         {showPreview &&
           (showMultipleScreens ? (
-            <PreviewList
+            <StandaloneCodeLiveEditorPreviewList
               code={debouncedCode}
               lang={props.lang}
               codeHash={props.codeHash}
+              isCommenting={isCommenting}
               hiddenSizes={hiddenSizes}
-              previewOnly={!showEditor}
+              fitHeight={!showEditor || isCommenting}
               zoom={zoomLevel}
-            />
+              onClickCommentPoint={(coord) => {
+                const previewList = previewListRef.current;
+
+                if (previewList) {
+                  const listRect = previewList.getBoundingClientRect();
+
+                  const listX = listRect.left + window.pageXOffset;
+                  const listY = listRect.top + window.pageYOffset;
+                  const elementRelative = {
+                    x: coord.x - listX + previewList.scrollLeft,
+                    y: coord.y - listY + previewList.scrollTop,
+                  };
+
+                  setTargetCoord(elementRelative);
+                }
+              }}
+              ref={previewListRef}
+            >
+              {isCommenting && targetCoord ? (
+                <StandaloneCodeLiveEditorCommentPopover
+                  open
+                  onOpenChange={(shouldOpen) => {
+                    if (!shouldOpen) {
+                      setTargetCoord(undefined);
+                    }
+                  }}
+                  onAdd={(newComment) => {
+                    add({
+                      text: newComment,
+                      zoomLevel,
+                      hiddenSizes,
+                      left: targetCoord.x,
+                      top: targetCoord.y,
+                    });
+                    setTargetCoord(undefined);
+                  }}
+                >
+                  <Marker
+                    css={{
+                      position: 'absolute',
+                      top: targetCoord.y,
+                      left: targetCoord.x,
+                    }}
+                  />
+                </StandaloneCodeLiveEditorCommentPopover>
+              ) : null}
+              {isCommenting &&
+                displayedComments.map((comment) => {
+                  const isActive = comment.id === activeComment;
+                  return (
+                    <Div
+                      css={{
+                        position: 'absolute',
+                        top: comment.top,
+                        left: comment.left,
+                        pointerEvents: 'auto',
+                        cursor: 'pointer',
+                        width: 20,
+                        height: 20,
+                      }}
+                      key={comment.id}
+                    >
+                      <MarkerButton
+                        onClick={(ev) => {
+                          ev.stopPropagation();
+                          setActiveComment(comment.id);
+                        }}
+                        type="button"
+                      >
+                        <Marker
+                          iconClass={iconClass({
+                            active: isActive,
+                          })}
+                          data-active-comment={isActive ? true : null}
+                        />
+                      </MarkerButton>
+                    </Div>
+                  );
+                })}
+              {isCommenting && (
+                <Div
+                  onClick={(ev) => ev.stopPropagation()}
+                  css={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: 12,
+                    pointerEvents: 'auto',
+                  }}
+                />
+              )}
+            </StandaloneCodeLiveEditorPreviewList>
           ) : (
             <CodePreviewIframe
               code={debouncedCode}
@@ -304,7 +436,7 @@ export const StandaloneCodeLiveEditor = ({
               codeHash={props.codeHash}
             />
           ))}
-        {showEditor && (
+        {showEditor && !isCommenting && (
           <Div css={{ flex: 1 }}>
             <CodeEditor
               code={code}
@@ -316,139 +448,117 @@ export const StandaloneCodeLiveEditor = ({
             />
           </Div>
         )}
+        {isCommenting && (
+          <Div
+            css={{
+              height: 200,
+              backgroundColor: '$gray-100',
+            }}
+          >
+            {commentState.items.length > 0 && (
+              <CommentList>
+                {commentState.items.map((comment) => (
+                  <CommentList.Item
+                    active={comment.id === activeComment}
+                    onClick={() => {
+                      setHiddenSizes(comment.hiddenSizes);
+                      setZoomLevel(
+                        comment.zoomLevel,
+                        comment.zoomLevel === '100'
+                          ? undefined
+                          : comment.zoomLevel
+                      );
+                      setActiveComment(comment.id);
+                    }}
+                    onDismiss={() => remove(comment.id)}
+                    key={comment.id}
+                  >
+                    {comment.text}
+                  </CommentList.Item>
+                ))}
+              </CommentList>
+            )}
+          </Div>
+        )}
       </Div>
     </Div>
   );
 };
 
-const PreviewList = (props: {
-  code: string;
-  lang: SupportedLanguage;
-  codeHash: string;
-  hiddenSizes: Array<number>;
-  previewOnly: boolean;
-  zoom: string;
-}) => {
-  const zoomValue = React.useMemo(() => Number(props.zoom), [props.zoom]);
-  const shouldAdjustZoom = !isNaN(zoomValue) && zoomValue !== 100;
-
-  const content = EXAMPLE_WIDTHS.map((width) =>
-    props.hiddenSizes.includes(width) ? null : (
-      <ScreenWrapper key={width}>
-        <Screen
-          css={{
-            width: `${
-              shouldAdjustZoom ? Math.round((width * zoomValue) / 100) : width
-            }px`,
-          }}
-        >
-          <CodePreviewIframe
-            code={props.code}
-            lang={props.lang}
-            codeHash={props.codeHash}
-            css={{
-              width: `${width}px`,
-              ...(shouldAdjustZoom
-                ? {
-                    transform: `scale(${zoomValue / 100})`,
-                    transformOrigin: 'top left',
-                    height: `${(100 / zoomValue) * 100}%`,
-                  }
-                : {}),
-            }}
-          />
-        </Screen>
-        <ScreenSize>{width}px</ScreenSize>
-      </ScreenWrapper>
-    )
-  );
-
-  const onlyOne = props.hiddenSizes.length === EXAMPLE_WIDTHS.length - 1;
-
-  return props.previewOnly ? (
-    <ScreenList
-      className={resizeStyle({
-        onlyOne,
-      })}
-    >
-      {content}
-    </ScreenList>
-  ) : (
-    <Resizable
-      enable={resizeEnable}
-      as="ul"
-      className={resizeStyle({
-        onlyOne,
-      })}
-    >
-      {content}
-    </Resizable>
-  );
-};
+const zoomOptions = [
+  {
+    value: '50',
+    label: '50%',
+  },
+  {
+    value: '75',
+    label: '75%',
+  },
+  {
+    value: '100',
+    label: '100%',
+  },
+  {
+    value: '110',
+    label: '110%',
+  },
+  {
+    value: '125',
+    label: '125%',
+  },
+];
 
 const showMultipleScreens = EXAMPLE_WIDTHS.length > 0;
-
-const resizeEnable: ResizeEnable = {
-  top: false,
-  right: false,
-  bottom: true,
-  left: false,
-  topRight: false,
-  bottomRight: false,
-  bottomLeft: false,
-  topLeft: false,
-};
 
 const zoomDropdown = css({
   minWidth: '80px !important',
 });
 
-const ScreenList = styled('ul', {
-  flex: 1,
-});
-
-const resizeStyle = css({
-  display: 'flex',
-  overflowX: 'auto',
-  overflowY: 'hidden',
-  gap: '$3',
-  paddingTop: '$3',
-  paddingBottom: '$6',
-  px: '$3',
-  backgroundColor: '$gray-200',
-  variants: {
-    onlyOne: {
-      true: {
-        justifyContent: 'center',
-      },
-    },
-  },
-});
-
-const ScreenSize = styled('div', {
-  px: '$2',
-  py: '$1',
-  fontSize: '$sm',
-  lineHeight: '$sm',
+const MarkerInner = styled(LocationMarkerIcon, {
+  width: 20,
+  height: 20,
   color: '$gray-500',
 });
 
-const Screen = styled('div', {
-  shadow: 'sm',
-  backgroundColor: 'White',
-  transition: 'box-shadow 100ms ease-in-out',
-  height: '100%',
-  overflow: 'hidden',
+interface MarkerSpanProps extends React.ComponentPropsWithoutRef<'span'> {
+  iconClass?: string;
+}
+
+const MarkerSpan = React.forwardRef<HTMLSpanElement, MarkerSpanProps>(
+  function MarkerSpan({ iconClass, ...props }, forwardedRef) {
+    return (
+      <span {...props} ref={forwardedRef}>
+        <MarkerInner width={20} height={20} className={iconClass} />
+      </span>
+    );
+  }
+);
+
+const Marker = styled(MarkerSpan, {
+  display: 'inline-block',
+  width: 20,
+  height: 20,
 });
 
-const ScreenWrapper = styled('li', {
-  [`&:hover ${ScreenSize}`]: {
-    color: 'Black',
-    fontWeight: '500',
-  },
-  [`&:hover ${Screen}`]: {
-    shadow: 'lg',
-  },
+const MarkerButton = styled('button', {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  margin: '-10px',
+  width: 40,
+  height: 40,
+});
+
+const CommentIcon = styled(AnnotationIcon, {
+  width: 20,
+  height: 20,
+  color: '$gray-400',
+});
+
+const CommentOnIcon = styled(FilledAnnotationIcon, {
+  width: 20,
+  height: 20,
+  color: 'White',
 });
 
 const ZoomIcon = styled(ZoomInIcon, {
@@ -461,22 +571,6 @@ const ScreensIcon = styled(AdjustmentsIcon, {
   width: 20,
   height: 20,
   color: '$gray-400',
-});
-
-const StyledShareIcon = styled(ShareIcon, {
-  width: 20,
-  height: 20,
-  color: '$gray-400',
-});
-
-const MiniCheckIcon = styled(CheckCircleIcon, {
-  width: 20,
-  height: 20,
-  color: '$green-400',
-});
-
-const CopiedMessage = styled('span', {
-  color: '$green-800',
 });
 
 const MenuButton = styled('button', {
@@ -496,29 +590,30 @@ const editorWrapper = css({
   overflow: 'hidden',
 });
 
-const BtnText = styled('span', {
-  srOnly: true,
-  '@sm': {
-    srOnly: false,
-  },
-});
-
-const btn = css({
-  minWidth: 36,
-  height: 36,
-  px: 6,
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 3,
-  position: 'relative',
-});
-
 const editor = css({
   borderRadius: '$base',
   height: '100%',
   overflowY: 'auto',
 });
+
+const iconClass = css({
+  transform: 'scale(1)',
+  transition: 'transform 150ms ease-in-out',
+  transformOrigin: 'bottom center',
+  variants: {
+    active: {
+      true: {
+        color: '$primary-500',
+        transform: 'scale(1.5)',
+      },
+    },
+  },
+});
+
+interface Coord {
+  x: number;
+  y: number;
+}
 
 const safeCompress = (oriString: string): string => {
   try {
