@@ -28,7 +28,7 @@ export const StandaloneCodeLiveEditorCommentPopover = React.forwardRef<
         css={{
           pointerEvents: 'auto',
         }}
-        onMouseDown={(ev) => ev.stopPropagation()}
+        onClick={(ev) => ev.stopPropagation()}
       >
         <form
           onSubmit={(ev) => {
