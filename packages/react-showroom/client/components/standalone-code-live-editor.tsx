@@ -9,7 +9,7 @@ import {
   AnnotationIcon as FilledAnnotationIcon,
   LocationMarkerIcon,
 } from '@heroicons/react/solid';
-import { SupportedLanguage } from '@showroomjs/core';
+import { isEqualArray, SupportedLanguage } from '@showroomjs/core';
 import {
   css,
   DropdownMenu,
@@ -24,11 +24,15 @@ import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { EXAMPLE_WIDTHS } from '../lib/config';
+import { getScrollFn } from '../lib/scroll-into-view';
+import { useCommentState } from '../lib/use-comment-state';
+import { useStateWithParams } from '../lib/use-state-with-params';
 import { Div } from './base';
 import { CheckboxDropdown } from './checkbox-dropdown';
 import { CodeEditor } from './code-editor';
 import { CodePreviewIframe } from './code-preview-iframe';
 import { RadioDropdown } from './radio-dropdown';
+import { CommentList } from './standalone-code-live-editor-comment';
 import { StandaloneCodeLiveEditorCommentPopover } from './standalone-code-live-editor-comment-popover';
 import {
   BtnText,
@@ -51,28 +55,39 @@ export const StandaloneCodeLiveEditor = ({
 
   const [queryParams, setQueryParams, isReady] = useQueryParams();
 
+  const { state: commentState, add, remove } = useCommentState(props.codeHash);
+  const [activeComment, setActiveComment] = React.useState('');
+  React.useEffect(() => {
+    if (activeComment) {
+      let isCurrent = true;
+      getScrollFn().then((scroll) => {
+        if (isCurrent) {
+          const target = document.querySelector('[data-active-comment]');
+          if (target) {
+            scroll(target, {
+              scrollMode: 'if-needed',
+            });
+          }
+        }
+      });
+      return () => {
+        isCurrent = false;
+      };
+    }
+  }, [activeComment]);
+
   const [code, setCode] = React.useState(props.code);
-  const [showEditor, _setShowEditor] = React.useState(true);
-  const setShowEditor = (show: boolean) => {
-    _setShowEditor(show);
-    setQueryParams({
-      hideEditor: show ? undefined : 'true',
-    });
-  };
-  const [showPreview, _setShowPreview] = React.useState(true);
-  const setShowPreview = (show: boolean) => {
-    _setShowPreview(show);
-    setQueryParams({
-      hidePreview: show ? undefined : 'true',
-    });
-  };
-  const [zoomLevel, _setZoomLevel] = React.useState('100');
-  const setZoomLevel = (level: string) => {
-    _setZoomLevel(level);
-    setQueryParams({
-      zoom: level === '100' ? undefined : level,
-    });
-  };
+  const [showEditor, setShowEditor] = useStateWithParams(
+    true,
+    'hideEditor',
+    (paramValue) => !paramValue
+  );
+  const [showPreview, setShowPreview] = useStateWithParams(
+    true,
+    'hidePreview',
+    (paramValue) => !paramValue
+  );
+  const [zoomLevel, setZoomLevel] = useStateWithParams('100', 'zoom', (x) => x);
 
   const [hiddenSizes, _setHiddenSizes] = usePersistedState<Array<number>>(
     [],
@@ -89,15 +104,6 @@ export const StandaloneCodeLiveEditor = ({
     if (isReady) {
       if (queryParams.code) {
         setCode(safeDecompress(queryParams.code as string, props.code));
-      }
-      if (queryParams.zoom) {
-        setZoomLevel(queryParams.zoom);
-      }
-      if (queryParams.hideEditor) {
-        _setShowEditor(false);
-      }
-      if (queryParams.hidePreview) {
-        _setShowPreview(false);
       }
       if (queryParams.hiddenSizes) {
         const serializedHiddenSizes = queryParams.hiddenSizes
@@ -121,10 +127,24 @@ export const StandaloneCodeLiveEditor = ({
     });
   }, [debouncedCode]);
 
-  const [isCommenting, setIsCommenting] = React.useState(false);
-  const previewListRef = React.useRef<HTMLUListElement>(null);
+  const [isCommenting, setIsCommenting] = useStateWithParams(
+    false,
+    'commentMode',
+    (v) => !!v
+  );
+  const previewListRef = React.useRef<HTMLDivElement>(null);
   const [targetCoord, setTargetCoord] = React.useState<Coord | undefined>(
     undefined
+  );
+
+  const displayedComments = React.useMemo(
+    () =>
+      commentState.items.filter(
+        (item) =>
+          item.zoomLevel === zoomLevel &&
+          isEqualArray(item.hiddenSizes, hiddenSizes, { ignoreOrder: true })
+      ),
+    [commentState.items, zoomLevel, hiddenSizes]
   );
 
   return (
@@ -152,14 +172,18 @@ export const StandaloneCodeLiveEditor = ({
           >
             <ToggleButton
               pressed={showEditor}
-              onPressedChange={setShowEditor}
+              onPressedChange={(show) =>
+                setShowEditor(show, show ? undefined : 'true')
+              }
               aria-label="toggle editor"
             >
               <CodeIcon width={20} height={20} />
             </ToggleButton>
             <ToggleButton
               pressed={showPreview}
-              onPressedChange={setShowPreview}
+              onPressedChange={(show) =>
+                setShowPreview(show, show ? undefined : 'true')
+              }
               disabled={isCommenting}
               aria-label="toggle preview"
             >
@@ -243,7 +267,12 @@ export const StandaloneCodeLiveEditor = ({
             <Div>
               <ToggleButton
                 pressed={isCommenting}
-                onPressedChange={setIsCommenting}
+                onPressedChange={(isCommentMode) =>
+                  setIsCommenting(
+                    isCommentMode,
+                    isCommentMode ? 'true' : undefined
+                  )
+                }
                 css={{
                   '&[data-state=on]': {
                     backgroundColor: '$primary-700',
@@ -271,13 +300,22 @@ export const StandaloneCodeLiveEditor = ({
               </DropdownMenu.Trigger>
               <RadioDropdown
                 value={zoomLevel}
-                onChangeValue={setZoomLevel}
+                onChangeValue={(level) =>
+                  setZoomLevel(level, level === '100' ? undefined : level)
+                }
                 options={zoomOptions}
                 className={zoomDropdown()}
               />
             </DropdownMenu>
           )}
-          <StandaloneCodeLiveEditorCopyButton />
+          <StandaloneCodeLiveEditorCopyButton
+            getTextToCopy={() => {
+              if (window) {
+                return window.location.href;
+              }
+              return '';
+            }}
+          />
         </Div>
       </Div>
       <Div
@@ -325,7 +363,13 @@ export const StandaloneCodeLiveEditor = ({
                     }
                   }}
                   onAdd={(newComment) => {
-                    console.log('add comment', newComment);
+                    add({
+                      text: newComment,
+                      zoomLevel,
+                      hiddenSizes,
+                      left: targetCoord.x,
+                      top: targetCoord.y,
+                    });
                     setTargetCoord(undefined);
                   }}
                 >
@@ -338,6 +382,52 @@ export const StandaloneCodeLiveEditor = ({
                   />
                 </StandaloneCodeLiveEditorCommentPopover>
               ) : null}
+              {isCommenting &&
+                displayedComments.map((comment) => {
+                  const isActive = comment.id === activeComment;
+                  return (
+                    <Div
+                      css={{
+                        position: 'absolute',
+                        top: comment.top,
+                        left: comment.left,
+                        pointerEvents: 'auto',
+                        cursor: 'pointer',
+                        width: 20,
+                        height: 20,
+                      }}
+                      key={comment.id}
+                    >
+                      <MarkerButton
+                        onClick={(ev) => {
+                          ev.stopPropagation();
+                          setActiveComment(comment.id);
+                        }}
+                        type="button"
+                      >
+                        <Marker
+                          iconClass={iconClass({
+                            active: isActive,
+                          })}
+                          data-active-comment={isActive ? true : null}
+                        />
+                      </MarkerButton>
+                    </Div>
+                  );
+                })}
+              {isCommenting && (
+                <Div
+                  onClick={(ev) => ev.stopPropagation()}
+                  css={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: 12,
+                    pointerEvents: 'auto',
+                  }}
+                />
+              )}
             </StandaloneCodeLiveEditorPreviewList>
           ) : (
             <CodePreviewIframe
@@ -362,8 +452,33 @@ export const StandaloneCodeLiveEditor = ({
           <Div
             css={{
               height: 200,
+              backgroundColor: '$gray-100',
             }}
-          ></Div>
+          >
+            {commentState.items.length > 0 && (
+              <CommentList>
+                {commentState.items.map((comment) => (
+                  <CommentList.Item
+                    active={comment.id === activeComment}
+                    onClick={() => {
+                      setHiddenSizes(comment.hiddenSizes);
+                      setZoomLevel(
+                        comment.zoomLevel,
+                        comment.zoomLevel === '100'
+                          ? undefined
+                          : comment.zoomLevel
+                      );
+                      setActiveComment(comment.id);
+                    }}
+                    onDismiss={() => remove(comment.id)}
+                    key={comment.id}
+                  >
+                    {comment.text}
+                  </CommentList.Item>
+                ))}
+              </CommentList>
+            )}
+          </Div>
         )}
       </Div>
     </Div>
@@ -405,21 +520,33 @@ const MarkerInner = styled(LocationMarkerIcon, {
   color: '$gray-500',
 });
 
-const MarkerSpan = React.forwardRef<
-  HTMLSpanElement,
-  React.ComponentPropsWithoutRef<'span'>
->(function MarkerSpan(props, forwardedRef) {
-  return (
-    <span {...props} ref={forwardedRef}>
-      <MarkerInner width={20} height={20} />
-    </span>
-  );
-});
+interface MarkerSpanProps extends React.ComponentPropsWithoutRef<'span'> {
+  iconClass?: string;
+}
+
+const MarkerSpan = React.forwardRef<HTMLSpanElement, MarkerSpanProps>(
+  function MarkerSpan({ iconClass, ...props }, forwardedRef) {
+    return (
+      <span {...props} ref={forwardedRef}>
+        <MarkerInner width={20} height={20} className={iconClass} />
+      </span>
+    );
+  }
+);
 
 const Marker = styled(MarkerSpan, {
   display: 'inline-block',
   width: 20,
   height: 20,
+});
+
+const MarkerButton = styled('button', {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  margin: '-10px',
+  width: 40,
+  height: 40,
 });
 
 const CommentIcon = styled(AnnotationIcon, {
@@ -467,6 +594,20 @@ const editor = css({
   borderRadius: '$base',
   height: '100%',
   overflowY: 'auto',
+});
+
+const iconClass = css({
+  transform: 'scale(1)',
+  transition: 'transform 150ms ease-in-out',
+  transformOrigin: 'bottom center',
+  variants: {
+    active: {
+      true: {
+        color: '$primary-500',
+        transform: 'scale(1.5)',
+      },
+    },
+  },
 });
 
 interface Coord {

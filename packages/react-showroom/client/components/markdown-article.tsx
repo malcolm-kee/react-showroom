@@ -221,15 +221,3 @@ const A = styled('a', {
   py: '$2',
   fontSize: '$sm',
 });
-
-const scrollToAnchor = (id: string) => {
-  const target = document.getElementById(id);
-
-  if (target) {
-    import('scroll-into-view-if-needed').then((scroll) =>
-      scroll.default(target, {
-        scrollMode: 'if-needed',
-      })
-    );
-  }
-};

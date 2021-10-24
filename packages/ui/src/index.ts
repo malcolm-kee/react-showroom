@@ -1,7 +1,7 @@
 import useConstantImpl from 'use-constant';
 
 export const useConstant = useConstantImpl;
-export { IdProvider } from '@radix-ui/react-id';
+export { IdProvider, useId } from '@radix-ui/react-id';
 export { Root as Portal } from '@radix-ui/react-portal';
 export * from './components/alert';
 export { Breadcrumbs } from './components/breadcrumbs';
@@ -26,5 +26,6 @@ export { useDebounce } from './lib/use-debounce';
 export { useNotification } from './lib/use-notification';
 export { usePersistedState } from './lib/use-persisted-state';
 export { QueryParamProvider, useQueryParams } from './lib/use-query-params';
+export { useStableCallback } from './lib/use-stable-callback';
 export { useTransientState } from './lib/use-transient-state';
 export * from './stitches.config';

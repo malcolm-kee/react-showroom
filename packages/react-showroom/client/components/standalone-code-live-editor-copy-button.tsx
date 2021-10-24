@@ -3,17 +3,18 @@ import { CheckCircleIcon } from '@heroicons/react/solid';
 import { CopyButton, css, styled, useNotification } from '@showroomjs/ui';
 import * as React from 'react';
 
-export const StandaloneCodeLiveEditorCopyButton = () => {
+export interface StandaloneCodeLiveEditorCopyButtonProps {
+  getTextToCopy: () => string;
+}
+
+export const StandaloneCodeLiveEditorCopyButton = (
+  props: StandaloneCodeLiveEditorCopyButtonProps
+) => {
   const showMsg = useNotification();
 
   return (
     <CopyButton
-      getTextToCopy={() => {
-        if (window) {
-          return window.location.href;
-        }
-        return '';
-      }}
+      {...props}
       className={btn()}
       onCopy={() => showMsg('URL copied')}
       label={

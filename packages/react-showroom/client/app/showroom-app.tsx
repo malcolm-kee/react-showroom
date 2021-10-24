@@ -12,6 +12,7 @@ import { Sidebar } from '../components/sidebar';
 import { CodeThemeContext } from '../lib/code-theme-context';
 import { Suspense } from '../lib/lazy';
 import { matchPath, Route, Switch, useLocation } from '../lib/routing';
+import { getScrollFn } from '../lib/scroll-into-view';
 import { DefaultHomePage } from '../pages/index';
 import { routeMapping, routes } from '../route-mapping';
 import { colorTheme, THEME } from '../theme';
@@ -30,11 +31,9 @@ export const ShowroomApp = () => {
       if (hashTarget) {
         let isCurrent = true;
 
-        import(
-          /* webpackChunkName: "scrollIntoView" */ 'scroll-into-view-if-needed'
-        ).then((scroll) => {
+        getScrollFn().then((scroll) => {
           if (isCurrent) {
-            scroll.default(hashTarget, {
+            scroll(hashTarget, {
               scrollMode: 'if-needed',
             });
           }

@@ -18,7 +18,7 @@ export interface StandaloneCodeLiveEditorPreviewListProps {
 }
 
 export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
-  HTMLUListElement,
+  HTMLDivElement,
   StandaloneCodeLiveEditorPreviewListProps
 >(function StandaloneCodeLiveEditorPreviewList(props, forwardedRef) {
   const zoomValue = React.useMemo(() => Number(props.zoom), [props.zoom]);
@@ -58,7 +58,7 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
     className: resizeStyle({
       isCommenting: props.isCommenting,
     }),
-    onMouseDown: props.isCommenting
+    onClick: props.isCommenting
       ? (ev: React.MouseEvent<HTMLElement, MouseEvent>) => {
           props.onClickCommentPoint({
             x: ev.pageX,
@@ -74,7 +74,7 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
       {props.children}
     </ScreenList>
   ) : (
-    <Resizable enable={resizeEnable} as="ul" {...rootProps}>
+    <Resizable enable={resizeEnable} {...rootProps}>
       {content}
       {props.children}
     </Resizable>
@@ -92,7 +92,7 @@ const resizeEnable: ResizeEnable = {
   topLeft: false,
 };
 
-const ScreenList = styled('ul', {
+const ScreenList = styled('div', {
   flex: 1,
 });
 
@@ -132,7 +132,7 @@ const Screen = styled('div', {
   overflow: 'hidden',
 });
 
-const ScreenWrapper = styled('li', {
+const ScreenWrapper = styled('div', {
   [`&:hover ${ScreenSize}`]: {
     color: 'Black',
     fontWeight: '500',
