@@ -1,5 +1,11 @@
 # react-showroom
 
+## 0.25.1
+
+### Patch Changes
+
+- d273611: Fix standalone preview not working for prerender false in dev
+
 ## 0.25.0
 
 ### Minor Changes
