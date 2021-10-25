@@ -34,7 +34,7 @@ export async function startDevServer(
 
   const config = getConfig('development', configFile, userConfig);
 
-  const { devServerPort, assetDir, prerender } = config;
+  const { devServerPort, assetDir } = config;
 
   const HOST = '0.0.0.0';
   const PORT = Number((argv as any).port ?? process.env.PORT ?? devServerPort);
@@ -48,14 +48,12 @@ export async function startDevServer(
         logging: 'none',
       },
       hot: true,
-      historyApiFallback: prerender
-        ? {
-            rewrites: [
-              { from: /^\/_preview/, to: '/_preview.html' },
-              { from: /./, to: '/index.html' },
-            ],
-          }
-        : true,
+      historyApiFallback: {
+        rewrites: [
+          { from: /^\/_preview/, to: '/_preview.html' },
+          { from: /./, to: '/index.html' },
+        ],
+      },
     },
     assetDir
       ? {
