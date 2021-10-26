@@ -439,7 +439,12 @@ const createBaseWebpackConfig = (
               sideEffects: true,
               use: [
                 isProd
-                  ? MiniCssExtractPlugin.loader
+                  ? {
+                      loader: MiniCssExtractPlugin.loader,
+                      options: {
+                        emit: !options.ssr,
+                      },
+                    }
                   : require.resolve('style-loader'),
                 {
                   loader: require.resolve('css-loader'),
