@@ -43,9 +43,12 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 export const createWebpackConfig = (
   mode: Environment,
   config: NormalizedReactShowroomConfiguration,
-  { outDir = 'showroom' } = {}
+  { outDir = 'showroom', profileWebpack = false } = {}
 ): webpack.Configuration => {
-  const baseConfig = createBaseWebpackConfig(mode, config, { ssr: false });
+  const baseConfig = createBaseWebpackConfig(mode, config, {
+    ssr: false,
+    profile: profileWebpack,
+  });
 
   const {
     webpackConfig: userConfig,
@@ -80,56 +83,61 @@ export const createWebpackConfig = (
         publicPath: !isProd ? '/' : `${basePath}/`, // need to add trailing slash
       },
       plugins: [
-        new HtmlWebpackPlugin({
-          template: resolveShowroom('html-template/showroom.html'),
-          templateParameters: {
-            favicon: theme.favicon,
-            resetCss: theme.resetCss,
-          },
-          minify: isProd && {
-            collapseWhitespace: true,
-            keepClosingSlash: true,
-            removeComments: true,
-            ignoreCustomComments: [/SSR-/],
-            removeRedundantAttributes: true,
-            removeScriptTypeAttributes: true,
-            removeStyleLinkTypeAttributes: true,
-            useShortDoctype: true,
-          },
-          chunks: ['showroom'],
-        }),
-        html.showroom
-          ? new HtmlWebpackTagsPlugin({
-              ...html.showroom,
-              files: ['**/index.html'],
-            })
-          : undefined,
-        new HtmlWebpackPlugin({
-          filename: '_preview.html',
-          template: resolveShowroom('html-template/preview.html'),
-          templateParameters: {
-            title: theme.title,
-            resetCss: theme.resetCss,
-            prerender: mode === 'production' && !!prerenderConfig,
-          },
-          minify: isProd && {
-            collapseWhitespace: true,
-            keepClosingSlash: true,
-            removeComments: true,
-            ignoreCustomComments: [/SSR-/],
-            removeRedundantAttributes: true,
-            removeScriptTypeAttributes: true,
-            removeStyleLinkTypeAttributes: true,
-            useShortDoctype: true,
-          },
-          chunks: ['preview'],
-        }),
-        html.preview
-          ? new HtmlWebpackTagsPlugin({
-              ...html.preview,
-              files: ['**/_preview.html'],
-            })
-          : undefined,
+        // workaround as html-webpack-plugin not compatible with ProfilingPlugin. See https://github.com/jantimon/html-webpack-plugin/issues/1652.
+        ...(profileWebpack
+          ? []
+          : [
+              new HtmlWebpackPlugin({
+                template: resolveShowroom('html-template/showroom.html'),
+                templateParameters: {
+                  favicon: theme.favicon,
+                  resetCss: theme.resetCss,
+                },
+                minify: isProd && {
+                  collapseWhitespace: true,
+                  keepClosingSlash: true,
+                  removeComments: true,
+                  ignoreCustomComments: [/SSR-/],
+                  removeRedundantAttributes: true,
+                  removeScriptTypeAttributes: true,
+                  removeStyleLinkTypeAttributes: true,
+                  useShortDoctype: true,
+                },
+                chunks: ['showroom'],
+              }),
+              html.showroom
+                ? new HtmlWebpackTagsPlugin({
+                    ...html.showroom,
+                    files: ['**/index.html'],
+                  })
+                : undefined,
+              new HtmlWebpackPlugin({
+                filename: '_preview.html',
+                template: resolveShowroom('html-template/preview.html'),
+                templateParameters: {
+                  title: theme.title,
+                  resetCss: theme.resetCss,
+                  prerender: mode === 'production' && !!prerenderConfig,
+                },
+                minify: isProd && {
+                  collapseWhitespace: true,
+                  keepClosingSlash: true,
+                  removeComments: true,
+                  ignoreCustomComments: [/SSR-/],
+                  removeRedundantAttributes: true,
+                  removeScriptTypeAttributes: true,
+                  removeStyleLinkTypeAttributes: true,
+                  useShortDoctype: true,
+                },
+                chunks: ['preview'],
+              }),
+              html.preview
+                ? new HtmlWebpackTagsPlugin({
+                    ...html.preview,
+                    files: ['**/_preview.html'],
+                  })
+                : undefined,
+            ]),
         new WebpackMessages({
           name: 'showroom',
           logger: logToStdout,
@@ -158,9 +166,12 @@ export const createWebpackConfig = (
 export const createSsrWebpackConfig = (
   mode: Environment,
   config: NormalizedReactShowroomConfiguration,
-  { outDir = 'showroom' } = {}
+  { outDir = 'showroom', profileWebpack = false } = {}
 ): webpack.Configuration => {
-  const baseConfig = createBaseWebpackConfig(mode, config, { ssr: true });
+  const baseConfig = createBaseWebpackConfig(mode, config, {
+    ssr: true,
+    profile: profileWebpack,
+  });
 
   const showroomServer = resolveShowroom(
     'client-dist/app/showroom-server-entry.js'
@@ -200,7 +211,7 @@ export const createSsrWebpackConfig = (
 const createBaseWebpackConfig = (
   mode: Environment,
   config: NormalizedReactShowroomConfiguration,
-  options: { ssr: boolean }
+  options: { ssr: boolean; profile: boolean }
 ): webpack.Configuration => {
   const {
     prerender: prerenderConfig,
@@ -506,6 +517,13 @@ const createBaseWebpackConfig = (
       }),
       virtualModules,
       isDev ? new ReactRefreshWebpackPlugin() : undefined,
+      options.profile
+        ? new webpack.debug.ProfilingPlugin({
+            outputPath: resolveApp(
+              `showroom-webpack-profile${options.ssr ? '-ssr' : ''}.json`
+            ),
+          })
+        : undefined,
       isProd
         ? new webpack.optimize.MinChunkSizePlugin({
             minChunkSize: 1000,

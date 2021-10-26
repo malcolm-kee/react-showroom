@@ -17,9 +17,13 @@ import { getConfig } from '../lib/get-config';
 import { cyan, logToStdout, yellow } from '../lib/log-to-stdout';
 import { resolveApp, resolveShowroom } from '../lib/paths';
 
-async function buildStaticSite(config: NormalizedReactShowroomConfiguration) {
+async function buildStaticSite(
+  config: NormalizedReactShowroomConfiguration,
+  profile = false
+) {
   const webpackConfig = createWebpackConfig('production', config, {
     outDir: config.outDir,
+    profileWebpack: profile,
   });
 
   const compiler = webpack(webpackConfig);
@@ -149,7 +153,8 @@ async function prerenderPreview(
 
 export async function buildShowroom(
   userConfig?: ReactShowroomConfiguration,
-  configFile?: string
+  configFile?: string,
+  profile?: boolean
 ) {
   const config = getConfig('production', configFile, userConfig);
 
@@ -157,13 +162,20 @@ export async function buildShowroom(
     `ssr-result-${Date.now() + performance.now()}`
   );
 
-  await Promise.all([buildStaticSite(config), createSSrBundle(config, ssrDir)]);
-
   try {
-    await Promise.all([
-      prerenderSite(config, ssrDir),
-      prerenderPreview(config, ssrDir),
-    ]);
+    if (profile) {
+      await buildStaticSite(config, profile);
+      await createSSrBundle(config, ssrDir, profile);
+    } else {
+      await Promise.all([
+        buildStaticSite(config, profile),
+        createSSrBundle(config, ssrDir, profile),
+      ]);
+      await Promise.all([
+        prerenderSite(config, ssrDir),
+        prerenderPreview(config, ssrDir),
+      ]);
+    }
   } finally {
     await fs.remove(ssrDir);
   }

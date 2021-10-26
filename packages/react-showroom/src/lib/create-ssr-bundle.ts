@@ -9,10 +9,12 @@ import { createSsrWebpackConfig } from '../config/create-webpack-config';
 
 export async function createSSrBundle(
   config: NormalizedReactShowroomConfiguration,
-  tmpDir: string
+  tmpDir: string,
+  profile = false
 ) {
   const webpackConfig = createSsrWebpackConfig('production', config, {
     outDir: tmpDir,
+    profileWebpack: profile,
   });
 
   const compiler = webpack(webpackConfig);
