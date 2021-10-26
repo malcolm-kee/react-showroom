@@ -1,5 +1,11 @@
 # react-showroom
 
+## 0.27.2
+
+### Patch Changes
+
+- c0c7f38: Do not emit css for ssr
+
 ## 0.27.1
 
 ### Patch Changes
