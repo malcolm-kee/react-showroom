@@ -31,8 +31,16 @@ yargs
     },
     () => spawnScript('dev', process.argv.slice(3))
   )
-  .command('build', 'Build showroom static site', {}, () =>
-    spawnScript('build', process.argv.slice(3))
+  .command(
+    'build',
+    'Build showroom static site',
+    {
+      profile: {
+        type: 'boolean',
+        describe: 'Whether to generate profile file',
+      },
+    },
+    () => spawnScript('build', process.argv.slice(3))
   )
   .help().argv;
 
