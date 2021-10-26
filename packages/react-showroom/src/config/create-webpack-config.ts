@@ -476,8 +476,8 @@ const createBaseWebpackConfig = (
     cache: cacheDir
       ? {
           type: 'filesystem',
-          name: `react-showroom-${mode}-${
-            prerenderConfig ? (options.ssr ? 'ssr' : 'client') : 'spa'
+          name: `react-showroom-${mode}-${options.ssr ? 'ssr' : 'client'}${
+            prerenderConfig ? '-prerender' : ''
           }`,
           version: [
             pkgData.version,
