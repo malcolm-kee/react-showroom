@@ -1,5 +1,11 @@
 # react-showroom
 
+## 0.26.0
+
+### Minor Changes
+
+- 79cc101: Add ability to profile
+
 ## 0.25.1
 
 ### Patch Changes
