@@ -53,7 +53,7 @@ export const ssr: Ssr = {
       }
 
       if (section.type === 'component') {
-        const { codeblocks, metadata } = await section.data.load();
+        const { codeblocks } = await section.data.load();
 
         const codeHashes = Object.values(codeblocks)
           .map((block) => block?.initialCodeHash)
@@ -62,7 +62,8 @@ export const ssr: Ssr = {
         if (codeHashes.length > 0) {
           result.push(
             codeHashes.map(
-              (hash) => `${hash}/${encodeDisplayName(metadata.displayName)}`
+              (hash) =>
+                `${hash}/${encodeDisplayName(section.metadata.displayName)}`
             )
           );
         }

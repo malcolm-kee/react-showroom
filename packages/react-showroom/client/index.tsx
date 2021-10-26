@@ -1,4 +1,6 @@
 import { lazy } from './lib/lazy';
+import type { ComponentDoc } from 'react-docgen-typescript';
+import allCompMetadata from 'react-showroom-comp-metadata?showroomAllComp';
 export { useQueryClient } from '@showroomjs/bundles/query';
 export { getCompilationKey } from '@showroomjs/core';
 export type { CodeBlocks } from '@showroomjs/core';
@@ -25,3 +27,5 @@ export { Link, MemoryRouter, Route, Switch, useLocation } from './lib/routing';
 export const StandaloneEditor = lazy(
   () => import('./components/standalone-editor-lazy')
 );
+export const allComponentsMetadata: Record<string, ComponentDoc> =
+  allCompMetadata;

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  allComponentsMetadata,
   BrowserWindow,
   ComponentMeta,
   mdxComponents,
@@ -9,17 +10,23 @@ import AnotherButtonDocs from './button-other-example.mdx';
 import anotherbuttonDocsSource from './button-other-example.mdx?raw';
 import anotherButtonCodeBlocks from './button-other-example.mdx?showroomRemarkCodeblocks';
 import { imports as anotherButtonImports } from './button-other-example.mdx?showroomRemarkImports';
-import buttonWithCommentsSource from './button-with-comments?raw';
-import buttonWithCommentsData from './button-with-comments?showroomComponent';
+import { Button } from './components/button';
+import buttonWithCommentsSource from './components/button-with-comments?raw';
 import ButtonDocs from './components/button.mdx';
 import docsSource from './components/button.mdx?raw';
 import buttonCodeblocks from './components/button.mdx?showroomRemarkCodeblocks';
 import { imports as buttonImports } from './components/button.mdx?showroomRemarkImports';
 import buttonSource from './components/button?raw';
-import buttonData from './components/button?showroomComponent';
-import oldButtonSource from './old-button?raw';
-import oldButtonData from './old-button?showroomComponent';
+import oldButtonSource from './components/old-button?raw';
 import { useSetCompilationCaches } from './set-compilation-caches';
+
+const allMetadata = Object.values(allComponentsMetadata);
+
+const buttonWithCommentsData = allMetadata.find(
+  (m) => m.displayName === 'ButtonWithComments'
+)!;
+const buttonData = allMetadata.find((m) => m.displayName === 'Button')!;
+const oldButtonData = allMetadata.find((m) => m.displayName === 'OldButton')!;
 
 const { pre: Pre, code: Code } = mdxComponents;
 
@@ -92,14 +99,14 @@ export const MarkdownSource = () => (
 );
 
 const markdownContent = {
-  metadata: buttonWithCommentsData,
   doc: ButtonDocs,
   imports: buttonImports,
   codeblocks: buttonCodeblocks,
+  Component: Button,
 };
 
 export const MarkdownResult = () => (
-  <ComponentDocRoute content={markdownContent} slug="" />
+  <ComponentDocRoute content={markdownContent} slug="" metadata={buttonData} />
 );
 
 export const AnotherMarkdownSource = () => (
@@ -114,9 +121,13 @@ const anotherMarkdownContent = {
   doc: AnotherButtonDocs,
   imports: anotherButtonImports,
   codeblocks: anotherButtonCodeBlocks,
-  metadata: buttonWithCommentsData,
+  Component: Button,
 };
 
 export const AnotherMarkdownResult = () => (
-  <ComponentDocRoute content={anotherMarkdownContent} slug="" />
+  <ComponentDocRoute
+    content={anotherMarkdownContent}
+    slug=""
+    metadata={buttonData}
+  />
 );

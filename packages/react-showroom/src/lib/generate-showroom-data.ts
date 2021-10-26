@@ -56,7 +56,8 @@ export const generateCodeblocksData = (
 
 function compileComponentSection(
   component: ReactShowroomComponentSectionConfig,
-  rootDir: string
+  rootDir: string,
+  metadataIdentifier: string
 ): string {
   const { docPath, sourcePath } = component;
 
@@ -67,20 +68,25 @@ function compileComponentSection(
       const loadDoc = import(/* webpackChunkName: "${componentName}-doc" */'${docPath}');
       const loadImports = import(/* webpackChunkName: "${componentName}-imports" */'${docPath}?showroomRemarkImports');
       const loadCodeBlocks = import(/* webpackChunkName: "${componentName}-codeblocks" */'${docPath}?showroomRemarkCodeblocks');
+      const Component = await import(/* webpackChunkName: "${componentName}" */'${sourcePath}');
     
       return {
         doc: (await loadDoc).default,
-        metadata: (await import(/* webpackChunkName: "${componentName}-metadata" */'${sourcePath}?showroomComponent')).default,
+        Component: Component.default || Component[${metadataIdentifier}.displayName] || Component,
     imports: (await loadImports).imports || {},
     codeblocks: (await loadCodeBlocks).default || {},
   }    
 }`
-    : `async () => ({
-  metadata: (await import('${sourcePath}?showroomComponent')).default,
-  doc: null,
-  imports: {},
-  codeblocks: {},
-})`;
+    : `async () => {
+      const Component = await import(/* webpackChunkName: "${componentName}" */'${sourcePath}');
+
+      return {
+        Component: Component.default || Component[${metadataIdentifier}.displayName] || Component,
+        doc: null,
+        imports: {},
+        codeblocks: {},
+      }
+    }`;
 
   return `{
       preloadUrl: ${docPath ? `'${path.relative(rootDir, docPath)}'` : 'null'},
@@ -102,6 +108,10 @@ export const generateSectionsAndImports = (
   const codeImportImports: Array<{
     path: string;
     name: string;
+  }> = [];
+  const compVar: Array<{
+    identifier: string;
+    sourcePath: string;
   }> = [];
 
   function collect(sectionList: Array<ReactShowroomSectionConfig>): string {
@@ -127,15 +137,15 @@ export const generateSectionsAndImports = (
             });
           }
 
-          imports.push({
-            type: 'default',
-            name,
-            path: `${section.sourcePath}?showroomComponentMetadata`,
+          compVar.push({
+            identifier: name,
+            sourcePath: section.sourcePath,
           });
 
-          return `${name}.displayName ? {
+          return `${name} ? {
               type: 'component',
-              data: ${compileComponentSection(section, rootDir)},
+              data: ${compileComponentSection(section, rootDir, name)},
+              metadata: ${name},
               title: ${name}.displayName,
               description: ${name}.description,
               slug: [${
@@ -208,11 +218,18 @@ export const generateSectionsAndImports = (
 
   return {
     sections: `import slugify from 'slugify';
+    import allCompMetadata from 'react-showroom-comp-metadata?showroomAllComp';
     ${imports
       .map((imp) =>
         imp.type === 'default'
           ? `import ${imp.name} from '${imp.path}';`
           : `import * as ${imp.name} from '${imp.path}';`
+      )
+      .join('\n')}
+    ${compVar
+      .map(
+        (varDef) =>
+          `const ${varDef.identifier} = allCompMetadata['${varDef.sourcePath}'];`
       )
       .join('\n')}
     export default ${result}`,
@@ -230,7 +247,6 @@ export const generateAllComponents = (
 ) => {
   const componentImports: Array<{
     name: string;
-    metadataPath: string;
     sourcePath: string;
     codeblockPath: string | null;
   }> = [];
@@ -245,7 +261,6 @@ export const generateAllComponents = (
 
         componentImports.push({
           name,
-          metadataPath: `${section.sourcePath}?showroomComponentMetadata`,
           sourcePath: section.sourcePath,
           codeblockPath:
             section.docPath && `${section.docPath}?showroomRemarkCodeblocks`,
@@ -260,10 +275,11 @@ export const generateAllComponents = (
     return `export const AllComponents = {};`;
   }
 
-  return `${componentImports
+  return `import allCompMetadata from 'react-showroom-comp-metadata?showroomAllComp';
+  ${componentImports
     .map(
       (comp) => `const ${comp.name} = require('${comp.sourcePath}');
-  import _showroomMetadata_${comp.name} from '${comp.metadataPath}';
+  const _showroomMetadata_${comp.name} = allCompMetadata['${comp.sourcePath}'];
   ${
     comp.codeblockPath
       ? `import _code_${comp.name} from '${comp.codeblockPath}';`
@@ -277,12 +293,33 @@ export const generateAllComponents = (
       .map((comp) => {
         const compVar = comp.name;
         const metadataVar = `_showroomMetadata_${comp.name}`;
-        return `${metadataVar}.displayName ? {
+        return `${metadataVar} ? {
       [${metadataVar}.displayName]: ${compVar}.default || ${compVar}[${metadataVar}.displayName] || ${compVar}
     } : {}`;
       })
       .join(', ')}
   );`;
+};
+
+export const generateAllComponentsPaths = (
+  sections: Array<ReactShowroomSectionConfig>
+) => {
+  const result: Array<string> = [];
+
+  function collect(sectionList: Array<ReactShowroomSectionConfig>): void {
+    sectionList.forEach((section) => {
+      if (section.type === 'group') {
+        collect(section.items);
+      }
+      if (section.type === 'component') {
+        result.push(section.sourcePath);
+      }
+    });
+  }
+
+  collect(sections);
+
+  return JSON.stringify(result, null, 2);
 };
 
 export const generateWrapper = (wrapper: string | undefined) => {

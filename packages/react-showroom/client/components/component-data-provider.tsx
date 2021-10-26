@@ -1,4 +1,5 @@
 import { ReactShowroomComponentContent } from '@showroomjs/core/react';
+import type { ComponentDoc } from 'react-docgen-typescript';
 import * as React from 'react';
 import { CodeImportsContextProvider } from '../lib/code-imports-context';
 import { CodeVariablesContextProvider } from '../lib/code-variables-context';
@@ -8,19 +9,21 @@ import { ComponentMetaContext } from '../lib/component-props-context';
 export const ComponentDataProvider = (props: {
   children: React.ReactNode;
   content: ReactShowroomComponentContent;
+  metadata: ComponentDoc;
 }) => {
   const {
-    content: { imports, codeblocks, metadata },
+    content: { imports, codeblocks, Component },
+    metadata,
   } = props;
 
   const codeVariables = React.useMemo(() => {
-    if (metadata.displayName && metadata.Component) {
+    if (metadata.displayName && Component) {
       return {
-        [metadata.displayName]: metadata.Component,
+        [metadata.displayName]: Component,
       };
     }
     return {};
-  }, [metadata]);
+  }, [metadata, Component]);
 
   return (
     <CodeImportsContextProvider value={imports}>

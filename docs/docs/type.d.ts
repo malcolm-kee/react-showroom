@@ -26,12 +26,8 @@ declare module '*?showroomRemarkDocImports' {
   export var imports: Record<string, any>;
 }
 
-declare module '*?showroomComponent' {
-  import { ReactShowroomComponentContent } from 'react-showroom/client';
-
-  const data: ReactShowroomComponentContent['metadata'];
-
-  export default data;
+declare module '*?showroomAllComp' {
+  export default any;
 }
 
 declare module '*.mdx' {

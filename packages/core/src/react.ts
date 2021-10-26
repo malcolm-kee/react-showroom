@@ -332,9 +332,7 @@ export interface NormalizedReactShowroomConfiguration
 }
 
 export interface ReactShowroomComponentContent {
-  metadata: DocgenComponentDoc & {
-    Component: ComponentType<any> | undefined;
-  };
+  Component: ComponentType<any> | undefined;
   doc: null | ComponentType<any>;
   imports: Record<string, any>;
   codeblocks: CodeBlocks;
@@ -348,6 +346,7 @@ export interface ComponentDocItem {
 export interface ReactShowroomComponentSection {
   type: 'component';
   data: ComponentDocItem;
+  metadata: DocgenComponentDoc;
   title: string;
   description: string;
   slug: string;

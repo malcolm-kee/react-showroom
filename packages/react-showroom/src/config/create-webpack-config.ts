@@ -18,6 +18,7 @@ import {
   generateCodeblocksData,
   generateSectionsAndImports,
   generateWrapper,
+  generateAllComponentsPaths,
 } from '../lib/generate-showroom-data';
 import { logToStdout } from '../lib/log-to-stdout';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
@@ -252,6 +253,8 @@ const createBaseWebpackConfig = (
       generated.allImports,
     [resolveShowroom('node_modules/react-showroom-all-components.js')]:
       generateAllComponents(sections),
+    [resolveShowroom('node_modules/react-showroom-comp-metadata.js')]:
+      generateAllComponentsPaths(sections),
   });
 
   const babelPreset = createBabelPreset(mode);
@@ -280,6 +283,19 @@ const createBaseWebpackConfig = (
     module: {
       rules: [
         {
+          test: /.js$/,
+          resourceQuery: /showroomAllComp/,
+          use: [
+            {
+              loader: 'showroom-all-component-loader',
+              options: {
+                parse: docgenParser.parse,
+                debug,
+              },
+            },
+          ],
+        },
+        {
           test: /\.(js|jsx|ts|tsx)$/,
           resourceQuery: /showroomCompile/,
           use: [
@@ -301,23 +317,7 @@ const createBaseWebpackConfig = (
           resourceQuery: {
             not: [/raw/],
           },
-          oneOf: [
-            {
-              resourceQuery: /showroomComponentMetadata/,
-              loader: 'showroom-component-metadata-loader',
-              options: {
-                docgenParser,
-                debug,
-              },
-            },
-            {
-              resourceQuery: /showroomComponent/,
-              loader: 'showroom-component-loader',
-              options: {
-                docgenParser,
-                debug,
-              },
-            },
+          use: [
             {
               loader: require.resolve('babel-loader'),
               options: {
