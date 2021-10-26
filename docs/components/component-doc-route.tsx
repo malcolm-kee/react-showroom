@@ -28,15 +28,13 @@ export const ComponentDocRoute = (
             <Suspense fallback={null}>
               <Switch>
                 <Route path="/_standalone/:codeHash">
-                  <ComponentDocStandaloneEditor
-                    slug=""
-                    content={props.content}
-                  />
+                  <ComponentDocStandaloneEditor />
                 </Route>
                 <Route>
                   <ComponentDocArticle
                     slug={props.slug}
                     content={props.content}
+                    metadata={props.metadata}
                   />
                 </Route>
               </Switch>

@@ -1,4 +1,3 @@
-import { ReactShowroomComponentContent } from '@showroomjs/core/react';
 import { Breadcrumbs } from '@showroomjs/ui';
 import * as React from 'react';
 import { useComponentMeta } from '../lib/component-props-context';

@@ -16,7 +16,7 @@ export interface ButtonProps extends React.ComponentPropsWithoutRef<'button'> {
  *
  * Unspecified props will be spreaded.
  */
-export const Button = ({
+export const ButtonWithComments = ({
   type = 'button',
   variant,
   fullWidth,

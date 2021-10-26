@@ -40,6 +40,14 @@ declare module 'react-showroom-all-components' {
   export const AllComponents: Record<string, any>;
 }
 
+declare module '*?showroomAllComp' {
+  import { ComponentDoc } from 'react-docgen-typescript';
+
+  declare const All: Record<string, ComponentDoc>;
+
+  export default All;
+}
+
 declare namespace NodeJS {
   import type { ThemeConfiguration } from '@showroomjs/core/react';
 
