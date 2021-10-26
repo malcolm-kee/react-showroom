@@ -1,5 +1,18 @@
 # react-showroom
 
+## 0.27.0
+
+### Minor Changes
+
+- 2004403: Performance improvement and huge internal refactoring
+
+### Patch Changes
+
+- Updated dependencies [2004403]
+  - @showroomjs/bundles@0.13.0
+  - @showroomjs/core@0.22.0
+  - @showroomjs/ui@0.21.0
+
 ## 0.26.0
 
 ### Minor Changes

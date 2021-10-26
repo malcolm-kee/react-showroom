@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 0.22.0
+
+### Minor Changes
+
+- 2004403: Performance improvement and huge internal refactoring
+
 ## 0.21.0
 
 ### Minor Changes

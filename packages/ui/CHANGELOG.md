@@ -1,5 +1,17 @@
 # @showroomjs/ui
 
+## 0.21.0
+
+### Minor Changes
+
+- 2004403: Performance improvement and huge internal refactoring
+
+### Patch Changes
+
+- Updated dependencies [2004403]
+  - @showroomjs/bundles@0.13.0
+  - @showroomjs/core@0.22.0
+
 ## 0.20.0
 
 ### Minor Changes
