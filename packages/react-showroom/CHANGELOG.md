@@ -1,5 +1,11 @@
 # react-showroom
 
+## 0.27.1
+
+### Patch Changes
+
+- d225413: Fix incorrect caching
+
 ## 0.27.0
 
 ### Minor Changes

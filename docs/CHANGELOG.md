@@ -1,5 +1,12 @@
 # react-showroom-docs
 
+## 0.10.27
+
+### Patch Changes
+
+- Updated dependencies [d225413]
+  - react-showroom@0.27.1
+
 ## 0.10.26
 
 ### Patch Changes
