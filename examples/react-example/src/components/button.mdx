@@ -50,3 +50,38 @@ const Example = () => {
 
 render(<Example />);
 ```
+
+### Using `wrapper` example
+
+`react-query` relies on `ReactQueryClientProvider` being rendered in at root of the application using `wrapper`.
+
+```jsx
+import { useQuery } from 'react-query';
+
+const Example = () => {
+  const [enabled, setEnabled] = React.useState(false);
+
+  const { data: result } = useQuery(
+    'hello',
+    () => fetch('/hello').then((res) => res.json()),
+    {
+      select: (data) => data.message,
+      enabled,
+    }
+  );
+
+  return (
+    <div>
+      <Button onClick={() => setEnabled(true)} variant="primary">
+        Fetch Data
+      </Button>
+      <div>
+        Result:
+        <output>{result}</output>
+      </div>
+    </div>
+  );
+};
+
+render(<Example />);
+```

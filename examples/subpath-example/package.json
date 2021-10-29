@@ -20,10 +20,10 @@
     "react-showroom": "workspace:*"
   },
   "devDependencies": {
-    "autoprefixer": "^10.3.7",
+    "autoprefixer": "^10.4.0",
     "postcss": "^8.3.11",
     "postcss-loader": "^6.2.0",
-    "tailwindcss": "^2.2.17",
+    "tailwindcss": "^2.2.19",
     "typescript": "^4.4.4"
   },
   "msw": {

@@ -1,5 +1,8 @@
 import { rest, setupWorker } from 'msw';
 import * as React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const queryClient = new QueryClient();
 
 export default function ShowroomProvider(props: { children: React.ReactNode }) {
   React.useEffect(() => {
@@ -23,5 +26,9 @@ export default function ShowroomProvider(props: { children: React.ReactNode }) {
     };
   }, []);
 
-  return <React.Fragment>{props.children}</React.Fragment>;
+  return (
+    <QueryClientProvider client={queryClient}>
+      {props.children}
+    </QueryClientProvider>
+  );
 }
