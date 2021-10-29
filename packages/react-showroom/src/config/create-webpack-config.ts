@@ -365,6 +365,7 @@ const createBaseWebpackConfig = (
                   loader: 'showroom-remark-codeblocks-imports-loader',
                   options: {
                     imports,
+                    env: options.ssr ? 'node' : 'browser',
                   },
                 },
                 {
@@ -380,6 +381,7 @@ const createBaseWebpackConfig = (
                   loader: 'showroom-remark-codeblocks-imports-loader',
                   options: {
                     imports,
+                    env: options.ssr ? 'node' : 'browser',
                   },
                 },
                 {

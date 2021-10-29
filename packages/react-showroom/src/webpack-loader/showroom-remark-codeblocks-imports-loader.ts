@@ -5,6 +5,7 @@ import { getImportsAttach } from '../lib/get-client-import-map';
 
 export interface ShowroomRemarkCodeblocksImportLoaderOptions {
   imports: Array<ImportConfig> | undefined;
+  env: 'browser' | 'node';
 }
 
 const showroomRemarkCodeblocksImportsLoader: LoaderDefinition<ShowroomRemarkCodeblocksImportLoaderOptions> =
@@ -17,7 +18,7 @@ const showroomRemarkCodeblocksImportsLoader: LoaderDefinition<ShowroomRemarkCode
 
     const processed = meta as CodeBlocks;
 
-    const { imports } = this.getOptions();
+    const { imports, env } = this.getOptions();
 
     const result: Array<ImportConfig> = imports ? imports.slice() : [];
 
@@ -41,7 +42,7 @@ const showroomRemarkCodeblocksImportsLoader: LoaderDefinition<ShowroomRemarkCode
       }
     });
 
-    return getImportsAttach(result);
+    return getImportsAttach(result, env);
   };
 
 module.exports = showroomRemarkCodeblocksImportsLoader;
