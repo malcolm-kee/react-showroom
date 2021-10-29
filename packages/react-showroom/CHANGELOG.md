@@ -1,5 +1,11 @@
 # react-showroom
 
+## 0.27.3
+
+### Patch Changes
+
+- c2e1483: Fix incorrect module resolution for import in example
+
 ## 0.27.2
 
 ### Patch Changes
