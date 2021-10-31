@@ -14,6 +14,7 @@ import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { useCodeBlocks } from '../lib/codeblocks-context';
 import { Link, useRouteMatch } from '../lib/routing';
+import { useTargetAudience } from '../lib/use-target-audience';
 import { Div } from './base';
 import { BrowserWindow } from './browser-window';
 import { CodeEditor } from './code-editor';
@@ -48,6 +49,9 @@ export const CodeLiveEditor = ({
   const codeBlocks = useCodeBlocks();
   const matchedCodeData = codeBlocks[props.code];
 
+  const targetAudience = useTargetAudience();
+  const isDeveloper = targetAudience === 'developer';
+
   const content = (
     <>
       <Div
@@ -58,6 +62,8 @@ export const CodeLiveEditor = ({
             ? {
                 backgroundColor: '$gray-400',
                 borderBottomRightRadius: '$base',
+                width: '100%',
+                overflowX: 'hidden',
               }
             : {
                 minHeight: 48,
@@ -86,36 +92,43 @@ export const CodeLiveEditor = ({
               py: '$1',
             }}
           >
-            <Collapsible.Button
-              css={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '$1',
-                fontSize: '$sm',
-                lineHeight: '$sm',
-              }}
-            >
-              <Collapsible.ToggleIcon
-                hide={showCode}
-                aria-label={showCode ? 'Hide' : 'View'}
-                width="16"
-                height="16"
-              />
-              Code
-            </Collapsible.Button>
+            {isDeveloper ? (
+              <Collapsible.Button
+                css={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '$1',
+                  fontSize: '$sm',
+                  lineHeight: '$sm',
+                }}
+              >
+                <Collapsible.ToggleIcon
+                  hide={showCode}
+                  aria-label={showCode ? 'Hide' : 'View'}
+                  width="16"
+                  height="16"
+                />
+                Code
+              </Collapsible.Button>
+            ) : (
+              <span />
+            )}
             <LinkToStandaloneView
               codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
+              isDesigner={targetAudience === 'designer'}
             />
           </Div>
-          <Collapsible.Content animate>
-            <CodeEditor
-              code={code}
-              onChange={setCode}
-              language={props.lang as Language}
-              className={editorBottom()}
-              theme={theme}
-            />
-          </Collapsible.Content>
+          {isDeveloper && (
+            <Collapsible.Content animate>
+              <CodeEditor
+                code={code}
+                onChange={setCode}
+                language={props.lang as Language}
+                className={editorBottom()}
+                theme={theme}
+              />
+            </Collapsible.Content>
+          )}
         </Collapsible.Root>
       )}
     </>
@@ -132,13 +145,18 @@ export const CodeLiveEditor = ({
   );
 };
 
-const LinkToStandaloneView = (props: { codeHash: string | undefined }) => {
+const LinkToStandaloneView = (props: {
+  codeHash: string | undefined;
+  isDesigner: boolean;
+}) => {
   const { url } = useRouteMatch();
 
   return props.codeHash ? (
     <Button
       as={Link}
-      to={`${removeTrailingSlash(url)}/_standalone/${props.codeHash}`}
+      to={`${removeTrailingSlash(url)}/_standalone/${props.codeHash}${
+        props.isDesigner ? '?commentMode=true' : ''
+      }`}
     >
       Standalone
       <ArrowsExpandIcon width={20} height={20} className={icons()} />

@@ -14,6 +14,7 @@ import { CodeThemeContext } from '../lib/code-theme-context';
 import { Suspense } from '../lib/lazy';
 import { matchPath, Route, Switch, useLocation } from '../lib/routing';
 import { getScrollFn } from '../lib/scroll-into-view';
+import { TargetAudienceProvider } from '../lib/use-target-audience';
 import { DefaultHomePage } from '../pages/index';
 import { routeMapping, routes } from '../route-mapping';
 import { colorTheme, THEME } from '../theme';
@@ -81,52 +82,54 @@ export const ShowroomApp = () => {
       <IdProvider>
         <IsClientContextProvider>
           <NotificationProvider>
-            <Div className={colorTheme}>
-              <QueryParamProvider>
-                <CodeThemeContext.Provider value={THEME.codeTheme}>
-                  <Div
-                    css={{
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}
-                  >
-                    {!shouldHideHeader && <Header />}
-                    <Div css={{ display: 'flex', flex: 1 }}>
-                      {!shouldHideSidebar && <Sidebar sections={sections} />}
-                      <Suspense fallback={null}>
-                        <Switch>
-                          {routes.map(function dataToRoute(route) {
-                            if (!route) {
-                              return null;
-                            }
+            <TargetAudienceProvider>
+              <Div className={colorTheme}>
+                <QueryParamProvider>
+                  <CodeThemeContext.Provider value={THEME.codeTheme}>
+                    <Div
+                      css={{
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                    >
+                      {!shouldHideHeader && <Header />}
+                      <Div css={{ display: 'flex', flex: 1 }}>
+                        {!shouldHideSidebar && <Sidebar sections={sections} />}
+                        <Suspense fallback={null}>
+                          <Switch>
+                            {routes.map(function dataToRoute(route) {
+                              if (!route) {
+                                return null;
+                              }
 
-                            const Ui = route.ui;
+                              const Ui = route.ui;
 
-                            return (
-                              <Route
-                                path={route.path}
-                                exact={route.exact}
-                                key={route.path}
-                              >
-                                {Array.isArray(Ui) ? (
-                                  Ui.map(dataToRoute)
-                                ) : (
-                                  <Ui />
-                                )}
-                              </Route>
-                            );
-                          })}
-                          <Route path="/" exact>
-                            <DefaultHomePage />
-                          </Route>
-                        </Switch>
-                      </Suspense>
+                              return (
+                                <Route
+                                  path={route.path}
+                                  exact={route.exact}
+                                  key={route.path}
+                                >
+                                  {Array.isArray(Ui) ? (
+                                    Ui.map(dataToRoute)
+                                  ) : (
+                                    <Ui />
+                                  )}
+                                </Route>
+                              );
+                            })}
+                            <Route path="/" exact>
+                              <DefaultHomePage />
+                            </Route>
+                          </Switch>
+                        </Suspense>
+                      </Div>
                     </Div>
-                  </Div>
-                </CodeThemeContext.Provider>
-              </QueryParamProvider>
-            </Div>
+                  </CodeThemeContext.Provider>
+                </QueryParamProvider>
+              </Div>
+            </TargetAudienceProvider>
           </NotificationProvider>
         </IsClientContextProvider>
       </IdProvider>

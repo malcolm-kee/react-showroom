@@ -48,7 +48,11 @@ export const usePersistedState = <T>(initialState: T, storageKey: string) => {
   const set = React.useCallback(
     (newValue: T) => {
       setValue(newValue);
-      window.localStorage.setItem(storageKey, JSON.stringify(newValue));
+      if (newValue === initialState) {
+        window.localStorage.removeItem(storageKey);
+      } else {
+        window.localStorage.setItem(storageKey, JSON.stringify(newValue));
+      }
       emitter.emit('change', {
         key: storageKey,
         value: newValue,

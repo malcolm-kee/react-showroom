@@ -57,6 +57,7 @@ const defaultThemeConfiguration: ThemeConfiguration = {
   title: 'React Showroom',
   codeTheme: nightOwlTheme,
   resetCss: true,
+  audienceToggle: 'design',
   navbar: {},
   colors: {
     'primary-50': '#FDF2F8',

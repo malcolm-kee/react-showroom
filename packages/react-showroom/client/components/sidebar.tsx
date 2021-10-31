@@ -10,11 +10,15 @@ import {
   styled,
 } from '@showroomjs/ui';
 import * as React from 'react';
+import { audienceDefault } from '../lib/config';
 import { isExternalLink } from '../lib/is-external-link';
 import { NavLink, useHistory } from '../lib/routing';
 import { colorTheme, THEME } from '../theme';
+import { AudienceDropdownGroup, AudienceToggle } from './audience-toggle';
 import { Div } from './base';
 import { GenericLink } from './generic-link';
+
+const toggle = audienceDefault ? <AudienceToggle /> : null;
 
 const navBarItems = THEME.navbar.items;
 
@@ -58,8 +62,10 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
           width: 240,
           background: '$gray-100',
           overflowY: 'auto',
+          overscrollBehaviorBlock: 'contain',
         }}
       >
+        {toggle}
         {props.sections.map((section, i) => (
           <SidebarSection section={section} key={i} />
         ))}
@@ -101,10 +107,11 @@ const MobileSidebar = (props: { sections: Array<ReactShowroomSection> }) => (
           <MenuIcon width={24} height={24} />
         </IconButton>
       </DropdownMenu.Trigger>
-      <DropdownMenu.Content>
+      <DropdownMenu.Content className={colorTheme}>
         {props.sections.map((section, i) => (
           <DropdownSection section={section} key={i} index={i} />
         ))}
+        {audienceDefault ? <AudienceDropdownGroup /> : null}
       </DropdownMenu.Content>
     </DropdownMenu>
   </Portal>

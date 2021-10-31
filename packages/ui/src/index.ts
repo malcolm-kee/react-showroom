@@ -15,6 +15,7 @@ export * from './components/icons';
 export { NotificationProvider } from './components/notification-provider';
 export { Popover } from './components/popover';
 export * from './components/search-dialog';
+export { Switch } from './components/switch';
 export { Table } from './components/table';
 export * from './components/text-input';
 export { Textarea } from './components/textarea';
