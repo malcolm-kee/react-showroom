@@ -1,4 +1,4 @@
-import { Alert, styled } from '@showroomjs/ui';
+import { Alert, styled, useIsClient } from '@showroomjs/ui';
 import * as React from 'react';
 import { GenericLink } from './generic-link';
 
@@ -9,7 +9,9 @@ export interface DocPlaceholderProps {
 
 export const DocPlaceholder = styled(
   function DocPlaceholder(props: DocPlaceholderProps) {
-    return (
+    const isClient = useIsClient();
+
+    return isClient ? (
       <div className={props.className}>
         <Alert variant="info">
           <div>
@@ -41,7 +43,7 @@ export const DocPlaceholder = styled(
           </div>
         </Alert>
       </div>
-    );
+    ) : null;
   },
   {
     marginY: '$4',
