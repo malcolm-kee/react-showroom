@@ -130,16 +130,5 @@
   </head>
   <body>
     <div id="preview"><!--SSR-target--></div>
-    <% if (prerender) { %>
-    <script>
-      parent.postMessage(
-        {
-          type: 'heightChange',
-          height: window.document.body.scrollHeight,
-        },
-        window.origin
-      );
-    </script>
-    <% } %>
   </body>
 </html>

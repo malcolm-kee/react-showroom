@@ -1,5 +1,5 @@
 import { SupportedLanguage } from '@showroomjs/core';
-import { css, ResizeIcon, styled } from '@showroomjs/ui';
+import { css, ResizeIcon, styled, useDebouncedCallback } from '@showroomjs/ui';
 import cx from 'classnames';
 import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
@@ -28,15 +28,23 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
     () => (codeHash && initialHeightMap.get(codeHash)) || 100
   );
 
+  // add 3 sec wait time before setting initial height to allow some layout shift
+  const saveHeight = useDebouncedCallback(function saveInitialHeight(
+    height: number
+  ) {
+    if (codeHash && !initialHeightMap.has(codeHash)) {
+      initialHeightMap.set(codeHash, height);
+    }
+  },
+  3000);
+
   const [isResizing, setIsResizing] = React.useState(false);
   const sizeEl = React.useRef<HTMLDivElement>(null);
 
   const { targetRef, sendMessage } = useParentWindow((ev) => {
     if (ev.type === 'heightChange') {
       setFrameHeight(ev.height);
-      if (codeHash && !initialHeightMap.has(codeHash)) {
-        initialHeightMap.set(codeHash, ev.height);
-      }
+      saveHeight(ev.height);
     }
   });
 
