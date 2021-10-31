@@ -1,5 +1,16 @@
 # react-showroom
 
+## 0.29.0
+
+### Minor Changes
+
+- 7d6aaee: Support audience toggle
+
+### Patch Changes
+
+- Updated dependencies [7d6aaee]
+  - @showroomjs/ui@0.22.0
+
 ## 0.28.1
 
 ### Patch Changes

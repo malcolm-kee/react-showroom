@@ -1,5 +1,11 @@
 # @showroomjs/ui
 
+## 0.22.0
+
+### Minor Changes
+
+- 7d6aaee: Support audience toggle
+
 ## 0.21.2
 
 ### Patch Changes
