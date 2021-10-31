@@ -1,5 +1,6 @@
 import {
   IdProvider,
+  IsClientContextProvider,
   NotificationProvider,
   QueryParamProvider,
 } from '@showroomjs/ui';
@@ -78,50 +79,56 @@ export const ShowroomApp = () => {
   return (
     <Wrapper>
       <IdProvider>
-        <NotificationProvider>
-          <Div className={colorTheme}>
-            <QueryParamProvider>
-              <CodeThemeContext.Provider value={THEME.codeTheme}>
-                <Div
-                  css={{
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                  }}
-                >
-                  {!shouldHideHeader && <Header />}
-                  <Div css={{ display: 'flex', flex: 1 }}>
-                    {!shouldHideSidebar && <Sidebar sections={sections} />}
-                    <Suspense fallback={null}>
-                      <Switch>
-                        {routes.map(function dataToRoute(route) {
-                          if (!route) {
-                            return null;
-                          }
+        <IsClientContextProvider>
+          <NotificationProvider>
+            <Div className={colorTheme}>
+              <QueryParamProvider>
+                <CodeThemeContext.Provider value={THEME.codeTheme}>
+                  <Div
+                    css={{
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    {!shouldHideHeader && <Header />}
+                    <Div css={{ display: 'flex', flex: 1 }}>
+                      {!shouldHideSidebar && <Sidebar sections={sections} />}
+                      <Suspense fallback={null}>
+                        <Switch>
+                          {routes.map(function dataToRoute(route) {
+                            if (!route) {
+                              return null;
+                            }
 
-                          const Ui = route.ui;
+                            const Ui = route.ui;
 
-                          return (
-                            <Route
-                              path={route.path}
-                              exact={route.exact}
-                              key={route.path}
-                            >
-                              {Array.isArray(Ui) ? Ui.map(dataToRoute) : <Ui />}
-                            </Route>
-                          );
-                        })}
-                        <Route path="/" exact>
-                          <DefaultHomePage />
-                        </Route>
-                      </Switch>
-                    </Suspense>
+                            return (
+                              <Route
+                                path={route.path}
+                                exact={route.exact}
+                                key={route.path}
+                              >
+                                {Array.isArray(Ui) ? (
+                                  Ui.map(dataToRoute)
+                                ) : (
+                                  <Ui />
+                                )}
+                              </Route>
+                            );
+                          })}
+                          <Route path="/" exact>
+                            <DefaultHomePage />
+                          </Route>
+                        </Switch>
+                      </Suspense>
+                    </Div>
                   </Div>
-                </Div>
-              </CodeThemeContext.Provider>
-            </QueryParamProvider>
-          </Div>
-        </NotificationProvider>
+                </CodeThemeContext.Provider>
+              </QueryParamProvider>
+            </Div>
+          </NotificationProvider>
+        </IsClientContextProvider>
       </IdProvider>
     </Wrapper>
   );

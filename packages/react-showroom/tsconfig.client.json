@@ -1,18 +1,17 @@
 {
-    "compilerOptions": {
-        "module": "ESNext",
-        "target": "ES2015",
-        "moduleResolution": "node",
-        "lib": ["DOM", "ESNext"],
-        "sourceMap": true,
-        "strict": true,
-        "jsx": "react",
-        "isolatedModules": true,
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "useDefineForClassFields": true,
-        "outDir": "client-dist",
-        "skipLibCheck": true
-    },
-    "include": ["client"]
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ES2015",
+    "moduleResolution": "node",
+    "lib": ["DOM", "ESNext"],
+    "sourceMap": true,
+    "strict": true,
+    "jsx": "react",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": true,
+    "outDir": "client-dist",
+    "skipLibCheck": true
+  },
+  "include": ["client"]
 }

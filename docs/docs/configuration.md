@@ -258,6 +258,20 @@ Pass `false` to disable caching.
 
 Patterns to ignore for components.
 
+### `skipEmptyComponent`
+
+- Type: `boolean | undefined`
+
+Ignore components that don’t have an example file nor props definition other than defined in `'@types/react'`.
+
+### `example.placeholder`
+
+- Type: `string | undefined`
+
+Path to a module/file that export default a React component as placeholder when there is no example file for the component.
+
+The component will receives `componentFilePath` prop (`string`).
+
 ### `theme.favicon`
 
 - Type: `string | undefined`

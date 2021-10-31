@@ -19,6 +19,7 @@ import {
   generateSectionsAndImports,
   generateWrapper,
   generateAllComponentsPaths,
+  generateDocPlaceHolder,
 } from '../lib/generate-showroom-data';
 import { logToStdout } from '../lib/log-to-stdout';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
@@ -237,7 +238,10 @@ const createBaseWebpackConfig = (
     docgenConfig.options
   );
 
-  const generated = generateSectionsAndImports(sections, paths.showroomPath);
+  const generated = generateSectionsAndImports(sections, {
+    rootDir: paths.showroomPath,
+    skipEmptyComponent: config.skipEmptyComponent,
+  });
 
   const virtualModules = new VirtualModulesPlugin({
     // create a virtual module that consists of parsed code blocks
@@ -255,6 +259,8 @@ const createBaseWebpackConfig = (
       generateAllComponents(sections),
     [resolveShowroom('node_modules/react-showroom-comp-metadata.js')]:
       generateAllComponentsPaths(sections),
+    [resolveShowroom('node_modules/react-showroom-doc-placeholder.js')]:
+      generateDocPlaceHolder(exampleConfig.placeholder),
   });
 
   const babelPreset = createBabelPreset(mode);

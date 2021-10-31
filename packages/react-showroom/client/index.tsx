@@ -1,6 +1,6 @@
-import { lazy } from './lib/lazy';
 import type { ComponentDoc } from 'react-docgen-typescript';
 import allCompMetadata from 'react-showroom-comp-metadata?showroomAllComp';
+import { lazy } from './lib/lazy';
 export { useQueryClient } from '@showroomjs/bundles/query';
 export { getCompilationKey } from '@showroomjs/core';
 export type { CodeBlocks } from '@showroomjs/core';
@@ -16,6 +16,8 @@ export { ComponentDocArticle } from './components/component-doc-article';
 export { ComponentDocStandaloneEditor } from './components/component-doc-standalone-editor';
 export { ComponentMeta } from './components/component-meta';
 export type { ComponentMetaProps } from './components/component-meta';
+export { DocPlaceholder } from './components/doc-placeholder';
+export type { DocPlaceholderProps } from './components/doc-placeholder';
 export { MarkdownArticle } from './components/markdown-article';
 export { MarkdownDataProvider } from './components/markdown-data-provider';
 export { mdxComponents } from './components/mdx-components';

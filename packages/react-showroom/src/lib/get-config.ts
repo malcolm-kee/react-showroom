@@ -95,7 +95,7 @@ export const getConfig = (
     css = {
       postcss: fs.existsSync(paths.appPostcssConfig),
     },
-    example: { widths = [320, 768, 1024] } = {},
+    example: { widths = [320, 768, 1024], placeholder } = {},
     html = {},
     ...providedConfig
   } = userConfig || getUserConfig(env, configFile);
@@ -145,6 +145,7 @@ export const getConfig = (
     ...providedConfig,
     example: {
       widths,
+      placeholder: placeholder && resolveApp(placeholder),
     },
     html,
     css: {

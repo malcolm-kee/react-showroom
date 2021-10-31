@@ -40,6 +40,15 @@ declare module 'react-showroom-all-components' {
   export const AllComponents: Record<string, any>;
 }
 
+declare module 'react-showroom-doc-placeholder' {
+  import type { ComponentType } from 'react';
+
+  declare const DocPlaceholder: ComponentType<{
+    componentFilePath: string;
+  }>;
+  export default DocPlaceholder;
+}
+
 declare module '*?showroomAllComp' {
   import { ComponentDoc } from 'react-docgen-typescript';
 
