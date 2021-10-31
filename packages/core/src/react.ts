@@ -156,6 +156,10 @@ export interface DocgenConfiguration {
 
 export interface ExampleConfiguration {
   widths: Array<number>;
+  /**
+   * path to a module/file that export default a React component that should be displayed when there is no associated markdown file for component.
+   */
+  placeholder?: string;
 }
 
 export interface ShowroomHtmlConfiguration {
@@ -182,6 +186,10 @@ export interface ReactShowroomConfiguration {
    * @default Default patterns for jest tests
    */
   ignores?: Array<string>;
+  /**
+   * Ignore components that don’t have an example file nor props definition other than defined in `'@types/react'`.
+   */
+  skipEmptyComponent?: boolean;
   items?: Array<ItemConfiguration>;
   example?: Partial<ExampleConfiguration>;
   /**

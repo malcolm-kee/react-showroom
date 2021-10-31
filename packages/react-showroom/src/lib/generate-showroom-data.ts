@@ -3,6 +3,7 @@ import {
   ReactShowroomComponentSectionConfig,
   ReactShowroomSectionConfig,
 } from '@showroomjs/core/react';
+import { resolveShowroom } from './paths';
 import path from 'path';
 
 let _nameIndex = 0;
@@ -102,7 +103,10 @@ interface ImportDefinition {
 
 export const generateSectionsAndImports = (
   sections: Array<ReactShowroomSectionConfig>,
-  rootDir: string
+  options: {
+    rootDir: string;
+    skipEmptyComponent?: boolean;
+  }
 ) => {
   const imports: Array<ImportDefinition> = [];
   const codeImportImports: Array<{
@@ -144,7 +148,7 @@ export const generateSectionsAndImports = (
 
           return `${name} ? {
               type: 'component',
-              data: ${compileComponentSection(section, rootDir, name)},
+              data: ${compileComponentSection(section, options.rootDir, name)},
               metadata: ${name},
               title: ${name}.displayName,
               description: ${name}.description,
@@ -155,7 +159,7 @@ export const generateSectionsAndImports = (
               } slugify(${name}.displayName, { lower: true })].join('/'),
               id: '${section.id}',
               ${section.hideFromSidebar ? 'hideFromSidebar: true,' : ''}
-              shouldIgnore: false
+              shouldIgnore: ${!!options.skipEmptyComponent} && (${!section.docPath} && !${name}.description && Object.keys(${name}.props).length === 0),
             } : {
               shouldIgnore: true,
             }`;
@@ -185,7 +189,10 @@ export const generateSectionsAndImports = (
               frontmatter: ${name}_frontmatter || {},
               ${section.hideFromSidebar ? 'hideFromSidebar: true,' : ''}
               formatLabel: ${section.formatLabel.toString()},
-              preloadUrl: '${path.relative(rootDir, section.sourcePath)}',
+              preloadUrl: '${path.relative(
+                options.rootDir,
+                section.sourcePath
+              )}',
               load: async () => {
                 const loadComponent = import(/* webpackChunkName: "${chunkName}" */'${
             section.sourcePath
@@ -330,4 +337,16 @@ export const generateWrapper = (wrapper: string | undefined) => {
 
   return `import * as React from 'react';
     export default React.Fragment;`;
+};
+
+export const generateDocPlaceHolder = (placeholder: string | undefined) => {
+  if (placeholder) {
+    return `import Placeholder from '${placeholder}';
+    export default Placeholder`;
+  }
+
+  return `import { DocPlaceholder } from '${resolveShowroom(
+    'client-dist/components/doc-placeholder.js'
+  )}';
+  export default DocPlaceholder`;
 };

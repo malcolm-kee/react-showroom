@@ -1,4 +1,6 @@
-import type * as Stitches from '@stitches/react';
+import type { PropertyValue } from '@stitches/react';
+import type { DefaultThemeMap } from '@stitches/react/types/config';
+import type Stitches from '@stitches/react/types/stitches';
 import { createStitches } from '@stitches/react';
 
 const SPACE_UNIT = 4;
@@ -17,16 +19,7 @@ const spaces = SPACE_VARIANTS.reduce<
   {} as any
 );
 
-export const {
-  styled,
-  css,
-  globalCss,
-  keyframes,
-  getCssText,
-  theme,
-  createTheme,
-  config,
-} = createStitches({
+const StitchConfig = {
   media: {
     sm: '(min-width: 640px)',
     md: '(min-width: 768px)',
@@ -123,37 +116,37 @@ export const {
     },
   },
   utils: {
-    marginX: (value: Stitches.PropertyValue<'margin'>) => ({
+    marginX: (value: PropertyValue<'margin'>) => ({
       marginLeft: value,
       marginRight: value,
     }),
-    marginY: (value: Stitches.PropertyValue<'margin'>) => ({
+    marginY: (value: PropertyValue<'margin'>) => ({
       marginTop: value,
       marginBottom: value,
     }),
-    px: (value: Stitches.PropertyValue<'padding'>) => ({
+    px: (value: PropertyValue<'padding'>) => ({
       paddingLeft: value,
       paddingRight: value,
     }),
-    py: (value: Stitches.PropertyValue<'padding'>) => ({
+    py: (value: PropertyValue<'padding'>) => ({
       paddingTop: value,
       paddingBottom: value,
     }),
-    inset: (value: Stitches.PropertyValue<'top'>) => ({
+    inset: (value: PropertyValue<'top'>) => ({
       top: value,
       left: value,
       right: value,
       bottom: value,
     }),
-    roundedT: (value: Stitches.PropertyValue<'borderRadius'>) => ({
+    roundedT: (value: PropertyValue<'borderRadius'>) => ({
       borderTopLeftRadius: value,
       borderTopRightRadius: value,
     }),
-    roundedB: (value: Stitches.PropertyValue<'borderRadius'>) => ({
+    roundedB: (value: PropertyValue<'borderRadius'>) => ({
       borderBottomLeftRadius: value,
       borderBottomRightRadius: value,
     }),
-    outlineRing: (value: Stitches.PropertyValue<'color'>) => ({
+    outlineRing: (value: PropertyValue<'color'>) => ({
       '&:focus': {
         outline: 'none',
         borderColor: 'transparent',
@@ -197,7 +190,30 @@ export const {
             whiteSpace: 'normal',
           },
   },
-});
+} as const;
+
+type StitchConfigType = typeof StitchConfig;
+
+type StitchResult = Stitches<
+  '',
+  StitchConfigType['media'],
+  StitchConfigType['theme'],
+  DefaultThemeMap,
+  StitchConfigType['utils']
+>;
+
+const result: StitchResult = createStitches(StitchConfig) as any;
+
+export const {
+  styled,
+  css,
+  globalCss,
+  keyframes,
+  getCssText,
+  theme,
+  createTheme,
+  config,
+} = result;
 
 export const icons = css({
   color: '$gray-400',

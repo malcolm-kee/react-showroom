@@ -35,6 +35,7 @@ module.exports = defineConfig({
       formatLabel: (t) => `Docs: ${t}`,
     },
   ],
+  skipEmptyComponent: true,
   theme: {
     title: 'React Showroom Example',
   },
