@@ -1,6 +1,6 @@
 {
   "name": "react-showroom",
-  "version": "0.27.3",
+  "version": "0.28.0",
   "license": "MIT",
   "bin": {
     "react-showroom": "react-showroom.js"

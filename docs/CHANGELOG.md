@@ -1,5 +1,14 @@
 # react-showroom-docs
 
+## 0.10.30
+
+### Patch Changes
+
+- f054a3f: Bump dependencies
+- Updated dependencies [f054a3f]
+- Updated dependencies [f054a3f]
+  - react-showroom@0.28.0
+
 ## 0.10.29
 
 ### Patch Changes

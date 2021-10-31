@@ -1,5 +1,14 @@
 # client-only-example
 
+## 1.0.10
+
+### Patch Changes
+
+- f054a3f: Bump dependencies
+- Updated dependencies [f054a3f]
+- Updated dependencies [f054a3f]
+  - react-showroom@0.28.0
+
 ## 1.0.9
 
 ### Patch Changes

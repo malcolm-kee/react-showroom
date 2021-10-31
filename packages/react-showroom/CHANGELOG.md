@@ -1,5 +1,19 @@
 # react-showroom
 
+## 0.28.0
+
+### Minor Changes
+
+- f054a3f: Add skipEmptyComponent config options
+
+### Patch Changes
+
+- f054a3f: Bump dependencies
+- Updated dependencies [f054a3f]
+  - @showroomjs/bundles@0.13.1
+  - @showroomjs/core@0.22.1
+  - @showroomjs/ui@0.21.1
+
 ## 0.27.3
 
 ### Patch Changes
