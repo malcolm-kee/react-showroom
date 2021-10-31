@@ -134,6 +134,7 @@ export const MarkdownArticle = (props: {
                 overflow: 'auto',
                 py: '$6',
                 borderLeft: '1px solid $gray-300',
+                overscrollBehavior: 'contain',
               }}
             >
               <Div

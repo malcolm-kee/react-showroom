@@ -14,6 +14,9 @@ const options = (function (allItems: Array<ReactShowroomSection>) {
     items.forEach((item) => {
       switch (item.type) {
         case 'component':
+          if (item.hideFromSidebar) {
+            return;
+          }
           result.push({
             label: item.title,
             value: item.slug,

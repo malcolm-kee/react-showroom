@@ -272,6 +272,15 @@ Path to a module/file that export default a React component as placeholder when 
 
 The component will receives `componentFilePath` prop (`string`).
 
+### `theme.audienceToggle`
+
+- Type: `'design' | 'code' | false`
+- Default: `'design'`
+
+Default value for the audience toggle.
+
+Set to `false` if you do not want to show the toggle, which means it will always be 'code'.
+
 ### `theme.favicon`
 
 - Type: `string | undefined`

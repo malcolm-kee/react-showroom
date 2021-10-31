@@ -412,6 +412,7 @@ importers:
       '@radix-ui/react-id': ^0.1.1
       '@radix-ui/react-popover': ^0.1.1
       '@radix-ui/react-portal': ^0.1.1
+      '@radix-ui/react-switch': ^0.1.1
       '@radix-ui/react-toggle': ^0.1.1
       '@showroomjs/bundles': workspace:*
       '@showroomjs/core': workspace:*
@@ -434,6 +435,7 @@ importers:
       '@radix-ui/react-id': 0.1.1_react@17.0.2
       '@radix-ui/react-popover': 0.1.1_14fc3c4d570feae7d722fbbd1b906730
       '@radix-ui/react-portal': 0.1.1_react-dom@17.0.2+react@17.0.2
+      '@radix-ui/react-switch': 0.1.1_react@17.0.2
       '@radix-ui/react-toggle': 0.1.1_react@17.0.2
       '@showroomjs/bundles': link:../bundles
       '@showroomjs/core': link:../core
@@ -2410,6 +2412,19 @@ packages:
       react: 17.0.2
     dev: false
 
+  /@radix-ui/react-label/0.1.1_react@17.0.2:
+    resolution: {integrity: sha512-52mHm7gxDcbY1+XuFwe0zBvUHp+JP424QC5V2nloPH9JUpCsM2MfviqA/nyW4nKuoGAeF6MhedjtlrXyze8DFw==}
+    peerDependencies:
+      react: ^16.8 || ^17.0
+    dependencies:
+      '@babel/runtime': 7.16.0
+      '@radix-ui/react-compose-refs': 0.1.0_react@17.0.2
+      '@radix-ui/react-context': 0.1.1_react@17.0.2
+      '@radix-ui/react-id': 0.1.1_react@17.0.2
+      '@radix-ui/react-primitive': 0.1.1_react@17.0.2
+      react: 17.0.2
+    dev: false
+
   /@radix-ui/react-menu/0.1.1_14fc3c4d570feae7d722fbbd1b906730:
     resolution: {integrity: sha512-j9ptTx6aNYbuc7ygNzl8ou5z010HLXgEKZQE5EAiTrdTOCrwullDDLvQR1M0+VGYQkfRvD5Y1MnJEp6ISQDEVg==}
     peerDependencies:
@@ -2545,6 +2560,23 @@ packages:
       react: 17.0.2
     dev: false
 
+  /@radix-ui/react-switch/0.1.1_react@17.0.2:
+    resolution: {integrity: sha512-QlLGNj7NnMUoYj+9msP4q9/X7ZtHLqVLlH5CSzEgoDxxU+wh5+65oTyBynWJLsF9QligE9pJqOwMdqo4qqnBhg==}
+    peerDependencies:
+      react: ^16.8 || ^17.0
+    dependencies:
+      '@babel/runtime': 7.16.0
+      '@radix-ui/primitive': 0.1.0
+      '@radix-ui/react-compose-refs': 0.1.0_react@17.0.2
+      '@radix-ui/react-context': 0.1.1_react@17.0.2
+      '@radix-ui/react-label': 0.1.1_react@17.0.2
+      '@radix-ui/react-primitive': 0.1.1_react@17.0.2
+      '@radix-ui/react-use-controllable-state': 0.1.0_react@17.0.2
+      '@radix-ui/react-use-previous': 0.1.0_react@17.0.2
+      '@radix-ui/react-use-size': 0.1.0_react@17.0.2
+      react: 17.0.2
+    dev: false
+
   /@radix-ui/react-toggle/0.1.1_react@17.0.2:
     resolution: {integrity: sha512-d19eskU1Q1NIs/OwFbzdqPhRtuvdifcF1flKS28lyrhG0m5ToIeq1AqvBib1XGcxnpCxa7X4FpFGIBsiGBtwtg==}
     peerDependencies:
@@ -2607,6 +2639,15 @@ packages:
 
   /@radix-ui/react-use-layout-effect/0.1.0_react@17.0.2:
     resolution: {integrity: sha512-+wdeS51Y+E1q1Wmd+1xSSbesZkpVj4jsg0BojCbopWvgq5iBvixw5vgemscdh58ep98BwUbsFYnrywFhV9yrVg==}
+    peerDependencies:
+      react: ^16.8 || ^17.0
+    dependencies:
+      '@babel/runtime': 7.16.0
+      react: 17.0.2
+    dev: false
+
+  /@radix-ui/react-use-previous/0.1.0_react@17.0.2:
+    resolution: {integrity: sha512-0fxNc33rYnCzDMPSiSnfS8YklnxQo8WqbAQXPAgIaaA1jRu2qFB916PL4qCIW+avcAAqFD38vWhqDqcVmBharA==}
     peerDependencies:
       react: ^16.8 || ^17.0
     dependencies:

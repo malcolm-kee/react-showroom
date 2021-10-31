@@ -114,6 +114,12 @@ export interface ThemeConfiguration {
    * @default true
    */
   resetCss: boolean;
+  /**
+   * Default value for the audience toggle.
+   *
+   * Set to `false` if you do not want to show the toggle, which means it will always be 'code'.
+   */
+  audienceToggle: 'design' | 'code' | false;
   colors: {
     'primary-50': string;
     'primary-100': string;

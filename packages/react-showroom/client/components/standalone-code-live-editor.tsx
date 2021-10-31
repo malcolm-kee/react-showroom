@@ -82,6 +82,7 @@ export const StandaloneCodeLiveEditor = ({
     'hideEditor',
     (paramValue) => !paramValue
   );
+
   const [showPreview, setShowPreview] = useStateWithParams(
     true,
     'hidePreview',
@@ -132,6 +133,7 @@ export const StandaloneCodeLiveEditor = ({
     'commentMode',
     (v) => !!v
   );
+
   const previewListRef = React.useRef<HTMLDivElement>(null);
   const [targetCoord, setTargetCoord] = React.useState<Coord | undefined>(
     undefined

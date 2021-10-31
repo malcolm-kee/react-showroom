@@ -2,6 +2,7 @@ import { Collapsible, styled, Table } from '@showroomjs/ui';
 import * as React from 'react';
 import type { ComponentDoc, Props } from 'react-docgen-typescript';
 import snarkdown from 'snarkdown';
+import { useTargetAudience } from '../lib/use-target-audience';
 import { Div, H1, NavLink } from './base';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -21,6 +22,8 @@ export const ComponentMeta = ({
   slug,
 }: ComponentMetaProps) => {
   const [propsIsOpen, setPropsIsOpen] = React.useState(propsDefaultOpen);
+
+  const targetAudience = useTargetAudience();
 
   const doc = componentData;
 
@@ -53,12 +56,16 @@ export const ComponentMeta = ({
           }}
         />
       )}
-      <ComponentMetaTags tags={tags} />
-      <ComponentPropsTable
-        componentProps={doc.props}
-        open={propsIsOpen}
-        onOpenChange={setPropsIsOpen}
-      />
+      {targetAudience === 'developer' && (
+        <>
+          <ComponentMetaTags tags={tags} />
+          <ComponentPropsTable
+            componentProps={doc.props}
+            open={propsIsOpen}
+            onOpenChange={setPropsIsOpen}
+          />
+        </>
+      )}
     </>
   );
 };

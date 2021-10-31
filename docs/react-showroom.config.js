@@ -109,6 +109,7 @@ module.exports = defineConfig({
       'primary-900': '#064E3B',
     },
     favicon: '/icon.png',
+    audienceToggle: 'code',
   },
   devServer: {
     port: 8989,

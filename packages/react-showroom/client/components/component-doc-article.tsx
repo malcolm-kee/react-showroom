@@ -18,7 +18,7 @@ export const ComponentDocArticle = (props: {
       <ComponentMeta
         componentData={props.metadata}
         slug={props.slug}
-        propsDefaultOpen={!Doc}
+        propsDefaultOpen
       />
       {Doc ? (
         <Doc components={mdxComponents} />

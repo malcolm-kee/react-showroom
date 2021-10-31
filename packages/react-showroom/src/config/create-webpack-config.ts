@@ -527,6 +527,7 @@ const createBaseWebpackConfig = (
         NODE_ENV: mode,
         EXAMPLE_WIDTHS: exampleConfig.widths,
         SITE_URL: url,
+        AUDIENCE_TOGGLE: theme.audienceToggle,
       }),
       virtualModules,
       isDev ? new ReactRefreshWebpackPlugin() : undefined,
