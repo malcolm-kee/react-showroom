@@ -1,4 +1,4 @@
-```tsx
+```tsx frame
 const Demo = () => {
   const [value, setValue] = React.useState('textarea');
 

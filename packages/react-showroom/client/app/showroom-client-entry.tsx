@@ -10,26 +10,18 @@ import { ShowroomApp } from './showroom-app';
 const queryClient = createQueryClient();
 
 const render = isPrerender
-  ? function hydrate(ui: React.ReactElement<any>, target: HTMLElement | null) {
+  ? function hydrate(ui: React.ReactElement, target: HTMLElement | null) {
       loadCodeAtPath(window.location.pathname, () => {
-        const el = document.createElement('div');
-
-        const uiEl = <Router basename={basename}>{ui}</Router>;
-
-        // we do this render on a virtual div to avoid lazy loading show the flashing fallback
-        ReactDOM.render(uiEl, el, () => {
-          ReactDOM.unmountComponentAtNode(el);
-          ReactDOM.hydrate(uiEl, target);
-        });
+        ReactDOM.hydrate(ui, target);
       });
     }
-  : function render(ui: React.ReactElement<any>, target: HTMLElement | null) {
-      ReactDOM.render(<Router basename={basename}>{ui}</Router>, target);
-    };
+  : ReactDOM.render;
 
 render(
-  <QueryClientProvider client={queryClient}>
-    <ShowroomApp />
-  </QueryClientProvider>,
+  <Router basename={basename}>
+    <QueryClientProvider client={queryClient}>
+      <ShowroomApp />
+    </QueryClientProvider>
+  </Router>,
   document.getElementById('target')
 );

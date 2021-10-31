@@ -38,6 +38,7 @@ module.exports = defineConfig({
   skipEmptyComponent: true,
   theme: {
     title: 'React Showroom Example',
+    resetCss: false,
   },
   imports: [
     {

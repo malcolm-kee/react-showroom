@@ -7,4 +7,4 @@ export const getPreviewUrl = (
 ) =>
   `${basename}/_preview/${codeHash}${
     componentDisplayName ? `/${encodeDisplayName(componentDisplayName)}` : ''
-  }`;
+  }/`;
