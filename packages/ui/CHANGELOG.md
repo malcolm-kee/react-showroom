@@ -1,5 +1,11 @@
 # @showroomjs/ui
 
+## 0.21.2
+
+### Patch Changes
+
+- 8764d70: Fix preview layout bug
+
 ## 0.21.1
 
 ### Patch Changes

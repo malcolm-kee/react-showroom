@@ -1,5 +1,13 @@
 # react-showroom
 
+## 0.28.1
+
+### Patch Changes
+
+- 8764d70: Fix preview layout bug
+- Updated dependencies [8764d70]
+  - @showroomjs/ui@0.21.2
+
 ## 0.28.0
 
 ### Minor Changes
