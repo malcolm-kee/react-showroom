@@ -1,5 +1,10 @@
-import { decodeDisplayName, SupportedLanguage } from '@showroomjs/core';
-import { Alert } from '@showroomjs/ui';
+import {
+  decodeDisplayName,
+  isFunction,
+  isDefined,
+  SupportedLanguage,
+} from '@showroomjs/core';
+import { Alert, useId, IdProvider, useConstant } from '@showroomjs/ui';
 import * as React from 'react';
 import allImports from 'react-showroom-all-imports';
 import CodeblockData from 'react-showroom-codeblocks';
@@ -12,24 +17,27 @@ import { usePreviewWindow } from '../lib/frame-message';
 import { Route, Switch, useParams } from '../lib/routing';
 import { useHeightChange } from '../lib/use-height-change';
 import { ConsoleContext, LogLevel } from '../lib/use-preview-console';
+import { UseCustomStateContext } from '../lib/use-custom-state';
 
 export const PreviewApp = () => {
   return (
-    <Wrapper>
-      <CodeImportsContextProvider value={allImports}>
-        <Switch>
-          <Route path="/:codeHash/:component">
-            <ComponentPreviewPage />
-          </Route>
-          <Route path="/:codeHash">
-            <GenericPreviewPage />
-          </Route>
-          <Route>
-            <ErrorPage />
-          </Route>
-        </Switch>
-      </CodeImportsContextProvider>
-    </Wrapper>
+    <IdProvider>
+      <Wrapper>
+        <CodeImportsContextProvider value={allImports}>
+          <Switch>
+            <Route path="/:codeHash/:component">
+              <ComponentPreviewPage />
+            </Route>
+            <Route path="/:codeHash">
+              <GenericPreviewPage />
+            </Route>
+            <Route>
+              <ErrorPage />
+            </Route>
+          </Switch>
+        </CodeImportsContextProvider>
+      </Wrapper>
+    </IdProvider>
   );
 };
 
@@ -92,9 +100,34 @@ const PreviewPage = () => {
       : defaultState
   );
 
+  const setStateMap = useConstant(
+    () => new Map<string, React.Dispatch<React.SetStateAction<any>>>()
+  );
+  const latestStateValueMap = useConstant(() => new Map<string, any>());
+  const customUseState = React.useMemo(
+    () =>
+      createCustomUseState({
+        onChange: (value, id) =>
+          sendParent({
+            type: 'stateChange',
+            stateValue: value,
+            stateId: id,
+          }),
+        setStateMap,
+        latestStateValueMap,
+      }),
+    []
+  );
+
   const { sendParent } = usePreviewWindow((data) => {
     if (data.type === 'code') {
       setState(data);
+    } else if (data.type === 'syncState') {
+      const setStateFn = setStateMap.get(data.stateId);
+      if (setStateFn) {
+        setStateFn(data.stateValue);
+      }
+      latestStateValueMap.set(data.stateId, data.stateValue);
     }
   });
 
@@ -126,11 +159,54 @@ const PreviewPage = () => {
   }, [sendParent]);
 
   return (
-    <ConsoleContext.Provider value={previewConsole}>
-      <CodePreviewFrame {...state} />
-    </ConsoleContext.Provider>
+    <UseCustomStateContext.Provider value={customUseState as any}>
+      <ConsoleContext.Provider value={previewConsole}>
+        <CodePreviewFrame {...state} />
+      </ConsoleContext.Provider>
+    </UseCustomStateContext.Provider>
   );
 };
+
+const createCustomUseState =
+  (options: {
+    onChange: (value: any, id: string) => void;
+    setStateMap: Map<string, React.Dispatch<React.SetStateAction<any>>>;
+    latestStateValueMap: Map<string, any>;
+  }) =>
+  <S extends unknown>(
+    initialState: S | (() => S)
+  ): [S, React.Dispatch<React.SetStateAction<S>>] => {
+    const stateId = useId();
+    const latestStateValue = options.latestStateValueMap.get(stateId);
+    const initialValue = isDefined(latestStateValue)
+      ? (latestStateValue as S)
+      : initialState;
+    const [state, setState] = React.useState(initialValue);
+    const latestValueRef = React.useRef(state);
+    latestValueRef.current = state;
+
+    React.useEffect(() => {
+      options.setStateMap.set(stateId, setState);
+    }, [stateId]);
+
+    const customSetState = React.useMemo<
+      React.Dispatch<React.SetStateAction<S>>
+    >(
+      () =>
+        function customSetState(newState) {
+          setState(newState);
+
+          const nextState = isFunction(newState)
+            ? newState(latestValueRef.current)
+            : newState;
+
+          options.onChange(nextState, stateId);
+        },
+      []
+    );
+
+    return [state, customSetState];
+  };
 
 const ErrorPage = () => {
   return (

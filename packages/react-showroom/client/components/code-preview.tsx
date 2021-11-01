@@ -5,6 +5,7 @@ import * as tslib from 'tslib';
 import { useCodeImports } from '../lib/code-imports-context';
 import { useCodeVariables } from '../lib/code-variables-context';
 import { prerenderExample } from '../lib/config';
+import { useCustomUseState } from '../lib/use-custom-state';
 import { useConsole } from '../lib/use-preview-console';
 export interface CodePreviewProps {
   /**
@@ -22,6 +23,7 @@ export const CodePreview = (props: CodePreviewProps) => {
   const codeVariables = useCodeVariables();
   const imports = useCodeImports();
   const previewConsole = useConsole();
+  const useCustomState = useCustomUseState();
 
   const evalCode = React.useCallback(
     (
@@ -36,7 +38,7 @@ export const CodePreview = (props: CodePreviewProps) => {
         omit(
           {
             ...codeVariables,
-            React,
+            React: Object.assign({}, React, { useState: useCustomState }),
             ReactDOM,
             render,
             tslib,

@@ -3,6 +3,7 @@ import {
   AnnotationIcon,
   CodeIcon,
   DesktopComputerIcon,
+  RefreshIcon,
   ZoomInIcon,
 } from '@heroicons/react/outline';
 import {
@@ -19,15 +20,16 @@ import {
   usePersistedState,
   useQueryParams,
 } from '@showroomjs/ui';
-import lzString from 'lz-string';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
+import { safeCompress, safeDecompress } from '../lib/compress';
 import { EXAMPLE_WIDTHS } from '../lib/config';
 import { getScrollFn } from '../lib/scroll-into-view';
 import { useCommentState } from '../lib/use-comment-state';
 import { PreviewConsoleProvider } from '../lib/use-preview-console';
 import { useStateWithParams } from '../lib/use-state-with-params';
+import { useTargetAudience } from '../lib/use-target-audience';
 import { Div } from './base';
 import { CheckboxDropdown } from './checkbox-dropdown';
 import { CodeEditor } from './code-editor';
@@ -151,6 +153,12 @@ export const StandaloneCodeLiveEditor = ({
     [commentState.items, zoomLevel, hiddenSizes]
   );
 
+  const targetAudience = useTargetAudience();
+  const [syncState, setSyncState] = usePersistedState(
+    targetAudience === 'developer',
+    'syncState'
+  );
+
   return (
     <PreviewConsoleProvider>
       <Div css={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -269,7 +277,13 @@ export const StandaloneCodeLiveEditor = ({
                 ))}
             </Div>
             {showPreview && (
-              <Div>
+              <Div
+                css={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '$2',
+                }}
+              >
                 <ToggleButton
                   pressed={isCommenting}
                   onPressedChange={(isCommentMode) =>
@@ -286,6 +300,19 @@ export const StandaloneCodeLiveEditor = ({
                 >
                   {isCommenting ? <CommentOnIcon /> : <CommentIcon />}
                 </ToggleButton>
+                {!isCommenting && (
+                  <ToggleButton
+                    pressed={syncState}
+                    onPressedChange={setSyncState}
+                    css={{
+                      '&[data-state=on]': {
+                        backgroundColor: '$primary-700',
+                      },
+                    }}
+                  >
+                    <SyncIcon active={syncState} />
+                  </ToggleButton>
+                )}
               </Div>
             )}
           </Div>
@@ -358,6 +385,7 @@ export const StandaloneCodeLiveEditor = ({
                   }
                 }}
                 ref={previewListRef}
+                syncState={syncState}
               >
                 {isCommenting && targetCoord ? (
                   <StandaloneCodeLiveEditorCommentPopover
@@ -568,6 +596,19 @@ const CommentOnIcon = styled(FilledAnnotationIcon, {
   color: 'White',
 });
 
+const SyncIcon = styled(RefreshIcon, {
+  width: 20,
+  height: 20,
+  color: '$gray-400',
+  variants: {
+    active: {
+      true: {
+        color: 'White',
+      },
+    },
+  },
+});
+
 const ZoomIcon = styled(ZoomInIcon, {
   width: 20,
   height: 20,
@@ -621,22 +662,3 @@ interface Coord {
   x: number;
   y: number;
 }
-
-const safeCompress = (oriString: string): string => {
-  try {
-    return lzString.compressToEncodedURIComponent(oriString);
-  } catch (err) {
-    return oriString;
-  }
-};
-
-const safeDecompress = (compressedString: string, fallback: string): string => {
-  try {
-    const decompressed =
-      lzString.decompressFromEncodedURIComponent(compressedString);
-
-    return decompressed === null ? fallback : decompressed;
-  } catch (err) {
-    return fallback;
-  }
-};

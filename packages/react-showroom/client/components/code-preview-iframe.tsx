@@ -4,9 +4,13 @@ import cx from 'classnames';
 import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
 import { useComponentMeta } from '../lib/component-props-context';
-import { useParentWindow } from '../lib/frame-message';
+import { Message, useParentWindow } from '../lib/frame-message';
 import { getPreviewUrl } from '../lib/preview-url';
 import { useConsole } from '../lib/use-preview-console';
+
+export interface CodePreviewIframeImperative {
+  sendToChild: (msg: Message) => void;
+}
 
 export interface CodePreviewIframeProps {
   code: string;
@@ -14,6 +18,8 @@ export interface CodePreviewIframeProps {
   codeHash: string | undefined;
   resizable?: boolean;
   className?: string;
+  imperativeRef?: React.Ref<CodePreviewIframeImperative>;
+  onStateChange?: (data: { stateId: string; stateValue: any }) => void;
 }
 
 const initialHeightMap = new Map<string, number>();
@@ -24,6 +30,8 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   lang,
   resizable,
   className,
+  onStateChange,
+  imperativeRef,
 }: CodePreviewIframeProps) {
   const [frameHeight, setFrameHeight] = React.useState(
     () => (codeHash && initialHeightMap.get(codeHash)) || 100
@@ -49,8 +57,16 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
       saveHeight(ev.height);
     } else if (ev.type === 'log') {
       previewConsole[ev.level](...(ev.data || []));
+    } else if (ev.type === 'stateChange') {
+      if (onStateChange) {
+        onStateChange(ev);
+      }
     }
   });
+
+  React.useImperativeHandle(imperativeRef, () => ({
+    sendToChild: (msg) => sendMessage(msg),
+  }));
 
   const componentMeta = useComponentMeta();
 
