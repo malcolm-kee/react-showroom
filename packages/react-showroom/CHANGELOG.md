@@ -1,5 +1,11 @@
 # react-showroom
 
+## 0.31.0
+
+### Minor Changes
+
+- 26dab13: Allow sync state and persist state to url
+
 ## 0.30.1
 
 ### Patch Changes
