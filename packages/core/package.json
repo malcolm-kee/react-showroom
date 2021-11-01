@@ -12,7 +12,7 @@
     "dev": "concurrently \"pnpm dev:cjs\" \"pnpm dev:esm\"",
     "dev:cjs": "pnpm build:cjs -- --watch",
     "dev:esm": "pnpm build:esm -- --watch",
-    "clean": "rimraf dist *.tsbuildinfo",
+    "clean": "rimraf dist dist-esm *.tsbuildinfo",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --watchAll=false --coverage --runInBand"

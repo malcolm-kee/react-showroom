@@ -16,6 +16,7 @@
   "scripts": {
     "build": "pnpm run typedef && pnpm run bundle",
     "bundle": "rollup --config rollup.config.js",
-    "typedef": "tsc --declaration --emitDeclarationOnly"
+    "typedef": "tsc --declaration --emitDeclarationOnly",
+    "clean": "rimraf dist"
   }
 }
