@@ -2,6 +2,11 @@ import { SupportedLanguage } from '@showroomjs/core';
 import { useCallback, useEffect, useRef } from 'react';
 import { useConstant } from '@showroomjs/ui';
 import { useStableCallback } from './callback';
+import { ConsoleMessage } from './use-preview-console';
+
+interface LogMessage extends Omit<ConsoleMessage, 'count'> {
+  type: 'log';
+}
 
 export type Message =
   | {
@@ -15,7 +20,8 @@ export type Message =
     }
   | {
       type: 'ready';
-    };
+    }
+  | LogMessage;
 
 export const usePreviewWindow = (onMessage: (data: Message) => void) => {
   useMessage(onMessage, (ev) => ev.source === parent);
@@ -29,8 +35,24 @@ export const usePreviewWindow = (onMessage: (data: Message) => void) => {
     );
   }, []);
 
-  const sendParent = useCallback((data: Message) => {
-    parent.postMessage(data, window.origin);
+  const sendParent = useCallback(function sendMsgToParent(data: Message) {
+    try {
+      parent.postMessage(data, window.origin);
+    } catch (err) {
+      if (data.type === 'log') {
+        console.group('Fail to log data into panel');
+        const level = data.level === 'fatal' ? 'error' : data.level;
+        console[level](...(data.data || []));
+        console.groupEnd();
+        sendMsgToParent({
+          type: 'log',
+          level: 'fatal',
+          data: [`Data could not be logged. Check DevTools console.`],
+        });
+      } else {
+        console.error(err);
+      }
+    }
   }, []);
 
   return {

@@ -51,7 +51,7 @@
     "lz-string": "^1.4.4",
     "mini-css-extract-plugin": "^2.4.3",
     "nanocolors": "^0.2.13",
-    "node-fetch": "^2.6.5",
+    "node-fetch": "^2.6.6",
     "open": "^8.4.0",
     "postcss": "^8.3.11",
     "postcss-loader": "^6.2.0",

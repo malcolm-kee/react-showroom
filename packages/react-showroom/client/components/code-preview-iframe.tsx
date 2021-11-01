@@ -6,6 +6,7 @@ import * as React from 'react';
 import { useComponentMeta } from '../lib/component-props-context';
 import { useParentWindow } from '../lib/frame-message';
 import { getPreviewUrl } from '../lib/preview-url';
+import { useConsole } from '../lib/use-preview-console';
 
 export interface CodePreviewIframeProps {
   code: string;
@@ -27,6 +28,7 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   const [frameHeight, setFrameHeight] = React.useState(
     () => (codeHash && initialHeightMap.get(codeHash)) || 100
   );
+  const previewConsole = useConsole();
 
   // add 3 sec wait time before setting initial height to allow some layout shift
   const saveHeight = useDebouncedCallback(function saveInitialHeight(
@@ -45,6 +47,8 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
     if (ev.type === 'heightChange') {
       setFrameHeight(ev.height);
       saveHeight(ev.height);
+    } else if (ev.type === 'log') {
+      previewConsole[ev.level](...(ev.data || []));
     }
   });
 

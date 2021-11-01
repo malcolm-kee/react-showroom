@@ -1,6 +1,6 @@
 Following is an example in TSX.
 
-```tsx frame
+```tsx
 const Example = () => {
   const [value, setValue] = React.useState<string>('');
 

@@ -12,3 +12,17 @@ export const isString = (value: any): value is string =>
 
 export const isFunction = (value: any): value is Function =>
   typeof value === 'function';
+
+export function isPlainObject(value: unknown): value is object {
+  if (typeof value !== 'object' || value === null) return false;
+
+  let proto = Object.getPrototypeOf(value);
+  if (proto === null) return true;
+
+  let baseProto = proto;
+  while (Object.getPrototypeOf(baseProto) !== null) {
+    baseProto = Object.getPrototypeOf(baseProto);
+  }
+
+  return proto === baseProto;
+}

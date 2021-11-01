@@ -5,6 +5,7 @@ import * as tslib from 'tslib';
 import { useCodeImports } from '../lib/code-imports-context';
 import { useCodeVariables } from '../lib/code-variables-context';
 import { prerenderExample } from '../lib/config';
+import { useConsole } from '../lib/use-preview-console';
 export interface CodePreviewProps {
   /**
    * Code that should call `render` to show the UI.
@@ -20,6 +21,7 @@ export interface CodePreviewProps {
 export const CodePreview = (props: CodePreviewProps) => {
   const codeVariables = useCodeVariables();
   const imports = useCodeImports();
+  const previewConsole = useConsole();
 
   const evalCode = React.useCallback(
     (
@@ -39,6 +41,7 @@ export const CodePreview = (props: CodePreviewProps) => {
             render,
             tslib,
             imports,
+            console: previewConsole,
           },
           importNames
         )

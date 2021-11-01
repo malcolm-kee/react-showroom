@@ -15,7 +15,14 @@ export { parseQueryString, stringifyQueryString } from './query-string';
 export { removeTrailingSlash } from './remove-trailing-slash';
 export { safeEval } from './safe-eval';
 export type { Ssr } from './ssr-types';
-export { isDefined, isFunction, isNil, isNumber, isString } from './type-guard';
+export {
+  isDefined,
+  isFunction,
+  isNil,
+  isNumber,
+  isPlainObject,
+  isString,
+} from './type-guard';
 
 import { SupportedLanguage } from './compilation';
 export interface RequestCompileData {

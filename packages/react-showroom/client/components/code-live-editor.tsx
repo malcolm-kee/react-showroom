@@ -1,25 +1,19 @@
 import { ArrowsExpandIcon } from '@heroicons/react/outline';
 import { removeTrailingSlash, SupportedLanguage } from '@showroomjs/core';
-import {
-  Collapsible,
-  css,
-  icons,
-  ResizeIcon,
-  styled,
-  useDebounce,
-} from '@showroomjs/ui';
+import { Collapsible, css, icons, styled, useDebounce } from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
-import { Enable as ResizeEnable } from 're-resizable';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { useCodeBlocks } from '../lib/codeblocks-context';
 import { Link, useRouteMatch } from '../lib/routing';
+import { PreviewConsoleProvider } from '../lib/use-preview-console';
 import { useTargetAudience } from '../lib/use-target-audience';
 import { Div } from './base';
 import { BrowserWindow } from './browser-window';
 import { CodeEditor } from './code-editor';
 import { CodePreviewFrame } from './code-preview-frame';
 import { CodePreviewIframe } from './code-preview-iframe';
+import { ConsolePanel } from './console-panel';
 
 export interface CodeLiveEditorProps {
   code: string;
@@ -53,7 +47,7 @@ export const CodeLiveEditor = ({
   const isDeveloper = targetAudience === 'developer';
 
   const content = (
-    <>
+    <PreviewConsoleProvider>
       <Div
         css={{
           position: 'relative',
@@ -83,6 +77,7 @@ export const CodeLiveEditor = ({
           <CodePreviewFrame code={debouncedCode} lang={props.lang} />
         )}
       </Div>
+      <ConsolePanel />
       {!noEditor && (
         <Collapsible.Root open={showCode} onOpenChange={setShowCode}>
           <Div
@@ -131,7 +126,7 @@ export const CodeLiveEditor = ({
           )}
         </Collapsible.Root>
       )}
-    </>
+    </PreviewConsoleProvider>
   );
 
   return (
@@ -164,8 +159,6 @@ const LinkToStandaloneView = (props: {
   ) : null;
 };
 
-const handleWidth = 16;
-
 const Button = styled('button', {
   display: 'inline-flex',
   alignItems: 'center',
@@ -179,68 +172,4 @@ const Button = styled('button', {
 
 const editorBottom = css({
   borderRadius: '$base',
-});
-
-const resizable = css({
-  overflow: 'hidden',
-  display: 'flex',
-  border: '1px solid',
-  borderColor: '$gray-300',
-  borderTopRightRadius: '$base',
-  borderBottomRightRadius: '$base',
-  backgroundColor: 'White',
-  variants: {
-    animate: {
-      true: {
-        transition: 'max-height 300ms ease-in-out',
-      },
-    },
-  },
-});
-
-const resizeEnable: ResizeEnable = {
-  top: false,
-  right: true,
-  bottom: false,
-  left: false,
-  topRight: false,
-  bottomRight: false,
-  bottomLeft: false,
-  topLeft: false,
-};
-
-const SizeDisplay = styled('div', {
-  position: 'absolute',
-  top: 1,
-  right: 16,
-  backgroundColor: 'rgba(255, 255, 255, 0.7)',
-  fontSize: '$xs',
-  lineHeight: '$xs',
-  px: '$3',
-  py: '$1',
-});
-
-const ResizeHandle = styled('div', {
-  flexShrink: 0,
-  width: handleWidth,
-  backgroundColor: '$gray-200',
-  display: 'flex',
-  alignItems: 'center',
-});
-
-const HandleIcon = styled(ResizeIcon, {
-  color: '$gray-500',
-});
-
-const Frame = styled('iframe', {
-  width: '100%',
-  flex: 1,
-  border: 0,
-  variants: {
-    animate: {
-      true: {
-        transition: 'height 300ms ease-in-out',
-      },
-    },
-  },
 });

@@ -127,6 +127,10 @@
     <% } %>
     <!--SSR-helmet-->
     <!--SSR-style-->
+    <script>
+      // attaching React DevTools
+      __REACT_DEVTOOLS_GLOBAL_HOOK__ = parent.__REACT_DEVTOOLS_GLOBAL_HOOK__;
+    </script>
   </head>
   <body>
     <div id="preview"><!--SSR-target--></div>
