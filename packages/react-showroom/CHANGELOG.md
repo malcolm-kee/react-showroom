@@ -1,5 +1,16 @@
 # react-showroom
 
+## 0.30.0
+
+### Minor Changes
+
+- ac7e0af: Add console panel to example
+
+### Patch Changes
+
+- Updated dependencies [ac7e0af]
+  - @showroomjs/ui@0.23.0
+
 ## 0.29.0
 
 ### Minor Changes

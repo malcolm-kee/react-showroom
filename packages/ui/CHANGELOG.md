@@ -1,5 +1,11 @@
 # @showroomjs/ui
 
+## 0.23.0
+
+### Minor Changes
+
+- ac7e0af: Add console panel to example
+
 ## 0.22.0
 
 ### Minor Changes
