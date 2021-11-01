@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 0.22.2
+
+### Patch Changes
+
+- 075a9bb: Fix build error
+
 ## 0.22.1
 
 ### Patch Changes

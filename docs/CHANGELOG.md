@@ -1,5 +1,11 @@
 # react-showroom-docs
 
+## 0.10.34
+
+### Patch Changes
+
+- react-showroom@0.30.1
+
 ## 0.10.33
 
 ### Patch Changes
