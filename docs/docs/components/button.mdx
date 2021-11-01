@@ -23,3 +23,26 @@ Add `frame` to render examples in iframe. This is very handy to see how the comp
 ```tsx frame
 <Button>Hello</Button>
 ```
+
+Calling `console.log`, `console.info`, `console.warn`, `console.error` in the example will log the result in a separate panel.
+
+```tsx frame
+import * as React from 'react';
+
+const Example = () => {
+  const [on, setOn] = React.useState<boolean>(false);
+
+  return (
+    <Button
+      onClick={() => {
+        console.log(`Changing`, { from: on, to: !on });
+        setOn(!on);
+      }}
+    >
+      {on ? 'On' : 'Off'}
+    </Button>
+  );
+};
+
+<Example />;
+```

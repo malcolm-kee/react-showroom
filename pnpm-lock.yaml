@@ -148,7 +148,7 @@ importers:
       react: ^17.0.2
       react-dom: ^17.0.2
       react-hook-form: ^7.18.0
-      react-query: ^3.30.0
+      react-query: ^3.31.0
       react-showroom: workspace:*
       react-textarea-autosize: ^8.3.3
       style-loader: ^3.3.1
@@ -165,7 +165,7 @@ importers:
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-hook-form: 7.18.0_react@17.0.2
-      react-query: 3.30.0_react-dom@17.0.2+react@17.0.2
+      react-query: 3.31.0_react-dom@17.0.2+react@17.0.2
       react-showroom: link:../../packages/react-showroom
       react-textarea-autosize: 8.3.3_74cdfb704b70bfbe5b519e0c4564d995
     devDependencies:
@@ -219,12 +219,12 @@ importers:
   packages/bundles:
     specifiers:
       '@rollup/plugin-replace': ^3.0.0
-      react-query: ^3.30.0
+      react-query: ^3.31.0
       react-router-dom: ^5.3.0
       react-simple-code-editor: ^0.11.0
     devDependencies:
       '@rollup/plugin-replace': 3.0.0_rollup@2.58.3
-      react-query: 3.30.0_react-dom@17.0.2+react@17.0.2
+      react-query: 3.31.0_react-dom@17.0.2+react@17.0.2
       react-router-dom: 5.3.0_react@17.0.2
       react-simple-code-editor: 0.11.0_react-dom@17.0.2+react@17.0.2
 
@@ -284,7 +284,7 @@ importers:
       lz-string: ^1.4.4
       mini-css-extract-plugin: ^2.4.3
       nanocolors: ^0.2.13
-      node-fetch: ^2.6.5
+      node-fetch: ^2.6.6
       open: ^8.4.0
       postcss: ^8.3.11
       postcss-loader: ^6.2.0
@@ -358,7 +358,7 @@ importers:
       lz-string: 1.4.4
       mini-css-extract-plugin: 2.4.3_webpack@5.61.0
       nanocolors: 0.2.13
-      node-fetch: 2.6.5
+      node-fetch: 2.6.6
       open: 8.4.0
       postcss: 8.3.11
       postcss-loader: 6.2.0_postcss@8.3.11+webpack@5.61.0
@@ -8086,7 +8086,7 @@ packages:
       inquirer: 8.1.5
       is-node-process: 1.0.1
       js-levenshtein: 1.1.6
-      node-fetch: 2.6.5
+      node-fetch: 2.6.6
       node-match-path: 0.6.3
       statuses: 2.0.1
       strict-event-emitter: 0.2.0
@@ -8159,8 +8159,8 @@ packages:
       lodash: 4.17.21
     dev: true
 
-  /node-fetch/2.6.5:
-    resolution: {integrity: sha512-mmlIVHJEu5rnIxgEgez6b9GgWXbkZj5YZ7fx+2r94a2E+Uirsp6HsPTPlomfdHtpt/B0cdKviwkoaM6pyvUOpQ==}
+  /node-fetch/2.6.6:
+    resolution: {integrity: sha512-Z8/6vRlTUChSdIgMa51jxQ4lrw/Jy5SOW10ObaA47/RElsAN2c5Pn8bTgFGWn/ibwzXTE8qwr1Yzx28vsecXEA==}
     engines: {node: 4.x || >=6.0.0}
     dependencies:
       whatwg-url: 5.0.0
@@ -9206,8 +9206,8 @@ packages:
     resolution: {integrity: sha512-oww+nyE5n1IjLOszppkVIe+cCcBfw8YqVxj3g3J/1b9MEv6tWWlymxCTn+H8OFlASb940B8yDCZbyybYR6Z46w==}
     dev: false
 
-  /react-query/3.30.0_react-dom@17.0.2+react@17.0.2:
-    resolution: {integrity: sha512-u4Xcwb3mBecDWXPJk7eXGQ0JKxipZbkf69wS2B6tEjPFVT8q0rz1nQ3hWl2B/mUWkkY7WDwndeGJp3PhYgsbUA==}
+  /react-query/3.31.0_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-6NiXgjdXBKGA9ge04NI21uqTCIpH6qzR8AGGom/nR/emaGc//D9KM6C6+AEy8zLYl4RYjvd/XhA3lWME5kGMiw==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0
       react-dom: '*'

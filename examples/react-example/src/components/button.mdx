@@ -85,3 +85,35 @@ const Example = () => {
 
 render(<Example />);
 ```
+
+### Log Message
+
+Calling `console.log`, `console.info`, `console.warn`, `console.error` in the example will log the result in a separate panel.
+
+```tsx frame
+const map = new Map();
+map.set('React', 'react');
+map.set('Angular', 'ng');
+
+const Example = () => (
+  <div className="flex flex-wrap gap-3">
+    <Button variant="primary" onClick={() => console.log('I am clicked!')}>
+      Log Msg
+    </Button>
+    <Button
+      variant="primary"
+      onClick={() => console.info(true, ['huhu', undefined])}
+    >
+      Info Multiple
+    </Button>
+    <Button variant="outline" onClick={() => console.error(new Date())}>
+      Error
+    </Button>
+    <Button variant="outline" onClick={() => console.warn(map)}>
+      Warn
+    </Button>
+  </div>
+);
+
+<Example />;
+```

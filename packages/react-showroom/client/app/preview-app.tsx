@@ -11,6 +11,7 @@ import { CodeVariablesContextProvider } from '../lib/code-variables-context';
 import { usePreviewWindow } from '../lib/frame-message';
 import { Route, Switch, useParams } from '../lib/routing';
 import { useHeightChange } from '../lib/use-height-change';
+import { ConsoleContext, LogLevel } from '../lib/use-preview-console';
 
 export const PreviewApp = () => {
   return (
@@ -106,7 +107,29 @@ const PreviewPage = () => {
       })
   );
 
-  return <CodePreviewFrame {...state} />;
+  const previewConsole = React.useMemo(() => {
+    const addMessage = (level: LogLevel, ...msg: any[]) => {
+      sendParent({
+        type: 'log',
+        level,
+        data: msg,
+      });
+    };
+
+    return Object.assign({}, console, {
+      log: addMessage.bind(null, 'log'),
+      error: addMessage.bind(null, 'error'),
+      fatal: addMessage.bind(null, 'fatal'),
+      warn: addMessage.bind(null, 'warn'),
+      info: addMessage.bind(null, 'info'),
+    });
+  }, [sendParent]);
+
+  return (
+    <ConsoleContext.Provider value={previewConsole}>
+      <CodePreviewFrame {...state} />
+    </ConsoleContext.Provider>
+  );
 };
 
 const ErrorPage = () => {
