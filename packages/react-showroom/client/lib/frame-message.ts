@@ -21,7 +21,17 @@ export type Message =
   | {
       type: 'ready';
     }
-  | LogMessage;
+  | LogMessage
+  | {
+      type: 'stateChange';
+      stateId: string;
+      stateValue: any;
+    }
+  | {
+      type: 'syncState';
+      stateId: string;
+      stateValue: any;
+    };
 
 export const usePreviewWindow = (onMessage: (data: Message) => void) => {
   useMessage(onMessage, (ev) => ev.source === parent);
