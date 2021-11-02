@@ -1,5 +1,17 @@
 # react-showroom
 
+## 0.32.0
+
+### Minor Changes
+
+- af70d2d: Improve live editor for js and ts example
+
+### Patch Changes
+
+- Updated dependencies [af70d2d]
+  - @showroomjs/core@0.23.0
+  - @showroomjs/ui@0.23.2
+
 ## 0.31.0
 
 ### Minor Changes

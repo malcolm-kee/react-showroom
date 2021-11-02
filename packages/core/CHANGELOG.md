@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 0.23.0
+
+### Minor Changes
+
+- af70d2d: Improve live editor for js and ts example
+
 ## 0.22.2
 
 ### Patch Changes
