@@ -142,11 +142,13 @@ const PreviewPage = () => {
 
   const previewConsole = React.useMemo(() => {
     const addMessage = (level: LogLevel, ...msg: any[]) => {
-      sendParent({
-        type: 'log',
-        level,
-        data: msg,
-      });
+      if (typeof window !== 'undefined') {
+        sendParent({
+          type: 'log',
+          level,
+          data: msg,
+        });
+      }
     };
 
     return Object.assign({}, console, {
