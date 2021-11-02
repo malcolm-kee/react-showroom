@@ -31,6 +31,10 @@ export type Message =
       type: 'syncState';
       stateId: string;
       stateValue: any;
+    }
+  | {
+      type: 'compileStatus';
+      isCompiling: boolean;
     };
 
 export const usePreviewWindow = (onMessage: (data: Message) => void) => {

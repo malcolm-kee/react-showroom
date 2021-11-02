@@ -106,7 +106,7 @@ const ComponentPropsTable = (props: {
           Props
         </Collapsible.Button>
       </Div>
-      <Collapsible.Content animate>
+      <Collapsible.Content>
         <Table>
           <thead>
             <Table.Tr>
