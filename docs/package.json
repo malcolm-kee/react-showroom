@@ -7,7 +7,7 @@
     "@babel/runtime": "^7.16.0",
     "@heroicons/react": "^1.0.5",
     "esbuild-loader": "^2.16.0",
-    "react-hook-form": "^7.18.0",
+    "react-hook-form": "^7.18.1",
     "react-showroom": "workspace:*"
   },
   "scripts": {

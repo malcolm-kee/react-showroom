@@ -161,7 +161,15 @@ const PreviewPage = () => {
   return (
     <UseCustomStateContext.Provider value={customUseState as any}>
       <ConsoleContext.Provider value={previewConsole}>
-        <CodePreviewFrame {...state} />
+        <CodePreviewFrame
+          {...state}
+          onIsCompilingChange={(isCompiling) =>
+            sendParent({
+              type: 'compileStatus',
+              isCompiling,
+            })
+          }
+        />
       </ConsoleContext.Provider>
     </UseCustomStateContext.Provider>
   );

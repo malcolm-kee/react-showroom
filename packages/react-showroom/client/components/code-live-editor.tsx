@@ -140,6 +140,64 @@ export const CodeLiveEditor = ({
   );
 };
 
+export const NonVisualCodeLiveEditor = (props: {
+  code: string;
+  lang: SupportedLanguage;
+  id?: string;
+  className?: string;
+  noEditor?: boolean;
+  frame?: boolean;
+}) => {
+  const theme = useCodeTheme();
+
+  const [code, setCode] = React.useState(props.code);
+
+  const debouncedCode = useDebounce(code);
+  const codeBlocks = useCodeBlocks();
+  const matchedCodeData = codeBlocks[props.code];
+
+  const [isCompiling, setIsCompiling] = React.useState(false);
+
+  return (
+    <div className={props.className} id={props.id}>
+      <PreviewConsoleProvider>
+        {props.noEditor ? null : (
+          <CodeEditor
+            code={code}
+            onChange={setCode}
+            language={props.lang as Language}
+            className={editorBottom()}
+            theme={theme}
+          />
+        )}
+        <Div
+          css={{
+            position: 'relative',
+          }}
+        >
+          {props.frame ? (
+            <CodePreviewIframe
+              code={debouncedCode}
+              lang={props.lang}
+              codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
+              nonVisual
+              onIsCompilingChange={setIsCompiling}
+            />
+          ) : (
+            <CodePreviewFrame
+              code={debouncedCode}
+              lang={props.lang}
+              nonVisual
+              onIsCompilingChange={setIsCompiling}
+            />
+          )}
+        </Div>
+        <ConsolePanel defaultIsOpen isCompiling={isCompiling} />
+      </PreviewConsoleProvider>
+    </div>
+  );
+};
+
 const LinkToStandaloneView = (props: {
   codeHash: string | undefined;
   isDesigner: boolean;

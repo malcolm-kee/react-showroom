@@ -1,5 +1,11 @@
 import { SupportedLanguage } from '@showroomjs/core';
-import { css, ResizeIcon, styled, useDebouncedCallback } from '@showroomjs/ui';
+import {
+  css,
+  ResizeIcon,
+  styled,
+  useDebouncedCallback,
+  useStableCallback,
+} from '@showroomjs/ui';
 import cx from 'classnames';
 import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
@@ -20,6 +26,8 @@ export interface CodePreviewIframeProps {
   className?: string;
   imperativeRef?: React.Ref<CodePreviewIframeImperative>;
   onStateChange?: (data: { stateId: string; stateValue: any }) => void;
+  nonVisual?: boolean;
+  onIsCompilingChange?: (isCompiling: boolean) => void;
 }
 
 const initialHeightMap = new Map<string, number>();
@@ -32,6 +40,8 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   className,
   onStateChange,
   imperativeRef,
+  nonVisual,
+  onIsCompilingChange,
 }: CodePreviewIframeProps) {
   const [frameHeight, setFrameHeight] = React.useState(
     () => (codeHash && initialHeightMap.get(codeHash)) || 100
@@ -51,6 +61,7 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   const [isResizing, setIsResizing] = React.useState(false);
   const sizeEl = React.useRef<HTMLDivElement>(null);
 
+  const onIsCompilingChangeCb = useStableCallback(onIsCompilingChange);
   const { targetRef, sendMessage } = useParentWindow((ev) => {
     if (ev.type === 'heightChange') {
       setFrameHeight(ev.height);
@@ -61,6 +72,8 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
       if (onStateChange) {
         onStateChange(ev);
       }
+    } else if (ev.type === 'compileStatus') {
+      onIsCompilingChangeCb(ev.isCompiling);
     }
   });
 
@@ -79,7 +92,7 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
       ref={targetRef}
       src={getPreviewUrl(codeHash, componentMeta && componentMeta.displayName)}
       title="Preview"
-      height={resizable ? frameHeight : '100%'}
+      height={nonVisual ? 0 : resizable ? frameHeight : '100%'}
       animate={!isResizing}
       className={resizable ? undefined : className}
     />

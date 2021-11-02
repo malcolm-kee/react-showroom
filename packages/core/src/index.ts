@@ -1,5 +1,6 @@
 export {
   getCompilationKey,
+  NON_VISUAL_LANGUAGES,
   SupportedLanguage,
   SUPPORTED_LANGUAGES,
 } from './compilation';

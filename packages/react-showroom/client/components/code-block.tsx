@@ -1,10 +1,10 @@
-import { SUPPORTED_LANGUAGES } from '@showroomjs/core';
+import { SUPPORTED_LANGUAGES, NON_VISUAL_LANGUAGES } from '@showroomjs/core';
 import { styled } from '@showroomjs/ui';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { Div } from './base';
 import { CodeHighlight } from './code-highlight';
-import { CodeLiveEditor } from './code-live-editor';
+import { CodeLiveEditor, NonVisualCodeLiveEditor } from './code-live-editor';
 import { LanguageTag } from './language-tag';
 
 const IsBlockCodeContext = React.createContext(false);
@@ -97,14 +97,24 @@ export const Code = ({
   return (
     <>
       {heading}
-      <CodeLiveEditor
-        code={code}
-        lang={lang}
-        id={props.id}
-        hasHeading={!!heading}
-        noEditor={noEditor}
-        frame={frame}
-      />
+      {NON_VISUAL_LANGUAGES.includes(lang) ? (
+        <NonVisualCodeLiveEditor
+          code={code}
+          lang={lang}
+          id={props.id}
+          noEditor={noEditor}
+          frame={frame}
+        />
+      ) : (
+        <CodeLiveEditor
+          code={code}
+          lang={lang}
+          id={props.id}
+          hasHeading={!!heading}
+          noEditor={noEditor}
+          frame={frame}
+        />
+      )}
     </>
   );
 };

@@ -3,6 +3,7 @@ import { SupportedLanguage } from '@showroomjs/core';
 import { Alert, icons } from '@showroomjs/ui';
 import * as React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import { useStableCallback } from '../lib/callback';
 import { useCodeCompilation } from '../lib/use-code-compilation';
 import { Div, Span } from './base';
 import { CodePreview } from './code-preview';
@@ -11,6 +12,8 @@ import { ErrorFallback } from './error-fallback';
 export interface CodePreviewFrameProps {
   code: string;
   lang: SupportedLanguage;
+  nonVisual?: boolean;
+  onIsCompilingChange?: (isCompiling: boolean) => void;
 }
 
 export const CodePreviewFrame = (props: CodePreviewFrameProps) => {
@@ -20,6 +23,11 @@ export const CodePreviewFrame = (props: CodePreviewFrameProps) => {
     props.code,
     props.lang
   );
+
+  const onIsCompilingChangeCb = useStableCallback(props.onIsCompilingChange);
+  React.useEffect(() => {
+    onIsCompilingChangeCb(isCompiling);
+  }, [isCompiling]);
 
   React.useEffect(() => {
     if (errorBoundaryRef.current) {
@@ -31,8 +39,8 @@ export const CodePreviewFrame = (props: CodePreviewFrameProps) => {
     <Div
       css={{
         position: 'relative',
-        padding: '$1',
-        minHeight: 30,
+        padding: props.nonVisual ? 0 : '$1',
+        minHeight: props.nonVisual ? 0 : 30,
       }}
     >
       {isError ? (
@@ -52,7 +60,7 @@ export const CodePreviewFrame = (props: CodePreviewFrameProps) => {
           <Alert variant="error">{formatError(data.error)}</Alert>
         ))
       )}
-      {isCompiling && (
+      {isCompiling && !props.nonVisual && (
         <Div
           css={{
             position: 'absolute',

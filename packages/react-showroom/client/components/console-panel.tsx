@@ -3,10 +3,16 @@ import { isPlainObject } from '@showroomjs/core';
 import * as React from 'react';
 import { useConsoleMessage } from '../lib/use-preview-console';
 
-export const ConsolePanel = () => {
+export const ConsolePanel = ({
+  defaultIsOpen = false,
+  isCompiling,
+}: {
+  defaultIsOpen?: boolean;
+  isCompiling?: boolean;
+}) => {
   const msgs = useConsoleMessage();
 
-  const [isShown, setIsShown] = React.useState(false);
+  const [isShown, setIsShown] = React.useState(defaultIsOpen);
 
   return msgs.length === 0 ? null : (
     <Collapsible.Root open={isShown} onOpenChange={setIsShown}>
@@ -74,6 +80,7 @@ export const ConsolePanel = () => {
               </Item>
             )
           )}
+          {isCompiling && <Item>Compiling...</Item>}
         </Wrapper>
       </Collapsible.Content>
     </Collapsible.Root>

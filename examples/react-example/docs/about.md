@@ -14,6 +14,14 @@ import { Button } from 'components';
 <Button>Hello</Button>;
 ```
 
+Pure TS example:
+
+```ts live frame
+import cx from 'classnames';
+
+console.log(cx('hahaha', true && 'lol'));
+```
+
 ## Autolink literals
 
 www.example.com, https://example.com, and contact@example.com.
