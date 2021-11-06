@@ -1,5 +1,18 @@
 # react-showroom
 
+## 0.33.0
+
+### Minor Changes
+
+- ae48482: Declutter UI by using tooltip
+- ae48482: Support HTML live edit
+
+### Patch Changes
+
+- Updated dependencies [ae48482]
+- Updated dependencies [ae48482]
+  - @showroomjs/ui@0.24.0
+
 ## 0.32.0
 
 ### Minor Changes

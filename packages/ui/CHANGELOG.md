@@ -1,5 +1,12 @@
 # @showroomjs/ui
 
+## 0.24.0
+
+### Minor Changes
+
+- ae48482: Declutter UI by using tooltip
+- ae48482: Support HTML live edit
+
 ## 0.23.2
 
 ### Patch Changes
