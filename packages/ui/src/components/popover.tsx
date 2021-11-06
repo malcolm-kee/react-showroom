@@ -1,25 +1,11 @@
 import * as PopoverPrimitive from '@radix-ui/react-popover';
-import { styled, keyframes } from '../stitches.config';
-
-const slideUpAndFade = keyframes({
-  '0%': { opacity: 0, transform: 'translateY(2px)' },
-  '100%': { opacity: 1, transform: 'translateY(0)' },
-});
-
-const slideRightAndFade = keyframes({
-  '0%': { opacity: 0, transform: 'translateX(-2px)' },
-  '100%': { opacity: 1, transform: 'translateX(0)' },
-});
-
-const slideDownAndFade = keyframes({
-  '0%': { opacity: 0, transform: 'translateY(-2px)' },
-  '100%': { opacity: 1, transform: 'translateY(0)' },
-});
-
-const slideLeftAndFade = keyframes({
-  '0%': { opacity: 0, transform: 'translateX(2px)' },
-  '100%': { opacity: 1, transform: 'translateX(0)' },
-});
+import { styled } from '../stitches.config';
+import {
+  slideDownAndFade,
+  slideLeftAndFade,
+  slideRightAndFade,
+  slideUpAndFade,
+} from './animations';
 
 const StyledContent = styled(PopoverPrimitive.Content, {
   borderRadius: 4,

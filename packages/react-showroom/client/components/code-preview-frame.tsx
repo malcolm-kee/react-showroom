@@ -41,6 +41,7 @@ export const CodePreviewFrame = (props: CodePreviewFrameProps) => {
         position: 'relative',
         padding: props.nonVisual ? 0 : '$1',
         minHeight: props.nonVisual ? 0 : 30,
+        backgroundColor: 'White',
       }}
     >
       {isError ? (

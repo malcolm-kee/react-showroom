@@ -23,24 +23,24 @@ export const ComponentDocRoute = (
   <MemoryRouter>
     <QueryParamProvider>
       <BrowserWindowInRouter className="mb-4">
-        <div className="px-6 pb-6">
-          <ComponentDataProvider {...props}>
-            <Suspense fallback={null}>
-              <Switch>
-                <Route path="/_standalone/:codeHash">
-                  <ComponentDocStandaloneEditor />
-                </Route>
-                <Route>
+        <ComponentDataProvider {...props}>
+          <Suspense fallback={null}>
+            <Switch>
+              <Route path="/_standalone/:codeHash">
+                <ComponentDocStandaloneEditor />
+              </Route>
+              <Route>
+                <div className="px-6 pb-6">
                   <ComponentDocArticle
                     slug={props.slug}
                     content={props.content}
                     metadata={props.metadata}
                   />
-                </Route>
-              </Switch>
-            </Suspense>
-          </ComponentDataProvider>
-        </div>
+                </div>
+              </Route>
+            </Switch>
+          </Suspense>
+        </ComponentDataProvider>
       </BrowserWindowInRouter>
     </QueryParamProvider>
   </MemoryRouter>

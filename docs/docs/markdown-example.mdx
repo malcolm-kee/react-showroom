@@ -69,3 +69,39 @@ setTimeout(() => {
   console.log('Hello World!');
 }, 500);
 ```
+
+`html` works too! However, `script` tag is not supported at the moment.
+
+```html live
+<style>
+  .heading {
+    color: blue;
+  }
+
+  .heading:hover {
+    text-decoration: underline;
+  }
+
+  @media (min-width: 500px) {
+    .heading {
+      font-size: 2rem;
+    }
+  }
+</style>
+<section>
+  <h1 class="heading">Hello World!</h1>
+</section>
+```
+
+Unsupported language will have syntax highlighting.
+
+```yaml
+doe: 'a deer, a female deer'
+pi: 3.14159
+xmas: true
+calling-birds:
+  - huey
+  - dewey
+  - louie
+  - fred
+```

@@ -12,6 +12,7 @@ export { getSafeName } from './get-safe-name';
 export { isEqualArray } from './is-equal-array';
 export { omit } from './object';
 export { ImportMapData, Packages, postCompile } from './post-compile';
+export { preCompileHtml } from './pre-compile-html';
 export { parseQueryString, stringifyQueryString } from './query-string';
 export { removeTrailingSlash } from './remove-trailing-slash';
 export { safeEval } from './safe-eval';

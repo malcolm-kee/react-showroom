@@ -18,6 +18,7 @@ export const DetailsPageContainer = (props: DetailsPageContainerProps) => {
           flex: '1',
           minWidth: 0,
           paddingBottom: '$12',
+          backgroundColor: '$gray-50',
         }}
       >
         <Div

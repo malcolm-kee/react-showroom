@@ -1,6 +1,13 @@
 import { ArrowsExpandIcon } from '@heroicons/react/outline';
 import { removeTrailingSlash, SupportedLanguage } from '@showroomjs/core';
-import { Collapsible, css, icons, styled, useDebounce } from '@showroomjs/ui';
+import {
+  Collapsible,
+  css,
+  icons,
+  styled,
+  useDebounce,
+  Tooltip,
+} from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
@@ -29,7 +36,8 @@ export const CodeLiveEditor = ({
   hasHeading,
   className,
   noEditor,
-  frame,
+  lang,
+  frame = lang === 'html',
   ...props
 }: CodeLiveEditorProps) => {
   const theme = useCodeTheme();
@@ -69,12 +77,12 @@ export const CodeLiveEditor = ({
         {frame ? (
           <CodePreviewIframe
             code={debouncedCode}
-            lang={props.lang}
+            lang={lang}
             codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
             resizable
           />
         ) : (
-          <CodePreviewFrame code={debouncedCode} lang={props.lang} />
+          <CodePreviewFrame code={debouncedCode} lang={lang} />
         )}
       </Div>
       <ConsolePanel />
@@ -118,7 +126,7 @@ export const CodeLiveEditor = ({
               <CodeEditor
                 code={code}
                 onChange={setCode}
-                language={props.lang as Language}
+                language={lang as Language}
                 className={editorBottom()}
                 theme={theme}
               />
@@ -205,19 +213,25 @@ const LinkToStandaloneView = (props: {
   const { url } = useRouteMatch();
 
   return props.codeHash ? (
-    <Button
-      as={Link}
-      to={`${removeTrailingSlash(url)}/_standalone/${props.codeHash}${
-        props.isDesigner ? '?commentMode=true' : ''
-      }`}
-    >
-      Standalone
-      <ArrowsExpandIcon width={20} height={20} className={icons()} />
-    </Button>
+    <Tooltip.Root>
+      <Tooltip.Trigger asChild>
+        <StyledLink
+          to={`${removeTrailingSlash(url)}/_standalone/${props.codeHash}${
+            props.isDesigner ? '?commentMode=true' : ''
+          }`}
+        >
+          <ArrowsExpandIcon width={20} height={20} className={icons()} />
+        </StyledLink>
+      </Tooltip.Trigger>
+      <Tooltip.Content>
+        Standalone
+        <Tooltip.Arrow />
+      </Tooltip.Content>
+    </Tooltip.Root>
   ) : null;
 };
 
-const Button = styled('button', {
+const StyledLink = styled(Link, {
   display: 'inline-flex',
   alignItems: 'center',
   textDecoration: 'none',

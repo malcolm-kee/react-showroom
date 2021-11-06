@@ -56,12 +56,6 @@ const Ol = styled('ol', {
   width: '100%',
   listStyleType: 'none',
   margin: 0,
-  '@sm': {
-    px: '$6',
-  },
-  '@lg': {
-    px: '$8',
-  },
 });
 
 const Item = styled('li', {

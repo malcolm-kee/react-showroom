@@ -4,6 +4,7 @@ import {
   CompilationError,
   CompileResult,
   postCompile,
+  preCompileHtml,
   RequestCompileData,
 } from '@showroomjs/core';
 import wasmPath from 'esbuild-wasm/esbuild.wasm';
@@ -38,11 +39,14 @@ self.onmessage = (ev) => {
     self.postMessage(errorResult);
   };
 
+  const lang = data.lang === 'html' ? 'jsx' : data.lang;
+  const code = data.lang === 'html' ? preCompileHtml(data.source) : data.source;
+
   esBuildIsReady
     .then(() =>
       esbuild
-        .transform(data.source, {
-          loader: data.lang,
+        .transform(code, {
+          loader: lang,
           target: 'es2018',
         })
         .then((transformOutput) => {

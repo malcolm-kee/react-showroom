@@ -1,6 +1,12 @@
 import { ShareIcon } from '@heroicons/react/outline';
 import { CheckCircleIcon } from '@heroicons/react/solid';
-import { CopyButton, css, styled, useNotification } from '@showroomjs/ui';
+import {
+  CopyButton,
+  css,
+  styled,
+  useNotification,
+  Tooltip,
+} from '@showroomjs/ui';
 import * as React from 'react';
 
 export interface StandaloneCodeLiveEditorCopyButtonProps {
@@ -13,23 +19,25 @@ export const StandaloneCodeLiveEditorCopyButton = (
   const showMsg = useNotification();
 
   return (
-    <CopyButton
-      {...props}
-      className={btn()}
-      onCopy={() => showMsg('URL copied')}
-      label={
-        <>
-          <BtnText>Share</BtnText>
-          <StyledShareIcon width={20} height={20} />
-        </>
-      }
-      successLabel={
-        <>
-          <CopiedMessage>Share</CopiedMessage>
-          <MiniCheckIcon width={20} height={20} />
-        </>
-      }
-    />
+    <Tooltip.Root>
+      <Tooltip.Trigger asChild>
+        <CopyButton
+          {...props}
+          className={btn()}
+          onCopy={() => showMsg('URL copied')}
+          label={<StyledShareIcon width={20} height={20} />}
+          successLabel={
+            <>
+              <MiniCheckIcon width={20} height={20} />
+            </>
+          }
+        />
+      </Tooltip.Trigger>
+      <Tooltip.Content>
+        Share View
+        <Tooltip.Arrow />
+      </Tooltip.Content>
+    </Tooltip.Root>
   );
 };
 
@@ -43,10 +51,6 @@ const MiniCheckIcon = styled(CheckCircleIcon, {
   width: 20,
   height: 20,
   color: '$green-400',
-});
-
-const CopiedMessage = styled('span', {
-  color: '$green-800',
 });
 
 export const BtnText = styled('span', {

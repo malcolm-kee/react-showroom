@@ -19,6 +19,7 @@ import {
   useDebounce,
   usePersistedState,
   useQueryParams,
+  Tooltip,
 } from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
@@ -183,25 +184,55 @@ export const StandaloneCodeLiveEditor = ({
                 borderRight: '1px solid $gray-200',
               }}
             >
-              <ToggleButton
-                pressed={showEditor}
-                onPressedChange={(show) =>
-                  setShowEditor(show, show ? undefined : 'true')
-                }
-                aria-label="toggle editor"
-              >
-                <CodeIcon width={20} height={20} />
-              </ToggleButton>
-              <ToggleButton
-                pressed={showPreview}
-                onPressedChange={(show) =>
-                  setShowPreview(show, show ? undefined : 'true')
-                }
-                disabled={isCommenting}
-                aria-label="toggle preview"
-              >
-                <DesktopComputerIcon width={20} height={20} />
-              </ToggleButton>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <ToggleButton
+                    pressed={showEditor}
+                    onPressedChange={(show) =>
+                      setShowEditor(show, show ? undefined : 'true')
+                    }
+                    css={
+                      showEditor
+                        ? {
+                            color: '$gray-600',
+                            backgroundColor: '$gray-100',
+                          }
+                        : undefined
+                    }
+                  >
+                    <CodeIcon width={20} height={20} />
+                  </ToggleButton>
+                </Tooltip.Trigger>
+                <Tooltip.Content>
+                  Editor
+                  <Tooltip.Arrow />
+                </Tooltip.Content>
+              </Tooltip.Root>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <ToggleButton
+                    pressed={showPreview}
+                    onPressedChange={(show) =>
+                      setShowPreview(show, show ? undefined : 'true')
+                    }
+                    disabled={isCommenting}
+                    css={
+                      showPreview
+                        ? {
+                            color: '$gray-600',
+                            backgroundColor: '$gray-100',
+                          }
+                        : undefined
+                    }
+                  >
+                    <DesktopComputerIcon width={20} height={20} />
+                  </ToggleButton>
+                </Tooltip.Trigger>
+                <Tooltip.Content>
+                  Preview
+                  <Tooltip.Arrow />
+                </Tooltip.Content>
+              </Tooltip.Root>
             </Div>
             <Div
               css={{
@@ -284,34 +315,54 @@ export const StandaloneCodeLiveEditor = ({
                   gap: '$2',
                 }}
               >
-                <ToggleButton
-                  pressed={isCommenting}
-                  onPressedChange={(isCommentMode) =>
-                    setIsCommenting(
-                      isCommentMode,
-                      isCommentMode ? 'true' : undefined
-                    )
-                  }
-                  css={{
-                    '&[data-state=on]': {
-                      backgroundColor: '$primary-700',
-                    },
-                  }}
-                >
-                  {isCommenting ? <CommentOnIcon /> : <CommentIcon />}
-                </ToggleButton>
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <ToggleButton
+                      pressed={isCommenting}
+                      onPressedChange={(isCommentMode) =>
+                        setIsCommenting(
+                          isCommentMode,
+                          isCommentMode ? 'true' : undefined
+                        )
+                      }
+                      css={
+                        isCommenting
+                          ? {
+                              backgroundColor: '$primary-700',
+                            }
+                          : undefined
+                      }
+                    >
+                      {isCommenting ? <CommentOnIcon /> : <CommentIcon />}
+                    </ToggleButton>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    Comment
+                    <Tooltip.Arrow />
+                  </Tooltip.Content>
+                </Tooltip.Root>
                 {!isCommenting && (
-                  <ToggleButton
-                    pressed={syncState}
-                    onPressedChange={setSyncState}
-                    css={{
-                      '&[data-state=on]': {
-                        backgroundColor: '$primary-700',
-                      },
-                    }}
-                  >
-                    <SyncIcon active={syncState} />
-                  </ToggleButton>
+                  <Tooltip.Root>
+                    <Tooltip.Trigger asChild>
+                      <ToggleButton
+                        pressed={syncState}
+                        onPressedChange={setSyncState}
+                        css={
+                          syncState
+                            ? {
+                                backgroundColor: '$primary-700',
+                              }
+                            : undefined
+                        }
+                      >
+                        <SyncIcon active={syncState} />
+                      </ToggleButton>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      Sync State
+                      <Tooltip.Arrow />
+                    </Tooltip.Content>
+                  </Tooltip.Root>
                 )}
               </Div>
             )}
@@ -319,7 +370,7 @@ export const StandaloneCodeLiveEditor = ({
           <Div
             css={{
               display: 'inline-flex',
-              gap: '$3',
+              gap: '$1',
             }}
           >
             {showMultipleScreens && showPreview && (

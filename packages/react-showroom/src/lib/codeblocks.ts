@@ -3,6 +3,7 @@ import {
   postCompile,
   SupportedLanguage,
   SUPPORTED_LANGUAGES,
+  preCompileHtml,
 } from '@showroomjs/core';
 import * as esbuild from 'esbuild';
 import type { Code, Parent as MdParent, Parent } from 'mdast';
@@ -93,8 +94,11 @@ export const mdToCodeBlocks = (
     if (SUPPORTED_LANGUAGES.includes(lang)) {
       for (const code of blocks[language]) {
         try {
-          const transformResult = esbuild.transformSync(code, {
-            loader: lang,
+          const loader = lang === 'html' ? 'jsx' : lang;
+          const codeToTransform = lang === 'html' ? preCompileHtml(code) : code;
+
+          const transformResult = esbuild.transformSync(codeToTransform, {
+            loader,
             target: 'es2018',
           });
 

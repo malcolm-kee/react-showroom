@@ -1,4 +1,4 @@
-export const SUPPORTED_LANGUAGES = ['js', 'jsx', 'ts', 'tsx'] as const;
+export const SUPPORTED_LANGUAGES = ['js', 'jsx', 'ts', 'tsx', 'html'] as const;
 
 export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
 

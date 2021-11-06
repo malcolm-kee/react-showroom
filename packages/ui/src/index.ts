@@ -20,6 +20,7 @@ export { Table } from './components/table';
 export * from './components/text-input';
 export { Textarea } from './components/textarea';
 export { ToggleButton } from './components/toggle-button';
+export { Tooltip } from './components/tooltip';
 export * from './lib';
 export { copyText } from './lib/copy';
 export { createNameContext } from './lib/create-named-context';
