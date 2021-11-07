@@ -12,7 +12,7 @@ export { getSafeName } from './get-safe-name';
 export { isEqualArray } from './is-equal-array';
 export { omit } from './object';
 export { ImportMapData, Packages, postCompile } from './post-compile';
-export { preCompileHtml } from './pre-compile-html';
+export { processHtml, toHtmlExample } from './process-html';
 export { parseQueryString, stringifyQueryString } from './query-string';
 export { removeTrailingSlash } from './remove-trailing-slash';
 export { safeEval } from './safe-eval';
@@ -63,3 +63,5 @@ export type CompileResult = CompilationSuccessResult | CompilationErrorResult;
 export type CodeBlocks = Record<string, CompilationSuccessResult | undefined>;
 
 export type Environment = 'development' | 'production';
+
+export const compileTarget = 'es2018';

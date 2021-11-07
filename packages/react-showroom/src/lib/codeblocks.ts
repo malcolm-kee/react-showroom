@@ -1,9 +1,11 @@
 import {
   CodeBlocks,
+  compileTarget,
   postCompile,
+  processHtml,
   SupportedLanguage,
   SUPPORTED_LANGUAGES,
-  preCompileHtml,
+  toHtmlExample,
 } from '@showroomjs/core';
 import * as esbuild from 'esbuild';
 import type { Code, Parent as MdParent, Parent } from 'mdast';
@@ -77,10 +79,10 @@ export const codeblocks = <
 
 const parser = unified().use(remarkParse as any);
 
-export const mdToCodeBlocks = (
+export const mdToCodeBlocks = async (
   mdSource: string,
   filter?: (child: Code) => boolean
-): CodeBlocks => {
+): Promise<CodeBlocks> => {
   const tree = parser.parse(vFile(mdSource));
 
   const blocks = codeblocks(tree as MdParent, {
@@ -94,23 +96,44 @@ export const mdToCodeBlocks = (
     if (SUPPORTED_LANGUAGES.includes(lang)) {
       for (const code of blocks[language]) {
         try {
-          const loader = lang === 'html' ? 'jsx' : lang;
-          const codeToTransform = lang === 'html' ? preCompileHtml(code) : code;
+          if (lang === 'html') {
+            const { html, script } = await processHtml(code);
+            const transpiledScript = await esbuild.transform(script, {
+              loader: 'js',
+              target: compileTarget,
+            });
 
-          const transformResult = esbuild.transformSync(codeToTransform, {
-            loader,
-            target: 'es2018',
-          });
+            const postCompileResult = postCompile(transpiledScript.code);
 
-          const postTranspileResult = postCompile(transformResult.code);
+            result[code] = {
+              ...postCompileResult,
+              code: toHtmlExample({
+                script: postCompileResult.code,
+                html,
+              }),
+              type: 'success',
+              messageId: -1,
+              initialCodeHash: createHash(code),
+              lang,
+            };
+          } else {
+            const transformResult = await esbuild.transform(code, {
+              loader: lang,
+              target: compileTarget,
+            });
 
-          result[code] = {
-            ...postTranspileResult,
-            type: 'success',
-            messageId: -1,
-            initialCodeHash: createHash(code),
-            lang,
-          };
+            const postTranspileResult = postCompile(transformResult.code, {
+              insertRenderIfEndWithJsx: true,
+            });
+
+            result[code] = {
+              ...postTranspileResult,
+              type: 'success',
+              messageId: -1,
+              initialCodeHash: createHash(code),
+              lang,
+            };
+          }
         } catch (err) {
           console.error(err);
         }

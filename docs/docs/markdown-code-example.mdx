@@ -1,0 +1,90 @@
+# Code Blocks in Markdown
+
+Contrary to the component examples, code blocks are static by default.
+
+```js
+const { buildShowroom } = require('react-showroom');
+
+buildShowroom();
+```
+
+## Component Example
+
+Make an example interative using `live` props.
+
+```tsx live
+const LiveExample = () => {
+  const [count, setCount] = React.useState(0);
+
+  return (
+    <div className="p-4 text-center">
+      <button
+        type="button"
+        onClick={() => setCount(count + 1)}
+        className="px-6 py-2 w-24 bg-pink-700 text-white shadow rounded"
+      >
+        {count}
+      </button>
+    </div>
+  );
+};
+
+<LiveExample />;
+```
+
+## Non Component Example
+
+Code in `ts/js` can be run as well.
+
+```ts live
+setTimeout(() => {
+  console.log('Hello World!');
+}, 500);
+```
+
+`html` works too!
+
+```html live
+<style>
+  .heading {
+    color: blue;
+    transition: color 500ms ease-in-out;
+  }
+
+  .heading:hover {
+    color: red;
+  }
+
+  @media (min-width: 500px) {
+    .heading {
+      font-size: 2rem;
+    }
+  }
+</style>
+<script>
+  import cx from 'classnames';
+
+  const heading = document.querySelector('.heading');
+
+  console.log('Heading', heading.textContent);
+  console.log('classnames', cx('base', ['item-1', true && 'whurt']));
+</script>
+<section>
+  <h1 class="heading">Hello World!</h1>
+</section>
+```
+
+## Unsupported Languages
+
+Unsupported language will have syntax highlighting.
+
+```yaml
+doe: 'a deer, a female deer'
+pi: 3.14159
+xmas: true
+calling-birds:
+  - huey
+  - dewey
+  - louie
+  - fred
+```

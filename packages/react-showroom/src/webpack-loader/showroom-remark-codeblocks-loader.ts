@@ -10,19 +10,23 @@ const showroomRemarkCodeblocksLoader: LoaderDefinition<ShowroomRemarkCodeBlocksL
   function (source, map, meta) {
     const options = this.getOptions();
 
-    const result = mdToCodeBlocks(source, options.filter);
+    const callback = this.async();
 
-    this.callback(
-      null,
-      `export default ${JSON.stringify(result)}`,
-      map,
-      meta
-        ? {
-            ...meta,
-            ...result,
-          }
-        : (result as any)
-    );
+    mdToCodeBlocks(source, options.filter)
+      .then((result) => {
+        callback(
+          null,
+          `export default ${JSON.stringify(result)}`,
+          map,
+          meta
+            ? {
+                ...meta,
+                ...result,
+              }
+            : (result as any)
+        );
+      })
+      .catch((err) => callback(err));
   };
 
 module.exports = showroomRemarkCodeblocksLoader;

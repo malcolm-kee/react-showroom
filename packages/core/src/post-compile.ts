@@ -23,12 +23,19 @@ export interface PostCompileResult {
 /**
  * Additional compilation after compiled by esbuild to JavaScript
  */
-export const postCompile = (providedCode: string): PostCompileResult => {
+export const postCompile = (
+  providedCode: string,
+  options: {
+    insertRenderIfEndWithJsx?: boolean;
+  } = {}
+): PostCompileResult => {
   let code = providedCode;
   const importNames: Array<string> = [];
   const importedPackages: Array<string> = [];
 
-  code = insertRenderIfEndWithJsx(code);
+  code = options.insertRenderIfEndWithJsx
+    ? insertRenderIfEndWithJsx(code)
+    : code;
 
   if (hasImports(code)) {
     const ast = parse(code, ACORN_OPTIONS);

@@ -4,8 +4,10 @@ import {
   CompilationError,
   CompileResult,
   postCompile,
-  preCompileHtml,
+  processHtml,
   RequestCompileData,
+  toHtmlExample,
+  compileTarget,
 } from '@showroomjs/core';
 import wasmPath from 'esbuild-wasm/esbuild.wasm';
 import * as esbuild from 'esbuild-wasm/esm/browser';
@@ -39,29 +41,58 @@ self.onmessage = (ev) => {
     self.postMessage(errorResult);
   };
 
-  const lang = data.lang === 'html' ? 'jsx' : data.lang;
-  const code = data.lang === 'html' ? preCompileHtml(data.source) : data.source;
+  const lang = data.lang;
 
-  esBuildIsReady
-    .then(() =>
-      esbuild
-        .transform(code, {
-          loader: lang,
-          target: 'es2018',
-        })
-        .then((transformOutput) => {
-          const compileResult = postCompile(transformOutput.code);
+  if (lang === 'html') {
+    Promise.all([processHtml(data.source), esBuildIsReady])
+      .then(([{ html, script }]) =>
+        esbuild
+          .transform(script, {
+            loader: 'js',
+            target: compileTarget,
+          })
+          .then((transpiledScript) => {
+            const postCompileResult = postCompile(transpiledScript.code);
 
-          const result: CompileResult = {
-            ...compileResult,
-            type: 'success',
-            messageId: data.messageId,
-            lang: data.lang,
-          };
-          self.postMessage(result);
-        })
-    )
-    .catch(handleError);
+            const result: CompileResult = {
+              ...postCompileResult,
+              code: toHtmlExample({
+                script: postCompileResult.code,
+                html,
+              }),
+              type: 'success',
+              messageId: data.messageId,
+              lang: data.lang,
+            };
+
+            self.postMessage(result);
+          })
+      )
+      .catch(handleError);
+  } else {
+    esBuildIsReady
+      .then(() =>
+        esbuild
+          .transform(data.source, {
+            loader: lang,
+            target: compileTarget,
+          })
+          .then((transformOutput) => {
+            const compileResult = postCompile(transformOutput.code, {
+              insertRenderIfEndWithJsx: true,
+            });
+
+            const result: CompileResult = {
+              ...compileResult,
+              type: 'success',
+              messageId: data.messageId,
+              lang: data.lang,
+            };
+            self.postMessage(result);
+          })
+      )
+      .catch(handleError);
+  }
 };
 
 const errorRegex = /Transform failed with \d+ error:\s+<stdin>:(\d+):(\d+):/;

@@ -36,7 +36,7 @@ export const MarkdownDocRoute = (props: {
                 <StandaloneEditor />
               </Route>
               <Route>
-                <div className="p-6">
+                <div className="px-6 pb-6">
                   <MarkdownArticle slug="/docs" content={props.data} />
                 </div>
               </Route>

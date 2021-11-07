@@ -29,6 +29,10 @@ const options = (function (allItems: Array<ReactShowroomSection>) {
           return;
 
         case 'markdown': {
+          if (item.hideFromSidebar) {
+            return;
+          }
+
           const title = item.formatLabel(
             item.frontmatter.title || item.fallbackTitle
           );
