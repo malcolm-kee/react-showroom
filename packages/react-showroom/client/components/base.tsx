@@ -1,13 +1,48 @@
 import { css, styled } from '@showroomjs/ui';
+import React from 'react';
 import { Link } from '../lib/routing';
 
-export const headerHeight = 58;
+export const headerHeight = 62;
 
 export const Div = styled('div');
 
 export const Span = styled('span');
 
 export const A = styled('a');
+
+const HashLink = styled('a', {
+  opacity: 0,
+  paddingLeft: '$2',
+  transition: 'opacity 100ms ease',
+  color: '$primary-500',
+  '&::before': {
+    content: '#',
+  },
+});
+
+const Heading = styled('h2', {
+  '&:target': {
+    color: '$primary-800',
+  },
+  [`&:hover ${HashLink}`]: {
+    opacity: 1,
+  },
+});
+
+export const createHeadingWithAnchor =
+  (tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6') =>
+  ({ children, id, ...props }: React.ComponentPropsWithoutRef<'h2'>) => {
+    return (
+      <Heading as={tag} {...props} id={id}>
+        {children}
+        {id && (
+          <HashLink aria-hidden href={`#${id}`} title="Direct link to heading">
+            &#8203;
+          </HashLink>
+        )}
+      </Heading>
+    );
+  };
 
 export const H1 = styled('h1', {
   fontSize: '$4xl',

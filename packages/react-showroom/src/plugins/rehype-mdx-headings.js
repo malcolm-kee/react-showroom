@@ -1,6 +1,7 @@
 const visit = require('unist-util-visit');
 const isHeading = require('hast-util-heading');
 const getHeadingRank = require('hast-util-heading-rank');
+const toHtml = require('hast-util-to-html');
 const findNode = require('unist-util-find');
 
 import { valueToEstree } from 'estree-util-value-to-estree';
@@ -58,11 +59,11 @@ function getHeadings(tree, minLevel) {
 function collectHeadings(node, result, minLevel) {
   if (isHeading(node)) {
     const rank = getHeadingRank(node);
-    const text = findNode(node, { type: 'text' });
+    const text = Array.isArray(node.children) && toHtml(node.children);
     if (rank >= minLevel && text) {
       result.push({
         rank,
-        text: text.value,
+        text,
         id: node.properties && node.properties.id,
       });
     }

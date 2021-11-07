@@ -6,13 +6,17 @@ import {
   mdxComponents,
 } from 'react-showroom/client';
 import { ComponentDocRoute } from '../components/component-doc-route';
-import AnotherButtonDocs from './button-other-example.mdx';
+import AnotherButtonDocs, {
+  headings as anotherButtonHeadings,
+} from './button-other-example.mdx';
 import anotherbuttonDocsSource from './button-other-example.mdx?raw';
 import anotherButtonCodeBlocks from './button-other-example.mdx?showroomRemarkCodeblocks';
 import { imports as anotherButtonImports } from './button-other-example.mdx?showroomRemarkImports';
 import { Button } from './components/button';
 import buttonWithCommentsSource from './components/button-with-comments?raw';
-import ButtonDocs from './components/button.mdx';
+import ButtonDocs, {
+  headings as buttonHeadings,
+} from './components/button.mdx';
 import docsSource from './components/button.mdx?raw';
 import buttonCodeblocks from './components/button.mdx?showroomRemarkCodeblocks';
 import { imports as buttonImports } from './components/button.mdx?showroomRemarkImports';
@@ -100,6 +104,7 @@ export const MarkdownSource = () => (
 
 const markdownContent = {
   doc: ButtonDocs,
+  headings: buttonHeadings,
   imports: buttonImports,
   codeblocks: buttonCodeblocks,
   Component: Button,
@@ -119,6 +124,7 @@ export const AnotherMarkdownSource = () => (
 
 const anotherMarkdownContent = {
   doc: AnotherButtonDocs,
+  headings: anotherButtonHeadings,
   imports: anotherButtonImports,
   codeblocks: anotherButtonCodeBlocks,
   Component: Button,

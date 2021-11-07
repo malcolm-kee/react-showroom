@@ -70,9 +70,12 @@ function compileComponentSection(
       const loadImports = import(/* webpackChunkName: "${componentName}-imports" */'${docPath}?showroomRemarkImports');
       const loadCodeBlocks = import(/* webpackChunkName: "${componentName}-codeblocks" */'${docPath}?showroomRemarkCodeblocks');
       const Component = await import(/* webpackChunkName: "${componentName}" */'${sourcePath}');
+
+      const { default: doc, headings } = await loadDoc;
     
       return {
-        doc: (await loadDoc).default,
+        doc,
+        headings,
         Component: Component.default || Component[${metadataIdentifier}.displayName] || Component,
     imports: (await loadImports).imports || {},
     codeblocks: (await loadCodeBlocks).default || {},
@@ -84,6 +87,7 @@ function compileComponentSection(
       return {
         Component: Component.default || Component[${metadataIdentifier}.displayName] || Component,
         doc: null,
+        headings: [],
         imports: {},
         codeblocks: {},
       }
