@@ -219,6 +219,7 @@ const LinkToStandaloneView = (props: {
           to={`${removeTrailingSlash(url)}/_standalone/${props.codeHash}${
             props.isDesigner ? '?commentMode=true' : ''
           }`}
+          data-testid="standalone-link"
         >
           <ArrowsExpandIcon width={20} height={20} className={icons()} />
         </StyledLink>
