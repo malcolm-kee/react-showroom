@@ -31,6 +31,9 @@ jobs:
           version: 6.15.1
           run_install: true
 
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
       - name: Test
         run: pnpm run test
 
@@ -39,6 +42,9 @@ jobs:
 
       - name: Build Example
         run: pnpm run example:build
+
+      - name: Run Playwright tests
+        run: pnpm run test:e2e
 
       - name: Deploy Docs to Netlify
         uses: nwtgck/actions-netlify@v1.2

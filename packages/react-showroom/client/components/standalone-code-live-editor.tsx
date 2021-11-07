@@ -199,6 +199,7 @@ export const StandaloneCodeLiveEditor = ({
                           }
                         : undefined
                     }
+                    data-testid="editor-toggle"
                   >
                     <CodeIcon width={20} height={20} />
                   </ToggleButton>
@@ -224,6 +225,7 @@ export const StandaloneCodeLiveEditor = ({
                           }
                         : undefined
                     }
+                    data-testid="preview-toggle"
                   >
                     <DesktopComputerIcon width={20} height={20} />
                   </ToggleButton>
@@ -332,6 +334,7 @@ export const StandaloneCodeLiveEditor = ({
                             }
                           : undefined
                       }
+                      data-testid="comment-toggle"
                     >
                       {isCommenting ? <CommentOnIcon /> : <CommentIcon />}
                     </ToggleButton>
@@ -354,6 +357,7 @@ export const StandaloneCodeLiveEditor = ({
                               }
                             : undefined
                         }
+                        data-testid="sync-state-toggle"
                       >
                         <SyncIcon active={syncState} />
                       </ToggleButton>
