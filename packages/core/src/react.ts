@@ -348,6 +348,7 @@ export interface NormalizedReactShowroomConfiguration
 export interface ReactShowroomComponentContent {
   Component: ComponentType<any> | undefined;
   doc: null | ComponentType<any>;
+  headings: Array<ReactShowroomMarkdownHeading>;
   imports: Record<string, any>;
   codeblocks: CodeBlocks;
 }

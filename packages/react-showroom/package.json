@@ -45,6 +45,7 @@
     "glob": "^7.2.0",
     "hast-util-heading": "1.0.5",
     "hast-util-heading-rank": "1.0.1",
+    "hast-util-to-html": "7.1.3",
     "html-webpack-plugin": "^5.5.0",
     "html-webpack-tags-plugin": "^3.0.2",
     "lodash": "^4.17.21",

@@ -1,5 +1,5 @@
 import { styled, Table } from '@showroomjs/ui';
-import { H1, headerHeight } from './base';
+import { H1, headerHeight, createHeadingWithAnchor } from './base';
 import { Code, Pre } from './code-block';
 import { GenericLink } from './generic-link';
 
@@ -43,7 +43,7 @@ const Ol = styled('ul', {
 
 export const mdxComponents = {
   h1: H1,
-  h2: styled('h2', {
+  h2: styled(createHeadingWithAnchor('h2'), {
     fontSize: '$2xl',
     lineHeight: '$2xl',
     '@sm': {
@@ -54,7 +54,7 @@ export const mdxComponents = {
     marginBottom: '$2',
     scrollMarginTop: headerHeight,
   }),
-  h3: styled('h3', {
+  h3: styled(createHeadingWithAnchor('h3'), {
     fontSize: '$xl',
     lineHeight: '$xl',
     '@sm': {
@@ -65,7 +65,7 @@ export const mdxComponents = {
     marginBottom: '$2',
     scrollMarginTop: headerHeight,
   }),
-  h4: styled('h4', {
+  h4: styled(createHeadingWithAnchor('h4'), {
     fontSize: '$lg',
     fontWeight: 'bold',
     lineHeight: '$lg',
@@ -73,6 +73,8 @@ export const mdxComponents = {
     marginBottom: '$2',
     scrollMarginTop: headerHeight,
   }),
+  h5: createHeadingWithAnchor('h5'),
+  h6: createHeadingWithAnchor('h6'),
   pre: Pre,
   code: Code,
   p: styled('p', {
