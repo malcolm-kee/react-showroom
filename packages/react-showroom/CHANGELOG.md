@@ -1,5 +1,17 @@
 # react-showroom
 
+## 1.1.0
+
+### Minor Changes
+
+- c8eaf38: Support toc for component examples
+
+### Patch Changes
+
+- Updated dependencies [c8eaf38]
+  - @showroomjs/core@1.1.0
+  - @showroomjs/ui@1.0.1
+
 ## 1.0.0
 
 ### Major Changes

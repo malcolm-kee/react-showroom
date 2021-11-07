@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 1.1.0
+
+### Minor Changes
+
+- c8eaf38: Support toc for component examples
+
 ## 1.0.0
 
 ### Major Changes
