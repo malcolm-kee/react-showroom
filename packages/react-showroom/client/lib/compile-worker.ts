@@ -95,11 +95,4 @@ self.onmessage = (ev) => {
   }
 };
 
-function getCode(data: RequestCompileData) {
-  if (data.lang === 'html') {
-    return processHtml(data.source);
-  }
-  return Promise.resolve(data.source);
-}
-
 const errorRegex = /Transform failed with \d+ error:\s+<stdin>:(\d+):(\d+):/;
