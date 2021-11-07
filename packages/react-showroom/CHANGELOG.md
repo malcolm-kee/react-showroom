@@ -1,5 +1,17 @@
 # react-showroom
 
+## 0.34.0
+
+### Minor Changes
+
+- 3e4bd8c: Support script tag in html example
+
+### Patch Changes
+
+- Updated dependencies [3e4bd8c]
+  - @showroomjs/core@0.24.0
+  - @showroomjs/ui@0.24.1
+
 ## 0.33.0
 
 ### Minor Changes

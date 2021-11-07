@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 0.24.0
+
+### Minor Changes
+
+- 3e4bd8c: Support script tag in html example
+
 ## 0.23.0
 
 ### Minor Changes
