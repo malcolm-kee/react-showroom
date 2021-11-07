@@ -1,5 +1,18 @@
 # react-showroom
 
+## 1.0.0
+
+### Major Changes
+
+- 0d3f91a: Cutoff beta as we have e2e tests now
+
+### Patch Changes
+
+- Updated dependencies [0d3f91a]
+  - @showroomjs/bundles@1.0.0
+  - @showroomjs/core@1.0.0
+  - @showroomjs/ui@1.0.0
+
 ## 0.34.0
 
 ### Minor Changes

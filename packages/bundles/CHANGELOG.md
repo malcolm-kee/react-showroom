@@ -1,5 +1,11 @@
 # @showroomjs/bundles
 
+## 1.0.0
+
+### Major Changes
+
+- 0d3f91a: Cutoff beta as we have e2e tests now
+
 ## 0.13.1
 
 ### Patch Changes
