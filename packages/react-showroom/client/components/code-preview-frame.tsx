@@ -55,7 +55,10 @@ export const CodePreviewFrame = (props: CodePreviewFrameProps) => {
             FallbackComponent={ErrorFallback}
             ref={errorBoundaryRef}
           >
-            <CodePreview {...data} />
+            <CodePreview
+              {...data}
+              skipConsoleForInitialRender={props.lang === 'html'}
+            />
           </ErrorBoundary>
         ) : (
           <Alert variant="error">{formatError(data.error)}</Alert>

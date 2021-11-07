@@ -6,7 +6,7 @@ import { useCodeImports } from '../lib/code-imports-context';
 import { useCodeVariables } from '../lib/code-variables-context';
 import { prerenderExample } from '../lib/config';
 import { useCustomUseState } from '../lib/use-custom-state';
-import { useConsole } from '../lib/use-preview-console';
+import { useConsole, noopConsole } from '../lib/use-preview-console';
 export interface CodePreviewProps {
   /**
    * Code that should call `render` to show the UI.
@@ -17,6 +17,7 @@ export interface CodePreviewProps {
    */
   importNames: Array<string>;
   imports?: Record<string, any>;
+  skipConsoleForInitialRender?: boolean;
 }
 
 export const CodePreview = (props: CodePreviewProps) => {
@@ -28,9 +29,12 @@ export const CodePreview = (props: CodePreviewProps) => {
   const evalCode = React.useCallback(
     (
       code: string,
-      importNames: Array<string>,
-      imports: Record<string, any>,
-      render: (ui: React.ReactElement) => void
+      options: {
+        importNames: Array<string>;
+        imports: Record<string, any>;
+        render: (ui: React.ReactElement) => void;
+        skipConsole?: boolean;
+      }
     ) =>
       safeEval(
         code,
@@ -40,12 +44,14 @@ export const CodePreview = (props: CodePreviewProps) => {
             ...codeVariables,
             React: Object.assign({}, React, { useState: useCustomState }),
             ReactDOM,
-            render,
+            render: options.render,
             tslib,
-            imports,
-            console: previewConsole,
+            imports: options.imports,
+            console: options.skipConsole
+              ? Object.assign({}, previewConsole, noopConsole)
+              : previewConsole,
           },
-          importNames
+          options.importNames
         )
       ),
     []
@@ -58,30 +64,29 @@ export const CodePreview = (props: CodePreviewProps) => {
 
     let result: React.ReactElement | null = null;
 
-    evalCode(
-      props.code,
-      props.importNames,
-      props.imports || imports,
-      (ui: React.ReactElement) => {
+    evalCode(props.code, {
+      importNames: props.importNames,
+      imports: props.imports || imports,
+      render: (ui: React.ReactElement) => {
         result = ui;
-      }
-    );
+      },
+      skipConsole: props.skipConsoleForInitialRender,
+    });
 
     return result;
   });
 
   React.useEffect(() => {
     let isLatest = true;
-    evalCode(
-      props.code,
-      props.importNames,
-      props.imports || imports,
-      (newUi) => {
+    evalCode(props.code, {
+      importNames: props.importNames,
+      imports: props.imports || imports,
+      render: (newUi) => {
         if (isLatest) {
           setUi(newUi);
         }
-      }
-    );
+      },
+    });
     return () => {
       isLatest = false;
     };

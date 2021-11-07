@@ -1,5 +1,5 @@
 import { createNameContext } from '@showroomjs/ui';
-import { isPlainObject } from '@showroomjs/core';
+import { isPlainObject, noop } from '@showroomjs/core';
 import * as React from 'react';
 
 export type LogLevel = 'info' | 'log' | 'error' | 'warn' | 'fatal';
@@ -72,6 +72,13 @@ export const PreviewConsoleProvider = (props: {
 };
 
 export const useConsole = () => React.useContext(ConsoleContext);
+
+export const noopConsole = {
+  log: noop,
+  error: noop,
+  warn: noop,
+  info: noop,
+};
 
 export const useConsoleMessage = () => React.useContext(ConsoleMessageContext);
 

@@ -28,6 +28,8 @@
   "dependencies": {
     "acorn": "^8.5.0",
     "acorn-walk": "^8.2.0",
+    "domutils": "^2.8.0",
+    "htmlparser2": "^7.1.2",
     "prism-react-renderer": "^1.2.1",
     "tslib": "^2.3.1"
   },
