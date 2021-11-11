@@ -5,8 +5,8 @@ import {
   css,
   icons,
   styled,
-  useDebounce,
   Tooltip,
+  useDebounce,
 } from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
@@ -16,7 +16,6 @@ import { Link, useRouteMatch } from '../lib/routing';
 import { PreviewConsoleProvider } from '../lib/use-preview-console';
 import { useTargetAudience } from '../lib/use-target-audience';
 import { Div } from './base';
-import { BrowserWindow } from './browser-window';
 import { CodeEditor } from './code-editor';
 import { CodePreviewFrame } from './code-preview-frame';
 import { CodePreviewIframe } from './code-preview-iframe';
@@ -137,15 +136,7 @@ export const CodeLiveEditor = ({
     </PreviewConsoleProvider>
   );
 
-  return (
-    <div className={className}>
-      {noEditor ? (
-        <BrowserWindow url="preview">{content}</BrowserWindow>
-      ) : (
-        content
-      )}
-    </div>
-  );
+  return <div className={className}>{content}</div>;
 };
 
 export const NonVisualCodeLiveEditor = (props: {

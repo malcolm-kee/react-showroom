@@ -21,11 +21,13 @@ export type { DocPlaceholderProps } from './components/doc-placeholder';
 export { MarkdownArticle } from './components/markdown-article';
 export { MarkdownDataProvider } from './components/markdown-data-provider';
 export { mdxComponents } from './components/mdx-components';
+export { PropsEditor } from './components/props-editor';
 export { Head } from './components/seo';
 export { useComponentList } from './lib/component-list-context';
 export type { ComponentItem } from './lib/component-list-context';
 export { Suspense } from './lib/lazy';
 export { Link, MemoryRouter, Route, Switch, useLocation } from './lib/routing';
+export { usePropsEditor } from './lib/use-props-editor';
 export const StandaloneEditor = lazy(
   () => import('./components/standalone-editor-lazy')
 );

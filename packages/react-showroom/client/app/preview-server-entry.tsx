@@ -77,7 +77,15 @@ export const ssr: Ssr = {
           .filter(isDefined);
 
         if (codeHashes.length > 0) {
-          result.push(codeHashes);
+          const compName = section._associatedComponentName;
+
+          if (compName) {
+            result.push(
+              codeHashes.map((hash) => `${hash}/${encodeDisplayName(compName)}`)
+            );
+          } else {
+            result.push(codeHashes);
+          }
         }
       }
     }

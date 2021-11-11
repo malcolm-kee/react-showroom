@@ -9,6 +9,10 @@ export interface ButtonProps extends React.ComponentPropsWithoutRef<'button'> {
    * specify if the button should takes up all the available horizontal space.
    */
   fullWidth?: boolean;
+  /**
+   * controls the border radius.
+   */
+  rounded?: 'sm' | 'lg';
 }
 
 /**
@@ -20,6 +24,7 @@ export const ButtonWithComments = ({
   type = 'button',
   variant,
   fullWidth,
+  rounded,
   ...props
 }: ButtonProps) => {
   return (
@@ -29,6 +34,8 @@ export const ButtonWithComments = ({
         backgroundColor: variant === 'primary' ? 'red' : 'blue',
         color: '#efefef',
         padding: '8px 16px',
+        width: fullWidth ? '100%' : undefined,
+        borderRadius: rounded ? (rounded === 'lg' ? 16 : 4) : undefined,
       }}
       type={type}
     />

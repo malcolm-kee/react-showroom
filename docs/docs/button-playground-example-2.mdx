@@ -1,0 +1,21 @@
+```jsx noEditor
+import { usePropsEditor, PropsEditor } from 'react-showroom/client';
+
+const Demo = () => {
+  const propsEditor = usePropsEditor({
+    initialProps: {
+      variant: 'secondary',
+      rounded: 'sm',
+    },
+  });
+
+  return (
+    <div>
+      <Button {...propsEditor.props}>Hello</Button>
+      <PropsEditor editor={propsEditor} />
+    </div>
+  );
+};
+
+<Demo />;
+```

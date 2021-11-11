@@ -58,6 +58,7 @@ export const CodeEditor = ({
     <Div
       css={{
         position: 'relative',
+        lineHeight: 1.5,
       }}
       className={wrapperClass}
     >

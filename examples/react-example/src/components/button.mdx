@@ -1,8 +1,25 @@
 import { Button } from './button';
 
+```jsx noEditor
+import { usePropsEditor, PropsEditor } from 'react-showroom/client';
+
+const Demo = () => {
+  const propsEditor = usePropsEditor();
+
+  return (
+    <div>
+      <Button {...propsEditor.props}>Hello</Button>
+      <PropsEditor editor={propsEditor} />
+    </div>
+  );
+};
+
+<Demo />;
+```
+
 <Button variant="primary">Hi</Button>
 
-Example for `<Button />` component
+## Variants
 
 ```jsx
 <div className="flex items-center gap-3">

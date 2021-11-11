@@ -40,7 +40,7 @@ const defaultConfig = {
   outDir: 'showroom',
 };
 
-const defaultDocgenOptions: ParserOptions = {
+const docgenOptions: ParserOptions = {
   propFilter: (prop) => {
     if (prop.parent) {
       return !prop.parent.fileName.includes('@types/react');
@@ -166,10 +166,7 @@ export const getConfig = (
     devServerPort: providedDevServerConfig.port || 6969,
     docgen: {
       tsconfigPath: providedDocgenConfig.tsconfigPath || paths.appTsConfig,
-      options: {
-        ...defaultDocgenOptions,
-        ...(providedDocgenConfig.options || {}),
-      },
+      options: docgenOptions,
     },
     theme: {
       ...defaultThemeConfiguration,
@@ -364,6 +361,7 @@ export const getConfig = (
             slug: parentSlugs.concat(slug).join('/'),
             hideFromSidebar: sectionConfig.hideFromSidebar,
             formatLabel: (x) => x,
+            _associatedComponentName: sectionConfig._associatedComponentName,
           });
           return;
         }
