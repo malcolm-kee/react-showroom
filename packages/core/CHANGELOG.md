@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 1.2.0
+
+### Minor Changes
+
+- fd55b1c: Support creating component playground
+
 ## 1.1.0
 
 ### Minor Changes

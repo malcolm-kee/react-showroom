@@ -1,5 +1,12 @@
 # client-only-example
 
+## 1.0.21
+
+### Patch Changes
+
+- Updated dependencies [fd55b1c]
+  - react-showroom@1.2.0
+
 ## 1.0.20
 
 ### Patch Changes
