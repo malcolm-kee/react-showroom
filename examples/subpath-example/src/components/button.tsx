@@ -1,5 +1,4 @@
 import * as React from 'react';
-import cx from 'classnames';
 
 export interface ButtonProps
   extends Omit<React.ComponentPropsWithoutRef<'button'>, 'size'> {
@@ -9,22 +8,39 @@ export interface ButtonProps
   variant?: 'primary' | 'outline';
   size?: 'small' | 'large';
   children: React.ReactNode;
+  fullWidth?: boolean;
+  leftIcon?: React.ReactNode;
 }
 
 /**
  * `<Button />` component wraps a `<button />` element and spread all the props.
  */
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  function Button({ variant, ...props }, ref) {
+  function Button({ variant, fullWidth, leftIcon, ...props }, ref) {
     return (
       <button
-        className={cx(
-          'inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500',
-          variant === 'primary' &&
-            'text-white bg-indigo-600 hover:bg-indigo-700 border-transparent',
-          variant === 'outline' &&
-            'text-indigo-500 bg-white hover:bg-gray-200 border-indigo-500'
-        )}
+        style={{
+          display: 'inline-block',
+          alignItems: 'center',
+          padding: `1rem 2rem`,
+          color:
+            variant === 'primary'
+              ? 'white'
+              : variant === 'outline'
+              ? 'rgb(99, 102, 241)'
+              : 'inherit',
+          backgroundColor: variant === 'primary' ? 'rgb(79,70,229)' : 'white',
+          borderWidth: '1px',
+          borderRadius: '0.5rem',
+          borderColor:
+            variant === 'primary'
+              ? 'transparent'
+              : variant === 'outline'
+              ? 'rgb(99, 102, 241)'
+              : 'rgb(229, 231, 235)',
+          width: fullWidth ? '100%' : undefined,
+          cursor: 'pointer',
+        }}
         {...props}
         ref={ref}
       />

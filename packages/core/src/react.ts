@@ -41,6 +41,12 @@ export interface ContentItemConfiguration extends ItemConfigBase {
    * location of a Markdown file containing the overview content.
    */
   content: string;
+  /**
+   * @internal
+   *
+   * Used by docs site
+   */
+  _associatedComponentName?: string;
 }
 
 export interface LinkItemConfiguration {
@@ -225,7 +231,7 @@ export interface ReactShowroomConfiguration {
    * Use this to render context providers that your application need, e.g. Redux Provider.
    */
   wrapper?: string;
-  docgen?: Partial<DocgenConfiguration>;
+  docgen?: Partial<Pick<DocgenConfiguration, 'tsconfigPath'>>;
   html?: ShowroomHtmlConfiguration;
   /**
    * Configuration to specify how css should be processed.
@@ -293,6 +299,12 @@ interface ReactShowroomMarkdownSectionConfig {
   title?: string;
   formatLabel: (oriTitle: string) => string;
   hideFromSidebar?: boolean;
+  /**
+   * @internal
+   *
+   * Used by docs site
+   */
+  _associatedComponentName?: string;
 }
 
 interface ReactShowroomLinkSectionConfig {
@@ -399,6 +411,12 @@ export interface ReactShowroomMarkdownSection {
   load: () => Promise<ReactShowroomMarkdownContent>;
   formatLabel: (oriTitle: string) => string;
   hideFromSidebar?: boolean;
+  /**
+   * @internal
+   *
+   * Used by docs site
+   */
+  _associatedComponentName?: string;
 }
 
 interface ReactShowroomLinkSection {

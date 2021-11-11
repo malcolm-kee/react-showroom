@@ -13,6 +13,7 @@ export interface ButtonProps
    * @deprecated
    */
   size?: 'small' | 'large';
+  fullWidth?: boolean;
   children: React.ReactNode;
 }
 
@@ -20,7 +21,7 @@ export interface ButtonProps
  * `<Button />` component wraps a `<button />` element and spread all the props.
  */
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  function Button({ variant, size, ...props }, ref) {
+  function Button({ variant, fullWidth = false, size, ...props }, ref) {
     return (
       <button
         className={cx(
@@ -28,7 +29,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           variant === 'primary' &&
             'text-white bg-indigo-600 hover:bg-indigo-700 border-transparent',
           variant === 'outline' &&
-            'text-indigo-500 bg-white hover:bg-gray-200 border-indigo-500'
+            'text-indigo-500 bg-white hover:bg-gray-200 border-indigo-500',
+          fullWidth && 'w-full justify-center'
         )}
         {...props}
         ref={ref}

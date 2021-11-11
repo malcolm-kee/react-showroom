@@ -179,9 +179,15 @@ export const generateSectionsAndImports = (
             path: `${section.sourcePath}?showroomFrontmatter`,
           });
 
+          const isTreatedAsComponentDoc = !!section._associatedComponentName;
+
           codeImportImports.push({
             name,
-            path: `${section.sourcePath}?showroomRemarkDocImports`,
+            path: `${section.sourcePath}?${
+              isTreatedAsComponentDoc
+                ? 'showroomRemarkImports'
+                : 'showroomRemarkDocImports'
+            }`,
           });
 
           const chunkName = `${section.title || section.slug || ''}${name}`;
@@ -192,6 +198,11 @@ export const generateSectionsAndImports = (
               slug: '${section.slug}',
               frontmatter: ${name}_frontmatter || {},
               ${section.hideFromSidebar ? 'hideFromSidebar: true,' : ''}
+              ${
+                isTreatedAsComponentDoc
+                  ? `_associatedComponentName: '${section._associatedComponentName}',`
+                  : ''
+              }
               formatLabel: ${section.formatLabel.toString()},
               preloadUrl: '${path.relative(
                 options.rootDir,
@@ -203,10 +214,18 @@ export const generateSectionsAndImports = (
           }');
                 const loadImports = import(/* webpackChunkName: "${chunkName}-imports" */'${
             section.sourcePath
-          }?showroomRemarkDocImports');
+          }?${
+            isTreatedAsComponentDoc
+              ? 'showroomRemarkImports'
+              : 'showroomRemarkDocImports'
+          }');
                 const loadCodeblocks = import(/* webpackChunkName: "${chunkName}-codeblocks" */'${
             section.sourcePath
-          }?showroomRemarkDocCodeblocks');
+          }?${
+            isTreatedAsComponentDoc
+              ? 'showroomRemarkCodeblocks'
+              : 'showroomRemarkDocCodeblocks'
+          }');
 
                 const { default: Component, headings } = await loadComponent;
 

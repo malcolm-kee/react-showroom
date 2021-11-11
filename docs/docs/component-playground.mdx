@@ -1,0 +1,30 @@
+---
+description: Learn how to create playground to modify component props
+---
+
+import {
+  PlaygroundSource,
+  PlaygroundResult,
+  PlaygroundSource2,
+  PlaygroundResult2,
+} from './component-playground';
+
+# Component Playground
+
+By using `usePropsEditor` custom hook and `PropsEditor` component (available at `react-showroom/client`) in your example, you can create a playground for your components (similar to Storybook's [Controls](https://storybook.js.org/docs/react/essentials/controls)).
+
+Compared to using Storybook, you do not need to manually configure the controls because we extract the props from your props definition.
+
+## Simple Example
+
+<PlaygroundSource />
+
+<PlaygroundResult />
+
+## Overwriting Initial Props
+
+By passing `initialProps` options to `usePropsEditor`, you can overwrite the initial values for props in the playground.
+
+<PlaygroundSource2 />
+
+<PlaygroundResult2 />

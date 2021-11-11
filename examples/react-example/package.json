@@ -15,16 +15,16 @@
     "test:e2e": "pnpm run test:playwright -- -c playwright.ssr.config.ts && pnpm run test:playwright -- -c playwright.spa.config.ts"
   },
   "dependencies": {
-    "@babel/runtime": "^7.16.0",
+    "@babel/runtime": "^7.16.3",
     "@tailwindcss/forms": "^0.3.4",
     "classnames": "^2.3.1",
-    "css-minimizer-webpack-plugin": "^3.1.1",
+    "css-minimizer-webpack-plugin": "^3.1.3",
     "mini-css-extract-plugin": "^2.4.4",
     "msw": "^0.35.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-hook-form": "^7.19.0",
-    "react-query": "^3.31.0",
+    "react-hook-form": "^7.19.4",
+    "react-query": "^3.32.1",
     "react-showroom": "workspace:*",
     "react-textarea-autosize": "^8.3.3"
   },
@@ -45,7 +45,7 @@
     "style-loader": "^3.3.1",
     "tailwindcss": "^2.2.19",
     "typescript": "^4.4.4",
-    "webpack": "^5.62.1"
+    "webpack": "^5.63.0"
   },
   "msw": {
     "workerDirectory": "public"

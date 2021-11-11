@@ -30,6 +30,27 @@ module.exports = defineConfig({
       hideFromSidebar: true,
     },
     {
+      type: 'content',
+      path: 'button-other-example',
+      content: 'docs/button-other-example.mdx',
+      hideFromSidebar: true,
+      _associatedComponentName: 'Button',
+    },
+    {
+      type: 'content',
+      path: 'button-playground-example',
+      content: 'docs/button-playground-example.mdx',
+      hideFromSidebar: true,
+      _associatedComponentName: 'Button',
+    },
+    {
+      type: 'content',
+      path: 'button-playground-example-2',
+      content: 'docs/button-playground-example-2.mdx',
+      hideFromSidebar: true,
+      _associatedComponentName: 'Button',
+    },
+    {
       type: 'group',
       title: 'Getting Started',
       items: [
@@ -40,6 +61,10 @@ module.exports = defineConfig({
         {
           type: 'content',
           content: 'docs/documenting-components.mdx',
+        },
+        {
+          type: 'content',
+          content: 'docs/component-playground.mdx',
         },
         {
           type: 'content',
