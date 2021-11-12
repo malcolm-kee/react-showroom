@@ -23,6 +23,7 @@ importers:
       '@types/react-highlight-words': ^0.16.3
       '@types/react-router-dom': ^5.3.2
       '@types/rimraf': ^3.0.2
+      '@types/stringify-object': 3.3.0
       '@types/temp': ^0.9.1
       '@types/yargs': ^17.0.5
       concurrently: ^6.3.0
@@ -56,6 +57,7 @@ importers:
       '@types/react-highlight-words': 0.16.3
       '@types/react-router-dom': 5.3.2
       '@types/rimraf': 3.0.2
+      '@types/stringify-object': 3.3.0
       '@types/temp': 0.9.1
       '@types/yargs': 17.0.5
       concurrently: 6.3.0
@@ -142,6 +144,7 @@ importers:
       '@babel/preset-react': ^7.16.0
       '@babel/preset-typescript': ^7.16.0
       '@babel/runtime': ^7.16.3
+      '@heroicons/react': ^1.0.5
       '@tailwindcss/forms': ^0.3.4
       '@testing-library/react': ^12.1.2
       '@types/jest': ^27.0.2
@@ -167,6 +170,7 @@ importers:
       webpack: ^5.63.0
     dependencies:
       '@babel/runtime': 7.16.3
+      '@heroicons/react': 1.0.5_react@17.0.2
       '@tailwindcss/forms': 0.3.4_tailwindcss@2.2.19
       classnames: 2.3.1
       css-minimizer-webpack-plugin: 3.1.3_webpack@5.63.0
@@ -324,6 +328,7 @@ importers:
       slugo: ^0.4.0
       snarkdown: ^2.0.0
       source-map-support: ^0.5.20
+      stringify-object: '3.3'
       style-loader: ^3.3.1
       temp: ^0.9.4
       tslib: ^2.3.1
@@ -399,6 +404,7 @@ importers:
       slugo: 0.4.0
       snarkdown: 2.0.0
       source-map-support: 0.5.20
+      stringify-object: 3.3.0
       style-loader: 3.3.1_webpack@5.63.0
       temp: 0.9.4
       tslib: 2.3.1
@@ -3357,6 +3363,10 @@ packages:
     resolution: {integrity: sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==}
     dev: true
 
+  /@types/stringify-object/3.3.0:
+    resolution: {integrity: sha512-ryxTolaNg1l809rknW9q9T7wG8QHcjtZX6syJx7kpOLY2qev75VzC9HMVimUxlA1YzjpGsDI29yLjHBotqhUhA==}
+    dev: true
+
   /@types/temp/0.9.1:
     resolution: {integrity: sha512-yDQ8Y+oQi9V7VkexwE6NBSVyNuyNFeGI275yWXASc2DjmxNicMi9O50KxDpNlST1kBbV9jKYBHGXhgNYFMPqtA==}
     dependencies:
@@ -5829,6 +5839,10 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
+  /get-own-enumerable-property-symbols/3.0.2:
+    resolution: {integrity: sha512-I0UBV/XOz1XkIJHEUDMZAbzCThU/H8DxmSfmdGcKPnVhu2VfFqr34jr9777IyaTYvxjedWhqVIilEDsCdP5G6g==}
+    dev: false
+
   /get-package-type/0.1.0:
     resolution: {integrity: sha512-pjzuKtY64GYfWizNAJ0fr9VqttZkNiK2iS430LtIHzjBEr6bX8Am2zm4sW4Ro5wjWW5cAlRL1qAMTcXbjNAO2Q==}
     engines: {node: '>=8.0.0'}
@@ -6602,6 +6616,11 @@ packages:
     resolution: {integrity: sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==}
     engines: {node: '>=0.12.0'}
 
+  /is-obj/1.0.1:
+    resolution: {integrity: sha1-PkcprB9f3gJc19g6iW2rn09n2w8=}
+    engines: {node: '>=0.10.0'}
+    dev: false
+
   /is-path-cwd/2.2.0:
     resolution: {integrity: sha512-w942bTcih8fdJPJmQHFzkS76NEP8Kzzvmw92cXsazb8intwLqPibPPdXf4ANdKV3rYMuuQYGIWtvz9JilB3NFQ==}
     engines: {node: '>=6'}
@@ -6660,6 +6679,11 @@ packages:
     dependencies:
       call-bind: 1.0.2
       has-tostringtag: 1.0.0
+    dev: false
+
+  /is-regexp/1.0.0:
+    resolution: {integrity: sha1-/S2INUXEa6xaYz57mgnof6LLUGk=}
+    engines: {node: '>=0.10.0'}
     dev: false
 
   /is-resolvable/1.1.0:
@@ -10485,6 +10509,15 @@ packages:
     dependencies:
       character-entities-html4: 2.0.0
       character-entities-legacy: 2.0.0
+    dev: false
+
+  /stringify-object/3.3.0:
+    resolution: {integrity: sha512-rHqiFh1elqCQ9WPLIC8I0Q/g/wj5J1eMkyoiD6eoQApWHP0FtlK7rqnhmabL5VUY9JQCcqwwvlOaSuutekgyrw==}
+    engines: {node: '>=4'}
+    dependencies:
+      get-own-enumerable-property-symbols: 3.0.2
+      is-obj: 1.0.1
+      is-regexp: 1.0.0
     dev: false
 
   /strip-ansi/4.0.0:

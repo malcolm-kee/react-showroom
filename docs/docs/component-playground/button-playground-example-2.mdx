@@ -11,7 +11,9 @@ const Demo = () => {
 
   return (
     <div>
-      <Button {...propsEditor.props}>Hello</Button>
+      <Button {...propsEditor.props} onClick={() => console.log('Clicked')}>
+        Hello
+      </Button>
       <PropsEditor editor={propsEditor} />
     </div>
   );

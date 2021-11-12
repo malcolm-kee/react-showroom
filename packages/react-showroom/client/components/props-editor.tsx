@@ -1,15 +1,24 @@
-import { isDefined } from '@showroomjs/core';
-import { Checkbox, Select, styled, TextInput, Button } from '@showroomjs/ui';
+import { isDefined, safeEval } from '@showroomjs/core';
+import {
+  Button,
+  Checkbox,
+  Select,
+  styled,
+  Textarea,
+  TextInput,
+} from '@showroomjs/ui';
 import * as React from 'react';
+import stringifyObject from 'stringify-object';
 import type { usePropsEditor } from '../lib/use-props-editor';
 
-export interface PropsEditorProps {
+export interface PropsEditorProps
+  extends React.ComponentPropsWithoutRef<'div'> {
   editor: ReturnType<typeof usePropsEditor>;
 }
 
-export const PropsEditor = ({ editor }: PropsEditorProps) => {
+export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
   return (
-    <Root>
+    <Root {...rootProps}>
       {editor.controls.map((ctrl) => {
         if (ctrl.type === 'checkbox') {
           return (
@@ -81,11 +90,26 @@ export const PropsEditor = ({ editor }: PropsEditorProps) => {
               <ControlWrapper>
                 <TextInput
                   id={ctrl.key}
-                  value={ctrl.value}
+                  value={ctrl.value || ''}
                   onValue={ctrl.setValue}
                   css={{
                     maxWidth: '36rem',
                   }}
+                />
+              </ControlWrapper>
+            </React.Fragment>
+          );
+        }
+
+        if (ctrl.type === 'object') {
+          return (
+            <React.Fragment key={ctrl.key}>
+              <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
+              <ControlWrapper>
+                <ObjectValueEditor
+                  id={ctrl.key}
+                  value={ctrl.value || ''}
+                  onValue={ctrl.setValue}
                 />
               </ControlWrapper>
             </React.Fragment>
@@ -102,7 +126,7 @@ const Root = styled('div', {
   display: 'grid',
   gridTemplateColumns: 'max-content 1fr',
   alignItems: 'center',
-  gap: '$1',
+  gap: '$2',
   py: '$1',
 });
 
@@ -125,6 +149,68 @@ const ToggleGroup = styled('div', {
     gap: '$2',
   },
 });
+
+const emptyValue = `{
+
+}`;
+
+const ObjectValueEditor = (props: {
+  value: object | undefined;
+  onValue: (value: object | undefined) => void;
+  id?: string;
+}) => {
+  const [value, setValue] = React.useState(() =>
+    props.value ? stringifyObject(props.value) : emptyValue
+  );
+
+  React.useEffect(() => {
+    setValue(props.value ? stringifyObject(props.value) : emptyValue);
+  }, [props.value]);
+
+  const isValid = React.useMemo(() => !value || isValidJson(value), [value]);
+
+  return (
+    <Textarea
+      value={value}
+      onChange={(ev) => setValue(ev.target.value)}
+      onBlur={() => {
+        if (!value) {
+          props.onValue(undefined);
+          return;
+        }
+
+        if (!props.value && value === emptyValue) {
+          return;
+        }
+
+        if (isValid) {
+          props.onValue(parseJsObject(value));
+        }
+      }}
+      id={props.id}
+      css={
+        isValid
+          ? undefined
+          : {
+              borderColor: '$red-400',
+            }
+      }
+    />
+  );
+};
+
+// we don't use JSON.parse because valid js object (prop without quote) is invalid JSON
+const parseJsObject = (jsObjString: string) =>
+  safeEval(`return (${jsObjString});`, {});
+
+const isValidJson = (val: string) => {
+  try {
+    parseJsObject(val);
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
 
 const SelectButton = styled(Button, {
   px: '$3',

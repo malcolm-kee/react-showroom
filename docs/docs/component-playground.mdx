@@ -3,6 +3,8 @@ description: Learn how to create playground to modify component props
 ---
 
 import {
+  ControlOptionsSource,
+  ControlOptionsResult,
   PlaygroundSource,
   PlaygroundResult,
   PlaygroundSource2,
@@ -11,15 +13,19 @@ import {
 
 # Component Playground
 
-By using `usePropsEditor` custom hook and `PropsEditor` component (available at `react-showroom/client`) in your example, you can create a playground for your components (similar to Storybook's [Controls](https://storybook.js.org/docs/react/essentials/controls)).
+By using `usePropsEditor` custom hook and `PropsEditor` component (available at `react-showroom/client`) in your example, you can create a playground for your components (similar to Storybook's [Controls/Knobs](https://storybook.js.org/docs/react/essentials/controls)).
 
-Compared to using Storybook, you do not need to manually configure the controls because we extract the props from your props definition.
+Compared to using Storybook, you don't have to manually configure the controls because we extract the props from your props definition and provide sensible default controls.
 
 ## Simple Example
 
 <PlaygroundSource />
 
 <PlaygroundResult />
+
+As `usePropsEditor` and `PropsEditor` is rendered by you in the example, it is up to you to decide how you want to compose them for your use case.
+
+For instance, you can place the `<PropsEditor />` above your example if that make sense, or adding additional props/state that you doesn't want the `usePropsEditor` to manage.
 
 ## Overwriting Initial Props
 
@@ -28,3 +34,21 @@ By passing `initialProps` options to `usePropsEditor`, you can overwrite the ini
 <PlaygroundSource2 />
 
 <PlaygroundResult2 />
+
+## Adding/Overwriting Control
+
+By default, `usePropsEditor` will try to infer the control for you based on the props definition. However, we will not infer the props control for the following conditions:
+
+1. props that are not primitive. For instance, you may have a complex object as props, which is impossible to provide a sensible default.
+1. props that comes from `@types/react`. If we include those, it will be a giant list of controls.
+
+However, you can add those manually by passing `controls` options to `usePropsEditor`.
+
+<ControlOptionsSource />
+
+<ControlOptionsResult />
+
+`controls` options is a key-value object where the key is the prop, and the value is the configuration of the control.
+
+1. Currently, we support 4 types of control, `select`, `textinput`, `checkbox`, and `object`. Except for `select`, you can provide the config as string (`textinput`) or as an object (`{ type: 'textinput' }`).
+1. For `select`, you must provide the `options`, which is an Array of `{ label: string; value: any }`. The value can be anything, including JSX.

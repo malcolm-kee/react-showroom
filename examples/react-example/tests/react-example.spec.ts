@@ -75,4 +75,24 @@ test.describe('react example', () => {
       'Hellotextarea'
     );
   });
+
+  test('props editor should works', async ({ page }) => {
+    await page.goto('/core/button');
+
+    await expect(
+      page.locator('data-testid=props-editor-example')
+    ).toBeVisible();
+
+    await page.fill('text=children', 'Hello Whurt');
+
+    await expect(
+      page.locator('[data-testid=props-editor-example] button').first()
+    ).toHaveText('Hello Whurt');
+
+    await page.fill('text=className', 'w-full');
+
+    await expect(
+      page.locator('[data-testid=props-editor-example] button').first()
+    ).toHaveClass(/w-full/);
+  });
 });

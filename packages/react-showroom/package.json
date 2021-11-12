@@ -77,6 +77,7 @@
     "slugo": "^0.4.0",
     "snarkdown": "^2.0.0",
     "source-map-support": "^0.5.20",
+    "stringify-object": "3.3",
     "style-loader": "^3.3.1",
     "temp": "^0.9.4",
     "tslib": "^2.3.1",

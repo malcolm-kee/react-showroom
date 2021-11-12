@@ -6,12 +6,6 @@ import {
   mdxComponents,
 } from 'react-showroom/client';
 import { ComponentDocRoute } from '../components/component-doc-route';
-import AnotherButtonDocs, {
-  headings as anotherButtonHeadings,
-} from './button-other-example.mdx';
-import anotherbuttonDocsSource from './button-other-example.mdx?raw';
-import anotherButtonCodeBlocks from './button-other-example.mdx?showroomRemarkCodeblocks';
-import { imports as anotherButtonImports } from './button-other-example.mdx?showroomRemarkImports';
 import { Button } from './components/button';
 import buttonWithCommentsSource from './components/button-with-comments?raw';
 import ButtonDocs, {
@@ -22,6 +16,12 @@ import buttonCodeblocks from './components/button.mdx?showroomRemarkCodeblocks';
 import { imports as buttonImports } from './components/button.mdx?showroomRemarkImports';
 import buttonSource from './components/button?raw';
 import oldButtonSource from './components/old-button?raw';
+import AnotherButtonDocs, {
+  headings as anotherButtonHeadings,
+} from './documenting-components/button-other-example.mdx';
+import anotherbuttonDocsSource from './documenting-components/button-other-example.mdx?raw';
+import anotherButtonCodeBlocks from './documenting-components/button-other-example.mdx?showroomRemarkCodeblocks';
+import { imports as anotherButtonImports } from './documenting-components/button-other-example.mdx?showroomRemarkImports';
 import { useSetCompilationCaches } from './set-compilation-caches';
 
 const allMetadata = Object.values(allComponentsMetadata);
