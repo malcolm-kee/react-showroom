@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 1.3.0
+
+### Minor Changes
+
+- 0a3cc0c: Allow manually add/overwrite the controls for playground.
+
 ## 1.2.0
 
 ### Minor Changes

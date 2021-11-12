@@ -1,5 +1,17 @@
 # react-showroom
 
+## 1.3.0
+
+### Minor Changes
+
+- 0a3cc0c: Allow manually add/overwrite the controls for playground.
+
+### Patch Changes
+
+- Updated dependencies [0a3cc0c]
+  - @showroomjs/core@1.3.0
+  - @showroomjs/ui@1.1.1
+
 ## 1.2.0
 
 ### Minor Changes

@@ -1,5 +1,12 @@
 # @showroomjs/ui
 
+## 1.1.1
+
+### Patch Changes
+
+- Updated dependencies [0a3cc0c]
+  - @showroomjs/core@1.3.0
+
 ## 1.1.0
 
 ### Minor Changes
