@@ -10,13 +10,13 @@ export interface UsePropsEditorOptions {
     string,
     PropsEditorControlDef | 'checkbox' | 'textinput' | 'object' | undefined
   >;
-  editableProps?: Array<string>;
+  includes?: Array<string>;
 }
 
 export const usePropsEditor = ({
   initialProps = {},
   controls: providedControls = {},
-  editableProps,
+  includes,
 }: UsePropsEditorOptions = {}) => {
   const controls = normalizeControls(providedControls);
 
@@ -31,8 +31,8 @@ export const usePropsEditor = ({
 
   return {
     props: state.values,
-    controls: (editableProps
-      ? state.controls.filter((ctrl) => editableProps.includes(ctrl.key))
+    controls: (includes
+      ? state.controls.filter((ctrl) => includes.includes(ctrl.key))
       : state.controls
     ).map((control) => ({
       ...control,
