@@ -1,0 +1,48 @@
+```jsx noEditor
+import { usePropsEditor, PropsEditor } from 'react-showroom/client';
+import { PencilIcon } from '@heroicons/react/solid';
+
+const childrenOptions = [
+  {
+    label: 'Text only',
+    value: 'Button',
+  },
+  {
+    label: 'Text with icon',
+    value: (
+      <>
+        <PencilIcon width={20} height={20} />
+        Edit
+      </>
+    ),
+  },
+];
+
+const Demo = () => {
+  const propsEditor = usePropsEditor({
+    initialProps: {
+      children: 'Button',
+    },
+    controls: {
+      children: {
+        type: 'select',
+        options: childrenOptions,
+      },
+      className: {
+        type: 'textinput',
+      },
+      disabled: 'checkbox',
+      style: 'object',
+    },
+  });
+
+  return (
+    <div>
+      <Button {...propsEditor.props} />
+      <PropsEditor editor={propsEditor} />
+    </div>
+  );
+};
+
+<Demo />;
+```

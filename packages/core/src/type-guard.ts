@@ -10,6 +10,9 @@ export const isNumber = (value: any): value is number =>
 export const isString = (value: any): value is string =>
   typeof value === 'string';
 
+export const isBoolean = (value: any): value is boolean =>
+  typeof value === 'boolean';
+
 export const isFunction = (value: any): value is Function =>
   typeof value === 'function';
 

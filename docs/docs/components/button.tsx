@@ -11,12 +11,17 @@ export const Button = ({
   variant,
   fullWidth,
   rounded,
+  style = {},
   ...props
 }: ButtonProps) => {
   return (
     <button
       {...props}
       style={{
+        ...style,
+        display: 'inline-flex',
+        gap: 8,
+        alignItems: 'center',
         backgroundColor: variant === 'primary' ? 'red' : 'blue',
         color: '#efefef',
         padding: '8px 16px',

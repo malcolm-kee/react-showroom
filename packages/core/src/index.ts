@@ -18,6 +18,7 @@ export { removeTrailingSlash } from './remove-trailing-slash';
 export { safeEval } from './safe-eval';
 export type { Ssr } from './ssr-types';
 export {
+  isBoolean,
   isDefined,
   isFunction,
   isNil,
