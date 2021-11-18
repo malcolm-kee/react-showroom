@@ -6,6 +6,7 @@ import {
   styled,
   Textarea,
   TextInput,
+  NumberInput,
 } from '@showroomjs/ui';
 import * as React from 'react';
 import stringifyObject from 'stringify-object';
@@ -83,7 +84,7 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
           );
         }
 
-        if (ctrl.type === 'textinput') {
+        if (ctrl.type === 'text') {
           return (
             <React.Fragment key={ctrl.key}>
               <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
@@ -101,6 +102,24 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
           );
         }
 
+        if (ctrl.type === 'number') {
+          return (
+            <React.Fragment key={ctrl.key}>
+              <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
+              <ControlWrapper>
+                <NumberInput
+                  id={ctrl.key}
+                  value={ctrl.value || ''}
+                  onValue={ctrl.setValue}
+                  css={{
+                    maxWidth: '20rem',
+                  }}
+                />
+              </ControlWrapper>
+            </React.Fragment>
+          );
+        }
+
         if (ctrl.type === 'object') {
           return (
             <React.Fragment key={ctrl.key}>
@@ -110,6 +129,23 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
                   id={ctrl.key}
                   value={ctrl.value || ''}
                   onValue={ctrl.setValue}
+                />
+              </ControlWrapper>
+            </React.Fragment>
+          );
+        }
+
+        if (ctrl.type === 'file') {
+          return (
+            <React.Fragment key={ctrl.key}>
+              <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
+              <ControlWrapper>
+                <input
+                  type="file"
+                  id={ctrl.key}
+                  onChange={(ev) =>
+                    ctrl.setValue(ev.target.files && ev.target.files[0])
+                  }
                 />
               </ControlWrapper>
             </React.Fragment>

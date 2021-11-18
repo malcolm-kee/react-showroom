@@ -22,7 +22,7 @@ export const ComponentDocArticle = (props: {
       css={
         hasHeadings
           ? {
-              '@lg': {
+              '@xl': {
                 display: 'flex',
                 flexDirection: 'row-reverse',
               },
@@ -35,7 +35,7 @@ export const ComponentDocArticle = (props: {
         css={
           hasHeadings
             ? {
-                '@lg': {
+                '@xl': {
                   width: '75%',
                 },
               }

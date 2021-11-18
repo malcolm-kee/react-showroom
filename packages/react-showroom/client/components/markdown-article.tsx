@@ -23,7 +23,7 @@ export const MarkdownArticle = (props: {
       css={
         hasHeadings
           ? {
-              '@lg': {
+              '@xl': {
                 display: 'flex',
                 flexDirection: 'row-reverse',
               },
@@ -37,7 +37,7 @@ export const MarkdownArticle = (props: {
         css={
           hasHeadings
             ? {
-                '@lg': {
+                '@xl': {
                   width: '75%',
                 },
               }

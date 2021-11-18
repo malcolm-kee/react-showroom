@@ -20,7 +20,7 @@
   "devDependencies": {
     "html-webpack-tags-plugin": "^3.0.2",
     "typescript": "^4.4.4",
-    "webpack": "^5.63.0"
+    "webpack": "^5.64.1"
   },
   "peerDependencies": {
     "webpack": "^5.0.0"
@@ -29,7 +29,7 @@
     "acorn": "^8.5.0",
     "acorn-walk": "^8.2.0",
     "domutils": "^2.8.0",
-    "htmlparser2": "^7.1.2",
+    "htmlparser2": "^7.2.0",
     "prism-react-renderer": "^1.2.1",
     "tslib": "^2.3.1"
   },
