@@ -12,7 +12,7 @@ import {
 import * as React from 'react';
 import { audienceDefault } from '../lib/config';
 import { isExternalLink } from '../lib/is-external-link';
-import { NavLink, useHistory } from '../lib/routing';
+import { NavLink, useNavigate } from '../lib/routing';
 import { colorTheme, THEME } from '../theme';
 import { AudienceDropdownGroup, AudienceToggle } from './audience-toggle';
 import { Div } from './base';
@@ -107,7 +107,16 @@ const MobileSidebar = (props: { sections: Array<ReactShowroomSection> }) => (
           <MenuIcon width={24} height={24} />
         </IconButton>
       </DropdownMenu.Trigger>
-      <DropdownMenu.Content className={colorTheme}>
+      <DropdownMenu.Content
+        className={colorTheme}
+        css={{
+          maxHeight:
+            'calc(100vh - env(safe-area-inset-bottom, 24px) - env(safe-area-inset-top, 24px) - 48px - 2rem)',
+          maxWidth:
+            'calc(100vw - env(safe-area-inset-right, 24px) - env(safe-area-inset-left, 24px) - 2rem)',
+          overflowY: 'auto',
+        }}
+      >
         {props.sections.map((section, i) => (
           <DropdownSection section={section} key={i} index={i} />
         ))}
@@ -124,19 +133,19 @@ const DropdownSection = (props: {
 }) => {
   const section = props.section;
 
-  const history = useHistory();
+  const { navigate } = useNavigate();
 
   switch (section.type) {
     case 'component':
       return section.hideFromSidebar ? null : (
-        <DropdownMenu.Item onSelect={() => history.push(`/${section.slug}`)}>
+        <DropdownMenu.Item onSelect={() => navigate(`/${section.slug}`)}>
           {section.title}
         </DropdownMenu.Item>
       );
 
     case 'markdown':
       return section.hideFromSidebar ? null : (
-        <DropdownMenu.Item onSelect={() => history.push(`/${section.slug}`)}>
+        <DropdownMenu.Item onSelect={() => navigate(`/${section.slug}`)}>
           {section.formatLabel(
             section.frontmatter.title || section.fallbackTitle
           )}
@@ -146,7 +155,7 @@ const DropdownSection = (props: {
     case 'link':
       return (
         <DropdownMenu.Item asChild>
-          <DropdownLink href={section.href}>
+          <DropdownLink href={section.href} css={{ gap: '$2' }}>
             {section.title}
             {isExternalLink(section.href) && (
               <ExternalLinkIcon className={icons()} width={20} height={20} />

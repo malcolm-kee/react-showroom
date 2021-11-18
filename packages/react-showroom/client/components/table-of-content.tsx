@@ -15,7 +15,7 @@ export const TableOfContent = ({
   return (
     <Div
       css={{
-        '@lg': {
+        '@xl': {
           paddingLeft: '$6',
           width: '25%',
           position: 'sticky',
@@ -32,7 +32,11 @@ export const TableOfContent = ({
           py: '$3',
           borderRadius: '$md',
           overflow: 'hidden',
-          '@lg': {
+          marginX: '-8px',
+          '@sm': {
+            marginX: 0,
+          },
+          '@xl': {
             display: 'none',
           },
         }}
@@ -59,11 +63,19 @@ export const TableOfContent = ({
         <Collapsible.Content
           css={{
             backgroundColor: '$gray-50',
-            px: '$2',
             paddingBottom: '$1',
           }}
         >
-          <List>
+          <List
+            css={{
+              maxHeight: 300,
+              '@md': {
+                maxHeight: 500,
+              },
+              px: '$2',
+              overflowY: 'auto',
+            }}
+          >
             {headings.map((heading, index) => (
               <Item
                 css={{
@@ -87,7 +99,7 @@ export const TableOfContent = ({
       <Div
         css={{
           display: 'none',
-          '@lg': {
+          '@xl': {
             display: 'block',
           },
           position: 'sticky',

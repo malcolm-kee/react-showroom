@@ -50,5 +50,15 @@ However, you can add those manually by passing `controls` options to `usePropsEd
 
 `controls` options is a key-value object where the key is the prop, and the value is the configuration of the control.
 
-1. Currently, we support 4 types of control, `select`, `textinput`, `checkbox`, and `object`. Except for `select`, you can provide the config as string (`textinput`) or as an object (`{ type: 'textinput' }`).
+1. Currently, we support the following control types:
+
+   - `text`,
+   - `checkbox`,
+   - `number`,
+   - `select`,
+   - `object`, and
+   - `file`.
+
+   Except for `select`, you can provide the config as string (e.g. `'number'`) or as an object (e.g. `{ type: 'number' }`).
+
 1. For `select`, you must provide the `options`, which is an Array of `{ label: string; value: any }`. The value can be anything, including JSX.

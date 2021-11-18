@@ -1,5 +1,4 @@
 export {
-  BrowserRouter,
   HashRouter,
   matchPath,
   MemoryRouter,
@@ -12,16 +11,67 @@ export {
   useRouteMatch,
 } from '@showroomjs/bundles/routing';
 import {
+  BrowserRouter as OriBrowserRouter,
+  BrowserRouterProps,
   LinkProps as OriLinkProps,
   matchPath,
   useHistory,
   useLocation,
 } from '@showroomjs/bundles/routing';
-import { callAll } from '@showroomjs/core';
+import { callAll, noop } from '@showroomjs/core';
+import { createNameContext } from '@showroomjs/ui';
 import cx from 'classnames';
 import * as React from 'react';
 import { loadCodeAtPath } from '../route-mapping';
 import { basename } from './config';
+
+const RouteIsLoadingContext = createNameContext<
+  [boolean, React.Dispatch<React.SetStateAction<boolean>>]
+>('RouteIsLoadingContext', [false, noop]);
+
+export const useIsLoadingRoute = () =>
+  React.useContext(RouteIsLoadingContext)[0];
+
+export const useNavigate = () => {
+  const [, setIsPending] = React.useContext(RouteIsLoadingContext);
+  const [isPending, setLocalIsPending] = React.useState(false);
+  const isMountedRef = React.useRef(false);
+
+  React.useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  const history = useHistory();
+
+  return {
+    navigate: (to: string, options: { replace?: boolean } = {}) => {
+      setIsPending(true);
+      setLocalIsPending(true);
+      loadCodeAtPath(to, () => {
+        setIsPending(false);
+        const method = options.replace ? history.replace : history.push;
+        method(to);
+        if (isMountedRef.current) {
+          setLocalIsPending(false);
+        }
+      });
+    },
+    isPending,
+  };
+};
+
+export const BrowserRouter = (props: BrowserRouterProps) => {
+  const loadingRouteState = React.useState(false);
+
+  return (
+    <RouteIsLoadingContext.Provider value={loadingRouteState}>
+      <OriBrowserRouter {...props} />
+    </RouteIsLoadingContext.Provider>
+  );
+};
 
 export interface LinkProps extends Omit<OriLinkProps, 'to'> {
   to: string;
@@ -34,8 +84,7 @@ export interface LinkProps extends Omit<OriLinkProps, 'to'> {
  */
 export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
   function Link({ to, replace, pendingClassName, ...props }, ref) {
-    const history = useHistory();
-    const [isPending, setIsPending] = React.useState(false);
+    const { navigate, isPending } = useNavigate();
 
     return (
       <a
@@ -43,11 +92,8 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
         className={cx(props.className, isPending && pendingClassName)}
         onClick={callAll(props.onClick, (ev) => {
           ev.preventDefault();
-          setIsPending(true);
-          loadCodeAtPath(to, () => {
-            setIsPending(false);
-            const method = replace ? history.replace : history.push;
-            method(to);
+          navigate(to, {
+            replace,
           });
         })}
         onMouseEnter={callAll(props.onMouseEnter, () => loadCodeAtPath(to))}

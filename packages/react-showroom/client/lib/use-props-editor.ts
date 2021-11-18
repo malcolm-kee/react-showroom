@@ -1,14 +1,27 @@
-import { isBoolean, isDefined, isNil, isString } from '@showroomjs/core';
-import { useId } from '@showroomjs/ui';
+import {
+  isBoolean,
+  isDefined,
+  isNil,
+  isNumber,
+  isString,
+} from '@showroomjs/core';
+import { NumberInput, useId } from '@showroomjs/ui';
 import * as React from 'react';
-import { ComponentDoc } from 'react-docgen-typescript';
+import { ComponentDoc, PropItem } from 'react-docgen-typescript';
+import { findBestMatch } from 'string-similarity';
 import { useComponentMeta } from './component-props-context';
 
 export interface UsePropsEditorOptions {
   initialProps?: Record<string, any>;
   controls?: Record<
     string,
-    PropsEditorControlDef | 'checkbox' | 'textinput' | 'object' | undefined
+    | PropsEditorControlDef
+    | 'checkbox'
+    | 'text'
+    | 'object'
+    | 'file'
+    | 'number'
+    | undefined
   >;
   includes?: Array<string>;
 }
@@ -28,6 +41,16 @@ export const usePropsEditor = ({
     { componentMeta, initialProps, controls },
     initState
   );
+
+  const props = state.values;
+
+  Object.entries(state.values).forEach(([prop, value]) => {
+    const control = state.controls.find((ctrl) => ctrl.key === prop);
+
+    if (control && control.type === 'number') {
+      props[prop] = NumberInput.getNumberValue(value);
+    }
+  });
 
   return {
     props: state.values,
@@ -51,7 +74,13 @@ export const usePropsEditor = ({
 const normalizeControls = (
   provided: Record<
     string,
-    PropsEditorControlDef | 'checkbox' | 'textinput' | 'object' | undefined
+    | PropsEditorControlDef
+    | 'checkbox'
+    | 'text'
+    | 'object'
+    | 'file'
+    | 'number'
+    | undefined
   >
 ): Record<string, PropsEditorControlDef | undefined> => {
   const result: Record<string, PropsEditorControlDef | undefined> = {};
@@ -89,10 +118,16 @@ export type PropsEditorControlDef =
       options: Array<SelectOption>;
     }
   | {
-      type: 'textinput';
+      type: 'text';
+    }
+  | {
+      type: 'number';
     }
   | {
       type: 'object';
+    }
+  | {
+      type: 'file';
     };
 
 export type PropsEditorControl = EditorControlBase & PropsEditorControlDef;
@@ -153,70 +188,83 @@ const initState = ({
 
     const override = controlOverrides[prop.name];
 
-    if (
-      prop.type.name === 'string' ||
-      (override && override.type === 'textinput')
-    ) {
-      controls.push({
-        label: prop.name,
-        type: 'textinput',
-        key: prop.name,
-      });
-
-      if (isString(initialValue)) {
-        values[prop.name] = initialValue;
-      }
-
-      return;
-    }
-
-    if (
-      prop.type.raw === 'boolean' ||
-      (override && override.type === 'checkbox')
-    ) {
-      controls.push({
-        label: prop.name,
-        type: 'checkbox',
-        key: prop.name,
-      });
-
-      if (isBoolean(initialValue)) {
-        values[prop.name] = initialValue;
-      }
-
-      return;
-    }
-
-    if (override && override.type === 'select') {
-      if (override.options.length > 0) {
-        const defaultOptions: Array<SelectOption> = prop.required
-          ? []
-          : [
-              {
-                value: undefined,
-                label: '(none)',
-              },
-            ];
-
+    const addControl = (config: PropsEditorControlDef) => {
+      if (config.type !== 'select') {
         controls.push({
-          type: 'select',
+          ...config,
           label: prop.name,
           key: prop.name,
-          options: defaultOptions.concat(override.options),
         });
-
-        if (
-          isDefined(initialValue) &&
-          override.options.some((opt) => opt.value === initialValue)
-        ) {
-          values[prop.name] = initialValue;
-        }
-
-        if (prop.required && !isDefined(values[prop.name])) {
-          values[prop.name] = override.options[0].value;
-        }
       }
 
+      if (config.type === 'text' && isString(initialValue)) {
+        values[prop.name] = initialValue;
+      }
+
+      if (config.type === 'number' && isNumber(initialValue)) {
+        values[prop.name] = initialValue;
+      }
+
+      if (config.type === 'checkbox' && isBoolean(initialValue)) {
+        values[prop.name] = initialValue;
+      }
+
+      if (config.type === 'select') {
+        if (config.options.length > 0) {
+          const defaultOptions: Array<SelectOption> = prop.required
+            ? []
+            : [
+                {
+                  value: undefined,
+                  label: '(none)',
+                },
+              ];
+
+          controls.push({
+            type: 'select',
+            label: prop.name,
+            key: prop.name,
+            options: defaultOptions.concat(config.options),
+          });
+
+          if (
+            isDefined(initialValue) &&
+            config.options.some((opt) => opt.value === initialValue)
+          ) {
+            values[prop.name] = initialValue;
+          }
+
+          if (prop.required && !isDefined(values[prop.name])) {
+            values[prop.name] = config.options[0].value;
+          }
+        }
+      }
+    };
+
+    if (override) {
+      if (isValidControlConfig(override)) {
+        addControl(override);
+        return;
+      }
+    }
+
+    if (isType(prop, 'string')) {
+      addControl({ type: 'text' });
+      return;
+    }
+
+    if (isType(prop, 'number')) {
+      addControl({ type: 'number' });
+      return;
+    }
+
+    if (isType(prop, 'boolean')) {
+      addControl({ type: 'checkbox' });
+      return;
+    }
+
+    if (isType(prop, 'File')) {
+      addControl({ type: 'file' });
       return;
     }
 
@@ -232,39 +280,15 @@ const initState = ({
         : [];
 
       if (parseOptions.length > 0) {
-        const defaultOptions: Array<SelectOption> = prop.required
-          ? []
-          : [
-              {
-                value: undefined,
-                label: '(none)',
-              },
-            ];
+        const options = parseOptions.map((value) => ({
+          value,
+          label: String(value),
+        }));
 
-        const options = defaultOptions.concat(
-          parseOptions.map((value) => ({
-            value,
-            label: String(value),
-          }))
-        );
-
-        controls.push({
+        addControl({
           type: 'select',
-          label: prop.name,
-          key: prop.name,
           options,
         });
-
-        if (
-          isDefined(initialValue) &&
-          options.some((opt) => opt.value === initialValue)
-        ) {
-          values[prop.name] = initialValue;
-        }
-
-        if (prop.required && !isDefined(values[prop.name])) {
-          values[prop.name] = parseOptions[0];
-        }
       }
       return;
     }
@@ -276,11 +300,13 @@ const initState = ({
 
   additionalControls.forEach(([propName, control]) => {
     if (isDefined(control)) {
-      controls.push({
-        ...control,
-        label: propName,
-        key: propName,
-      });
+      if (isValidControlConfig(control)) {
+        controls.push({
+          ...control,
+          label: propName,
+          key: propName,
+        });
+      }
     }
   });
 
@@ -288,6 +314,55 @@ const initState = ({
     controls,
     values,
   };
+};
+
+const isType = (prop: PropItem, type: string) =>
+  prop.type.name === type ||
+  (prop.type.name === 'enum' && prop.type.raw === type);
+
+const VALID_TYPES: Array<PropsEditorControlDef['type']> = [
+  'checkbox',
+  'text',
+  'object',
+  'file',
+  'number',
+  'select',
+];
+
+const isValidControlConfig = (controlConfig: PropsEditorControlDef) => {
+  if (
+    ['checkbox', 'text', 'object', 'number', 'file'].includes(
+      controlConfig.type
+    )
+  ) {
+    return true;
+  }
+
+  if (controlConfig.type === 'select') {
+    if (
+      Array.isArray(controlConfig.options) &&
+      controlConfig.options.length > 0 &&
+      controlConfig.options.every((option) => isString(option.label))
+    ) {
+      return true;
+    } else {
+      console.warn(`options must be Array of label/value if type is 'select'.`);
+      return false;
+    }
+  }
+
+  const bestMatch =
+    controlConfig.type && findBestMatch(controlConfig.type, VALID_TYPES);
+
+  let warningMessage = `'${controlConfig.type}' is not a supported type for control.`;
+
+  if (bestMatch.bestMatch && bestMatch.bestMatch.rating > 0.4) {
+    warningMessage += `\nDo you mean to use '${bestMatch.bestMatch.target}'?`;
+  }
+
+  console.warn(warningMessage);
+
+  return false;
 };
 
 const parseSafely = (raw: string): boolean | string | number | undefined => {

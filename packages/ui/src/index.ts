@@ -14,6 +14,7 @@ export { DropdownMenu } from './components/dropdown-menu';
 export * from './components/icon-button';
 export * from './components/icons';
 export { NotificationProvider } from './components/notification-provider';
+export { NumberInput } from './components/number-input';
 export { Popover } from './components/popover';
 export * from './components/search-dialog';
 export { Select } from './components/select';

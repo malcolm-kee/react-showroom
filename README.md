@@ -32,7 +32,9 @@ Document React components by declaring props definition and writing markdown.
 
 ## Inspired by
 
-This project is largely inspired by [React Styleguidist](https://react-styleguidist.js.org/). To be honest this project is started as my plan to rewrite it to understand how it works.
+This project is largely inspired by [React Styleguidist](https://react-styleguidist.js.org/). To be honest this project was started as my plan to rewrite it to understand how it works.
+
+The standalone editor view is inspired by [Playroom](https://github.com/seek-oss/playroom).
 
 ## Philosophy
 
