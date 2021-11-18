@@ -1,5 +1,20 @@
 # react-showroom
 
+## 1.4.0
+
+### Minor Changes
+
+- 6244c1d: Support number and file controls in playground
+
+### Patch Changes
+
+- 6244c1d: Bump dependencies
+- Updated dependencies [6244c1d]
+- Updated dependencies [6244c1d]
+  - @showroomjs/bundles@1.1.1
+  - @showroomjs/core@1.3.1
+  - @showroomjs/ui@1.2.0
+
 ## 1.3.0
 
 ### Minor Changes

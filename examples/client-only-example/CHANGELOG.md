@@ -1,5 +1,13 @@
 # client-only-example
 
+## 1.0.23
+
+### Patch Changes
+
+- Updated dependencies [6244c1d]
+- Updated dependencies [6244c1d]
+  - react-showroom@1.4.0
+
 ## 1.0.22
 
 ### Patch Changes

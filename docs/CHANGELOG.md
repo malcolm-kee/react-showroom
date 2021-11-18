@@ -1,5 +1,13 @@
 # react-showroom-docs
 
+## 1.0.4
+
+### Patch Changes
+
+- Updated dependencies [6244c1d]
+- Updated dependencies [6244c1d]
+  - react-showroom@1.4.0
+
 ## 1.0.3
 
 ### Patch Changes
