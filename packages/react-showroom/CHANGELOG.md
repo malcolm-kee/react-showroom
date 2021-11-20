@@ -1,5 +1,20 @@
 # react-showroom
 
+## 1.5.0
+
+### Minor Changes
+
+- 0bdcacc: Support specifying initialHeight and height for iframe
+- 88da380: Improve props control - number and file
+
+### Patch Changes
+
+- 7e0f43e: Fix enum with non primitive type not handled properly
+- Updated dependencies [0bdcacc]
+- Updated dependencies [88da380]
+  - @showroomjs/bundles@1.2.0
+  - @showroomjs/ui@1.3.0
+
 ## 1.4.0
 
 ### Minor Changes

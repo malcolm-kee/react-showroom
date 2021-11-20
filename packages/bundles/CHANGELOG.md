@@ -1,5 +1,11 @@
 # @showroomjs/bundles
 
+## 1.2.0
+
+### Minor Changes
+
+- 0bdcacc: Support specifying initialHeight and height for iframe
+
 ## 1.1.1
 
 ### Patch Changes

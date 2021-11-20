@@ -1,5 +1,16 @@
 # @showroomjs/ui
 
+## 1.3.0
+
+### Minor Changes
+
+- 88da380: Improve props control - number and file
+
+### Patch Changes
+
+- Updated dependencies [0bdcacc]
+  - @showroomjs/bundles@1.2.0
+
 ## 1.2.0
 
 ### Minor Changes
