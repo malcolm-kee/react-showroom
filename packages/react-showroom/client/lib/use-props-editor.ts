@@ -4,6 +4,7 @@ import {
   isNil,
   isNumber,
   isString,
+  createSymbol,
 } from '@showroomjs/core';
 import { NumberInput, useId } from '@showroomjs/ui';
 import * as React from 'react';
@@ -11,20 +12,20 @@ import { ComponentDoc, PropItem } from 'react-docgen-typescript';
 import { findBestMatch } from 'string-similarity';
 import { useComponentMeta } from './component-props-context';
 
+export type ControlType = 'checkbox' | 'text' | 'object' | 'file' | 'number';
+
+export const NonLiteralValue = createSymbol('NonLiteral');
+
 export interface UsePropsEditorOptions {
   initialProps?: Record<string, any>;
-  controls?: Record<
-    string,
-    | PropsEditorControlDef
-    | 'checkbox'
-    | 'text'
-    | 'object'
-    | 'file'
-    | 'number'
-    | undefined
-  >;
+  controls?: Record<string, PropsEditorControlDef | ControlType | undefined>;
   includes?: Array<string>;
 }
+
+export type PropsEditorControlData = PropsEditorControl & {
+  value: any;
+  setValue: (val: any) => void;
+};
 
 export const usePropsEditor = ({
   initialProps = {},
@@ -57,31 +58,24 @@ export const usePropsEditor = ({
     controls: (includes
       ? state.controls.filter((ctrl) => includes.includes(ctrl.key))
       : state.controls
-    ).map((control) => ({
-      ...control,
-      key: `${id}${control.key}`,
-      value: state.values[control.label],
-      setValue: (value: any) =>
-        dispatch({
-          type: 'setValue',
-          prop: control.label,
-          value,
-        }),
-    })),
+    ).map(
+      (control): PropsEditorControlData => ({
+        ...control,
+        key: `${id}${control.key}`,
+        value: state.values[control.label],
+        setValue: (value: any) =>
+          dispatch({
+            type: 'setValue',
+            prop: control.label,
+            value,
+          }),
+      })
+    ),
   };
 };
 
 const normalizeControls = (
-  provided: Record<
-    string,
-    | PropsEditorControlDef
-    | 'checkbox'
-    | 'text'
-    | 'object'
-    | 'file'
-    | 'number'
-    | undefined
-  >
+  provided: Record<string, PropsEditorControlDef | ControlType | undefined>
 ): Record<string, PropsEditorControlDef | undefined> => {
   const result: Record<string, PropsEditorControlDef | undefined> = {};
 
@@ -92,6 +86,17 @@ const normalizeControls = (
       result[prop] = {
         type: config,
       };
+    } else if (config && config.type === 'select') {
+      result[prop] = {
+        ...config,
+        options: Array.isArray(config.options)
+          ? config.options.map(({ type = 'literal', value, label }) => ({
+              type,
+              value,
+              label,
+            }))
+          : config.options,
+      };
     } else {
       result[prop] = config;
     }
@@ -99,9 +104,10 @@ const normalizeControls = (
 
   return result;
 };
-interface SelectOption {
+export interface SelectOption {
   label: string;
   value: any;
+  type: 'literal' | ControlType;
 }
 
 export interface EditorControlBase {
@@ -211,20 +217,38 @@ const initState = ({
 
       if (config.type === 'select') {
         if (config.options.length > 0) {
-          const defaultOptions: Array<SelectOption> = prop.required
-            ? []
-            : [
-                {
-                  value: undefined,
-                  label: '(none)',
-                },
-              ];
+          const optionsWithType = config.options.map(
+            ({ type = 'literal', value, label }) => ({
+              value,
+              label,
+              type,
+            })
+          );
+
+          const nullOptionIndex = optionsWithType.findIndex(
+            (opt) => opt.value === null
+          );
+
+          const defaultOptions: Array<SelectOption> =
+            prop.required && nullOptionIndex === -1
+              ? []
+              : [
+                  {
+                    value: nullOptionIndex !== -1 ? null : undefined,
+                    label: '(none)',
+                    type: 'literal',
+                  },
+                ];
 
           controls.push({
             type: 'select',
             label: prop.name,
             key: prop.name,
-            options: defaultOptions.concat(config.options),
+            options: defaultOptions.concat(
+              nullOptionIndex === -1
+                ? optionsWithType
+                : optionsWithType.filter((opt) => opt.value !== null)
+            ),
           });
 
           if (
@@ -276,13 +300,33 @@ const initState = ({
       const optionValues = prop.type.value;
 
       const parseOptions = Array.isArray(optionValues)
-        ? optionValues.map((opt) => parseSafely(opt.value)).filter(isDefined)
+        ? optionValues
+            .map((opt): Omit<SelectOption, 'label'> | undefined => {
+              const literalValue = parseSafely(opt.value);
+
+              if (isDefined(literalValue)) {
+                return {
+                  value: literalValue,
+                  type: 'literal',
+                };
+              }
+
+              const controlType = controlByTypeMap[opt.value];
+
+              if (controlType) {
+                return {
+                  value: NonLiteralValue,
+                  type: controlType,
+                };
+              }
+            })
+            .filter(isDefined)
         : [];
 
       if (parseOptions.length > 0) {
-        const options = parseOptions.map((value) => ({
-          value,
-          label: String(value),
+        const options = parseOptions.map((opt) => ({
+          ...opt,
+          label: opt.type === 'literal' ? String(opt.value) : `(${opt.type})`,
         }));
 
         addControl({
@@ -328,6 +372,14 @@ const VALID_TYPES: Array<PropsEditorControlDef['type']> = [
   'number',
   'select',
 ];
+
+const controlByTypeMap: Record<string, ControlType | undefined> = {
+  string: 'text',
+  number: 'number',
+  boolean: 'checkbox',
+  object: 'object',
+  File: 'file',
+};
 
 const isValidControlConfig = (controlConfig: PropsEditorControlDef) => {
   if (

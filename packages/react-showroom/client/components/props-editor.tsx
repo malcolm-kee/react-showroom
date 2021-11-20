@@ -2,15 +2,19 @@ import { isDefined, safeEval } from '@showroomjs/core';
 import {
   Button,
   Checkbox,
+  NumberInput,
   Select,
   styled,
   Textarea,
   TextInput,
-  NumberInput,
 } from '@showroomjs/ui';
 import * as React from 'react';
 import stringifyObject from 'stringify-object';
-import type { usePropsEditor } from '../lib/use-props-editor';
+import {
+  PropsEditorControlData,
+  SelectOption,
+  usePropsEditor,
+} from '../lib/use-props-editor';
 
 export interface PropsEditorProps
   extends React.ComponentPropsWithoutRef<'div'> {
@@ -37,51 +41,7 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
         }
 
         if (ctrl.type === 'select') {
-          return (
-            <React.Fragment key={ctrl.key}>
-              <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
-              <ControlWrapper>
-                <Select
-                  id={ctrl.key}
-                  value={
-                    ctrl.options.findIndex((opt) => opt.value === ctrl.value) ||
-                    undefined
-                  }
-                  onValue={(value) => {
-                    const valueIndex = Number(value);
-
-                    ctrl.setValue(ctrl.options[valueIndex].value);
-                  }}
-                  css={{
-                    maxWidth: '36rem',
-                    '@lg': {
-                      display: 'none',
-                    },
-                  }}
-                >
-                  {ctrl.options.map((opt, i) => (
-                    <option value={i} key={i}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </Select>
-                <ToggleGroup>
-                  {ctrl.options.map((opt, i) => {
-                    const selected = ctrl.value === opt.value;
-                    return (
-                      <SelectButton
-                        onClick={() => ctrl.setValue(opt.value)}
-                        selected={selected}
-                        key={i}
-                      >
-                        {opt.label}
-                      </SelectButton>
-                    );
-                  })}
-                </ToggleGroup>
-              </ControlWrapper>
-            </React.Fragment>
-          );
+          return <PropsSelectControl control={ctrl} key={ctrl.key} />;
         }
 
         if (ctrl.type === 'text') {
@@ -158,6 +118,138 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
   );
 };
 
+const PropsSelectControl = (props: {
+  control: PropsEditorControlData & { type: 'select' };
+}) => {
+  const ctrl = props.control;
+
+  const [type, setType] = React.useState<SelectOption['type']>(() =>
+    ctrl.options.some((opt) => opt.type === 'literal')
+      ? 'literal'
+      : ctrl.options[0]?.type
+  );
+
+  const selectedOptionIndex =
+    type === 'literal'
+      ? ctrl.options.findIndex((opt) => opt.value === ctrl.value)
+      : ctrl.options.findIndex((opt) => opt.type === type);
+
+  const handleSelectOption = (option: SelectOption) => {
+    if (option.type === 'literal') {
+      setType('literal');
+      ctrl.setValue(option.value);
+    } else {
+      setType(option.type);
+      ctrl.setValue(undefined);
+    }
+  };
+
+  return (
+    <React.Fragment>
+      <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
+      <ControlWrapper>
+        <Select
+          id={ctrl.key}
+          value={selectedOptionIndex}
+          onValue={(value) => {
+            const valueIndex = Number(value);
+
+            handleSelectOption(ctrl.options[valueIndex]);
+          }}
+          css={{
+            maxWidth: '36rem',
+            '@lg': {
+              display: 'none',
+            },
+          }}
+        >
+          {ctrl.options.map((opt, i) => (
+            <option value={i} key={i}>
+              {opt.label}
+            </option>
+          ))}
+        </Select>
+        <ToggleGroup>
+          {ctrl.options.map((opt, i) => {
+            const selected =
+              opt.type === type &&
+              (opt.type !== 'literal' || ctrl.value === opt.value);
+            return (
+              <SelectButton
+                onClick={() => handleSelectOption(opt)}
+                selected={selected}
+                key={i}
+              >
+                {opt.label}
+              </SelectButton>
+            );
+          })}
+        </ToggleGroup>
+        {type !== 'literal' && (
+          <SelectSubControlDiv>
+            {(function getControl() {
+              switch (type) {
+                case 'checkbox':
+                  return (
+                    <Checkbox
+                      checked={
+                        isDefined(ctrl.value) ? ctrl.value : 'indeterminate'
+                      }
+                      onCheckedChange={ctrl.setValue}
+                    />
+                  );
+
+                case 'file':
+                  return (
+                    <input
+                      type="file"
+                      onChange={(ev) =>
+                        ctrl.setValue(ev.target.files && ev.target.files[0])
+                      }
+                    />
+                  );
+
+                case 'text':
+                  return (
+                    <TextInput
+                      value={ctrl.value || ''}
+                      onValue={ctrl.setValue}
+                      css={{
+                        maxWidth: '36rem',
+                      }}
+                    />
+                  );
+
+                case 'object':
+                  return (
+                    <ObjectValueEditor
+                      value={ctrl.value || ''}
+                      onValue={ctrl.setValue}
+                    />
+                  );
+
+                case 'number':
+                  return (
+                    <NumberInput
+                      value={ctrl.value || ''}
+                      onValue={ctrl.setValue}
+                      css={{
+                        maxWidth: '20rem',
+                      }}
+                    />
+                  );
+
+                default:
+                  return null;
+              }
+            })()}
+          </SelectSubControlDiv>
+        )}
+      </ControlWrapper>
+    </React.Fragment>
+  );
+};
+
 const Root = styled('div', {
   display: 'grid',
   gridTemplateColumns: 'max-content 1fr',
@@ -184,6 +276,10 @@ const ToggleGroup = styled('div', {
     display: 'flex',
     gap: '$2',
   },
+});
+
+const SelectSubControlDiv = styled('div', {
+  marginTop: '$1',
 });
 
 const emptyValue = `{

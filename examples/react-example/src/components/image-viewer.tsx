@@ -2,7 +2,7 @@ import * as React from 'react';
 
 export interface ImageViewerProps
   extends React.ComponentPropsWithoutRef<'img'> {
-  file?: File;
+  file?: File | null;
 }
 
 export const ImageViewer = React.forwardRef<HTMLImageElement, ImageViewerProps>(

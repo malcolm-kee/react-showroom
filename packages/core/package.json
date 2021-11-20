@@ -26,7 +26,7 @@
     "webpack": "^5.0.0"
   },
   "dependencies": {
-    "acorn": "^8.5.0",
+    "acorn": "^8.6.0",
     "acorn-walk": "^8.2.0",
     "domutils": "^2.8.0",
     "htmlparser2": "^7.2.0",

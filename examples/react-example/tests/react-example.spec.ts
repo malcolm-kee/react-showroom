@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import path from 'path';
 
 test.describe('react example', () => {
   test('visit home page', async ({ page }) => {
@@ -94,5 +95,16 @@ test.describe('react example', () => {
     await expect(
       page.locator('[data-testid=props-editor-example] button').first()
     ).toHaveClass(/w-full/);
+  });
+
+  test('props editor for complex prop', async ({ page }) => {
+    await page.goto('/core/imageviewer');
+
+    await page.click('button:has-text("(file)")');
+
+    await page.setInputFiles(
+      'input[type="file"]',
+      path.resolve(__dirname, 'amei.jpeg')
+    );
   });
 });

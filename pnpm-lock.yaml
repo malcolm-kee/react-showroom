@@ -14,7 +14,7 @@ importers:
       '@types/fs-extra': ^9.0.13
       '@types/glob': ^7.2.0
       '@types/hast': ^2.3.4
-      '@types/jest': ^27.0.2
+      '@types/jest': ^27.0.3
       '@types/lz-string': ^1.3.34
       '@types/mdast': ^3.0.10
       '@types/react': ^17.0.35
@@ -26,7 +26,7 @@ importers:
       '@types/string-similarity': ^4.0.0
       '@types/stringify-object': 3.3.0
       '@types/temp': ^0.9.1
-      '@types/yargs': ^17.0.6
+      '@types/yargs': ^17.0.7
       concurrently: ^6.4.0
       http-server: ^14.0.0
       jest: ^27.3.1
@@ -49,7 +49,7 @@ importers:
       '@types/fs-extra': 9.0.13
       '@types/glob': 7.2.0
       '@types/hast': 2.3.4
-      '@types/jest': 27.0.2
+      '@types/jest': 27.0.3
       '@types/lz-string': 1.3.34
       '@types/mdast': 3.0.10
       '@types/react': 17.0.35
@@ -61,7 +61,7 @@ importers:
       '@types/string-similarity': 4.0.0
       '@types/stringify-object': 3.3.0
       '@types/temp': 0.9.1
-      '@types/yargs': 17.0.6
+      '@types/yargs': 17.0.7
       concurrently: 6.4.0
       http-server: 14.0.0
       jest: 27.3.1
@@ -70,7 +70,7 @@ importers:
       rimraf: 3.0.2
       rollup: 2.60.0
       tailwindcss: 2.2.19
-      ts-jest: 27.0.7_@types+jest@27.0.2+jest@27.3.1
+      ts-jest: 27.0.7_@types+jest@27.0.3+jest@27.3.1
       type-fest: 2.5.4
       why-is-node-running: 2.2.0
 
@@ -89,7 +89,7 @@ importers:
       postcss-loader: ^6.2.0
       react: ^17.0.2
       react-dom: ^17.0.2
-      react-hook-form: ^7.19.5
+      react-hook-form: ^7.20.2
       react-showroom: workspace:*
       style-loader: ^3.3.1
       tailwindcss: ^2.2.19
@@ -100,7 +100,7 @@ importers:
       esbuild-loader: 2.16.0
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-      react-hook-form: 7.19.5_react@17.0.2
+      react-hook-form: 7.20.2_react@17.0.2
       react-showroom: link:../packages/react-showroom
     devDependencies:
       '@tailwindcss/forms': 0.3.4_tailwindcss@2.2.19
@@ -149,7 +149,7 @@ importers:
       '@heroicons/react': ^1.0.5
       '@tailwindcss/forms': ^0.3.4
       '@testing-library/react': ^12.1.2
-      '@types/jest': ^27.0.2
+      '@types/jest': ^27.0.3
       autoprefixer: ^10.4.0
       babel-loader: ^8.2.3
       classnames: ^2.3.1
@@ -162,7 +162,7 @@ importers:
       postcss-loader: ^6.2.0
       react: ^17.0.2
       react-dom: ^17.0.2
-      react-hook-form: ^7.19.5
+      react-hook-form: ^7.20.2
       react-query: ^3.33.1
       react-showroom: workspace:*
       react-textarea-autosize: ^8.3.3
@@ -180,7 +180,7 @@ importers:
       msw: 0.35.0
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-      react-hook-form: 7.19.5_react@17.0.2
+      react-hook-form: 7.20.2_react@17.0.2
       react-query: 3.33.1_react-dom@17.0.2+react@17.0.2
       react-showroom: link:../../packages/react-showroom
       react-textarea-autosize: 8.3.3_812c4b915b618d5091ca1e8ce4566766
@@ -191,7 +191,7 @@ importers:
       '@babel/preset-react': 7.16.0_@babel+core@7.16.0
       '@babel/preset-typescript': 7.16.0_@babel+core@7.16.0
       '@testing-library/react': 12.1.2_react-dom@17.0.2+react@17.0.2
-      '@types/jest': 27.0.2
+      '@types/jest': 27.0.3
       autoprefixer: 10.4.0_postcss@8.3.11
       babel-loader: 8.2.3_fda98f9ff70e0481a7d2271d8792a29b
       css-loader: 6.5.1_webpack@5.64.1
@@ -246,7 +246,7 @@ importers:
 
   packages/core:
     specifiers:
-      acorn: ^8.5.0
+      acorn: ^8.6.0
       acorn-walk: ^8.2.0
       domutils: ^2.8.0
       html-webpack-tags-plugin: ^3.0.2
@@ -256,7 +256,7 @@ importers:
       typescript: ^4.4.4
       webpack: ^5.64.1
     dependencies:
-      acorn: 8.5.0
+      acorn: 8.6.0
       acorn-walk: 8.2.0
       domutils: 2.8.0
       htmlparser2: 7.2.0
@@ -275,7 +275,7 @@ importers:
       '@babel/preset-react': ^7.16.0
       '@babel/preset-typescript': ^7.16.0
       '@heroicons/react': ^1.0.5
-      '@pmmmwh/react-refresh-webpack-plugin': ^0.5.1
+      '@pmmmwh/react-refresh-webpack-plugin': ^0.5.2
       '@rollup/plugin-virtual': ^2.0.3
       '@rollup/pluginutils': ^4.1.1
       '@showroomjs/bundles': workspace:*
@@ -329,7 +329,7 @@ importers:
       slugify: ^1.6.2
       slugo: ^0.4.0
       snarkdown: ^2.0.0
-      source-map-support: ^0.5.20
+      source-map-support: ^0.5.21
       string-similarity: ^4.0.4
       stringify-object: '3.3'
       style-loader: ^3.3.1
@@ -354,7 +354,7 @@ importers:
       '@babel/preset-react': 7.16.0_@babel+core@7.16.0
       '@babel/preset-typescript': 7.16.0_@babel+core@7.16.0
       '@heroicons/react': 1.0.5_react@17.0.2
-      '@pmmmwh/react-refresh-webpack-plugin': 0.5.1_895f50b82b01259a0380c5d28fe207bc
+      '@pmmmwh/react-refresh-webpack-plugin': 0.5.2_895f50b82b01259a0380c5d28fe207bc
       '@rollup/plugin-virtual': 2.0.3_rollup@2.60.0
       '@rollup/pluginutils': 4.1.1
       '@showroomjs/bundles': link:../bundles
@@ -406,7 +406,7 @@ importers:
       slugify: 1.6.2
       slugo: 0.4.0
       snarkdown: 2.0.0
-      source-map-support: 0.5.20
+      source-map-support: 0.5.21
       string-similarity: 4.0.4
       stringify-object: 3.3.0
       style-loader: 3.3.1_webpack@5.64.1
@@ -2307,12 +2307,12 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@pmmmwh/react-refresh-webpack-plugin/0.5.1_895f50b82b01259a0380c5d28fe207bc:
-    resolution: {integrity: sha512-ccap6o7+y5L8cnvkZ9h8UXCGyy2DqtwCD+/N3Yru6lxMvcdkPKtdx13qd7sAC9s5qZktOmWf9lfUjsGOvSdYhg==}
+  /@pmmmwh/react-refresh-webpack-plugin/0.5.2_895f50b82b01259a0380c5d28fe207bc:
+    resolution: {integrity: sha512-BWOG6opI9+L5HjQIj6znFLwVXkjDS98PKfRDlbPFvinTz4wQ7ZSXxV0lLOfRW12HXcqk4DEzrphjRMJFXuihNg==}
     engines: {node: '>= 10.13'}
     peerDependencies:
       '@types/webpack': 4.x || 5.x
-      react-refresh: ^0.10.0
+      react-refresh: '>=0.10.0 <1.0.0'
       sockjs-client: ^1.4.0
       type-fest: '>=0.17.0 <3.0.0'
       webpack: '>=4.43.0 <6.0.0'
@@ -3218,8 +3218,8 @@ packages:
       '@types/istanbul-lib-report': 3.0.0
     dev: true
 
-  /@types/jest/27.0.2:
-    resolution: {integrity: sha512-4dRxkS/AFX0c5XW6IPMNOydLn2tEhNhJV7DnYK+0bjoJZ+QTmfucBlihX7aoEsh/ocYtkLC73UbnBXBXIxsULA==}
+  /@types/jest/27.0.3:
+    resolution: {integrity: sha512-cmmwv9t7gBYt7hNKH5Spu7Kuu/DotGa+Ff+JGRKZ4db5eh8PnKS4LuebJ3YLUoyOyIHraTGyULn23YtEAm0VSg==}
     dependencies:
       jest-diff: 27.2.0
       pretty-format: 27.2.0
@@ -3476,8 +3476,8 @@ packages:
       '@types/yargs-parser': 20.2.1
     dev: true
 
-  /@types/yargs/17.0.6:
-    resolution: {integrity: sha512-6jzGs5Kb3Rqe98q8CPKPABvzgnueEzGMLd8aT4FD3HrtO8Ju7Efnb8pyUSL22IoQ5WfUH7eMVQ2AwjO5EOIXFQ==}
+  /@types/yargs/17.0.7:
+    resolution: {integrity: sha512-OvLKmpKdea1aWtqHv9bxVVcMoT6syAeK+198dfETIFkAevYRGwqh4H+KFxfjUETZuUuE5sQCAFwdOdoHUdo8eg==}
     dependencies:
       '@types/yargs-parser': 20.2.1
     dev: true
@@ -3611,27 +3611,27 @@ packages:
       acorn-walk: 7.2.0
     dev: true
 
-  /acorn-import-assertions/1.7.6_acorn@8.5.0:
+  /acorn-import-assertions/1.7.6_acorn@8.6.0:
     resolution: {integrity: sha512-FlVvVFA1TX6l3lp8VjDnYYq7R1nyW6x3svAt4nDgrWQ9SBaSh9CnbwgSUTasgfNfOG5HlM1ehugCvM+hjo56LA==}
     peerDependencies:
       acorn: ^8
     dependencies:
-      acorn: 8.5.0
+      acorn: 8.6.0
     dev: true
 
-  /acorn-import-assertions/1.8.0_acorn@8.5.0:
+  /acorn-import-assertions/1.8.0_acorn@8.6.0:
     resolution: {integrity: sha512-m7VZ3jwz4eK6A4Vtt8Ew1/mNbP24u0FhdyfA7fSvnJR6LMdfOYnmuIrrJAgrYfYJ10F/otaHTtrtrtmHdMNzEw==}
     peerDependencies:
       acorn: ^8
     dependencies:
-      acorn: 8.5.0
+      acorn: 8.6.0
 
-  /acorn-jsx/5.3.2_acorn@8.5.0:
+  /acorn-jsx/5.3.2_acorn@8.6.0:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
     peerDependencies:
       acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
     dependencies:
-      acorn: 8.5.0
+      acorn: 8.6.0
     dev: false
 
   /acorn-node/1.8.2:
@@ -3658,8 +3658,8 @@ packages:
     hasBin: true
     dev: true
 
-  /acorn/8.5.0:
-    resolution: {integrity: sha512-yXbYeFy+jUuYd3/CDcg2NkIYE991XYX/bje7LmjJigUciaeO1JR4XxXgCIV1/Zc/dRuFEyw1L0pbA+qynJkW5Q==}
+  /acorn/8.6.0:
+    resolution: {integrity: sha512-U1riIR+lBSNi3IbxtaHOIKdH8sLFv3NYfNv8sg7ZsNhcfl4HF2++BfqqrNAxoCLQW1iiylOj76ecnaUxz+z9yw==}
     engines: {node: '>=0.4.0'}
     hasBin: true
 
@@ -7449,7 +7449,7 @@ packages:
       jest-runtime: 27.3.1
       jest-util: 27.3.1
       jest-worker: 27.3.1
-      source-map-support: 0.5.20
+      source-map-support: 0.5.21
       throat: 6.0.1
     transitivePeerDependencies:
       - bufferutil
@@ -7663,7 +7663,7 @@ packages:
         optional: true
     dependencies:
       abab: 2.0.5
-      acorn: 8.5.0
+      acorn: 8.6.0
       acorn-globals: 6.0.0
       cssom: 0.4.4
       cssstyle: 2.3.0
@@ -8320,8 +8320,8 @@ packages:
   /micromark-extension-mdxjs/1.0.0:
     resolution: {integrity: sha512-TZZRZgeHvtgm+IhtgC2+uDMR7h8eTKF0QUX9YsgoL9+bADBpBY6SiLvWqnBlLbCEevITmTqmEuY3FoxMKVs1rQ==}
     dependencies:
-      acorn: 8.5.0
-      acorn-jsx: 5.3.2_acorn@8.5.0
+      acorn: 8.6.0
+      acorn-jsx: 5.3.2_acorn@8.6.0
       micromark-extension-mdx-expression: 1.0.2
       micromark-extension-mdx-jsx: 1.0.2
       micromark-extension-mdx-md: 1.0.0
@@ -9860,8 +9860,9 @@ packages:
       react: 17.0.2
     dev: false
 
-  /react-hook-form/7.19.5_react@17.0.2:
-    resolution: {integrity: sha512-+M9gd0nWWASuEitf5PQGOGNElnHknzY3rGISrPDXwsOmZb7c/jyvkRUqk4OJXaZit1ZwesSv+EysttdAeFEfmw==}
+  /react-hook-form/7.20.2_react@17.0.2:
+    resolution: {integrity: sha512-J5zkZW0Mf3KuMlk7Tl1tWYXoSjYhfKyEu//NfWTn2xzvv2vnDT5/EE/vHgtNb7kVeYpx6/mHIBd9aOfNnWcOsg==}
+    engines: {node: '>=12.0'}
     peerDependencies:
       react: ^16.8.0 || ^17
     dependencies:
@@ -10665,8 +10666,8 @@ packages:
       source-map: 0.5.7
     dev: true
 
-  /source-map-support/0.5.20:
-    resolution: {integrity: sha512-n1lZZ8Ve4ksRqizaBQgxXDgKwttHDhyfQjA6YZZn8+AroHbsIz+JjwxQDxbp+7y5OYCI8t1Yk7etjD9CRd2hIw==}
+  /source-map-support/0.5.21:
+    resolution: {integrity: sha512-uBHU3L3czsIyYXKX88fdrGovxdSCoTGDRZ6SYXtSRxLZUzHg5P/66Ht6uoUlHu9EZod+inXhKo3qQgwXUT/y1w==}
     dependencies:
       buffer-from: 1.1.2
       source-map: 0.6.1
@@ -11128,7 +11129,7 @@ packages:
       webpack: 5.63.0
     dev: true
 
-  /terser-webpack-plugin/5.2.5_0e803dad53c61b9827b40f7191be603b:
+  /terser-webpack-plugin/5.2.5_9e4bcfad78452471e1af27aa95d0f61c:
     resolution: {integrity: sha512-3luOVHku5l0QBeYS8r4CdHYWEGMmIj3H1U64jgkdZzECcSOJAyJ9TjuqcQZvw1Y+4AOBN9SeYJPJmFn2cM4/2g==}
     engines: {node: '>= 10.13.0'}
     peerDependencies:
@@ -11149,12 +11150,12 @@ packages:
       schema-utils: 3.1.1
       serialize-javascript: 6.0.0
       source-map: 0.6.1
-      terser: 5.10.0_acorn@8.5.0
+      terser: 5.10.0_acorn@8.6.0
       webpack: 5.64.1_esbuild@0.13.14
     transitivePeerDependencies:
       - acorn
 
-  /terser-webpack-plugin/5.2.5_acorn@8.5.0+webpack@5.64.1:
+  /terser-webpack-plugin/5.2.5_acorn@8.6.0+webpack@5.64.1:
     resolution: {integrity: sha512-3luOVHku5l0QBeYS8r4CdHYWEGMmIj3H1U64jgkdZzECcSOJAyJ9TjuqcQZvw1Y+4AOBN9SeYJPJmFn2cM4/2g==}
     engines: {node: '>= 10.13.0'}
     peerDependencies:
@@ -11174,13 +11175,13 @@ packages:
       schema-utils: 3.1.1
       serialize-javascript: 6.0.0
       source-map: 0.6.1
-      terser: 5.10.0_acorn@8.5.0
+      terser: 5.10.0_acorn@8.6.0
       webpack: 5.64.1
     transitivePeerDependencies:
       - acorn
     dev: true
 
-  /terser/5.10.0_acorn@8.5.0:
+  /terser/5.10.0_acorn@8.6.0:
     resolution: {integrity: sha512-AMmF99DMfEDiRJfxfY5jj5wNH/bYO09cniSqhfoyxc8sFoYIgkJy86G04UoZU5VjlpnplVu0K6Tx6E9b5+DlHA==}
     engines: {node: '>=10'}
     hasBin: true
@@ -11190,10 +11191,10 @@ packages:
       acorn:
         optional: true
     dependencies:
-      acorn: 8.5.0
+      acorn: 8.6.0
       commander: 2.20.3
       source-map: 0.7.3
-      source-map-support: 0.5.20
+      source-map-support: 0.5.21
 
   /terser/5.9.0:
     resolution: {integrity: sha512-h5hxa23sCdpzcye/7b8YqbE5OwKca/ni0RQz1uRX3tGh8haaGHqcuSqbGRybuAKNdntZ0mDgFNXPJ48xQ2RXKQ==}
@@ -11202,7 +11203,7 @@ packages:
     dependencies:
       commander: 2.20.3
       source-map: 0.7.3
-      source-map-support: 0.5.20
+      source-map-support: 0.5.21
 
   /test-exclude/6.0.0:
     resolution: {integrity: sha512-cAGWPIyOHU6zlmg88jwm7VRyXnMN7iV68OGAbYDk/Mh/xC/pzVPlQtY6ngoIH/5/tciuhGfvESU8GrHrcxD56w==}
@@ -11319,7 +11320,7 @@ packages:
     resolution: {integrity: sha512-3IVX4nI6B5cc31/GFFE+i8ey/N2eA0CZDbo6n0yrz0zDX8ZJ8djmU1p+XRz7G3is0F3bB3pu2pAroFdAWQKU3w==}
     dev: false
 
-  /ts-jest/27.0.7_@types+jest@27.0.2+jest@27.3.1:
+  /ts-jest/27.0.7_@types+jest@27.0.3+jest@27.3.1:
     resolution: {integrity: sha512-O41shibMqzdafpuP+CkrOL7ykbmLh+FqQrXEmV9CydQ5JBk0Sj0uAEF5TNNe94fZWKm3yYvWa/IbyV4Yg1zK2Q==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
     hasBin: true
@@ -11337,7 +11338,7 @@ packages:
       babel-jest:
         optional: true
     dependencies:
-      '@types/jest': 27.0.2
+      '@types/jest': 27.0.3
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
       jest: 27.3.1
@@ -11959,8 +11960,8 @@ packages:
       '@webassemblyjs/ast': 1.11.1
       '@webassemblyjs/wasm-edit': 1.11.1
       '@webassemblyjs/wasm-parser': 1.11.1
-      acorn: 8.5.0
-      acorn-import-assertions: 1.7.6_acorn@8.5.0
+      acorn: 8.6.0
+      acorn-import-assertions: 1.7.6_acorn@8.6.0
       browserslist: 4.17.3
       chrome-trace-event: 1.0.3
       enhanced-resolve: 5.8.3
@@ -11999,8 +12000,8 @@ packages:
       '@webassemblyjs/ast': 1.11.1
       '@webassemblyjs/wasm-edit': 1.11.1
       '@webassemblyjs/wasm-parser': 1.11.1
-      acorn: 8.5.0
-      acorn-import-assertions: 1.8.0_acorn@8.5.0
+      acorn: 8.6.0
+      acorn-import-assertions: 1.8.0_acorn@8.6.0
       browserslist: 4.18.1
       chrome-trace-event: 1.0.3
       enhanced-resolve: 5.8.3
@@ -12015,7 +12016,7 @@ packages:
       neo-async: 2.6.2
       schema-utils: 3.1.1
       tapable: 2.2.1
-      terser-webpack-plugin: 5.2.5_acorn@8.5.0+webpack@5.64.1
+      terser-webpack-plugin: 5.2.5_acorn@8.6.0+webpack@5.64.1
       watchpack: 2.2.0
       webpack-sources: 3.2.2
     transitivePeerDependencies:
@@ -12039,8 +12040,8 @@ packages:
       '@webassemblyjs/ast': 1.11.1
       '@webassemblyjs/wasm-edit': 1.11.1
       '@webassemblyjs/wasm-parser': 1.11.1
-      acorn: 8.5.0
-      acorn-import-assertions: 1.8.0_acorn@8.5.0
+      acorn: 8.6.0
+      acorn-import-assertions: 1.8.0_acorn@8.6.0
       browserslist: 4.18.1
       chrome-trace-event: 1.0.3
       enhanced-resolve: 5.8.3
@@ -12055,7 +12056,7 @@ packages:
       neo-async: 2.6.2
       schema-utils: 3.1.1
       tapable: 2.2.1
-      terser-webpack-plugin: 5.2.5_0e803dad53c61b9827b40f7191be603b
+      terser-webpack-plugin: 5.2.5_9e4bcfad78452471e1af27aa95d0f61c
       watchpack: 2.2.0
       webpack-sources: 3.2.2
     transitivePeerDependencies:
