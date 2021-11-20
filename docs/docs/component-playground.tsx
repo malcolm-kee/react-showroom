@@ -36,7 +36,11 @@ const playgroundContent = {
 };
 
 export const PlaygroundSource = () => {
-  useSetCompilationCaches([playgroundCodeBlocks, playgroundCodeBlocks2]);
+  useSetCompilationCaches([
+    playgroundCodeBlocks,
+    playgroundCodeBlocks2,
+    controlOptionsCodeBlocks,
+  ]);
 
   return (
     <Pre>

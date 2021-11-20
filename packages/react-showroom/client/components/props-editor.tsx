@@ -3,6 +3,7 @@ import {
   Button,
   Checkbox,
   NumberInput,
+  FileInput,
   Select,
   styled,
   Textarea,
@@ -71,6 +72,7 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
                   id={ctrl.key}
                   value={ctrl.value || ''}
                   onValue={ctrl.setValue}
+                  allowNegative
                   css={{
                     maxWidth: '20rem',
                   }}
@@ -100,12 +102,10 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
             <React.Fragment key={ctrl.key}>
               <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
               <ControlWrapper>
-                <input
-                  type="file"
+                <FileInput
                   id={ctrl.key}
-                  onChange={(ev) =>
-                    ctrl.setValue(ev.target.files && ev.target.files[0])
-                  }
+                  file={ctrl.value}
+                  onFilesSelected={(files) => ctrl.setValue(files[0])}
                 />
               </ControlWrapper>
             </React.Fragment>
@@ -201,11 +201,9 @@ const PropsSelectControl = (props: {
 
                 case 'file':
                   return (
-                    <input
-                      type="file"
-                      onChange={(ev) =>
-                        ctrl.setValue(ev.target.files && ev.target.files[0])
-                      }
+                    <FileInput
+                      onFilesSelected={(files) => ctrl.setValue(files[0])}
+                      file={ctrl.value}
                     />
                   );
 

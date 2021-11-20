@@ -1,8 +1,10 @@
+import { MinusIcon, PlusIcon } from '@heroicons/react/solid';
+import { callAll, isDefined, isNumber, noop } from '@showroomjs/core';
 import { useRifm } from 'rifm';
-import { callAll, noop, isDefined, isNumber } from '@showroomjs/core';
 import { formatMoney } from '../lib/number';
-import { TextInput, TextInputProps } from './text-input';
 import { styled } from '../stitches.config';
+import { IconButton } from './icon-button';
+import { TextInput, TextInputProps } from './text-input';
 
 export interface NumberInputProps
   extends Omit<TextInputProps, 'value' | 'onValue' | 'type' | 'max'> {
@@ -43,6 +45,7 @@ const NumberInputImpl = styled(function NumberInput({
   allowTrailingZero,
   allowNegative,
   max,
+  className,
   ...inputProps
 }: NumberInputProps) {
   const { value, onChange } = useRifm({
@@ -61,13 +64,94 @@ const NumberInputImpl = styled(function NumberInput({
   });
 
   return (
-    <TextInput
-      {...inputProps}
-      value={value}
-      onChange={callAll(onChange, inputProps.onChange)}
-    />
+    <Root className={className}>
+      <TextInput
+        {...inputProps}
+        value={value}
+        onChange={callAll(onChange, inputProps.onChange)}
+      />
+      <IconButton
+        onClick={
+          inputProps.disabled
+            ? undefined
+            : () => {
+                const value = parseNumber(
+                  inputProps.value,
+                  decimalPlaces === 0,
+                  max,
+                  allowNegative
+                );
+                if (value) {
+                  const valueAsNum = Number(value);
+                  if (!isNaN(valueAsNum)) {
+                    const step = getStep(valueAsNum);
+                    onValue(String(valueAsNum - step));
+                  }
+                }
+              }
+        }
+        type="button"
+        aria-label="decrement"
+        css={{
+          flexShrink: 0,
+          width: 34,
+          height: 34,
+        }}
+        disabled={inputProps.disabled}
+      >
+        <MinusIcon width={16} height={16} aria-hidden />
+      </IconButton>
+      <IconButton
+        onClick={
+          inputProps.disabled
+            ? undefined
+            : () => {
+                const value = parseNumber(
+                  inputProps.value,
+                  decimalPlaces === 0,
+                  max,
+                  allowNegative
+                );
+                if (value) {
+                  const valueAsNum = Number(value);
+                  if (!isNaN(valueAsNum)) {
+                    const step = getStep(valueAsNum);
+
+                    onValue(String(valueAsNum + step));
+                  }
+                }
+              }
+        }
+        type="button"
+        aria-label="increment"
+        css={{ flexShrink: 0, width: 34, height: 34 }}
+        disabled={inputProps.disabled}
+      >
+        <PlusIcon width={16} height={16} aria-hidden />
+      </IconButton>
+    </Root>
   );
 });
+
+const Root = styled('div', {
+  display: 'flex',
+  gap: 2,
+});
+
+const logTen =
+  'log10' in Math && typeof Math.log10 === 'function'
+    ? Math.log10
+    : function (num: number) {
+        return Math.log(num) / Math.log(10);
+      };
+
+const getStep = (value: number) => {
+  const powerOfTen = logTen(Math.abs(value));
+
+  const powerOfTenForStep = Math.max(Math.floor(powerOfTen) - 1, 0);
+
+  return Math.pow(10, powerOfTenForStep);
+};
 
 const getNumberValue = (value: string | number): number | undefined => {
   if (isNumber(value)) {
@@ -161,8 +245,7 @@ const formatFixedPointNumber = (
   }
 
   const formatted = formatMoney(number, {
-    maxDecimal: scaledTail.length,
-    minDecimal: scaledTail.length,
+    decimalPlaces: scaledTail.length,
   });
 
   if (parsed.includes('.')) {

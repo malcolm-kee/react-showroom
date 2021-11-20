@@ -1,8 +1,7 @@
 import { isNil } from '@showroomjs/core';
 
 export interface FormatMoneyOptions {
-  minDecimal?: number;
-  maxDecimal?: number;
+  decimalPlaces?: number;
 }
 
 const numberFormatters: Record<string, Intl.NumberFormat> = {};
@@ -14,7 +13,7 @@ const numberFormatters: Record<string, Intl.NumberFormat> = {};
  */
 export const formatMoney = (
   value: string | number | undefined | null,
-  { minDecimal = 0, maxDecimal = 2 }: FormatMoneyOptions = {}
+  { decimalPlaces = 2 }: FormatMoneyOptions = {}
 ): string => {
   if (isNil(value)) {
     return '';
@@ -29,17 +28,16 @@ export const formatMoney = (
   }
 
   if (featureCheck.intlNumberFormat) {
-    const cacheKey = `${minDecimal}-${maxDecimal}`;
-    if (!numberFormatters[cacheKey]) {
-      numberFormatters[cacheKey] = new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: minDecimal,
-        maximumFractionDigits: maxDecimal,
+    if (!numberFormatters[decimalPlaces]) {
+      numberFormatters[decimalPlaces] = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: decimalPlaces,
+        maximumFractionDigits: decimalPlaces,
       });
     }
 
-    displayValue = numberFormatters[cacheKey].format(numValue);
+    displayValue = numberFormatters[decimalPlaces].format(numValue);
   } else {
-    displayValue = insertThousandSeparator(numValue.toFixed(maxDecimal));
+    displayValue = insertThousandSeparator(numValue.toFixed(decimalPlaces));
   }
 
   return displayValue;
