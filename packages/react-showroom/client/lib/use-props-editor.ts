@@ -43,7 +43,7 @@ export const usePropsEditor = ({
     initState
   );
 
-  const props = state.values;
+  const props = { ...state.values };
 
   Object.entries(state.values).forEach(([prop, value]) => {
     const control = state.controls.find((ctrl) => ctrl.key === prop);
@@ -54,7 +54,7 @@ export const usePropsEditor = ({
   });
 
   return {
-    props: state.values,
+    props,
     controls: (includes
       ? state.controls.filter((ctrl) => includes.includes(ctrl.key))
       : state.controls

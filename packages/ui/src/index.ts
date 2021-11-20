@@ -11,6 +11,7 @@ export * as Collapsible from './components/collapsible';
 export { CopyButton } from './components/copy-button';
 export * from './components/dialog';
 export { DropdownMenu } from './components/dropdown-menu';
+export { FileInput } from './components/file-input';
 export * from './components/icon-button';
 export * from './components/icons';
 export { NotificationProvider } from './components/notification-provider';
