@@ -10,7 +10,7 @@ Importing third party libraries work as well as long as they are installed in yo
 
 If user add additional import statement in live editor, they will be loaded from [Skypack](https://www.skypack.dev/) on the fly.
 
-```tsx frame
+```tsx
 import { useForm } from 'react-hook-form';
 
 const FormExample = () => {
@@ -73,4 +73,16 @@ const Example = () => {
 };
 
 <Example />;
+```
+
+For code blocks with `frame`, by default we will adjust the given height based on the rendered content.
+
+You can overwrite the height (fixed) and initial height (initial iframe height while waiting the content to be rendered) using `height` and `initialHeight` modifier.
+
+```tsx frame height=100
+<Button>Height: 100</Button>
+```
+
+```tsx frame initialHeight=48
+<Button>Initial Height: 48</Button>
 ```

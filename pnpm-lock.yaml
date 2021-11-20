@@ -24,7 +24,7 @@ importers:
       '@types/react-router-dom': ^5.3.2
       '@types/rimraf': ^3.0.2
       '@types/string-similarity': ^4.0.0
-      '@types/stringify-object': 3.3.0
+      '@types/stringify-object': 4.0.0
       '@types/temp': ^0.9.1
       '@types/yargs': ^17.0.7
       concurrently: ^6.4.0
@@ -59,7 +59,7 @@ importers:
       '@types/react-router-dom': 5.3.2
       '@types/rimraf': 3.0.2
       '@types/string-similarity': 4.0.0
-      '@types/stringify-object': 3.3.0
+      '@types/stringify-object': 4.0.0
       '@types/temp': 0.9.1
       '@types/yargs': 17.0.7
       concurrently: 6.4.0
@@ -163,7 +163,7 @@ importers:
       react: ^17.0.2
       react-dom: ^17.0.2
       react-hook-form: ^7.20.2
-      react-query: ^3.33.1
+      react-query: ^3.33.2
       react-showroom: workspace:*
       react-textarea-autosize: ^8.3.3
       style-loader: ^3.3.1
@@ -181,7 +181,7 @@ importers:
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-hook-form: 7.20.2_react@17.0.2
-      react-query: 3.33.1_react-dom@17.0.2+react@17.0.2
+      react-query: 3.33.2_react-dom@17.0.2+react@17.0.2
       react-showroom: link:../../packages/react-showroom
       react-textarea-autosize: 8.3.3_812c4b915b618d5091ca1e8ce4566766
     devDependencies:
@@ -235,12 +235,12 @@ importers:
   packages/bundles:
     specifiers:
       '@rollup/plugin-replace': ^3.0.0
-      react-query: ^3.33.1
+      react-query: ^3.33.2
       react-router-dom: ^5.3.0
       react-simple-code-editor: ^0.11.0
     devDependencies:
       '@rollup/plugin-replace': 3.0.0_rollup@2.60.0
-      react-query: 3.33.1_react-dom@17.0.2+react@17.0.2
+      react-query: 3.33.2_react-dom@17.0.2+react@17.0.2
       react-router-dom: 5.3.0_react@17.0.2
       react-simple-code-editor: 0.11.0_react-dom@17.0.2+react@17.0.2
 
@@ -331,7 +331,7 @@ importers:
       snarkdown: ^2.0.0
       source-map-support: ^0.5.21
       string-similarity: ^4.0.4
-      stringify-object: '3.3'
+      stringify-object: ~4.0.0
       style-loader: ^3.3.1
       temp: ^0.9.4
       tslib: ^2.3.1
@@ -408,7 +408,7 @@ importers:
       snarkdown: 2.0.0
       source-map-support: 0.5.21
       string-similarity: 4.0.4
-      stringify-object: 3.3.0
+      stringify-object: 4.0.0
       style-loader: 3.3.1_webpack@5.64.1
       temp: 0.9.4
       tslib: 2.3.1
@@ -3414,8 +3414,8 @@ packages:
     resolution: {integrity: sha512-dMS4S07fbtY1AILG/RhuwmptmzK1Ql8scmAebOTJ/8iBtK/KI17NwGwKzu1uipjj8Kk+3mfPxum56kKZE93mzQ==}
     dev: true
 
-  /@types/stringify-object/3.3.0:
-    resolution: {integrity: sha512-ryxTolaNg1l809rknW9q9T7wG8QHcjtZX6syJx7kpOLY2qev75VzC9HMVimUxlA1YzjpGsDI29yLjHBotqhUhA==}
+  /@types/stringify-object/4.0.0:
+    resolution: {integrity: sha512-trCwcvojE04LNHX0aX3bkctaUUgbGyrVDghCDKmJYnh2p4dm0YthcYecrTtB55X2d5tu3Rwyc1ESEMQNKf0fBg==}
     dev: true
 
   /@types/temp/0.9.1:
@@ -6920,9 +6920,9 @@ packages:
     resolution: {integrity: sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==}
     engines: {node: '>=0.12.0'}
 
-  /is-obj/1.0.1:
-    resolution: {integrity: sha1-PkcprB9f3gJc19g6iW2rn09n2w8=}
-    engines: {node: '>=0.10.0'}
+  /is-obj/3.0.0:
+    resolution: {integrity: sha512-IlsXEHOjtKhpN8r/tRFj2nDyTmHvcfNeu/nrRIcXE17ROeatXchkojffa1SpdqW4cr/Fj6QkEf/Gn4zf6KKvEQ==}
+    engines: {node: '>=12'}
     dev: false
 
   /is-path-cwd/2.2.0:
@@ -6985,9 +6985,9 @@ packages:
       has-tostringtag: 1.0.0
     dev: false
 
-  /is-regexp/1.0.0:
-    resolution: {integrity: sha1-/S2INUXEa6xaYz57mgnof6LLUGk=}
-    engines: {node: '>=0.10.0'}
+  /is-regexp/3.1.0:
+    resolution: {integrity: sha512-rbku49cWloU5bSMI+zaRaXdQHXnthP6DZ/vLnfdSKyL4zUzuWnomtOEiZZOd+ioQ+avFo/qau3KPTc7Fjy1uPA==}
+    engines: {node: '>=12'}
     dev: false
 
   /is-resolvable/1.1.0:
@@ -9879,8 +9879,8 @@ packages:
     resolution: {integrity: sha512-oww+nyE5n1IjLOszppkVIe+cCcBfw8YqVxj3g3J/1b9MEv6tWWlymxCTn+H8OFlASb940B8yDCZbyybYR6Z46w==}
     dev: false
 
-  /react-query/3.33.1_react-dom@17.0.2+react@17.0.2:
-    resolution: {integrity: sha512-RtvQKhD4sJkoAGbyFpLmftGezz1KL19SeGdmjIOLUulyPTZuhcn3gemee96yjEiBk/9LFB5CuSiqywZY20Qj5Q==}
+  /react-query/3.33.2_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-hlGMl0FyFvO2mrgJObgKbJMzulzB4bzQZnh4ZhekCKWNhf0XH007Gi71wsaO+xCTyv8DNGxnrgBe/V+rvTWFjQ==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0
       react-dom: '*'
@@ -10853,13 +10853,13 @@ packages:
       character-entities-legacy: 2.0.0
     dev: false
 
-  /stringify-object/3.3.0:
-    resolution: {integrity: sha512-rHqiFh1elqCQ9WPLIC8I0Q/g/wj5J1eMkyoiD6eoQApWHP0FtlK7rqnhmabL5VUY9JQCcqwwvlOaSuutekgyrw==}
-    engines: {node: '>=4'}
+  /stringify-object/4.0.0:
+    resolution: {integrity: sha512-MkMnWfxpZgZdd4z+EM7zmpPQZ6tCyC/vx+D1Mz6xbLHpzQwjHjSQCv7LEjDMArrnKCeMWn9KKeDEoifF2B6oaQ==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     dependencies:
       get-own-enumerable-property-symbols: 3.0.2
-      is-obj: 1.0.1
-      is-regexp: 1.0.0
+      is-obj: 3.0.0
+      is-regexp: 3.1.0
     dev: false
 
   /strip-ansi/4.0.0:

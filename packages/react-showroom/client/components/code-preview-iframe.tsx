@@ -28,6 +28,8 @@ export interface CodePreviewIframeProps {
   onStateChange?: (data: { stateId: string; stateValue: any }) => void;
   nonVisual?: boolean;
   onIsCompilingChange?: (isCompiling: boolean) => void;
+  initialHeight?: number;
+  height?: number;
 }
 
 const initialHeightMap = new Map<string, number>();
@@ -42,9 +44,11 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   imperativeRef,
   nonVisual,
   onIsCompilingChange,
+  initialHeight = 100,
+  height: providedHeight,
 }: CodePreviewIframeProps) {
   const [frameHeight, setFrameHeight] = React.useState(
-    () => (codeHash && initialHeightMap.get(codeHash)) || 100
+    () => (codeHash && initialHeightMap.get(codeHash)) || initialHeight
   );
   const previewConsole = useConsole();
 
@@ -64,8 +68,10 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   const onIsCompilingChangeCb = useStableCallback(onIsCompilingChange);
   const { targetRef, sendMessage } = useParentWindow((ev) => {
     if (ev.type === 'heightChange') {
-      setFrameHeight(ev.height);
-      saveHeight(ev.height);
+      if (!providedHeight) {
+        setFrameHeight(ev.height);
+        saveHeight(ev.height);
+      }
     } else if (ev.type === 'log') {
       previewConsole[ev.level](...(ev.data || []));
     } else if (ev.type === 'stateChange') {
@@ -87,12 +93,14 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
     sendMessage({ type: 'code', code, lang });
   }, [code, lang]);
 
+  const height = providedHeight || frameHeight;
+
   const content = codeHash ? (
     <Frame
       ref={targetRef}
       src={getPreviewUrl(codeHash, componentMeta && componentMeta.displayName)}
       title="Preview"
-      height={nonVisual ? 0 : resizable ? frameHeight : '100%'}
+      height={nonVisual ? 0 : resizable ? height : '100%'}
       animate={!isResizing}
       className={resizable ? undefined : className}
     />
@@ -106,8 +114,8 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
         }),
         className
       )}
-      minHeight={frameHeight}
-      maxHeight={frameHeight}
+      minHeight={height}
+      maxHeight={height}
       minWidth={320 + handleWidth + 2}
       maxWidth={'100%'}
       enable={resizeEnable}
