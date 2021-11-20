@@ -29,6 +29,8 @@ export interface CodeLiveEditorProps {
   className?: string;
   noEditor?: boolean;
   frame?: boolean;
+  initialHeight?: string;
+  height?: string;
 }
 
 export const CodeLiveEditor = ({
@@ -37,6 +39,8 @@ export const CodeLiveEditor = ({
   noEditor,
   lang,
   frame = lang === 'html',
+  initialHeight,
+  height,
   ...props
 }: CodeLiveEditorProps) => {
   const theme = useCodeTheme();
@@ -52,6 +56,9 @@ export const CodeLiveEditor = ({
 
   const targetAudience = useTargetAudience();
   const isDeveloper = targetAudience === 'developer';
+
+  const initialHeightValue = initialHeight && Number(initialHeight);
+  const heightValue = height && Number(height);
 
   const content = (
     <PreviewConsoleProvider>
@@ -78,6 +85,14 @@ export const CodeLiveEditor = ({
             code={debouncedCode}
             lang={lang}
             codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
+            initialHeight={
+              initialHeightValue && !isNaN(initialHeightValue)
+                ? initialHeightValue
+                : undefined
+            }
+            height={
+              heightValue && !isNaN(heightValue) ? heightValue : undefined
+            }
             resizable
           />
         ) : (
