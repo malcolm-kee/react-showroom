@@ -4,6 +4,7 @@ import {
   isNil,
   isNumber,
   isString,
+  createSymbol,
 } from '@showroomjs/core';
 import { NumberInput, useId } from '@showroomjs/ui';
 import * as React from 'react';
@@ -13,7 +14,7 @@ import { useComponentMeta } from './component-props-context';
 
 export type ControlType = 'checkbox' | 'text' | 'object' | 'file' | 'number';
 
-export const NonLiteralValue = Symbol('NonLiteral');
+export const NonLiteralValue = createSymbol('NonLiteral');
 
 export interface UsePropsEditorOptions {
   initialProps?: Record<string, any>;
@@ -84,6 +85,17 @@ const normalizeControls = (
     if (isString(config)) {
       result[prop] = {
         type: config,
+      };
+    } else if (config && config.type === 'select') {
+      result[prop] = {
+        ...config,
+        options: Array.isArray(config.options)
+          ? config.options.map(({ type = 'literal', value, label }) => ({
+              type,
+              value,
+              label,
+            }))
+          : config.options,
       };
     } else {
       result[prop] = config;
@@ -299,38 +311,12 @@ const initState = ({
                 };
               }
 
-              if (opt.value === 'string') {
-                return {
-                  value: NonLiteralValue,
-                  type: 'text',
-                };
-              }
+              const controlType = controlByTypeMap[opt.value];
 
-              if (opt.value === 'number') {
+              if (controlType) {
                 return {
                   value: NonLiteralValue,
-                  type: 'number',
-                };
-              }
-
-              if (opt.value === 'boolean') {
-                return {
-                  value: NonLiteralValue,
-                  type: 'checkbox',
-                };
-              }
-
-              if (opt.value === 'object') {
-                return {
-                  value: NonLiteralValue,
-                  type: 'object',
-                };
-              }
-
-              if (opt.value === 'File') {
-                return {
-                  value: NonLiteralValue,
-                  type: 'file',
+                  type: controlType,
                 };
               }
             })
@@ -386,6 +372,14 @@ const VALID_TYPES: Array<PropsEditorControlDef['type']> = [
   'number',
   'select',
 ];
+
+const controlByTypeMap: Record<string, ControlType | undefined> = {
+  string: 'text',
+  number: 'number',
+  boolean: 'checkbox',
+  object: 'object',
+  File: 'file',
+};
 
 const isValidControlConfig = (controlConfig: PropsEditorControlDef) => {
   if (
