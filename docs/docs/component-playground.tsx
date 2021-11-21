@@ -86,6 +86,7 @@ export const PlaygroundSource2 = () => {
         className="language-mdx"
         static
         fileName="src/components/button.mdx"
+        highlights="{6-9}"
       >
         {playgroundSource2}
       </Code>
@@ -116,6 +117,7 @@ export const ControlOptionsSource = () => {
         className="language-mdx"
         static
         fileName="src/components/button.mdx"
+        highlights="{26-37}"
       >
         {controlOptionsSource}
       </Code>

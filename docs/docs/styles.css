@@ -1,0 +1,15 @@
+.react-showroom-line-highlight {
+  @apply opacity-100 transition duration-200 mx-[-10px] px-[10px];
+}
+
+.react-showroom-line-dim {
+  @apply opacity-50 transition duration-200;
+}
+
+.react-showroom-code:hover .react-showroom-line-dim {
+  @apply opacity-100;
+}
+
+.react-showroom-code:hover .react-showroom-line-highlight {
+  @apply bg-gray-700;
+}
