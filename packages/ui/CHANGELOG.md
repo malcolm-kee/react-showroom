@@ -1,5 +1,11 @@
 # @showroomjs/ui
 
+## 1.3.1
+
+### Patch Changes
+
+- 231515f: Auto hide link to standalone editor for playground
+
 ## 1.3.0
 
 ### Minor Changes

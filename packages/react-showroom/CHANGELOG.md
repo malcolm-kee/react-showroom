@@ -1,5 +1,17 @@
 # react-showroom
 
+## 1.6.0
+
+### Minor Changes
+
+- 9c2b67f: Support code highlight
+
+### Patch Changes
+
+- 231515f: Auto hide link to standalone editor for playground
+- Updated dependencies [231515f]
+  - @showroomjs/ui@1.3.1
+
 ## 1.5.0
 
 ### Minor Changes
