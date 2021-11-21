@@ -13,6 +13,7 @@ import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { useCodeBlocks } from '../lib/codeblocks-context';
 import { Link, useRouteMatch } from '../lib/routing';
+import { useCodeCompilationCache } from '../lib/use-code-compilation';
 import { PreviewConsoleProvider } from '../lib/use-preview-console';
 import { useTargetAudience } from '../lib/use-target-audience';
 import { Div } from './base';
@@ -46,6 +47,14 @@ export const CodeLiveEditor = ({
   const theme = useCodeTheme();
 
   const [code, setCode] = React.useState(props.code);
+
+  const compilationCache = useCodeCompilationCache(props.code, lang);
+
+  const hideEditor =
+    noEditor ||
+    (compilationCache.data &&
+      compilationCache.data.type === 'success' &&
+      compilationCache.data.isPlayground);
 
   const debouncedCode = useDebounce(code);
 
@@ -100,7 +109,7 @@ export const CodeLiveEditor = ({
         )}
       </Div>
       <ConsolePanel />
-      {!noEditor && (
+      {!hideEditor && (
         <Collapsible.Root open={showCode} onOpenChange={setShowCode}>
           <Div
             css={{

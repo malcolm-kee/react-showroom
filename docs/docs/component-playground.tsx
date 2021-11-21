@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { allComponentsMetadata, mdxComponents } from 'react-showroom/client';
+import {
+  allComponentsMetadata,
+  mdxComponents,
+  Checkbox,
+  Select,
+  SelectButton,
+  ToggleGroup,
+  NumberInput,
+} from 'react-showroom/client';
 import { ComponentDocRoute } from '../components/component-doc-route';
 import ButtonPlaygroundDocs2, {
   headings as headings2,
@@ -122,3 +130,73 @@ export const ControlOptionsResult = () => (
     metadata={buttonData}
   />
 );
+
+export const CheckboxDemo = () => {
+  const [checked, setChecked] = React.useState<'indeterminate' | boolean>(
+    'indeterminate'
+  );
+
+  return <Checkbox checked={checked} onCheckedChange={setChecked} />;
+};
+
+export const NumberInputDemo = () => {
+  const [value, setValue] = React.useState('');
+
+  return (
+    <NumberInput
+      value={value}
+      onValue={setValue}
+      css={{
+        maxWidth: '20rem',
+      }}
+      allowNegative
+    />
+  );
+};
+
+const options = [
+  {
+    label: 'Option 1',
+    value: '1',
+  },
+  {
+    label: 'Option 2',
+    value: '2',
+  },
+];
+
+export const SelectDemo = () => {
+  const [value, setValue] = React.useState('1');
+
+  return (
+    <>
+      <Select
+        value={value}
+        onValue={setValue}
+        css={{
+          maxWidth: '36rem',
+          '@lg': {
+            display: 'none',
+          },
+        }}
+      >
+        {options.map((opt) => (
+          <option value={opt.value} key={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </Select>
+      <ToggleGroup>
+        {options.map((opt) => (
+          <SelectButton
+            onClick={() => setValue(opt.value)}
+            selected={opt.value === value}
+            key={opt.value}
+          >
+            {opt.label}
+          </SelectButton>
+        ))}
+      </ToggleGroup>
+    </>
+  );
+};

@@ -2,11 +2,23 @@ import { useQuery } from '@showroomjs/bundles/query';
 import {
   CompilationErrorResult,
   CompilationSuccessResult,
+  CompileResult,
   getCompilationKey,
   SupportedLanguage,
 } from '@showroomjs/core';
 import { addMissingImports } from './add-missing-imports';
 import { useCodeImports } from './code-imports-context';
+
+export const useCodeCompilationCache = (
+  providedCode: string,
+  lang: SupportedLanguage
+) => {
+  const code = providedCode.trim();
+
+  return useQuery<CompileResult>(getCompilationKey(code, lang), {
+    enabled: false,
+  });
+};
 
 export const useCodeCompilation = (
   providedCode: string,
