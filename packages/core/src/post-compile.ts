@@ -18,6 +18,7 @@ export interface PostCompileResult {
   code: string;
   importNames: Array<string>;
   importedPackages: Array<string>;
+  isPlayground: boolean;
 }
 
 /**
@@ -32,6 +33,7 @@ export const postCompile = (
   let code = providedCode;
   const importNames: Array<string> = [];
   const importedPackages: Array<string> = [];
+  let isPlayground = false;
 
   code = options.insertRenderIfEndWithJsx
     ? insertRenderIfEndWithJsx(code)
@@ -55,7 +57,18 @@ export const postCompile = (
         const importLocals = getImportNames(declarationNode);
         importNames.push(...importLocals);
 
-        importedPackages.push(getImportedPackage(declarationNode));
+        const importedPkg = getImportedPackage(declarationNode);
+
+        importedPackages.push(importedPkg);
+
+        if (importedPkg === 'react-showroom/client') {
+          const { namedImports } = categorizeImports(declarationNode);
+          if (
+            namedImports.some((imp) => imp.imported.name === 'usePropsEditor')
+          ) {
+            isPlayground = true;
+          }
+        }
 
         code =
           code.substring(0, start) + transpiledStatement + code.substring(end);
@@ -65,7 +78,7 @@ export const postCompile = (
     });
   }
 
-  return { code, importNames, importedPackages };
+  return { code, importNames, importedPackages, isPlayground };
 };
 
 // Strip semicolon (;) at the end

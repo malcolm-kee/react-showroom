@@ -200,9 +200,18 @@ export const SearchDialog = Object.assign(SearchDialogImpl, {
           as="button"
           className={cx(triggerInput({}), className)}
           css={{
-            width: 'auto',
             color: '$gray-400',
             height: 38,
+            width: 38,
+            borderRadius: '$full',
+            px: '$1',
+            justifyContent: 'center',
+            '@md': {
+              width: 'auto',
+              borderRadius: '$base',
+              px: '$3',
+              justifyContent: 'start',
+            },
           }}
           {...props}
         >

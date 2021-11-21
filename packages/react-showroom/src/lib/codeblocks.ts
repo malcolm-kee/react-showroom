@@ -58,7 +58,7 @@ export const codeblocks = <
     const child = children[i];
 
     if (child.type === 'code' && child.value && filter(child)) {
-      if (lang === 'all') {
+      if (lang === all) {
         child.lang = child.lang || '_';
         // @ts-ignore
         result[name][child.lang] = result[name][child.lang] || [];

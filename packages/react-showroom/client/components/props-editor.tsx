@@ -234,6 +234,7 @@ const PropsSelectControl = (props: {
                       css={{
                         maxWidth: '20rem',
                       }}
+                      allowNegative
                     />
                   );
 
@@ -268,7 +269,7 @@ const ControlWrapper = styled('div', {
   py: '$1',
 });
 
-const ToggleGroup = styled('div', {
+export const ToggleGroup = styled('div', {
   display: 'none',
   '@lg': {
     display: 'flex',
@@ -284,7 +285,7 @@ const emptyValue = `{
 
 }`;
 
-const ObjectValueEditor = (props: {
+export const ObjectValueEditor = (props: {
   value: object | undefined;
   onValue: (value: object | undefined) => void;
   id?: string;
@@ -342,7 +343,7 @@ const isValidJson = (val: string) => {
   }
 };
 
-const SelectButton = styled(Button, {
+export const SelectButton = styled(Button, {
   px: '$3',
   py: '$1',
   color: '$gray-600',

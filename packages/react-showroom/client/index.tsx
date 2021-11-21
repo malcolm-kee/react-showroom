@@ -8,7 +8,16 @@ export type {
   ComponentDocItem,
   ReactShowroomComponentContent,
 } from '@showroomjs/core/react';
-export { Breadcrumbs, QueryParamProvider, styled } from '@showroomjs/ui';
+export {
+  Breadcrumbs,
+  Checkbox,
+  FileInput,
+  NumberInput,
+  QueryParamProvider,
+  Select,
+  styled,
+  TextInput,
+} from '@showroomjs/ui';
 export { BrowserWindow } from './components/browser-window';
 export type { BrowserWindowProps } from './components/browser-window';
 export { ComponentDataProvider } from './components/component-data-provider';
@@ -21,7 +30,12 @@ export type { DocPlaceholderProps } from './components/doc-placeholder';
 export { MarkdownArticle } from './components/markdown-article';
 export { MarkdownDataProvider } from './components/markdown-data-provider';
 export { mdxComponents } from './components/mdx-components';
-export { PropsEditor } from './components/props-editor';
+export {
+  ObjectValueEditor,
+  PropsEditor,
+  SelectButton,
+  ToggleGroup,
+} from './components/props-editor';
 export { Head } from './components/seo';
 export { useComponentList } from './lib/component-list-context';
 export type { ComponentItem } from './lib/component-list-context';

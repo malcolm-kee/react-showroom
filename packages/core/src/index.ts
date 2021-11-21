@@ -50,6 +50,7 @@ export interface CompilationSuccessResult {
   importNames: Array<string>;
   importedPackages: Array<string>;
   lang: SupportedLanguage;
+  isPlayground: boolean;
   initialCodeHash?: string;
 }
 

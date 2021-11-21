@@ -3,19 +3,28 @@ description: Learn how to create playground to modify component props
 ---
 
 import {
+  FileInput,
+  ObjectValueEditor,
+  Select,
+  TextInput,
+} from 'react-showroom/client';
+import {
+  CheckboxDemo,
   ControlOptionsSource,
   ControlOptionsResult,
+  NumberInputDemo,
   PlaygroundSource,
   PlaygroundResult,
   PlaygroundSource2,
   PlaygroundResult2,
+  SelectDemo,
 } from './component-playground';
 
 # Component Playground
 
 By using `usePropsEditor` custom hook and `PropsEditor` component (available at `react-showroom/client`) in your example, you can create a playground for your components (similar to Storybook's [Controls/Knobs](https://storybook.js.org/docs/react/essentials/controls)).
 
-Compared to using Storybook, you don't have to manually configure the controls because we extract the props from your props definition and provide sensible default controls.
+You don't have to manually configure the controls because we extract the props from your props definition and provide sensible default controls.
 
 ## Simple Example
 
@@ -27,9 +36,11 @@ As `usePropsEditor` and `PropsEditor` is rendered by you in the example, it is u
 
 For instance, you can place the `<PropsEditor />` above your example if that make sense, or adding additional props/state that you doesn't want the `usePropsEditor` to manage.
 
-## Overwriting Initial Props
+## Setting Initial Props
 
-By passing `initialProps` options to `usePropsEditor`, you can overwrite the initial values for props in the playground.
+By passing `initialProps` options to `usePropsEditor`, you can set the initial values for props in the playground.
+
+Note that by default, if typescript able to infer the default value from your code, we will use that. So this should only be used if you do not want the default for your code or a workaround when typescript could not infer the default value.
 
 <PlaygroundSource2 />
 
@@ -39,10 +50,10 @@ By passing `initialProps` options to `usePropsEditor`, you can overwrite the ini
 
 By default, `usePropsEditor` will try to infer the control for you based on the props definition. However, we will not infer the props control for the following conditions:
 
-1. props that are not primitive. For instance, you may have a complex object as props, which is impossible to provide a sensible default.
+1. props that are not supported by our available controls. For instance, you may have a custom object as props, which we could not know how to provide a default control.
 1. props that comes from `@types/react`. If we include those, it will be a giant list of controls.
 
-However, you can add those manually by passing `controls` options to `usePropsEditor`.
+Fortunately, you can add those manually by passing `controls` options to `usePropsEditor`.
 
 <ControlOptionsSource />
 
@@ -50,15 +61,18 @@ However, you can add those manually by passing `controls` options to `usePropsEd
 
 `controls` options is a key-value object where the key is the prop, and the value is the configuration of the control.
 
-1. Currently, we support the following control types:
+Currently, we support the following control types:
 
-   - `text`,
-   - `checkbox`,
-   - `number`,
-   - `select`,
-   - `object`, and
-   - `file`.
+| type       |                                         |
+| :--------- | --------------------------------------- |
+| `text`     | <TextInput css={{maxWidth: '36rem'}} /> |
+| `checkbox` | <CheckboxDemo />                        |
+| `number`   | <NumberInputDemo />                     |
+| `select`   | <SelectDemo />                          |
+| `object`   | <ObjectValueEditor />                   |
+| `file`     | <FileInput />                           |
 
-   Except for `select`, you can provide the config as string (e.g. `'number'`) or as an object (e.g. `{ type: 'number' }`).
+Notes:
 
+1. Except for `select`, you can provide the config as string (e.g. `'number'`) or as an object (e.g. `{ type: 'number' }`).
 1. For `select`, you must provide the `options`, which is an Array of `{ label: string; value: any }`. The value can be anything, including JSX.
