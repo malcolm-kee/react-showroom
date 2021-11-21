@@ -1,7 +1,6 @@
 import Highlight, { Language, Prism, PrismTheme } from 'prism-react-renderer';
 import * as React from 'react';
 import { Fragment } from 'react';
-import { styled } from '@showroomjs/ui';
 
 export const CodeHighlight = (props: {
   code: string;
@@ -21,7 +20,7 @@ export const CodeHighlight = (props: {
         <Fragment>
           {tokens.map((line, i) => (
             // eslint-disable-next-line react/jsx-key
-            <Line
+            <div
               {...getLineProps({
                 line,
                 className:
@@ -37,14 +36,12 @@ export const CodeHighlight = (props: {
                 // eslint-disable-next-line react/jsx-key
                 <span {...getTokenProps({ token, key })} />
               ))}
-            </Line>
+            </div>
           ))}
         </Fragment>
       )}
     </Highlight>
   );
 };
-
-const Line = styled('div');
 
 const isMarkdown = (language: Language) => ['md', 'mdx'].includes(language);
