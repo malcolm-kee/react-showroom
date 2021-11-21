@@ -1,5 +1,7 @@
-import { SUPPORTED_LANGUAGES, NON_VISUAL_LANGUAGES } from '@showroomjs/core';
+import { NON_VISUAL_LANGUAGES, SUPPORTED_LANGUAGES } from '@showroomjs/core';
 import { styled } from '@showroomjs/ui';
+import parseNumRange from 'parse-numeric-range';
+import cx from 'classnames';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { Div } from './base';
@@ -31,6 +33,7 @@ export interface CodeProps extends React.ComponentPropsWithoutRef<'code'> {
   frame?: boolean;
   initialHeight?: string;
   height?: string;
+  highlights?: string;
 }
 
 export const Code = ({
@@ -41,6 +44,7 @@ export const Code = ({
   frame,
   initialHeight,
   height,
+  highlights,
   ...props
 }: CodeProps) => {
   const isBlockCode = React.useContext(IsBlockCodeContext);
@@ -69,6 +73,11 @@ export const Code = ({
 
   const theme = useCodeTheme();
 
+  const highlightedLines = React.useMemo(
+    () => highlights && parseNumRange(highlights.replace(/^\{|\}$/g, '')),
+    []
+  );
+
   if (!SUPPORTED_LANGUAGES.includes(lang) || isStatic) {
     return (
       <>
@@ -89,9 +98,14 @@ export const Code = ({
             px: inlineBlock ? '$6' : 10,
             overflow: 'auto',
           }}
-          className={props.className}
+          className={cx('react-showroom-code', props.className)}
         >
-          <CodeHighlight code={code} language={lang} theme={theme} />
+          <CodeHighlight
+            code={code}
+            language={lang}
+            theme={theme}
+            highlights={highlightedLines || undefined}
+          />
           {!inlineBlock && lang && <LanguageTag language={lang} />}
         </Div>
       </>

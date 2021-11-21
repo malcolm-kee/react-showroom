@@ -4,7 +4,7 @@ const libPackageJson = require('react-showroom/package.json');
 
 module.exports = defineConfig({
   url: 'https://react-showroom.js.org',
-  require: ['tailwindcss/tailwind.css'],
+  require: ['tailwindcss/tailwind.css', './docs/styles.css'],
   items: [
     {
       type: 'content',

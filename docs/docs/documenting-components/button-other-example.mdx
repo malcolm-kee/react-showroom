@@ -41,26 +41,6 @@ const FormExample = () => {
 <FormExample />;
 ```
 
-Use `noEditor` modifier to show only the output result.
-
-```tsx noEditor
-import * as React from 'react';
-
-const Example = () => {
-  const [on, setOn] = React.useState<boolean>(false);
-
-  return <Button onClick={() => setOn(!on)}>{on ? 'On' : 'Off'}</Button>;
-};
-
-<Example />;
-```
-
-Use `static` modifier to show static code.
-
-```tsx static
-<Button>Hello</Button>
-```
-
 Use `fileName` modifier to add a file name at the top of the code block.
 
 ```tsx fileName="code.tsx"
@@ -85,4 +65,38 @@ You can overwrite the height (fixed) and initial height (initial iframe height w
 
 ```tsx frame initialHeight=48
 <Button>Initial Height: 48</Button>
+```
+
+Use `noEditor` modifier to show only the output result.
+
+```tsx noEditor
+import * as React from 'react';
+
+const Example = () => {
+  const [on, setOn] = React.useState<boolean>(false);
+
+  return <Button onClick={() => setOn(!on)}>{on ? 'On' : 'Off'}</Button>;
+};
+
+<Example />;
+```
+
+Use `static` modifier to show static code.
+
+```tsx static
+<Button>Hello</Button>
+```
+
+For static code blocks, you can use `highlights` to highlight specific lines.
+
+```tsx static highlights={3-7}
+import * as React from 'react';
+
+const Example = () => {
+  const [on, setOn] = React.useState<boolean>(false);
+
+  return <Button onClick={() => setOn(!on)}>{on ? 'On' : 'Off'}</Button>;
+};
+
+<Example />;
 ```
