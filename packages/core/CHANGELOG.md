@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 1.3.2
+
+### Patch Changes
+
+- 25d94bf: Republish to fix error
+
 ## 1.3.1
 
 ### Patch Changes

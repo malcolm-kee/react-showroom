@@ -1,5 +1,11 @@
 # client-only-example
 
+## 1.0.26
+
+### Patch Changes
+
+- react-showroom@1.6.1
+
 ## 1.0.25
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # react-showroom
 
+## 1.6.1
+
+### Patch Changes
+
+- Updated dependencies [25d94bf]
+  - @showroomjs/core@1.3.2
+  - @showroomjs/ui@1.3.2
+
 ## 1.6.0
 
 ### Minor Changes
