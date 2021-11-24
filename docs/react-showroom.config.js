@@ -38,6 +38,13 @@ module.exports = defineConfig({
     },
     {
       type: 'content',
+      path: 'button-union-example',
+      content: 'docs/documenting-components/button-union-example.mdx',
+      hideFromSidebar: true,
+      _associatedComponentName: 'Button',
+    },
+    {
+      type: 'content',
       path: 'button-playground-example',
       content: 'docs/component-playground/button-playground-example.mdx',
       hideFromSidebar: true,

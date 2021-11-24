@@ -22,6 +22,14 @@ import AnotherButtonDocs, {
 import anotherbuttonDocsSource from './documenting-components/button-other-example.mdx?raw';
 import anotherButtonCodeBlocks from './documenting-components/button-other-example.mdx?showroomRemarkCodeblocks';
 import { imports as anotherButtonImports } from './documenting-components/button-other-example.mdx?showroomRemarkImports';
+
+import ButtonUnionPropsDocs, {
+  headings as buttonUnionPropsHeadings,
+} from './documenting-components/button-union-example.mdx';
+import buttonUnionPropsDocsSource from './documenting-components/button-union-example.mdx?raw';
+import buttonUnionPropsCodeBlocks from './documenting-components/button-union-example.mdx?showroomRemarkCodeblocks';
+import { imports as buttonUnionPropsImports } from './documenting-components/button-union-example.mdx?showroomRemarkImports';
+
 import { useSetCompilationCaches } from './set-compilation-caches';
 
 const allMetadata = Object.values(allComponentsMetadata);
@@ -35,7 +43,11 @@ const oldButtonData = allMetadata.find((m) => m.displayName === 'OldButton')!;
 const { pre: Pre, code: Code } = mdxComponents;
 
 export const DocumentingComponentPropsSource = () => {
-  useSetCompilationCaches([buttonCodeblocks, anotherButtonCodeBlocks]);
+  useSetCompilationCaches([
+    buttonCodeblocks,
+    anotherButtonCodeBlocks,
+    buttonUnionPropsCodeBlocks,
+  ]);
 
   return (
     <Pre>
@@ -133,6 +145,30 @@ const anotherMarkdownContent = {
 export const AnotherMarkdownResult = () => (
   <ComponentDocRoute
     content={anotherMarkdownContent}
+    slug=""
+    metadata={buttonData}
+  />
+);
+
+export const UnionPropsSource = () => (
+  <Pre>
+    <Code className="language-mdx" static fileName="src/components/button.mdx">
+      {buttonUnionPropsDocsSource}
+    </Code>
+  </Pre>
+);
+
+const unionPropsContent = {
+  doc: ButtonUnionPropsDocs,
+  headings: buttonUnionPropsHeadings,
+  imports: buttonUnionPropsImports,
+  codeblocks: buttonUnionPropsCodeBlocks,
+  Component: Button,
+};
+
+export const UnionPropsResult = () => (
+  <ComponentDocRoute
+    content={unionPropsContent}
     slug=""
     metadata={buttonData}
   />

@@ -1,16 +1,20 @@
 import {
+  createSymbol,
   isBoolean,
   isDefined,
   isNil,
   isNumber,
   isString,
-  createSymbol,
 } from '@showroomjs/core';
 import { NumberInput, useId } from '@showroomjs/ui';
 import * as React from 'react';
-import { ComponentDoc, PropItem } from 'react-docgen-typescript';
+import { ComponentDoc } from 'react-docgen-typescript';
 import { findBestMatch } from 'string-similarity';
-import { useComponentMeta } from './component-props-context';
+import {
+  isType,
+  parseSafely,
+  useComponentMeta,
+} from './component-props-context';
 
 export type ControlType = 'checkbox' | 'text' | 'object' | 'file' | 'number';
 
@@ -360,10 +364,6 @@ const initState = ({
   };
 };
 
-const isType = (prop: PropItem, type: string) =>
-  prop.type.name === type ||
-  (prop.type.name === 'enum' && prop.type.raw === type);
-
 const VALID_TYPES: Array<PropsEditorControlDef['type']> = [
   'checkbox',
   'text',
@@ -415,15 +415,6 @@ const isValidControlConfig = (controlConfig: PropsEditorControlDef) => {
   console.warn(warningMessage);
 
   return false;
-};
-
-const parseSafely = (raw: string): boolean | string | number | undefined => {
-  try {
-    const result = JSON.parse(raw);
-    return result;
-  } catch (err) {
-    return undefined;
-  }
 };
 
 const propsEditorReducer = (

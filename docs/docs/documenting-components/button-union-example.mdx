@@ -1,0 +1,37 @@
+```tsx
+import { useUnionProps } from 'react-showroom/client';
+
+const Variants = () => {
+  const variantOptions = useUnionProps('variant');
+  const roundedOptions = useUnionProps('rounded');
+
+  return (
+    <div>
+      {variantOptions.map((vOption) => (
+        <div
+          style={{
+            display: 'flex',
+            gap: '1rem',
+            marginBottom: '0.5rem',
+            alignItems: 'center',
+          }}
+          key={vOption.value}
+        >
+          <div>{vOption.label}</div>
+          {roundedOptions.map((rOption) => (
+            <Button
+              variant={vOption.value}
+              rounded={rOption.value}
+              key={rOption.value}
+            >
+              rounded="{rOption.label}"
+            </Button>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+<Variants />;
+```

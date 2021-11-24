@@ -9,7 +9,7 @@ import { ComponentMetaContext } from '../lib/component-props-context';
 export const ComponentDataProvider = (props: {
   children: React.ReactNode;
   content: ReactShowroomComponentContent;
-  metadata: ComponentDoc;
+  metadata: ComponentDoc & { id: string };
 }) => {
   const {
     content: { imports, codeblocks, Component },

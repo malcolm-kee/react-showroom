@@ -13,6 +13,8 @@ import {
   MarkdownResult,
   AnotherMarkdownSource,
   AnotherMarkdownResult,
+  UnionPropsSource,
+  UnionPropsResult,
 } from './documenting-components';
 
 # Documenting Components
@@ -87,3 +89,11 @@ A few scenarios for code blocks:
 And the result:
 
 <AnotherMarkdownResult />
+
+## Show Different Variants
+
+You can use the `useUnionProps` custom hook (available in `react-showroom/client`) to show different variants of the component.
+
+<UnionPropsSource />
+
+<UnionPropsResult />

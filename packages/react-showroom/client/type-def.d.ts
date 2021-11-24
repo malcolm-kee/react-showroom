@@ -52,7 +52,7 @@ declare module 'react-showroom-doc-placeholder' {
 declare module '*?showroomAllComp' {
   import { ComponentDoc } from 'react-docgen-typescript';
 
-  declare const All: Record<string, ComponentDoc>;
+  declare const All: Record<string, ComponentDoc & { id: string }>;
 
   export default All;
 }

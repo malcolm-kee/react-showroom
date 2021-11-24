@@ -42,6 +42,7 @@ export type { ComponentItem } from './lib/component-list-context';
 export { Suspense } from './lib/lazy';
 export { Link, MemoryRouter, Route, Switch, useLocation } from './lib/routing';
 export { usePropsEditor } from './lib/use-props-editor';
+export { useUnionProps } from './lib/use-union-props';
 export const StandaloneEditor = lazy(
   () => import('./components/standalone-editor-lazy')
 );
