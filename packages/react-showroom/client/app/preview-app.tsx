@@ -1,23 +1,22 @@
-import {
-  decodeDisplayName,
-  isFunction,
-  isDefined,
-  SupportedLanguage,
-} from '@showroomjs/core';
-import { Alert, useId, IdProvider, useConstant } from '@showroomjs/ui';
+import { isDefined, isFunction, SupportedLanguage } from '@showroomjs/core';
+import { Alert, IdProvider, useConstant, useId } from '@showroomjs/ui';
 import * as React from 'react';
 import allImports from 'react-showroom-all-imports';
 import CodeblockData from 'react-showroom-codeblocks';
+import allCompMetadata from 'react-showroom-comp-metadata?showroomAllComp';
 import Wrapper from 'react-showroom-wrapper';
 import { AllComponents } from '../all-components';
 import { CodePreviewFrame } from '../components/code-preview-frame';
 import { CodeImportsContextProvider } from '../lib/code-imports-context';
 import { CodeVariablesContextProvider } from '../lib/code-variables-context';
+import { ComponentMetaContext } from '../lib/component-props-context';
 import { usePreviewWindow } from '../lib/frame-message';
 import { Route, Switch, useParams } from '../lib/routing';
+import { UseCustomStateContext } from '../lib/use-custom-state';
 import { useHeightChange } from '../lib/use-height-change';
 import { ConsoleContext, LogLevel } from '../lib/use-preview-console';
-import { UseCustomStateContext } from '../lib/use-custom-state';
+
+const componentsMetas = Object.values(allCompMetadata);
 
 export const PreviewApp = () => {
   return (
@@ -25,7 +24,7 @@ export const PreviewApp = () => {
       <Wrapper>
         <CodeImportsContextProvider value={allImports}>
           <Switch>
-            <Route path="/:codeHash/:component">
+            <Route path="/:codeHash/:componentId">
               <ComponentPreviewPage />
             </Route>
             <Route path="/:codeHash">
@@ -56,23 +55,38 @@ const allCodeBlocks = CodeblockData.items.reduce((result, codeblock) =>
 );
 
 const ComponentPreviewPage = () => {
-  const params = useParams<{ component: string }>();
+  const params = useParams<{ componentId: string }>();
+  const metadata = React.useMemo(
+    () => componentsMetas.find((m) => m.id === params.componentId),
+    [params.componentId]
+  );
 
   const variables = React.useMemo(() => {
-    const componentDisplayName = decodeDisplayName(params.component);
-    const Component = AllComponents[componentDisplayName];
+    if (!metadata) {
+      return {};
+    }
+
+    const Component = AllComponents[metadata.displayName];
 
     return Component
       ? {
-          [componentDisplayName]: Component,
+          [metadata.displayName]: Component,
         }
       : {};
-  }, [params.component]);
+  }, [metadata]);
 
-  return (
+  const content = (
     <CodeVariablesContextProvider value={variables}>
       <PreviewPage />
     </CodeVariablesContextProvider>
+  );
+
+  return metadata ? (
+    <ComponentMetaContext.Provider value={metadata}>
+      {content}
+    </ComponentMetaContext.Provider>
+  ) : (
+    content
   );
 };
 

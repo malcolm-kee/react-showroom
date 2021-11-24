@@ -1,12 +1,10 @@
 import { QueryClientProvider } from '@showroomjs/bundles/query';
+import { flattenArray, isDefined, NestedArray, Ssr } from '@showroomjs/core';
 import {
-  encodeDisplayName,
-  flattenArray,
-  isDefined,
-  NestedArray,
-  Ssr,
-} from '@showroomjs/core';
-import { ReactShowroomSection } from '@showroomjs/core/react';
+  ReactShowroomComponentSection,
+  ReactShowroomMarkdownSection,
+  ReactShowroomSection,
+} from '@showroomjs/core/react';
 import { getCssText } from '@showroomjs/ui';
 import * as React from 'react';
 import * as ReactDOMServer from 'react-dom/server';
@@ -46,6 +44,8 @@ export const ssr: Ssr = {
   getHelmet: () => Helmet.renderStatic(),
   getRoutes: async () => {
     const result: NestedArray<string> = [];
+    const markdownSections: Array<ReactShowroomMarkdownSection> = [];
+    const componentSections: Array<ReactShowroomComponentSection> = [];
 
     async function getRoute(section: ReactShowroomSection): Promise<void> {
       if (section.type === 'group') {
@@ -53,6 +53,8 @@ export const ssr: Ssr = {
       }
 
       if (section.type === 'component') {
+        componentSections.push(section);
+
         const { codeblocks } = await section.data.load();
 
         const codeHashes = Object.values(codeblocks)
@@ -60,38 +62,43 @@ export const ssr: Ssr = {
           .filter(isDefined);
 
         if (codeHashes.length > 0) {
-          result.push(
-            codeHashes.map(
-              (hash) =>
-                `${hash}/${encodeDisplayName(section.metadata.displayName)}`
-            )
-          );
+          result.push(codeHashes.map((hash) => `${hash}/${section.id}`));
         }
       }
 
       if (section.type === 'markdown') {
-        const { codeblocks } = await section.load();
-
-        const codeHashes = Object.values(codeblocks)
-          .map((block) => block?.initialCodeHash)
-          .filter(isDefined);
-
-        if (codeHashes.length > 0) {
-          const compName = section._associatedComponentName;
-
-          if (compName) {
-            result.push(
-              codeHashes.map((hash) => `${hash}/${encodeDisplayName(compName)}`)
-            );
-          } else {
-            result.push(codeHashes);
-          }
-        }
+        markdownSections.push(section);
       }
     }
 
     for (const section of sections) {
       await getRoute(section);
+    }
+
+    for (const section of markdownSections) {
+      const { codeblocks } = await section.load();
+
+      const codeHashes = Object.values(codeblocks)
+        .map((block) => block?.initialCodeHash)
+        .filter(isDefined);
+
+      if (codeHashes.length > 0) {
+        const compName = section._associatedComponentName;
+
+        if (compName) {
+          const compSection = componentSections.find(
+            (sec) => sec.metadata.displayName === compName
+          );
+
+          result.push(
+            codeHashes.map((hash) =>
+              compSection ? `${hash}/${compSection.id}` : hash
+            )
+          );
+        } else {
+          result.push(codeHashes);
+        }
+      }
     }
 
     return flattenArray(result);

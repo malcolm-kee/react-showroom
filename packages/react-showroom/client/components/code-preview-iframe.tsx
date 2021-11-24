@@ -98,7 +98,7 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   const content = codeHash ? (
     <Frame
       ref={targetRef}
-      src={getPreviewUrl(codeHash, componentMeta && componentMeta.displayName)}
+      src={getPreviewUrl(codeHash, componentMeta && componentMeta.id)}
       title="Preview"
       height={nonVisual ? 0 : resizable ? height : '100%'}
       animate={!isResizing}

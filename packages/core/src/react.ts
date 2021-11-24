@@ -373,7 +373,7 @@ export interface ComponentDocItem {
 export interface ReactShowroomComponentSection {
   type: 'component';
   data: ComponentDocItem;
-  metadata: DocgenComponentDoc;
+  metadata: DocgenComponentDoc & { id: string };
   title: string;
   description: string;
   slug: string;

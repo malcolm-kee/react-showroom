@@ -64,7 +64,11 @@ export const postCompile = (
         if (importedPkg === 'react-showroom/client') {
           const { namedImports } = categorizeImports(declarationNode);
           if (
-            namedImports.some((imp) => imp.imported.name === 'usePropsEditor')
+            namedImports.some(
+              (imp) =>
+                imp.imported.name === 'usePropsEditor' ||
+                imp.imported.name === 'useUnionProps'
+            )
           ) {
             isPlayground = true;
           }

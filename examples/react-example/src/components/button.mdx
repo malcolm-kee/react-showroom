@@ -61,6 +61,35 @@ const Demo = () => {
 </div>
 ```
 
+Use `useUnionProps` to render the component with different value of an union prop.
+
+```jsx
+import { useUnionProps } from 'react-showroom/client';
+
+const AllVariants = () => {
+  const variants = useUnionProps('variant');
+  const fullWidthOptions = useUnionProps('fullWidth');
+
+  return (
+    <div className="flex flex-col gap-3">
+      {fullWidthOptions.map((option) => (
+        <div className="flex flex-col gap-3" key={option.value}>
+          {variants.map((v) => (
+            <div key={v.value}>
+              <Button variant={v.value} fullWidth={option.value}>
+                {v.label} {option.value ? '(fullWidth)' : ''}
+              </Button>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+<AllVariants />;
+```
+
 ## Static Example
 
 Following is a static example.

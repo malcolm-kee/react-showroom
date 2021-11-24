@@ -295,7 +295,12 @@ const createBaseWebpackConfig = (
             {
               loader: 'showroom-all-component-loader',
               options: {
-                parse: docgenParser.parse,
+                parse: (sources: Array<string>) =>
+                  docgenParser.parse(sources).map((doc) =>
+                    Object.assign({}, doc, {
+                      id: createHash(doc.filePath),
+                    })
+                  ),
                 debug,
               },
             },

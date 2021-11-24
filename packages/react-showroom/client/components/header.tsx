@@ -123,7 +123,7 @@ const TitleWrapper = styled('div', {
 
 const SearchText = styled('span', {
   srOnly: true,
-  '@sm': {
+  '@md': {
     srOnly: false,
   },
 });
