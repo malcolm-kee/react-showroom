@@ -1,5 +1,17 @@
 # @showroomjs/ui
 
+## 1.4.0
+
+### Minor Changes
+
+- 536609f: Introduce useUnionProps
+
+### Patch Changes
+
+- Updated dependencies [536609f]
+  - @showroomjs/bundles@1.3.0
+  - @showroomjs/core@1.4.0
+
 ## 1.3.2
 
 ### Patch Changes
