@@ -1,11 +1,10 @@
 import {
   CodeBlocks,
+  compileHtml,
   compileTarget,
   postCompile,
-  processHtml,
   SupportedLanguage,
   SUPPORTED_LANGUAGES,
-  toHtmlExample,
 } from '@showroomjs/core';
 import * as esbuild from 'esbuild';
 import type { Code, Parent as MdParent, Parent } from 'mdast';
@@ -97,20 +96,10 @@ export const mdToCodeBlocks = async (
       for (const code of blocks[language]) {
         try {
           if (lang === 'html') {
-            const { html, script } = await processHtml(code);
-            const transpiledScript = await esbuild.transform(script, {
-              loader: 'js',
-              target: compileTarget,
-            });
-
-            const postCompileResult = postCompile(transpiledScript.code);
+            const htmlCompileResult = await compileHtml(code, esbuild);
 
             result[code] = {
-              ...postCompileResult,
-              code: toHtmlExample({
-                script: postCompileResult.code,
-                html,
-              }),
+              ...htmlCompileResult,
               type: 'success',
               messageId: -1,
               initialCodeHash: createHash(code),

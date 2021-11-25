@@ -2,12 +2,11 @@
 
 import {
   CompilationError,
+  compileHtml,
   CompileResult,
-  postCompile,
-  processHtml,
-  RequestCompileData,
-  toHtmlExample,
   compileTarget,
+  postCompile,
+  RequestCompileData,
 } from '@showroomjs/core';
 import wasmPath from 'esbuild-wasm/esbuild.wasm';
 import * as esbuild from 'esbuild-wasm/esm/browser';
@@ -44,30 +43,17 @@ self.onmessage = (ev) => {
   const lang = data.lang;
 
   if (lang === 'html') {
-    Promise.all([processHtml(data.source), esBuildIsReady])
-      .then(([{ html, script }]) =>
-        esbuild
-          .transform(script, {
-            loader: 'js',
-            target: compileTarget,
-          })
-          .then((transpiledScript) => {
-            const postCompileResult = postCompile(transpiledScript.code);
-
-            const result: CompileResult = {
-              ...postCompileResult,
-              code: toHtmlExample({
-                script: postCompileResult.code,
-                html,
-              }),
-              type: 'success',
-              messageId: data.messageId,
-              lang: data.lang,
-            };
-
-            self.postMessage(result);
-          })
-      )
+    esBuildIsReady
+      .then(() => compileHtml(data.source, esbuild))
+      .then((htmlCompileResult) => {
+        const result: CompileResult = {
+          ...htmlCompileResult,
+          type: 'success',
+          messageId: data.messageId,
+          lang: data.lang,
+        };
+        self.postMessage(result);
+      })
       .catch(handleError);
   } else {
     esBuildIsReady

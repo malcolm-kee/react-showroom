@@ -42,6 +42,7 @@ export const CodePreview = (props: CodePreviewProps) => {
         omit(
           {
             ...codeVariables,
+            showroomUseState: React.useState,
             React: Object.assign({}, React, { useState: useCustomState }),
             ReactDOM,
             render: options.render,

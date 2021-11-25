@@ -92,7 +92,13 @@ And the result:
 
 ## Show Different Variants
 
-You can use the `useUnionProps` custom hook (available in `react-showroom/client`) to show different variants of the component.
+A common use case is to show different variants of the component side-by-side so they can be compared visually.
+
+You can, of course, render the component by passing different props to it in an example to do that.
+
+However, you need to maintain the example so any changes to the props will be reflected in the example.
+
+Another options is to use the `useUnionProps` custom hook (available in `react-showroom/client`), which provide the variants (parsed from the props type definition) as options to your examples.
 
 <UnionPropsSource />
 
