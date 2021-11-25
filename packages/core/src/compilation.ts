@@ -8,3 +8,5 @@ export const getCompilationKey = (
   source: string,
   language: SupportedLanguage
 ) => ['codeCompilation', source, language];
+
+export const compileTarget = 'es2018';

@@ -18,11 +18,13 @@
     "test:ci": "jest --watchAll=false --coverage --runInBand"
   },
   "devDependencies": {
+    "esbuild": "^0.13.15",
     "html-webpack-tags-plugin": "^3.0.2",
     "typescript": "^4.5.2",
     "webpack": "^5.64.2"
   },
   "peerDependencies": {
+    "esbuild": "^0.13.0",
     "webpack": "^5.0.0"
   },
   "dependencies": {

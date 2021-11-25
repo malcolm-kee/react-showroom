@@ -42,7 +42,9 @@ setTimeout(() => {
 }, 500);
 ```
 
-`html` works too!
+## HTML Support
+
+For `html`, you can just include any HTML elements directly, including `<style>` and `<script>` tags.
 
 ```html live
 <style>
@@ -72,6 +74,47 @@ setTimeout(() => {
 <section>
   <h1 class="heading">Hello World!</h1>
 </section>
+```
+
+We take one step further and allow you to specific the `lang` attribute for `<script>` tags with `ts`, `tsx`, or `jsx`.
+
+```html live
+<style>
+  .button {
+    background-color: blue;
+    color: white;
+    transition: background-color 100ms ease-in-out;
+  }
+
+  .button-base {
+    padding: 8px 16px;
+    border-radius: 4px;
+  }
+
+  .button:hover {
+    background-color: darkblue;
+  }
+</style>
+
+<script lang="tsx">
+  import cx from 'classnames';
+
+  const Demo = () => {
+    const [clicked, setClicked] = React.useState(false);
+
+    return (
+      <button
+        onClick={() => setClicked(!clicked)}
+        className={cx('button', 'button-base')}
+        type="button"
+      >
+        {clicked ? 'Yes' : 'No'}
+      </button>
+    );
+  };
+
+  <Demo />;
+</script>
 ```
 
 ## Unsupported Languages
