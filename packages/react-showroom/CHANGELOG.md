@@ -1,5 +1,18 @@
 # react-showroom
 
+## 1.8.0
+
+### Minor Changes
+
+- e7b8ab3: Support lang attribute for script in html example
+
+### Patch Changes
+
+- Updated dependencies [e7b8ab3]
+  - @showroomjs/bundles@1.4.0
+  - @showroomjs/core@1.5.0
+  - @showroomjs/ui@1.4.1
+
 ## 1.7.0
 
 ### Minor Changes

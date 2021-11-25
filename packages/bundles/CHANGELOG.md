@@ -1,5 +1,11 @@
 # @showroomjs/bundles
 
+## 1.4.0
+
+### Minor Changes
+
+- e7b8ab3: Support lang attribute for script in html example
+
 ## 1.3.0
 
 ### Minor Changes
