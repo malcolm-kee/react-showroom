@@ -50,10 +50,15 @@ export const useNavigate = () => {
     navigate: (to: string, options: { replace?: boolean } = {}) => {
       setIsPending(true);
       setLocalIsPending(true);
-      loadCodeAtPath(to, () => {
+      const urlWhenClick = history.location.pathname;
+      Promise.race([loadCode(to), wait(1500)]).then(() => {
         setIsPending(false);
-        const method = options.replace ? history.replace : history.push;
-        method(to);
+
+        // avoid race condition where user click another route before the Promise resolves
+        if (urlWhenClick === history.location.pathname) {
+          const method = options.replace ? history.replace : history.push;
+          method(to);
+        }
         if (isMountedRef.current) {
           setLocalIsPending(false);
         }
@@ -120,3 +125,10 @@ export const NavLink = React.forwardRef<
     <Link {...props} aria-current={!!match ? 'page' : undefined} ref={ref} />
   );
 });
+
+const loadCode = (path: string) =>
+  new Promise<void>((fulfill) => {
+    loadCodeAtPath(path, fulfill);
+  });
+
+const wait = (ms: number) => new Promise((fulfill) => setTimeout(fulfill, ms));

@@ -7,6 +7,7 @@ export type { CodeBlocks } from '@showroomjs/core';
 export type {
   ComponentDocItem,
   ReactShowroomComponentContent,
+  ReactShowroomSection,
 } from '@showroomjs/core/react';
 export {
   Breadcrumbs,
@@ -41,6 +42,7 @@ export { useComponentList } from './lib/component-list-context';
 export type { ComponentItem } from './lib/component-list-context';
 export { Suspense } from './lib/lazy';
 export { Link, MemoryRouter, Route, Switch, useLocation } from './lib/routing';
+export { useMenu } from './lib/use-menu';
 export { usePropsEditor } from './lib/use-props-editor';
 export { useUnionProps } from './lib/use-union-props';
 export const StandaloneEditor = lazy(
