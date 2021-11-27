@@ -1,5 +1,18 @@
 # react-showroom
 
+## 1.9.0
+
+### Minor Changes
+
+- 8e0ccb5: Support useMenu
+
+### Patch Changes
+
+- Updated dependencies [8e0ccb5]
+  - @showroomjs/bundles@1.5.0
+  - @showroomjs/core@1.6.0
+  - @showroomjs/ui@1.5.0
+
 ## 1.8.0
 
 ### Minor Changes

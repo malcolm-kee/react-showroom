@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 1.6.0
+
+### Minor Changes
+
+- 8e0ccb5: Support useMenu
+
 ## 1.5.0
 
 ### Minor Changes
