@@ -3,6 +3,11 @@ declare module '*.wasm' {
   export default src;
 }
 
+declare module '?raw' {
+  const src: string;
+  export default src;
+}
+
 declare module 'react-showroom-codeblocks' {
   import type { CodeBlocks } from '@showroomjs/core';
 
@@ -49,10 +54,16 @@ declare module 'react-showroom-doc-placeholder' {
   export default DocPlaceholder;
 }
 
-declare module '*?showroomAllComp' {
+declare module 'react-showroom-comp-metadata?showroomAllComp' {
   import { ComponentDoc } from 'react-docgen-typescript';
 
   declare const All: Record<string, ComponentDoc & { id: string }>;
+
+  export default All;
+}
+
+declare module 'react-showroom-comp-metadata?showroomCompProp' {
+  declare const All: string;
 
   export default All;
 }

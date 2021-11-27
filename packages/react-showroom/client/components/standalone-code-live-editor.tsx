@@ -5,6 +5,7 @@ import {
   DesktopComputerIcon,
   RefreshIcon,
   ZoomInIcon,
+  SparklesIcon,
 } from '@heroicons/react/outline';
 import {
   AnnotationIcon as FilledAnnotationIcon,
@@ -16,14 +17,15 @@ import {
   DropdownMenu,
   styled,
   ToggleButton,
+  Tooltip,
   useDebounce,
   usePersistedState,
   useQueryParams,
-  Tooltip,
 } from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
+import { Suspense, lazy } from '../lib/lazy';
 import { safeCompress, safeDecompress } from '../lib/compress';
 import { EXAMPLE_WIDTHS } from '../lib/config';
 import { getScrollFn } from '../lib/scroll-into-view';
@@ -45,6 +47,12 @@ import {
 } from './standalone-code-live-editor-copy-button';
 import { StandaloneCodeLiveEditorPreviewList } from './standalone-code-live-editor-preview';
 
+const CodeAdvancedEditor = lazy(() =>
+  import('./code-advanced-editor').then((m) => ({
+    default: m.CodeAdvancedEditor,
+  }))
+);
+
 export interface StandaloneCodeLiveEditorProps {
   code: string;
   lang: SupportedLanguage;
@@ -59,6 +67,8 @@ export const StandaloneCodeLiveEditor = ({
   const theme = useCodeTheme();
 
   const [queryParams, setQueryParams, isReady] = useQueryParams();
+
+  const [isCodeParsed, setIsCodeParsed] = React.useState(false);
 
   const { state: commentState, add, remove } = useCommentState(props.codeHash);
   const [activeComment, setActiveComment] = React.useState('');
@@ -121,6 +131,8 @@ export const StandaloneCodeLiveEditor = ({
           _setHiddenSizes(serializedHiddenSizes);
         }
       }
+
+      setIsCodeParsed(true);
     }
   }, [isReady]);
 
@@ -159,6 +171,8 @@ export const StandaloneCodeLiveEditor = ({
     targetAudience === 'developer',
     'syncState'
   );
+
+  const [useAdvancedEditor, setUseAdvancedEditor] = React.useState(false);
 
   return (
     <PreviewConsoleProvider>
@@ -206,6 +220,29 @@ export const StandaloneCodeLiveEditor = ({
                 </Tooltip.Trigger>
                 <Tooltip.Content>
                   Editor
+                  <Tooltip.Arrow />
+                </Tooltip.Content>
+              </Tooltip.Root>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <ToggleButton
+                    pressed={useAdvancedEditor}
+                    onPressedChange={setUseAdvancedEditor}
+                    css={
+                      useAdvancedEditor
+                        ? {
+                            color: '$gray-600',
+                            backgroundColor: '$gray-100',
+                          }
+                        : undefined
+                    }
+                    data-testid="advanced-editor-toggle"
+                  >
+                    <SparklesIcon width={20} height={20} />
+                  </ToggleButton>
+                </Tooltip.Trigger>
+                <Tooltip.Content>
+                  Advanced Editor
                   <Tooltip.Arrow />
                 </Tooltip.Content>
               </Tooltip.Root>
@@ -525,18 +562,30 @@ export const StandaloneCodeLiveEditor = ({
               />
             ))}
           <ConsolePanel />
-          {showEditor && !isCommenting && (
-            <Div css={{ flex: 1 }}>
-              <CodeEditor
-                code={code}
-                onChange={setCode}
-                language={props.lang as Language}
-                theme={theme}
-                className={editor()}
-                wrapperClass={editorWrapper()}
-              />
-            </Div>
-          )}
+          {showEditor &&
+            !isCommenting &&
+            (useAdvancedEditor ? (
+              isCodeParsed && (
+                <Suspense fallback={null}>
+                  <CodeAdvancedEditor
+                    value={code}
+                    onChange={setCode}
+                    language={props.lang as Language}
+                  />
+                </Suspense>
+              )
+            ) : (
+              <Div css={{ flex: 1 }}>
+                <CodeEditor
+                  code={code}
+                  onChange={setCode}
+                  language={props.lang as Language}
+                  theme={theme}
+                  className={editor()}
+                  wrapperClass={editorWrapper()}
+                />
+              </Div>
+            ))}
           {isCommenting && (
             <Div
               css={{

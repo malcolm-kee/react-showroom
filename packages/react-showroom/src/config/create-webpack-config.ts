@@ -238,6 +238,11 @@ const createBaseWebpackConfig = (
     docgenConfig.options
   );
 
+  const componentTypeParser = docgen.withCustomConfig(
+    docgenConfig.tsconfigPath,
+    {}
+  );
+
   const generated = generateSectionsAndImports(sections, {
     rootDir: paths.showroomPath,
     skipEmptyComponent: config.skipEmptyComponent,
@@ -301,6 +306,20 @@ const createBaseWebpackConfig = (
                       id: createHash(doc.filePath),
                     })
                   ),
+                debug,
+              },
+            },
+          ],
+        },
+        {
+          test: /.js$/,
+          resourceQuery: /showroomCompProp/,
+          use: [
+            {
+              loader: 'showroom-all-component-prop-loader',
+              options: {
+                parse: (sources: Array<string>) =>
+                  componentTypeParser.parse(sources),
                 debug,
               },
             },
@@ -535,7 +554,11 @@ const createBaseWebpackConfig = (
         AUDIENCE_TOGGLE: theme.audienceToggle,
       }),
       virtualModules,
-      isDev ? new ReactRefreshWebpackPlugin() : undefined,
+      isDev
+        ? new ReactRefreshWebpackPlugin({
+            overlay: false,
+          })
+        : undefined,
       options.profile
         ? new webpack.debug.ProfilingPlugin({
             outputPath: resolveApp(

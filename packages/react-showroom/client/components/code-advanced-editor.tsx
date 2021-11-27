@@ -1,0 +1,125 @@
+import Editor, { EditorProps } from '@monaco-editor/react';
+import { useStableCallback, styled } from '@showroomjs/ui';
+// @ts-expect-error
+import reactDefinition from '@types/react/index.d.ts?raw';
+import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import { Language } from 'prism-react-renderer';
+import * as React from 'react';
+import allProps from 'react-showroom-comp-metadata?showroomCompProp';
+import nightOwl from 'monaco-themes/themes/Night Owl.json';
+
+type Monaco = typeof monaco;
+
+export interface CodeAdvancedEditorProps {
+  value: string;
+  onChange: (value: string) => void;
+  language: Language;
+  className?: string;
+}
+
+const languageMapping: { [key in Language]?: string } = {
+  tsx: 'typescript',
+  typescript: 'typescript',
+  jsx: 'javascript',
+  javascript: 'javascript',
+};
+
+const languageExtension: { [key in Language]?: string } = {
+  tsx: 'tsx',
+  typescript: 'ts',
+  jsx: 'jsx',
+  javascript: 'js',
+};
+
+export const CodeAdvancedEditor = styled(function CodeAdvancedEditor({
+  value,
+  onChange,
+  language,
+  className,
+}: CodeAdvancedEditorProps) {
+  const onChangeCallback = useStableCallback(onChange);
+  const [initialized, setInitialized] = React.useState(false);
+
+  const onEditorChange = React.useCallback<
+    NonNullable<EditorProps['onChange']>
+  >(
+    (value) => {
+      onChangeCallback(value || '');
+    },
+    [onChangeCallback]
+  );
+
+  const mappedLanguage = languageMapping[language];
+
+  const extension = languageExtension[language];
+
+  return (
+    <Editor
+      defaultLanguage={mappedLanguage || language}
+      defaultValue={value}
+      onChange={initialized ? onEditorChange : undefined}
+      path={extension ? `index.${extension}` : undefined}
+      onMount={(editor, monaco) => {
+        setupLanguage(monaco, language);
+
+        monaco.editor.defineTheme('nightOwl', nightOwl as any);
+        monaco.editor.setTheme('nightOwl');
+
+        if (extension) {
+          monaco.editor.getModels().forEach((model) => model.dispose());
+
+          const model = monaco.editor.createModel(
+            value,
+            extension ? 'typescript' : language,
+            monaco.Uri.parse(`index.${extension}`)
+          );
+          editor.setModel(null);
+          editor.setModel(model);
+        }
+
+        setInitialized(true);
+      }}
+      options={editorOptions}
+      className={className}
+    />
+  );
+});
+
+const editorOptions: EditorProps['options'] = {
+  minimap: { enabled: false },
+  theme: 'nightOwl',
+};
+
+const setupLanguage = (monaco: Monaco, language: Language) => {
+  const global = `/// <reference types="react" />
+
+  declare function render(ui: React.ReactElement): void;
+  ${allProps}`;
+
+  const defaultService =
+    language === 'tsx' ||
+    language === 'typescript' ||
+    language === 'jsx' ||
+    language === 'javascript'
+      ? monaco.languages.typescript.typescriptDefaults
+      : undefined;
+
+  if (defaultService) {
+    defaultService.setCompilerOptions({
+      jsx: monaco.languages.typescript.JsxEmit.React,
+      moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+      noEmit: true,
+      allowJs: true,
+      allowSyntheticDefaultImports: true,
+      esModuleInterop: true,
+      target: monaco.languages.typescript.ScriptTarget.ES2018,
+    });
+
+    defaultService.addExtraLib(global, 'global.d.ts');
+
+    defaultService.addExtraLib(
+      reactDefinition,
+      'file:///node_modules/@types/react/index.d.ts'
+    );
+  }
+};
