@@ -84,5 +84,6 @@ declare namespace NodeJS {
     readonly SSR: boolean;
     readonly AUDIENCE_TOGGLE: 'design' | 'code' | false;
     readonly EXAMPLE_WIDTHS: Array<number>;
+    readonly COMPONENTS_ENTRY_NAME: string | undefined;
   }
 }

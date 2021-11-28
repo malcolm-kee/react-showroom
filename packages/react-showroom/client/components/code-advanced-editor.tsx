@@ -1,4 +1,5 @@
 import Editor, { EditorProps } from '@monaco-editor/react';
+import { CompileResult } from '@showroomjs/core';
 import { styled, useStableCallback } from '@showroomjs/ui';
 // @ts-expect-error
 import reactDefinition from '@types/react/index.d.ts?raw';
@@ -7,14 +8,15 @@ import { Language } from 'prism-react-renderer';
 import * as React from 'react';
 import allComponentProps from 'react-showroom-comp-metadata?showroomCompProp';
 import { useComponentMeta } from '../lib/component-props-context';
+import { componentsEntryName } from '../lib/config';
 
 type Monaco = typeof monaco;
-
 export interface CodeAdvancedEditorProps {
   value: string;
   onChange: (value: string) => void;
   language: Language;
   className?: string;
+  initialResult: CompileResult | undefined;
 }
 
 const languageMapping: { [key in Language]?: string } = {
@@ -36,6 +38,7 @@ export const CodeAdvancedEditor = styled(function CodeAdvancedEditor({
   onChange,
   language,
   className,
+  initialResult,
 }: CodeAdvancedEditorProps) {
   const onChangeCallback = useStableCallback(onChange);
   const [initialized, setInitialized] = React.useState(false);
@@ -63,7 +66,14 @@ export const CodeAdvancedEditor = styled(function CodeAdvancedEditor({
       path={extension ? `index.${extension}` : undefined}
       theme="vs-dark"
       onMount={(editor, monaco) => {
-        setupLanguage(monaco, language, componentMeta);
+        setupLanguage(
+          monaco,
+          language,
+          !!initialResult &&
+            initialResult.type === 'success' &&
+            initialResult.importedPackages.length > 0,
+          componentMeta
+        );
 
         if (extension) {
           monaco.editor.getModels().forEach((model) => model.dispose());
@@ -92,22 +102,9 @@ const editorOptions: EditorProps['options'] = {
 const setupLanguage = (
   monaco: Monaco,
   language: Language,
+  isModule: boolean,
   componentMeta: { id: string } | undefined
 ) => {
-  const componentDef =
-    componentMeta &&
-    allComponentProps.find((comp) => comp.id === componentMeta.id);
-
-  const global = `/// <reference types="react" />
-
-declare function render(ui: React.ReactElement): void;
-
-${
-  componentDef
-    ? `declare const ${componentDef.name}: React.ComponentType<${componentDef.props}>;`
-    : ''
-}`;
-
   const defaultService =
     language === 'tsx' ||
     language === 'typescript' ||
@@ -127,11 +124,57 @@ ${
       target: monaco.languages.typescript.ScriptTarget.ES2018,
     });
 
+    defaultService.setDiagnosticsOptions({
+      noSemanticValidation: true,
+      noSyntaxValidation: true,
+      onlyVisible: true,
+    });
+
+    const componentDef =
+      componentMeta &&
+      allComponentProps.find((comp) => comp.id === componentMeta.id);
+
+    const global = isModule
+      ? `import * as R from 'react';
+declare global {
+  const React: typeof R;
+  const function render(ui: R.ReactElement): void;
+
+  ${
+    componentDef
+      ? `const ${componentDef.name}: R.ComponentType<${componentDef.props}>`
+      : ''
+  }
+}`
+      : `/// <reference types="react" />
+
+declare function render(ui: React.ReactElement): void;
+
+${
+  componentDef
+    ? `declare const ${componentDef.name}: React.ComponentType<${componentDef.props}>;`
+    : ''
+}`;
+
     defaultService.addExtraLib(global, 'global.d.ts');
 
     defaultService.addExtraLib(
       reactDefinition,
       'file:///node_modules/@types/react/index.d.ts'
     );
+
+    if (componentsEntryName) {
+      defaultService.addExtraLib(
+        `import * as React from 'react';
+        
+        ${allComponentProps
+          .map(
+            (component) =>
+              `export const ${component.name}: React.ComponentType<${component.props}>`
+          )
+          .join('\n')}`,
+        `file:///node_modules/${componentsEntryName}/index.d.ts`
+      );
+    }
   }
 };

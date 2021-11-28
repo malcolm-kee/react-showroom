@@ -4,14 +4,18 @@ import {
   CodeIcon,
   DesktopComputerIcon,
   RefreshIcon,
-  ZoomInIcon,
   SparklesIcon,
+  ZoomInIcon,
 } from '@heroicons/react/outline';
 import {
   AnnotationIcon as FilledAnnotationIcon,
   LocationMarkerIcon,
 } from '@heroicons/react/solid';
-import { isEqualArray, SupportedLanguage } from '@showroomjs/core';
+import {
+  CompileResult,
+  isEqualArray,
+  SupportedLanguage,
+} from '@showroomjs/core';
 import {
   css,
   DropdownMenu,
@@ -25,10 +29,11 @@ import {
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
-import { Suspense, lazy } from '../lib/lazy';
 import { safeCompress, safeDecompress } from '../lib/compress';
 import { EXAMPLE_WIDTHS } from '../lib/config';
+import { lazy, Suspense } from '../lib/lazy';
 import { getScrollFn } from '../lib/scroll-into-view';
+import { useCodeCompilationCache } from '../lib/use-code-compilation';
 import { useCommentState } from '../lib/use-comment-state';
 import { PreviewConsoleProvider } from '../lib/use-preview-console';
 import { useStateWithParams } from '../lib/use-state-with-params';
@@ -176,6 +181,8 @@ export const StandaloneCodeLiveEditor = ({
     false,
     'useAdvancedEditor'
   );
+
+  const initialCompilation = useCodeCompilationCache(props.code, props.lang);
 
   return (
     <PreviewConsoleProvider>
@@ -569,13 +576,12 @@ export const StandaloneCodeLiveEditor = ({
             !isCommenting &&
             (useAdvancedEditor ? (
               isCodeParsed && (
-                <Suspense fallback={null}>
-                  <CodeAdvancedEditor
-                    value={code}
-                    onChange={setCode}
-                    language={props.lang as Language}
-                  />
-                </Suspense>
+                <AdvancedEditor
+                  value={code}
+                  onChange={setCode}
+                  language={props.lang as Language}
+                  initialResult={initialCompilation.data}
+                />
               )
             ) : (
               <Div css={{ flex: 1 }}>
@@ -624,6 +630,19 @@ export const StandaloneCodeLiveEditor = ({
         </Div>
       </Div>
     </PreviewConsoleProvider>
+  );
+};
+
+const AdvancedEditor = (props: {
+  value: string;
+  onChange: (code: string) => void;
+  language: Language;
+  initialResult: CompileResult | undefined;
+}) => {
+  return (
+    <Suspense fallback={null}>
+      <CodeAdvancedEditor {...props} />
+    </Suspense>
   );
 };
 

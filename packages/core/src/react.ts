@@ -343,7 +343,6 @@ export interface NormalizedReactShowroomConfiguration
     | 'css'
     | 'cacheDir'
     | 'imports'
-    | 'componentsEntry'
   > {
   sections: Array<ReactShowroomSectionConfig>;
   ignores: Array<string>;

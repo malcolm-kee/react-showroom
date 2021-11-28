@@ -152,6 +152,7 @@ export const getConfig = (
   _normalizedConfig = {
     ...defaultConfig,
     ...providedConfig,
+    componentsEntry,
     example: {
       widths,
       placeholder: placeholder && resolveApp(placeholder),
