@@ -1,6 +1,8 @@
 Following is an example in TSX.
 
 ```tsx
+import { TextInput } from 'components';
+
 const Example = () => {
   const [value, setValue] = React.useState<string>('');
 

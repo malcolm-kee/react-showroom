@@ -172,7 +172,10 @@ export const StandaloneCodeLiveEditor = ({
     'syncState'
   );
 
-  const [useAdvancedEditor, setUseAdvancedEditor] = React.useState(false);
+  const [useAdvancedEditor, setUseAdvancedEditor] = usePersistedState(
+    false,
+    'useAdvancedEditor'
+  );
 
   return (
     <PreviewConsoleProvider>

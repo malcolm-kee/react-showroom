@@ -240,7 +240,9 @@ const createBaseWebpackConfig = (
 
   const componentTypeParser = docgen.withCustomConfig(
     docgenConfig.tsconfigPath,
-    {}
+    {
+      shouldRemoveUndefinedFromOptional: true,
+    }
   );
 
   const generated = generateSectionsAndImports(sections, {
@@ -319,7 +321,11 @@ const createBaseWebpackConfig = (
               loader: 'showroom-all-component-prop-loader',
               options: {
                 parse: (sources: Array<string>) =>
-                  componentTypeParser.parse(sources),
+                  componentTypeParser.parse(sources).map((doc) =>
+                    Object.assign({}, doc, {
+                      id: createHash(doc.filePath),
+                    })
+                  ),
                 debug,
               },
             },

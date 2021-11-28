@@ -1,12 +1,12 @@
 import Editor, { EditorProps } from '@monaco-editor/react';
-import { useStableCallback, styled } from '@showroomjs/ui';
+import { styled, useStableCallback } from '@showroomjs/ui';
 // @ts-expect-error
 import reactDefinition from '@types/react/index.d.ts?raw';
 import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { Language } from 'prism-react-renderer';
 import * as React from 'react';
-import allProps from 'react-showroom-comp-metadata?showroomCompProp';
-import nightOwl from 'monaco-themes/themes/Night Owl.json';
+import allComponentProps from 'react-showroom-comp-metadata?showroomCompProp';
+import { useComponentMeta } from '../lib/component-props-context';
 
 type Monaco = typeof monaco;
 
@@ -53,17 +53,17 @@ export const CodeAdvancedEditor = styled(function CodeAdvancedEditor({
 
   const extension = languageExtension[language];
 
+  const componentMeta = useComponentMeta();
+
   return (
     <Editor
       defaultLanguage={mappedLanguage || language}
       defaultValue={value}
       onChange={initialized ? onEditorChange : undefined}
       path={extension ? `index.${extension}` : undefined}
+      theme="vs-dark"
       onMount={(editor, monaco) => {
-        setupLanguage(monaco, language);
-
-        monaco.editor.defineTheme('nightOwl', nightOwl as any);
-        monaco.editor.setTheme('nightOwl');
+        setupLanguage(monaco, language, componentMeta);
 
         if (extension) {
           monaco.editor.getModels().forEach((model) => model.dispose());
@@ -87,14 +87,26 @@ export const CodeAdvancedEditor = styled(function CodeAdvancedEditor({
 
 const editorOptions: EditorProps['options'] = {
   minimap: { enabled: false },
-  theme: 'nightOwl',
 };
 
-const setupLanguage = (monaco: Monaco, language: Language) => {
+const setupLanguage = (
+  monaco: Monaco,
+  language: Language,
+  componentMeta: { id: string } | undefined
+) => {
+  const componentDef =
+    componentMeta &&
+    allComponentProps.find((comp) => comp.id === componentMeta.id);
+
   const global = `/// <reference types="react" />
 
-  declare function render(ui: React.ReactElement): void;
-  ${allProps}`;
+declare function render(ui: React.ReactElement): void;
+
+${
+  componentDef
+    ? `declare const ${componentDef.name}: React.ComponentType<${componentDef.props}>;`
+    : ''
+}`;
 
   const defaultService =
     language === 'tsx' ||
