@@ -371,6 +371,7 @@ export interface ReactShowroomComponentContent {
   doc: null | ComponentType<any>;
   headings: Array<ReactShowroomMarkdownHeading>;
   imports: Record<string, any>;
+  versions: Record<string, string>;
   codeblocks: CodeBlocks;
 }
 
@@ -408,6 +409,7 @@ export interface ReactShowroomMarkdownContent {
   Component: ComponentType<any>;
   headings: Array<ReactShowroomMarkdownHeading>;
   imports: Record<string, any>;
+  versions: Record<string, string>;
   codeblocks: CodeBlocks;
 }
 

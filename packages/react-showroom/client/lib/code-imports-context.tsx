@@ -9,3 +9,14 @@ const CodeImportsContext = createNameContext<Record<string, any>>(
 export const CodeImportsContextProvider = CodeImportsContext.Provider;
 
 export const useCodeImports = () => React.useContext(CodeImportsContext);
+
+const DependenciesVersionsContext = createNameContext<Record<string, string>>(
+  'DependenciesVersions',
+  {}
+);
+
+export const DependenciesVersionsContextProvider =
+  DependenciesVersionsContext.Provider;
+
+export const useDependenciesVersions = () =>
+  React.useContext(DependenciesVersionsContext);

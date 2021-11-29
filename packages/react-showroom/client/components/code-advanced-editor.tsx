@@ -7,6 +7,7 @@ import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { Language } from 'prism-react-renderer';
 import * as React from 'react';
 import allComponentProps from 'react-showroom-comp-metadata?showroomCompProp';
+import { useDependenciesVersions } from '../lib/code-imports-context';
 import { useComponentMeta } from '../lib/component-props-context';
 import { componentsEntryName } from '../lib/config';
 
@@ -57,6 +58,10 @@ export const CodeAdvancedEditor = styled(function CodeAdvancedEditor({
   const extension = languageExtension[language];
 
   const componentMeta = useComponentMeta();
+
+  const versions = useDependenciesVersions();
+
+  console.log({ versions });
 
   return (
     <Editor

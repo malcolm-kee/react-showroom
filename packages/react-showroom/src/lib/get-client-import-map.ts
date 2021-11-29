@@ -1,7 +1,7 @@
 import { getSafeName } from '@showroomjs/core';
 import { ImportConfig } from '@showroomjs/core/react';
-import { paths, resolveApp } from './paths';
 import resolve from 'enhanced-resolve';
+import { paths, resolveApp } from './paths';
 
 type Env = 'browser' | 'node';
 
@@ -14,6 +14,23 @@ const resolveCommonJs = resolve.create.sync({
   mainFields: ['module', 'main'],
   conditionNames: ['require', 'node'],
 });
+
+const resolveVersion = (packageName: string): string => {
+  try {
+    const result = require.resolve(`${packageName}/package.json`, {
+      paths: [paths.appPath],
+    });
+
+    if (result) {
+      const { version } = require(result);
+
+      return version;
+    }
+    return '';
+  } catch (err) {
+    return '';
+  }
+};
 
 function getPkgResolvedFile(path: string, env: Env): string {
   try {
@@ -39,9 +56,10 @@ interface ImportMapData {
   name: string;
   varName: string;
   path: string;
+  version: string;
 }
 
-export const getClientImportMap = (imports: Array<ImportConfig>, env: Env) =>
+const getClientImportMap = (imports: Array<ImportConfig>, env: Env) =>
   imports.reduce<Record<string, ImportMapData>>((result, importConfig) => {
     if (typeof importConfig === 'string') {
       return {
@@ -50,6 +68,7 @@ export const getClientImportMap = (imports: Array<ImportConfig>, env: Env) =>
           name: importConfig,
           varName: getSafeName(importConfig),
           path: getPkgResolvedFile(importConfig, env),
+          version: resolveVersion(importConfig),
         },
       };
     }
@@ -65,6 +84,7 @@ export const getClientImportMap = (imports: Array<ImportConfig>, env: Env) =>
         path: isPackage(path)
           ? getPkgResolvedFile(path, env)
           : resolveApp(path),
+        version: isPackage(path) ? resolveVersion(path) : '',
       },
     };
   }, {});
@@ -81,8 +101,12 @@ export const getImportsAttach = (
 ${Object.values(importMap)
   .map(({ varName, path }) => `import * as ${varName} from '${path}';`)
   .join('\n')}
-  ${Object.values(importMap)
-    .map(({ varName }) => `imports.${varName} = ${varName};`)
-    .join('\n')}
+${Object.values(importMap)
+  .map(({ varName }) => `imports.${varName} = ${varName};`)
+  .join('\n')}
+export const versions = {};
+${Object.values(importMap)
+  .map(({ name, version }) => `versions['${name}'] = '${version}';`)
+  .join('\n')}
 `;
 };
