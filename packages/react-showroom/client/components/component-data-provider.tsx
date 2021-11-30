@@ -3,7 +3,7 @@ import * as React from 'react';
 import type { ComponentDoc } from 'react-docgen-typescript';
 import {
   CodeImportsContextProvider,
-  DependenciesVersionsContextProvider,
+  LoadDtsContextProvider,
 } from '../lib/code-imports-context';
 import { CodeVariablesContextProvider } from '../lib/code-variables-context';
 import { CodeblocksContext } from '../lib/codeblocks-context';
@@ -15,7 +15,7 @@ export const ComponentDataProvider = (props: {
   metadata: ComponentDoc & { id: string };
 }) => {
   const {
-    content: { imports, codeblocks, Component, versions },
+    content: { imports, codeblocks, Component, loadDts },
     metadata,
   } = props;
 
@@ -30,7 +30,7 @@ export const ComponentDataProvider = (props: {
 
   return (
     <CodeImportsContextProvider value={imports}>
-      <DependenciesVersionsContextProvider value={versions}>
+      <LoadDtsContextProvider value={loadDts}>
         <ComponentMetaContext.Provider value={metadata}>
           <CodeVariablesContextProvider value={codeVariables}>
             <CodeblocksContext.Provider value={codeblocks}>
@@ -38,7 +38,7 @@ export const ComponentDataProvider = (props: {
             </CodeblocksContext.Provider>
           </CodeVariablesContextProvider>
         </ComponentMetaContext.Provider>
-      </DependenciesVersionsContextProvider>
+      </LoadDtsContextProvider>
     </CodeImportsContextProvider>
   );
 };

@@ -283,13 +283,10 @@ importers:
       '@heroicons/react': ^1.0.5
       '@monaco-editor/react': ^4.3.1
       '@pmmmwh/react-refresh-webpack-plugin': ^0.5.2
-      '@rollup/plugin-virtual': ^2.0.3
-      '@rollup/pluginutils': ^4.1.1
       '@showroomjs/bundles': workspace:*
       '@showroomjs/core': workspace:*
       '@showroomjs/ui': workspace:*
       '@types/lodash': ^4.14.177
-      '@types/react': ^17.0.37
       '@types/webpack-dev-server': ^4.5.0
       babel-loader: ^8.2.3
       classnames: ^2.3.1
@@ -337,7 +334,6 @@ importers:
       rimraf: ^3.0.2
       scroll-into-view-if-needed: ^2.2.28
       slugify: ^1.6.3
-      slugo: ^0.4.0
       snarkdown: ^2.0.0
       source-map-support: ^0.5.21
       string-similarity: ^4.0.4
@@ -366,12 +362,9 @@ importers:
       '@heroicons/react': 1.0.5_react@17.0.2
       '@monaco-editor/react': 4.3.1_38e345af476e5e7cfa5440c4ff004a8f
       '@pmmmwh/react-refresh-webpack-plugin': 0.5.2_b9031d1e4ce9d8753b6e7db1570d91c1
-      '@rollup/plugin-virtual': 2.0.3_rollup@2.60.1
-      '@rollup/pluginutils': 4.1.1
       '@showroomjs/bundles': link:../bundles
       '@showroomjs/core': link:../core
       '@showroomjs/ui': link:../ui
-      '@types/react': 17.0.37
       babel-loader: 8.2.3_d888b76bb52891dbb46d1b9f7384ff34
       classnames: 2.3.1
       copy-webpack-plugin: 10.0.0_webpack@5.64.4
@@ -418,7 +411,6 @@ importers:
       rimraf: 3.0.2
       scroll-into-view-if-needed: 2.2.28
       slugify: 1.6.3
-      slugo: 0.4.0
       snarkdown: 2.0.0
       source-map-support: 0.5.21
       string-similarity: 4.0.4
@@ -2939,14 +2931,6 @@ packages:
       rollup: 2.60.1
     dev: true
 
-  /@rollup/plugin-virtual/2.0.3_rollup@2.60.1:
-    resolution: {integrity: sha512-pw6ziJcyjZtntQ//bkad9qXaBx665SgEL8C8KI5wO8G5iU5MPxvdWrQyVaAvjojGm9tJoS8M9Z/EEepbqieYmw==}
-    peerDependencies:
-      rollup: ^1.20.0||^2.0.0
-    dependencies:
-      rollup: 2.60.1
-    dev: false
-
   /@rollup/pluginutils/3.1.0_rollup@2.60.1:
     resolution: {integrity: sha512-GksZ6pr6TpIjHm8h9lSQ8pi8BE9VeubNT0OMJ3B5uZJ8pz73NPiqOtCog/x2/QzM1ENChPKxMDhiQuRHsqc+lg==}
     engines: {node: '>= 8.0.0'}
@@ -3344,6 +3328,7 @@ packages:
 
   /@types/prop-types/15.7.4:
     resolution: {integrity: sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ==}
+    dev: true
 
   /@types/qs/6.9.7:
     resolution: {integrity: sha512-FGa1F62FT09qcrueBA6qYTrJPVDzah9a+493+o2PCXsesWHIn27G98TsSMs3WPNbZIEj4+VJf6saSFpvD+3Zsw==}
@@ -3392,6 +3377,7 @@ packages:
       '@types/prop-types': 15.7.4
       '@types/scheduler': 0.16.2
       csstype: 3.0.10
+    dev: true
 
   /@types/resolve/1.17.1:
     resolution: {integrity: sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw==}
@@ -3418,6 +3404,7 @@ packages:
 
   /@types/scheduler/0.16.2:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
+    dev: true
 
   /@types/semver/6.2.3:
     resolution: {integrity: sha512-KQf+QAMWKMrtBMsB8/24w53tEsxllMj6TuA80TT/5igJalLI/zm0L3oXRbIAl4Ohfc85gyHX/jhMwsVkmhLU4A==}
@@ -4931,6 +4918,7 @@ packages:
 
   /csstype/3.0.10:
     resolution: {integrity: sha512-2u44ZG2OcNUO9HDp/Jl8C07x6pU/eTR3ncV91SiK3dhG9TWvRVsCoJw14Ckx5DgWkzGA3waZWO3d7pgqpUI/XA==}
+    dev: true
 
   /csstype/3.0.9:
     resolution: {integrity: sha512-rpw6JPxK6Rfg1zLOYCSwle2GFOOsnjmDYDaBwEcwoOg4qlsIVCN789VkBZDJAGi4T07gI4YSutR43t9Zz4Lzuw==}
@@ -10406,10 +10394,6 @@ packages:
   /slugify/1.6.3:
     resolution: {integrity: sha512-1MPyqnIhgiq+/0iDJyqSJHENdnH5MMIlgJIBxmkRMzTNKlS/QsN5dXsB+MdDq4E6w0g9jFA4XOTRkVDjDae/2w==}
     engines: {node: '>=8.0.0'}
-    dev: false
-
-  /slugo/0.4.0:
-    resolution: {integrity: sha512-WENYU9JlHuU2vIxtsmY/6N9HxgXFG+tpkHtl8yP0a5y7FvjKDRjTtMWU/CLpX4qOZDlGhOLGOhiD4L+GqhZjRQ==}
     dev: false
 
   /smart-buffer/4.2.0:

@@ -373,6 +373,7 @@ export interface ReactShowroomComponentContent {
   imports: Record<string, any>;
   versions: Record<string, string>;
   codeblocks: CodeBlocks;
+  loadDts: () => Promise<{ default: Record<string, string> }>;
 }
 
 export interface ComponentDocItem {
@@ -411,6 +412,7 @@ export interface ReactShowroomMarkdownContent {
   imports: Record<string, any>;
   versions: Record<string, string>;
   codeblocks: CodeBlocks;
+  loadDts: () => Promise<{ default: Record<string, string> }>;
 }
 
 export interface ReactShowroomMarkdownSection {

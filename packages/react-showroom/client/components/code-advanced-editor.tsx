@@ -1,13 +1,11 @@
 import Editor, { EditorProps } from '@monaco-editor/react';
 import { CompileResult } from '@showroomjs/core';
 import { styled, useStableCallback } from '@showroomjs/ui';
-// @ts-expect-error
-import reactDefinition from '@types/react/index.d.ts?raw';
 import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { Language } from 'prism-react-renderer';
 import * as React from 'react';
 import allComponentProps from 'react-showroom-comp-metadata?showroomCompProp';
-import { useDependenciesVersions } from '../lib/code-imports-context';
+import { useLoadDts } from '../lib/code-imports-context';
 import { useComponentMeta } from '../lib/component-props-context';
 import { componentsEntryName } from '../lib/config';
 
@@ -59,9 +57,7 @@ export const CodeAdvancedEditor = styled(function CodeAdvancedEditor({
 
   const componentMeta = useComponentMeta();
 
-  const versions = useDependenciesVersions();
-
-  console.log({ versions });
+  const loadDts = useLoadDts();
 
   return (
     <Editor
@@ -71,28 +67,31 @@ export const CodeAdvancedEditor = styled(function CodeAdvancedEditor({
       path={extension ? `index.${extension}` : undefined}
       theme="vs-dark"
       onMount={(editor, monaco) => {
-        setupLanguage(
-          monaco,
-          language,
-          !!initialResult &&
-            initialResult.type === 'success' &&
-            initialResult.importedPackages.length > 0,
-          componentMeta
-        );
-
-        if (extension) {
-          monaco.editor.getModels().forEach((model) => model.dispose());
-
-          const model = monaco.editor.createModel(
-            value,
-            extension ? 'typescript' : language,
-            monaco.Uri.parse(`index.${extension}`)
+        loadDts().then((m) => {
+          setupLanguage(
+            monaco,
+            language,
+            !!initialResult &&
+              initialResult.type === 'success' &&
+              initialResult.importedPackages.length > 0,
+            m.default,
+            componentMeta
           );
-          editor.setModel(null);
-          editor.setModel(model);
-        }
 
-        setInitialized(true);
+          if (extension) {
+            monaco.editor.getModels().forEach((model) => model.dispose());
+
+            const model = monaco.editor.createModel(
+              value,
+              extension ? 'typescript' : language,
+              monaco.Uri.parse(`index.${extension}`)
+            );
+            editor.setModel(null);
+            editor.setModel(model);
+          }
+
+          setInitialized(true);
+        });
       }}
       options={editorOptions}
       className={className}
@@ -108,6 +107,7 @@ const setupLanguage = (
   monaco: Monaco,
   language: Language,
   isModule: boolean,
+  dts: Record<string, string>,
   componentMeta: { id: string } | undefined
 ) => {
   const defaultService =
@@ -133,6 +133,10 @@ const setupLanguage = (
       noSemanticValidation: true,
       noSyntaxValidation: true,
       onlyVisible: true,
+    });
+
+    Object.entries(dts).forEach(([name, content]) => {
+      defaultService.addExtraLib(content, `file:///${name}`);
     });
 
     const componentDef =
@@ -162,11 +166,6 @@ ${
 }`;
 
     defaultService.addExtraLib(global, 'global.d.ts');
-
-    defaultService.addExtraLib(
-      reactDefinition,
-      'file:///node_modules/@types/react/index.d.ts'
-    );
 
     if (componentsEntryName) {
       defaultService.addExtraLib(

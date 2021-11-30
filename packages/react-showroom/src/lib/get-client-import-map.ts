@@ -56,7 +56,6 @@ interface ImportMapData {
   name: string;
   varName: string;
   path: string;
-  version: string;
 }
 
 const getClientImportMap = (imports: Array<ImportConfig>, env: Env) =>
@@ -68,7 +67,6 @@ const getClientImportMap = (imports: Array<ImportConfig>, env: Env) =>
           name: importConfig,
           varName: getSafeName(importConfig),
           path: getPkgResolvedFile(importConfig, env),
-          version: resolveVersion(importConfig),
         },
       };
     }
@@ -103,10 +101,6 @@ ${Object.values(importMap)
   .join('\n')}
 ${Object.values(importMap)
   .map(({ varName }) => `imports.${varName} = ${varName};`)
-  .join('\n')}
-export const versions = {};
-${Object.values(importMap)
-  .map(({ name, version }) => `versions['${name}'] = '${version}';`)
   .join('\n')}
 `;
 };

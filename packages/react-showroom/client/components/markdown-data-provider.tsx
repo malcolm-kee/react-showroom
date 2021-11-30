@@ -1,9 +1,6 @@
 import { ReactShowroomMarkdownContent } from '@showroomjs/core/react';
 import * as React from 'react';
-import {
-  CodeImportsContextProvider,
-  DependenciesVersionsContextProvider,
-} from '../lib/code-imports-context';
+import { CodeImportsContextProvider } from '../lib/code-imports-context';
 import { CodeblocksContext } from '../lib/codeblocks-context';
 
 export const MarkdownDataProvider = (props: {
@@ -12,11 +9,9 @@ export const MarkdownDataProvider = (props: {
 }) => {
   return (
     <CodeImportsContextProvider value={props.data.imports}>
-      <DependenciesVersionsContextProvider value={props.data.versions}>
-        <CodeblocksContext.Provider value={props.data.codeblocks}>
-          {props.children}
-        </CodeblocksContext.Provider>
-      </DependenciesVersionsContextProvider>
+      <CodeblocksContext.Provider value={props.data.codeblocks}>
+        {props.children}
+      </CodeblocksContext.Provider>
     </CodeImportsContextProvider>
   );
 };

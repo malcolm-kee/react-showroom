@@ -396,6 +396,21 @@ const createBaseWebpackConfig = (
               ],
             },
             {
+              resourceQuery: /showroomRemarkImportsDts/,
+              use: [
+                {
+                  loader: 'showroom-remark-codeblocks-dts-loader',
+                  options: {
+                    imports,
+                  },
+                },
+                {
+                  loader: 'showroom-remark-codeblocks-loader',
+                  options: codeBlocksOptions,
+                },
+              ],
+            },
+            {
               resourceQuery: /showroomRemarkImports/,
               use: [
                 {
@@ -408,6 +423,21 @@ const createBaseWebpackConfig = (
                 {
                   loader: 'showroom-remark-codeblocks-loader',
                   options: codeBlocksOptions,
+                },
+              ],
+            },
+            {
+              resourceQuery: /showroomRemarkDocImportsDts/,
+              use: [
+                {
+                  loader: 'showroom-remark-codeblocks-dts-loader',
+                  options: {
+                    imports,
+                  },
+                },
+                {
+                  loader: 'showroom-remark-codeblocks-loader',
+                  options: docsCodeBlocksOptions,
                 },
               ],
             },

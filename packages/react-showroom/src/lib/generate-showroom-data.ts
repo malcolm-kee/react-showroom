@@ -72,15 +72,15 @@ function compileComponentSection(
   const Component = await import(/* webpackChunkName: "${componentName}" */'${sourcePath}');
 
   const { default: doc, headings } = await loadDoc;
-  const { imports, versions } = await loadImports;
+  const { imports } = await loadImports;
 
   return {
     doc,
     headings,
     Component: Component.default || Component[${metadataIdentifier}.displayName] || Component,
     imports: imports || {},
-    versions: versions || {},
     codeblocks: (await loadCodeBlocks).default || {},
+    loadDts: () => import('${docPath}?showroomRemarkImportsDts'),
   }    
 }`
     : `async () => {
@@ -92,6 +92,7 @@ function compileComponentSection(
         headings: [],
         imports: {},
         codeblocks: {},
+        loadDts: () => Promise.resolve({}),
       }
     }`;
 
@@ -230,14 +231,18 @@ export const generateSectionsAndImports = (
           }');
 
                 const { default: Component, headings } = await loadComponent;
-                const { imports = {}, versions = {} } = await loadImports;
+                const { imports = {} } = await loadImports;
 
                 return {
                   Component,
                   headings,
                   imports,
-                  versions,
                   codeblocks: (await loadCodeblocks).default || {},
+                  loadDts: () => import('${section.sourcePath}?${
+            isTreatedAsComponentDoc
+              ? 'showroomRemarkImportsDts'
+              : 'showroomRemarkDocImportsDts'
+          }'),
                 }
               },
             }`;
