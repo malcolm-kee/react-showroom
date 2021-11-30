@@ -18,6 +18,12 @@ declare module '*.mdx?showroomRemarkCodeblocks' {
   export = codeBlocks;
 }
 
+declare module '*.mdx?showroomRemarkImportsDts' {
+  var value: Record<string, string>;
+
+  export default value;
+}
+
 declare module '*?showroomRemarkImports' {
   export var imports: Record<string, any>;
 }

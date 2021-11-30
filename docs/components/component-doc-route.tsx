@@ -27,7 +27,9 @@ export const ComponentDocRoute = (
           <Suspense fallback={null}>
             <Switch>
               <Route path="/_standalone/:codeHash">
-                <ComponentDocStandaloneEditor />
+                <div className="flex flex-col h-[50vh] min-h-[500px]">
+                  <ComponentDocStandaloneEditor />
+                </div>
               </Route>
               <Route>
                 <div className="px-6 pb-6">

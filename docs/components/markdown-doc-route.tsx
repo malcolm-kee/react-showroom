@@ -33,7 +33,9 @@ export const MarkdownDocRoute = (props: {
                     },
                   ]}
                 />
-                <StandaloneEditor />
+                <div className="flex flex-col h-[50vh] min-h-[500px]">
+                  <StandaloneEditor />
+                </div>
               </Route>
               <Route>
                 <div className="px-6 pb-6">

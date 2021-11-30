@@ -589,7 +589,7 @@ const createBaseWebpackConfig = (
         EXAMPLE_WIDTHS: exampleConfig.widths,
         SITE_URL: url,
         AUDIENCE_TOGGLE: theme.audienceToggle,
-        COMPONENTS_ENTRY_NAME: componentsEntry && componentsEntry.name,
+        COMPONENTS_ENTRY_NAME: (componentsEntry && componentsEntry.name) || '',
       }),
       virtualModules,
       isDev

@@ -48,5 +48,7 @@ export { useUnionProps } from './lib/use-union-props';
 export const StandaloneEditor = lazy(
   () => import('./components/standalone-editor-lazy')
 );
-export const allComponentsMetadata: Record<string, ComponentDoc> =
-  allCompMetadata;
+export const allComponentsMetadata: Record<
+  string,
+  ComponentDoc & { id: string }
+> = allCompMetadata;

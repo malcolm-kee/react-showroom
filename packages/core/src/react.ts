@@ -371,7 +371,6 @@ export interface ReactShowroomComponentContent {
   doc: null | ComponentType<any>;
   headings: Array<ReactShowroomMarkdownHeading>;
   imports: Record<string, any>;
-  versions: Record<string, string>;
   codeblocks: CodeBlocks;
   loadDts: () => Promise<{ default: Record<string, string> }>;
 }
@@ -410,7 +409,6 @@ export interface ReactShowroomMarkdownContent {
   Component: ComponentType<any>;
   headings: Array<ReactShowroomMarkdownHeading>;
   imports: Record<string, any>;
-  versions: Record<string, string>;
   codeblocks: CodeBlocks;
   loadDts: () => Promise<{ default: Record<string, string> }>;
 }

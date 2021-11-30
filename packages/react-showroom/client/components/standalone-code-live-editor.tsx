@@ -238,14 +238,18 @@ export const StandaloneCodeLiveEditor = ({
                   <ToggleButton
                     pressed={useAdvancedEditor}
                     onPressedChange={setUseAdvancedEditor}
-                    css={
-                      useAdvancedEditor
+                    css={{
+                      display: 'none',
+                      '@md': {
+                        display: 'flex',
+                      },
+                      ...(useAdvancedEditor
                         ? {
                             color: '$gray-600',
                             backgroundColor: '$gray-100',
                           }
-                        : undefined
-                    }
+                        : {}),
+                    }}
                     data-testid="advanced-editor-toggle"
                   >
                     <SparklesIcon width={20} height={20} />
@@ -576,12 +580,14 @@ export const StandaloneCodeLiveEditor = ({
             !isCommenting &&
             (useAdvancedEditor ? (
               isCodeParsed && (
-                <AdvancedEditor
-                  value={code}
-                  onChange={setCode}
-                  language={props.lang as Language}
-                  initialResult={initialCompilation.data}
-                />
+                <Div css={{ flex: 1 }}>
+                  <AdvancedEditor
+                    value={code}
+                    onChange={setCode}
+                    language={props.lang as Language}
+                    initialResult={initialCompilation.data}
+                  />
+                </Div>
               )
             ) : (
               <Div css={{ flex: 1 }}>

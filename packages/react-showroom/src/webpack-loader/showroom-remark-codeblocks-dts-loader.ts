@@ -20,8 +20,6 @@ const showroomRemarkCodeblocksDtsLoader: LoaderDefinition<ShowroomRemarkCodebloc
 
     const { imports } = this.getOptions();
 
-    console.log({ imports });
-
     const allImports: Array<ImportConfig> = imports ? imports.slice() : [];
 
     Object.keys(processed).forEach((sourceCodeSnippet) => {
