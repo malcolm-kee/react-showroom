@@ -1,5 +1,18 @@
 # react-showroom
 
+## 1.10.0
+
+### Minor Changes
+
+- be8f3b1: Support advanced editor - monaco editor
+
+### Patch Changes
+
+- Updated dependencies [be8f3b1]
+  - @showroomjs/bundles@1.6.0
+  - @showroomjs/core@1.7.0
+  - @showroomjs/ui@1.6.0
+
 ## 1.9.0
 
 ### Minor Changes

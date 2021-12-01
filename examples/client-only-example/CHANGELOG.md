@@ -1,5 +1,16 @@
 # client-only-example
 
+## 1.1.0
+
+### Minor Changes
+
+- be8f3b1: Support advanced editor - monaco editor
+
+### Patch Changes
+
+- Updated dependencies [be8f3b1]
+  - react-showroom@1.10.0
+
 ## 1.0.29
 
 ### Patch Changes

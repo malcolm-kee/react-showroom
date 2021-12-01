@@ -1,5 +1,17 @@
 # @showroomjs/ui
 
+## 1.6.0
+
+### Minor Changes
+
+- be8f3b1: Support advanced editor - monaco editor
+
+### Patch Changes
+
+- Updated dependencies [be8f3b1]
+  - @showroomjs/bundles@1.6.0
+  - @showroomjs/core@1.7.0
+
 ## 1.5.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @showroomjs/bundles
 
+## 1.6.0
+
+### Minor Changes
+
+- be8f3b1: Support advanced editor - monaco editor
+
 ## 1.5.0
 
 ### Minor Changes
