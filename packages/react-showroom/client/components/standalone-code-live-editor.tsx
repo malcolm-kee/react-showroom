@@ -4,29 +4,36 @@ import {
   CodeIcon,
   DesktopComputerIcon,
   RefreshIcon,
+  SparklesIcon,
   ZoomInIcon,
 } from '@heroicons/react/outline';
 import {
   AnnotationIcon as FilledAnnotationIcon,
   LocationMarkerIcon,
 } from '@heroicons/react/solid';
-import { isEqualArray, SupportedLanguage } from '@showroomjs/core';
+import {
+  CompileResult,
+  isEqualArray,
+  SupportedLanguage,
+} from '@showroomjs/core';
 import {
   css,
   DropdownMenu,
   styled,
   ToggleButton,
+  Tooltip,
   useDebounce,
   usePersistedState,
   useQueryParams,
-  Tooltip,
 } from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { safeCompress, safeDecompress } from '../lib/compress';
 import { EXAMPLE_WIDTHS } from '../lib/config';
+import { lazy, Suspense } from '../lib/lazy';
 import { getScrollFn } from '../lib/scroll-into-view';
+import { useCodeCompilationCache } from '../lib/use-code-compilation';
 import { useCommentState } from '../lib/use-comment-state';
 import { PreviewConsoleProvider } from '../lib/use-preview-console';
 import { useStateWithParams } from '../lib/use-state-with-params';
@@ -45,6 +52,12 @@ import {
 } from './standalone-code-live-editor-copy-button';
 import { StandaloneCodeLiveEditorPreviewList } from './standalone-code-live-editor-preview';
 
+const CodeAdvancedEditor = lazy(() =>
+  import('./code-advanced-editor').then((m) => ({
+    default: m.CodeAdvancedEditor,
+  }))
+);
+
 export interface StandaloneCodeLiveEditorProps {
   code: string;
   lang: SupportedLanguage;
@@ -59,6 +72,8 @@ export const StandaloneCodeLiveEditor = ({
   const theme = useCodeTheme();
 
   const [queryParams, setQueryParams, isReady] = useQueryParams();
+
+  const [isCodeParsed, setIsCodeParsed] = React.useState(false);
 
   const { state: commentState, add, remove } = useCommentState(props.codeHash);
   const [activeComment, setActiveComment] = React.useState('');
@@ -121,6 +136,8 @@ export const StandaloneCodeLiveEditor = ({
           _setHiddenSizes(serializedHiddenSizes);
         }
       }
+
+      setIsCodeParsed(true);
     }
   }, [isReady]);
 
@@ -160,6 +177,13 @@ export const StandaloneCodeLiveEditor = ({
     'syncState'
   );
 
+  const [useAdvancedEditor, setUseAdvancedEditor] = usePersistedState(
+    false,
+    'useAdvancedEditor'
+  );
+
+  const initialCompilation = useCodeCompilationCache(props.code, props.lang);
+
   return (
     <PreviewConsoleProvider>
       <Div css={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -176,66 +200,95 @@ export const StandaloneCodeLiveEditor = ({
               display: 'flex',
             }}
           >
-            <Div
-              css={{
-                display: 'flex',
-                gap: '$2',
-                paddingRight: '$2',
-                borderRight: '1px solid $gray-200',
-              }}
-            >
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <ToggleButton
-                    pressed={showEditor}
-                    onPressedChange={(show) =>
-                      setShowEditor(show, show ? undefined : 'true')
-                    }
-                    css={
-                      showEditor
-                        ? {
-                            color: '$gray-600',
-                            backgroundColor: '$gray-100',
-                          }
-                        : undefined
-                    }
-                    data-testid="editor-toggle"
-                  >
-                    <CodeIcon width={20} height={20} />
-                  </ToggleButton>
-                </Tooltip.Trigger>
-                <Tooltip.Content>
-                  Editor
-                  <Tooltip.Arrow />
-                </Tooltip.Content>
-              </Tooltip.Root>
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <ToggleButton
-                    pressed={showPreview}
-                    onPressedChange={(show) =>
-                      setShowPreview(show, show ? undefined : 'true')
-                    }
-                    disabled={isCommenting}
-                    css={
-                      showPreview
-                        ? {
-                            color: '$gray-600',
-                            backgroundColor: '$gray-100',
-                          }
-                        : undefined
-                    }
-                    data-testid="preview-toggle"
-                  >
-                    <DesktopComputerIcon width={20} height={20} />
-                  </ToggleButton>
-                </Tooltip.Trigger>
-                <Tooltip.Content>
-                  Preview
-                  <Tooltip.Arrow />
-                </Tooltip.Content>
-              </Tooltip.Root>
-            </Div>
+            {!isCommenting && (
+              <Div
+                css={{
+                  display: 'flex',
+                  gap: '$2',
+                  paddingRight: '$2',
+                  borderRight: '1px solid $gray-200',
+                }}
+              >
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <ToggleButton
+                      pressed={showEditor}
+                      onPressedChange={(show) =>
+                        setShowEditor(show, show ? undefined : 'true')
+                      }
+                      css={
+                        showEditor
+                          ? {
+                              color: '$gray-600',
+                              backgroundColor: '$gray-100',
+                            }
+                          : undefined
+                      }
+                      data-testid="editor-toggle"
+                    >
+                      <CodeIcon width={20} height={20} />
+                    </ToggleButton>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    Editor
+                    <Tooltip.Arrow />
+                  </Tooltip.Content>
+                </Tooltip.Root>
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <ToggleButton
+                      pressed={useAdvancedEditor}
+                      onPressedChange={setUseAdvancedEditor}
+                      css={{
+                        display: 'none',
+                        '@md': {
+                          display: 'flex',
+                        },
+                        ...(useAdvancedEditor
+                          ? {
+                              color: '$gray-600',
+                              backgroundColor: '$gray-100',
+                            }
+                          : {}),
+                      }}
+                      data-testid="advanced-editor-toggle"
+                    >
+                      <SparklesIcon width={20} height={20} />
+                    </ToggleButton>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    Advanced Editor
+                    <Tooltip.Arrow />
+                  </Tooltip.Content>
+                </Tooltip.Root>
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <ToggleButton
+                      pressed={showPreview}
+                      onPressedChange={(show) =>
+                        setShowPreview(show, show ? undefined : 'true')
+                      }
+                      disabled={isCommenting}
+                      css={
+                        showPreview
+                          ? {
+                              color: '$gray-600',
+                              backgroundColor: '$gray-100',
+                            }
+                          : undefined
+                      }
+                      data-testid="preview-toggle"
+                    >
+                      <DesktopComputerIcon width={20} height={20} />
+                    </ToggleButton>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    Preview
+                    <Tooltip.Arrow />
+                  </Tooltip.Content>
+                </Tooltip.Root>
+              </Div>
+            )}
             <Div
               css={{
                 display: 'block',
@@ -525,18 +578,31 @@ export const StandaloneCodeLiveEditor = ({
               />
             ))}
           <ConsolePanel />
-          {showEditor && !isCommenting && (
-            <Div css={{ flex: 1 }}>
-              <CodeEditor
-                code={code}
-                onChange={setCode}
-                language={props.lang as Language}
-                theme={theme}
-                className={editor()}
-                wrapperClass={editorWrapper()}
-              />
-            </Div>
-          )}
+          {showEditor &&
+            !isCommenting &&
+            (useAdvancedEditor ? (
+              isCodeParsed && (
+                <Div css={{ flex: 1 }}>
+                  <AdvancedEditor
+                    value={code}
+                    onChange={setCode}
+                    language={props.lang as Language}
+                    initialResult={initialCompilation.data}
+                  />
+                </Div>
+              )
+            ) : (
+              <Div css={{ flex: 1 }}>
+                <CodeEditor
+                  code={code}
+                  onChange={setCode}
+                  language={props.lang as Language}
+                  theme={theme}
+                  className={editor()}
+                  wrapperClass={editorWrapper()}
+                />
+              </Div>
+            ))}
           {isCommenting && (
             <Div
               css={{
@@ -572,6 +638,19 @@ export const StandaloneCodeLiveEditor = ({
         </Div>
       </Div>
     </PreviewConsoleProvider>
+  );
+};
+
+const AdvancedEditor = (props: {
+  value: string;
+  onChange: (code: string) => void;
+  language: Language;
+  initialResult: CompileResult | undefined;
+}) => {
+  return (
+    <Suspense fallback={null}>
+      <CodeAdvancedEditor {...props} />
+    </Suspense>
   );
 };
 

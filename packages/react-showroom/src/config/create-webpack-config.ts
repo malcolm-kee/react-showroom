@@ -228,6 +228,7 @@ const createBaseWebpackConfig = (
     debug,
     cacheDir,
     example: exampleConfig,
+    componentsEntry,
   } = config;
 
   const isProd = mode === 'production';
@@ -236,6 +237,13 @@ const createBaseWebpackConfig = (
   const docgenParser = docgen.withCustomConfig(
     docgenConfig.tsconfigPath,
     docgenConfig.options
+  );
+
+  const componentTypeParser = docgen.withCustomConfig(
+    docgenConfig.tsconfigPath,
+    {
+      shouldRemoveUndefinedFromOptional: true,
+    }
   );
 
   const generated = generateSectionsAndImports(sections, {
@@ -297,6 +305,24 @@ const createBaseWebpackConfig = (
               options: {
                 parse: (sources: Array<string>) =>
                   docgenParser.parse(sources).map((doc) =>
+                    Object.assign({}, doc, {
+                      id: createHash(doc.filePath),
+                    })
+                  ),
+                debug,
+              },
+            },
+          ],
+        },
+        {
+          test: /.js$/,
+          resourceQuery: /showroomCompProp/,
+          use: [
+            {
+              loader: 'showroom-all-component-prop-loader',
+              options: {
+                parse: (sources: Array<string>) =>
+                  componentTypeParser.parse(sources).map((doc) =>
                     Object.assign({}, doc, {
                       id: createHash(doc.filePath),
                     })
@@ -370,6 +396,21 @@ const createBaseWebpackConfig = (
               ],
             },
             {
+              resourceQuery: /showroomRemarkImportsDts/,
+              use: [
+                {
+                  loader: 'showroom-remark-codeblocks-dts-loader',
+                  options: {
+                    imports,
+                  },
+                },
+                {
+                  loader: 'showroom-remark-codeblocks-loader',
+                  options: codeBlocksOptions,
+                },
+              ],
+            },
+            {
               resourceQuery: /showroomRemarkImports/,
               use: [
                 {
@@ -382,6 +423,21 @@ const createBaseWebpackConfig = (
                 {
                   loader: 'showroom-remark-codeblocks-loader',
                   options: codeBlocksOptions,
+                },
+              ],
+            },
+            {
+              resourceQuery: /showroomRemarkDocImportsDts/,
+              use: [
+                {
+                  loader: 'showroom-remark-codeblocks-dts-loader',
+                  options: {
+                    imports,
+                  },
+                },
+                {
+                  loader: 'showroom-remark-codeblocks-loader',
+                  options: docsCodeBlocksOptions,
                 },
               ],
             },
@@ -533,9 +589,14 @@ const createBaseWebpackConfig = (
         EXAMPLE_WIDTHS: exampleConfig.widths,
         SITE_URL: url,
         AUDIENCE_TOGGLE: theme.audienceToggle,
+        COMPONENTS_ENTRY_NAME: (componentsEntry && componentsEntry.name) || '',
       }),
       virtualModules,
-      isDev ? new ReactRefreshWebpackPlugin() : undefined,
+      isDev
+        ? new ReactRefreshWebpackPlugin({
+            overlay: false,
+          })
+        : undefined,
       options.profile
         ? new webpack.debug.ProfilingPlugin({
             outputPath: resolveApp(

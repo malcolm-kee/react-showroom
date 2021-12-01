@@ -208,12 +208,14 @@ export interface ReactShowroomConfiguration {
    * Webpack configuration to load your components (or any other resources that are needed by the components, e.g. CSS)
    */
   webpackConfig?: Configuration | ((env: Environment) => Configuration);
+  componentsEntry?: {
+    name: string;
+    path: string;
+  };
   /**
-   * modules to be available in examples via `import`.
-   *
-   * Pass 'name' (how it is imported) and 'path' (relative path from project root).
+   * packages to be available in examples via `import`.
    */
-  imports?: Array<ImportConfig>;
+  imports?: Array<string>;
   /**
    * Modules that are required for your style guide. Useful for third-party styles or polyfills.
    */
@@ -334,11 +336,18 @@ export type ReactShowroomSectionConfig =
 export interface NormalizedReactShowroomConfiguration
   extends Omit<
     ReactShowroomConfiguration,
-    'items' | 'devServer' | 'build' | 'components' | 'css' | 'cacheDir'
+    | 'items'
+    | 'devServer'
+    | 'build'
+    | 'components'
+    | 'css'
+    | 'cacheDir'
+    | 'imports'
   > {
   sections: Array<ReactShowroomSectionConfig>;
   ignores: Array<string>;
   outDir: string;
+  imports: Array<ImportConfig>;
   cacheDir: string | null;
   prerender: boolean;
   basePath: string;
@@ -363,6 +372,7 @@ export interface ReactShowroomComponentContent {
   headings: Array<ReactShowroomMarkdownHeading>;
   imports: Record<string, any>;
   codeblocks: CodeBlocks;
+  loadDts: () => Promise<{ default: Record<string, string> }>;
 }
 
 export interface ComponentDocItem {
@@ -400,6 +410,7 @@ export interface ReactShowroomMarkdownContent {
   headings: Array<ReactShowroomMarkdownHeading>;
   imports: Record<string, any>;
   codeblocks: CodeBlocks;
+  loadDts: () => Promise<{ default: Record<string, string> }>;
 }
 
 export interface ReactShowroomMarkdownSection {

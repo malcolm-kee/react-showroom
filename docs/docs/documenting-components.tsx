@@ -120,6 +120,7 @@ const markdownContent = {
   imports: buttonImports,
   codeblocks: buttonCodeblocks,
   Component: Button,
+  loadDts: () => import('./components/button.mdx?showroomRemarkImportsDts'),
 };
 
 export const MarkdownResult = () => (
@@ -139,6 +140,10 @@ const anotherMarkdownContent = {
   headings: anotherButtonHeadings,
   imports: anotherButtonImports,
   codeblocks: anotherButtonCodeBlocks,
+  loadDts: () =>
+    import(
+      './documenting-components/button-other-example.mdx?showroomRemarkImportsDts'
+    ),
   Component: Button,
 };
 
@@ -164,6 +169,10 @@ const unionPropsContent = {
   imports: buttonUnionPropsImports,
   codeblocks: buttonUnionPropsCodeBlocks,
   Component: Button,
+  loadDts: () =>
+    import(
+      './documenting-components/button-union-example.mdx?showroomRemarkImportsDts'
+    ),
 };
 
 export const UnionPropsResult = () => (

@@ -1,11 +1,11 @@
 import { getSafeName } from '@showroomjs/core';
 import { ImportConfig } from '@showroomjs/core/react';
-import { paths, resolveApp } from './paths';
 import resolve from 'enhanced-resolve';
+import { paths, resolveApp } from './paths';
 
 type Env = 'browser' | 'node';
 
-const resolveEs = resolve.create.sync({
+const resolveBrowser = resolve.create.sync({
   mainFields: ['browser', 'module', 'main'],
   conditionNames: ['import', 'require', 'node'],
 });
@@ -19,7 +19,7 @@ function getPkgResolvedFile(path: string, env: Env): string {
   try {
     const resolvedResult =
       env === 'browser'
-        ? resolveEs(paths.appPath, path)
+        ? resolveBrowser(paths.appPath, path)
         : resolveCommonJs(paths.appPath, path);
 
     if (resolvedResult) {
@@ -41,7 +41,7 @@ interface ImportMapData {
   path: string;
 }
 
-export const getClientImportMap = (imports: Array<ImportConfig>, env: Env) =>
+const getClientImportMap = (imports: Array<ImportConfig>, env: Env) =>
   imports.reduce<Record<string, ImportMapData>>((result, importConfig) => {
     if (typeof importConfig === 'string') {
       return {
@@ -81,8 +81,8 @@ export const getImportsAttach = (
 ${Object.values(importMap)
   .map(({ varName, path }) => `import * as ${varName} from '${path}';`)
   .join('\n')}
-  ${Object.values(importMap)
-    .map(({ varName }) => `imports.${varName} = ${varName};`)
-    .join('\n')}
+${Object.values(importMap)
+  .map(({ varName }) => `imports.${varName} = ${varName};`)
+  .join('\n')}
 `;
 };

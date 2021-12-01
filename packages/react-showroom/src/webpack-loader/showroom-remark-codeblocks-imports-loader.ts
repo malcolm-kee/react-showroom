@@ -5,6 +5,11 @@ import { getImportsAttach } from '../lib/get-client-import-map';
 
 export interface ShowroomRemarkCodeblocksImportLoaderOptions {
   imports: Array<ImportConfig> | undefined;
+  /**
+   * the environment that the code will be run.
+   *
+   * We need to know this to determine the module resolution (i.e. using ESM or CJS)
+   */
   env: 'browser' | 'node';
 }
 

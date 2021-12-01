@@ -9,3 +9,11 @@ const CodeImportsContext = createNameContext<Record<string, any>>(
 export const CodeImportsContextProvider = CodeImportsContext.Provider;
 
 export const useCodeImports = () => React.useContext(CodeImportsContext);
+
+const LoadDtsContext = createNameContext<
+  () => Promise<{ default: Record<string, string> }>
+>('LoadDtsContext', () => Promise.resolve({ default: {} }));
+
+export const LoadDtsContextProvider = LoadDtsContext.Provider;
+
+export const useLoadDts = () => React.useContext(LoadDtsContext);

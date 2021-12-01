@@ -1,7 +1,10 @@
 import { ReactShowroomComponentContent } from '@showroomjs/core/react';
-import type { ComponentDoc } from 'react-docgen-typescript';
 import * as React from 'react';
-import { CodeImportsContextProvider } from '../lib/code-imports-context';
+import type { ComponentDoc } from 'react-docgen-typescript';
+import {
+  CodeImportsContextProvider,
+  LoadDtsContextProvider,
+} from '../lib/code-imports-context';
 import { CodeVariablesContextProvider } from '../lib/code-variables-context';
 import { CodeblocksContext } from '../lib/codeblocks-context';
 import { ComponentMetaContext } from '../lib/component-props-context';
@@ -12,7 +15,7 @@ export const ComponentDataProvider = (props: {
   metadata: ComponentDoc & { id: string };
 }) => {
   const {
-    content: { imports, codeblocks, Component },
+    content: { imports, codeblocks, Component, loadDts },
     metadata,
   } = props;
 
@@ -27,13 +30,15 @@ export const ComponentDataProvider = (props: {
 
   return (
     <CodeImportsContextProvider value={imports}>
-      <ComponentMetaContext.Provider value={metadata}>
-        <CodeVariablesContextProvider value={codeVariables}>
-          <CodeblocksContext.Provider value={codeblocks}>
-            {props.children}
-          </CodeblocksContext.Provider>
-        </CodeVariablesContextProvider>
-      </ComponentMetaContext.Provider>
+      <LoadDtsContextProvider value={loadDts}>
+        <ComponentMetaContext.Provider value={metadata}>
+          <CodeVariablesContextProvider value={codeVariables}>
+            <CodeblocksContext.Provider value={codeblocks}>
+              {props.children}
+            </CodeblocksContext.Provider>
+          </CodeVariablesContextProvider>
+        </ComponentMetaContext.Provider>
+      </LoadDtsContextProvider>
     </CodeImportsContextProvider>
   );
 };

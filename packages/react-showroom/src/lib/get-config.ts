@@ -5,6 +5,7 @@ import {
   removeTrailingSlash,
 } from '@showroomjs/core';
 import {
+  ImportConfig,
   ItemConfiguration,
   NormalizedReactShowroomConfiguration,
   ReactShowroomComponentSectionConfig,
@@ -93,6 +94,7 @@ export const getConfig = (
     imports: providedImports,
     ignores = DEFAULT_IGNORES,
     cacheDir = '.showroom_cache',
+    componentsEntry,
     css = {
       postcss: fs.existsSync(paths.appPostcssConfig),
     },
@@ -141,9 +143,16 @@ export const getConfig = (
 
   const { outDir = 'showroom', prerender = true } = providedBuildConfig;
 
+  const imports: Array<ImportConfig> = providedImports
+    ? providedImports.some((imp) => imp === 'react')
+      ? providedImports
+      : providedImports.concat('react')
+    : ['react'];
+
   _normalizedConfig = {
     ...defaultConfig,
     ...providedConfig,
+    componentsEntry,
     example: {
       widths,
       placeholder: placeholder && resolveApp(placeholder),
@@ -172,13 +181,7 @@ export const getConfig = (
       ...defaultThemeConfiguration,
       ...providedThemeConfig,
     },
-    imports: providedImports
-      ? providedImports.some((imp) =>
-          isString(imp) ? imp === 'react' : imp.name === 'react'
-        )
-        ? providedImports
-        : providedImports.concat('react')
-      : ['react'],
+    imports: componentsEntry ? imports.concat(componentsEntry) : imports,
   };
 
   return _normalizedConfig;

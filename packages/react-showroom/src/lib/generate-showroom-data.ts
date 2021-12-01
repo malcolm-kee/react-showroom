@@ -66,19 +66,21 @@ function compileComponentSection(
 
   const load = docPath
     ? `async () => {
-      const loadDoc = import(/* webpackChunkName: "${componentName}-doc" */'${docPath}');
-      const loadImports = import(/* webpackChunkName: "${componentName}-imports" */'${docPath}?showroomRemarkImports');
-      const loadCodeBlocks = import(/* webpackChunkName: "${componentName}-codeblocks" */'${docPath}?showroomRemarkCodeblocks');
-      const Component = await import(/* webpackChunkName: "${componentName}" */'${sourcePath}');
+  const loadDoc = import(/* webpackChunkName: "${componentName}-doc" */'${docPath}');
+  const loadImports = import(/* webpackChunkName: "${componentName}-imports" */'${docPath}?showroomRemarkImports');
+  const loadCodeBlocks = import(/* webpackChunkName: "${componentName}-codeblocks" */'${docPath}?showroomRemarkCodeblocks');
+  const Component = await import(/* webpackChunkName: "${componentName}" */'${sourcePath}');
 
-      const { default: doc, headings } = await loadDoc;
-    
-      return {
-        doc,
-        headings,
-        Component: Component.default || Component[${metadataIdentifier}.displayName] || Component,
-    imports: (await loadImports).imports || {},
+  const { default: doc, headings } = await loadDoc;
+  const { imports } = await loadImports;
+
+  return {
+    doc,
+    headings,
+    Component: Component.default || Component[${metadataIdentifier}.displayName] || Component,
+    imports: imports || {},
     codeblocks: (await loadCodeBlocks).default || {},
+    loadDts: () => import('${docPath}?showroomRemarkImportsDts'),
   }    
 }`
     : `async () => {
@@ -90,6 +92,7 @@ function compileComponentSection(
         headings: [],
         imports: {},
         codeblocks: {},
+        loadDts: () => Promise.resolve({}),
       }
     }`;
 
@@ -228,12 +231,18 @@ export const generateSectionsAndImports = (
           }');
 
                 const { default: Component, headings } = await loadComponent;
+                const { imports = {} } = await loadImports;
 
                 return {
                   Component,
                   headings,
-                  imports: (await loadImports).imports || {},
+                  imports,
                   codeblocks: (await loadCodeblocks).default || {},
+                  loadDts: () => import('${section.sourcePath}?${
+            isTreatedAsComponentDoc
+              ? 'showroomRemarkImportsDts'
+              : 'showroomRemarkDocImportsDts'
+          }'),
                 }
               },
             }`;
