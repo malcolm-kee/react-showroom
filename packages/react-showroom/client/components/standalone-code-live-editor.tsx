@@ -200,93 +200,95 @@ export const StandaloneCodeLiveEditor = ({
               display: 'flex',
             }}
           >
-            <Div
-              css={{
-                display: 'flex',
-                gap: '$2',
-                paddingRight: '$2',
-                borderRight: '1px solid $gray-200',
-              }}
-            >
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <ToggleButton
-                    pressed={showEditor}
-                    onPressedChange={(show) =>
-                      setShowEditor(show, show ? undefined : 'true')
-                    }
-                    css={
-                      showEditor
-                        ? {
-                            color: '$gray-600',
-                            backgroundColor: '$gray-100',
-                          }
-                        : undefined
-                    }
-                    data-testid="editor-toggle"
-                  >
-                    <CodeIcon width={20} height={20} />
-                  </ToggleButton>
-                </Tooltip.Trigger>
-                <Tooltip.Content>
-                  Editor
-                  <Tooltip.Arrow />
-                </Tooltip.Content>
-              </Tooltip.Root>
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <ToggleButton
-                    pressed={useAdvancedEditor}
-                    onPressedChange={setUseAdvancedEditor}
-                    css={{
-                      display: 'none',
-                      '@md': {
-                        display: 'flex',
-                      },
-                      ...(useAdvancedEditor
-                        ? {
-                            color: '$gray-600',
-                            backgroundColor: '$gray-100',
-                          }
-                        : {}),
-                    }}
-                    data-testid="advanced-editor-toggle"
-                  >
-                    <SparklesIcon width={20} height={20} />
-                  </ToggleButton>
-                </Tooltip.Trigger>
-                <Tooltip.Content>
-                  Advanced Editor
-                  <Tooltip.Arrow />
-                </Tooltip.Content>
-              </Tooltip.Root>
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <ToggleButton
-                    pressed={showPreview}
-                    onPressedChange={(show) =>
-                      setShowPreview(show, show ? undefined : 'true')
-                    }
-                    disabled={isCommenting}
-                    css={
-                      showPreview
-                        ? {
-                            color: '$gray-600',
-                            backgroundColor: '$gray-100',
-                          }
-                        : undefined
-                    }
-                    data-testid="preview-toggle"
-                  >
-                    <DesktopComputerIcon width={20} height={20} />
-                  </ToggleButton>
-                </Tooltip.Trigger>
-                <Tooltip.Content>
-                  Preview
-                  <Tooltip.Arrow />
-                </Tooltip.Content>
-              </Tooltip.Root>
-            </Div>
+            {!isCommenting && (
+              <Div
+                css={{
+                  display: 'flex',
+                  gap: '$2',
+                  paddingRight: '$2',
+                  borderRight: '1px solid $gray-200',
+                }}
+              >
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <ToggleButton
+                      pressed={showEditor}
+                      onPressedChange={(show) =>
+                        setShowEditor(show, show ? undefined : 'true')
+                      }
+                      css={
+                        showEditor
+                          ? {
+                              color: '$gray-600',
+                              backgroundColor: '$gray-100',
+                            }
+                          : undefined
+                      }
+                      data-testid="editor-toggle"
+                    >
+                      <CodeIcon width={20} height={20} />
+                    </ToggleButton>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    Editor
+                    <Tooltip.Arrow />
+                  </Tooltip.Content>
+                </Tooltip.Root>
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <ToggleButton
+                      pressed={useAdvancedEditor}
+                      onPressedChange={setUseAdvancedEditor}
+                      css={{
+                        display: 'none',
+                        '@md': {
+                          display: 'flex',
+                        },
+                        ...(useAdvancedEditor
+                          ? {
+                              color: '$gray-600',
+                              backgroundColor: '$gray-100',
+                            }
+                          : {}),
+                      }}
+                      data-testid="advanced-editor-toggle"
+                    >
+                      <SparklesIcon width={20} height={20} />
+                    </ToggleButton>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    Advanced Editor
+                    <Tooltip.Arrow />
+                  </Tooltip.Content>
+                </Tooltip.Root>
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <ToggleButton
+                      pressed={showPreview}
+                      onPressedChange={(show) =>
+                        setShowPreview(show, show ? undefined : 'true')
+                      }
+                      disabled={isCommenting}
+                      css={
+                        showPreview
+                          ? {
+                              color: '$gray-600',
+                              backgroundColor: '$gray-100',
+                            }
+                          : undefined
+                      }
+                      data-testid="preview-toggle"
+                    >
+                      <DesktopComputerIcon width={20} height={20} />
+                    </ToggleButton>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    Preview
+                    <Tooltip.Arrow />
+                  </Tooltip.Content>
+                </Tooltip.Root>
+              </Div>
+            )}
             <Div
               css={{
                 display: 'block',

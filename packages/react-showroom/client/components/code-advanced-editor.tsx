@@ -67,31 +67,40 @@ export const CodeAdvancedEditor = styled(function CodeAdvancedEditor({
       path={extension ? `index.${extension}` : undefined}
       theme="vs-dark"
       onMount={(editor, monaco) => {
-        loadDts().then((m) => {
-          setupLanguage(
-            monaco,
-            language,
-            !!initialResult &&
-              initialResult.type === 'success' &&
-              initialResult.importedPackages.length > 0,
-            m.default,
-            componentMeta
+        const langService = setupLanguage(
+          monaco,
+          language,
+          !!initialResult &&
+            initialResult.type === 'success' &&
+            initialResult.importedPackages.length > 0,
+          componentMeta
+        );
+
+        if (extension) {
+          monaco.editor.getModels().forEach((model) => model.dispose());
+
+          const model = monaco.editor.createModel(
+            value,
+            extension ? 'typescript' : language,
+            monaco.Uri.parse(`index.${extension}`)
           );
+          editor.setModel(null);
+          editor.setModel(model);
+        }
 
-          if (extension) {
-            monaco.editor.getModels().forEach((model) => model.dispose());
+        if (langService) {
+          loadDts().then((m) => {
+            if (m.default) {
+              Object.entries(m.default).forEach(([name, content]) => {
+                langService.addExtraLib(content, `file:///${name}`);
+              });
+            }
 
-            const model = monaco.editor.createModel(
-              value,
-              extension ? 'typescript' : language,
-              monaco.Uri.parse(`index.${extension}`)
-            );
-            editor.setModel(null);
-            editor.setModel(model);
-          }
-
+            setInitialized(true);
+          });
+        } else {
           setInitialized(true);
-        });
+        }
       }}
       options={editorOptions}
       className={className}
@@ -107,7 +116,6 @@ const setupLanguage = (
   monaco: Monaco,
   language: Language,
   isModule: boolean,
-  dts: Record<string, string>,
   componentMeta: { id: string } | undefined
 ) => {
   const defaultService =
@@ -135,23 +143,19 @@ const setupLanguage = (
       onlyVisible: true,
     });
 
-    Object.entries(dts).forEach(([name, content]) => {
-      defaultService.addExtraLib(content, `file:///${name}`);
-    });
-
     const componentDef =
       componentMeta &&
       allComponentProps.find((comp) => comp.id === componentMeta.id);
 
     const global = isModule
-      ? `import * as R from 'react';
+      ? `import * as React from 'react';
 declare global {
-  const React: typeof R;
-  const function render(ui: R.ReactElement): void;
+  const React: typeof React;
+  const function render(ui: React.ReactElement): void;
 
   ${
     componentDef
-      ? `const ${componentDef.name}: R.ComponentType<${componentDef.props}>`
+      ? `const ${componentDef.name}: React.ComponentType<${componentDef.props}>`
       : ''
   }
 }`
@@ -180,5 +184,7 @@ ${
         `file:///node_modules/${componentsEntryName}/index.d.ts`
       );
     }
+
+    return defaultService;
   }
 };
