@@ -80,7 +80,7 @@ const showroomAllComponentPropLoader: LoaderDefinition<ShowroomAllComponentLoade
         props.push(
           `'${propName}'${propDef.required ? '' : '?'}: ${normalizeType(
             propDef.type.name
-          )}`
+          )};`
         );
       });
 

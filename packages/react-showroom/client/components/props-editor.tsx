@@ -274,6 +274,7 @@ export const ToggleGroup = styled('div', {
   '@lg': {
     display: 'flex',
     gap: '$2',
+    flexWrap: 'wrap',
   },
 });
 

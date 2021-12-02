@@ -24,6 +24,7 @@ import type { defineConfig } from '../index';
 import { createHash } from './create-hash';
 import { logToStdout } from './log-to-stdout';
 import { paths, resolveApp } from './paths';
+import * as ts from 'typescript';
 
 const DEFAULT_COMPONENTS_GLOB = 'src/components/**/*.tsx';
 const DEFAULT_IGNORES = [
@@ -149,6 +150,12 @@ export const getConfig = (
       : providedImports.concat('react')
     : ['react'];
 
+  const tsconfigPath = providedDocgenConfig.tsconfigPath || paths.appTsConfig;
+
+  const { config } = ts.readConfigFile(tsconfigPath, (path) =>
+    fs.readFileSync(path, 'utf8')
+  );
+
   _normalizedConfig = {
     ...defaultConfig,
     ...providedConfig,
@@ -174,7 +181,7 @@ export const getConfig = (
     prerender,
     devServerPort: providedDevServerConfig.port || 6969,
     docgen: {
-      tsconfigPath: providedDocgenConfig.tsconfigPath || paths.appTsConfig,
+      tsconfigPath,
       options: docgenOptions,
     },
     theme: {
@@ -182,6 +189,7 @@ export const getConfig = (
       ...providedThemeConfig,
     },
     imports: componentsEntry ? imports.concat(componentsEntry) : imports,
+    compilerOptions: (config && config.compilerOptions) || {},
   };
 
   return _normalizedConfig;

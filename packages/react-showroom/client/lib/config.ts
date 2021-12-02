@@ -9,3 +9,5 @@ export const prerenderExample = process.env.PRERENDER_EXAMPLE;
 export const audienceDefault = process.env.AUDIENCE_TOGGLE;
 
 export const componentsEntryName = process.env.COMPONENTS_ENTRY_NAME;
+
+export const compilerOptions = process.env.COMPILER_OPTIONS;
