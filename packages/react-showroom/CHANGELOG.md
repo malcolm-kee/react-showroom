@@ -1,5 +1,18 @@
 # react-showroom
 
+## 1.11.0
+
+### Minor Changes
+
+- 51c2463: Use app tsconfig compilerOptions and apply to the advanced code editor
+
+### Patch Changes
+
+- Updated dependencies [51c2463]
+  - @showroomjs/bundles@1.7.0
+  - @showroomjs/core@1.8.0
+  - @showroomjs/ui@1.6.1
+
 ## 1.10.0
 
 ### Minor Changes

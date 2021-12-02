@@ -1,5 +1,11 @@
 # @showroomjs/bundles
 
+## 1.7.0
+
+### Minor Changes
+
+- 51c2463: Use app tsconfig compilerOptions and apply to the advanced code editor
+
 ## 1.6.0
 
 ### Minor Changes
