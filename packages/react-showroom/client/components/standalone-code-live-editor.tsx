@@ -4,7 +4,7 @@ import {
   CodeIcon,
   DesktopComputerIcon,
   RefreshIcon,
-  SparklesIcon,
+  TerminalIcon,
   ZoomInIcon,
 } from '@heroicons/react/outline';
 import {
@@ -234,33 +234,35 @@ export const StandaloneCodeLiveEditor = ({
                     <Tooltip.Arrow />
                   </Tooltip.Content>
                 </Tooltip.Root>
-                <Tooltip.Root>
-                  <Tooltip.Trigger asChild>
-                    <ToggleButton
-                      pressed={useAdvancedEditor}
-                      onPressedChange={setUseAdvancedEditor}
-                      css={{
-                        display: 'none',
-                        '@md': {
-                          display: 'flex',
-                        },
-                        ...(useAdvancedEditor
-                          ? {
-                              color: '$gray-600',
-                              backgroundColor: '$gray-100',
-                            }
-                          : {}),
-                      }}
-                      data-testid="advanced-editor-toggle"
-                    >
-                      <SparklesIcon width={20} height={20} />
-                    </ToggleButton>
-                  </Tooltip.Trigger>
-                  <Tooltip.Content>
-                    Advanced Editor
-                    <Tooltip.Arrow />
-                  </Tooltip.Content>
-                </Tooltip.Root>
+                {showEditor && (
+                  <Tooltip.Root>
+                    <Tooltip.Trigger asChild>
+                      <ToggleButton
+                        pressed={useAdvancedEditor}
+                        onPressedChange={setUseAdvancedEditor}
+                        css={{
+                          display: 'none',
+                          '@md': {
+                            display: 'flex',
+                          },
+                          ...(useAdvancedEditor
+                            ? {
+                                color: '$gray-600',
+                                backgroundColor: '$gray-100',
+                              }
+                            : {}),
+                        }}
+                        data-testid="advanced-editor-toggle"
+                      >
+                        <TerminalIcon width={20} height={20} />
+                      </ToggleButton>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      Advanced Editor
+                      <Tooltip.Arrow />
+                    </Tooltip.Content>
+                  </Tooltip.Root>
+                )}
                 <Tooltip.Root>
                   <Tooltip.Trigger asChild>
                     <ToggleButton

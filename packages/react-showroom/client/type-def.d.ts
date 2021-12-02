@@ -74,6 +74,7 @@ declare module 'react-showroom-comp-metadata?showroomCompProp' {
 
 declare namespace NodeJS {
   import type { ThemeConfiguration } from '@showroomjs/core/react';
+  import type { CompilerOptions } from 'typescript';
 
   interface ProcessEnv {
     readonly REACT_SHOWROOM_THEME: ThemeConfiguration;
@@ -85,5 +86,6 @@ declare namespace NodeJS {
     readonly AUDIENCE_TOGGLE: 'design' | 'code' | false;
     readonly EXAMPLE_WIDTHS: Array<number>;
     readonly COMPONENTS_ENTRY_NAME: string | undefined;
+    readonly COMPILER_OPTIONS: Partial<CompilerOptions>;
   }
 }

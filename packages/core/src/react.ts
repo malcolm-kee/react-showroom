@@ -1,5 +1,6 @@
 import type { PrismTheme } from 'prism-react-renderer';
 import type { ComponentType } from 'react';
+import type { CompilerOptions } from 'typescript';
 import type {
   ComponentDoc as DocgenComponentDoc,
   ParserOptions,
@@ -351,9 +352,6 @@ export interface NormalizedReactShowroomConfiguration
   cacheDir: string | null;
   prerender: boolean;
   basePath: string;
-  /**
-   * assetDirs in absolute paths
-   */
   devServerPort: number;
   docgen: DocgenConfiguration;
   theme: ThemeConfiguration;
@@ -364,6 +362,10 @@ export interface NormalizedReactShowroomConfiguration
   };
   html: ShowroomHtmlConfiguration;
   example: ExampleConfiguration;
+  /**
+   * typescript compiler options to be used in advanced code editor
+   */
+  compilerOptions: Partial<CompilerOptions>;
 }
 
 export interface ReactShowroomComponentContent {

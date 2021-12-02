@@ -229,6 +229,7 @@ const createBaseWebpackConfig = (
     cacheDir,
     example: exampleConfig,
     componentsEntry,
+    compilerOptions,
   } = config;
 
   const isProd = mode === 'production';
@@ -590,6 +591,7 @@ const createBaseWebpackConfig = (
         SITE_URL: url,
         AUDIENCE_TOGGLE: theme.audienceToggle,
         COMPONENTS_ENTRY_NAME: (componentsEntry && componentsEntry.name) || '',
+        COMPILER_OPTIONS: compilerOptions,
       }),
       virtualModules,
       isDev

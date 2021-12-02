@@ -1,5 +1,5 @@
 import Editor, { EditorProps } from '@monaco-editor/react';
-import { CompileResult } from '@showroomjs/core';
+import { CompileResult, omit } from '@showroomjs/core';
 import { styled, useStableCallback } from '@showroomjs/ui';
 import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { Language } from 'prism-react-renderer';
@@ -7,7 +7,7 @@ import * as React from 'react';
 import allComponentProps from 'react-showroom-comp-metadata?showroomCompProp';
 import { useLoadDts } from '../lib/code-imports-context';
 import { useComponentMeta } from '../lib/component-props-context';
-import { componentsEntryName } from '../lib/config';
+import { componentsEntryName, compilerOptions } from '../lib/config';
 
 type Monaco = typeof monaco;
 export interface CodeAdvancedEditorProps {
@@ -108,8 +108,23 @@ export const CodeAdvancedEditor = styled(function CodeAdvancedEditor({
   );
 });
 
+const isAndroid = process.env.SSR
+  ? false
+  : navigator && /android/i.test(navigator.userAgent);
+
 const editorOptions: EditorProps['options'] = {
   minimap: { enabled: false },
+  lightbulb: { enabled: true },
+  quickSuggestions: {
+    other: !isAndroid,
+    comments: !isAndroid,
+    strings: !isAndroid,
+  },
+  acceptSuggestionOnCommitCharacter: !isAndroid,
+  acceptSuggestionOnEnter: !isAndroid ? 'on' : 'off',
+  inlayHints: {
+    enabled: true,
+  },
 };
 
 const setupLanguage = (
@@ -128,13 +143,20 @@ const setupLanguage = (
 
   if (defaultService) {
     defaultService.setCompilerOptions({
+      allowSyntheticDefaultImports: true,
+      esModuleInterop: true,
+      ...omit(compilerOptions, [
+        'baseUrl',
+        'paths',
+        'module',
+        'isolatedModules',
+        'lib',
+      ]),
+      target: monaco.languages.typescript.ScriptTarget.ES2018,
       jsx: monaco.languages.typescript.JsxEmit.React,
       moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
       noEmit: true,
       allowJs: true,
-      allowSyntheticDefaultImports: true,
-      esModuleInterop: true,
-      target: monaco.languages.typescript.ScriptTarget.ES2018,
     });
 
     defaultService.setDiagnosticsOptions({
