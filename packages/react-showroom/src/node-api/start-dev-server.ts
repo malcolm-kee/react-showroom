@@ -8,6 +8,7 @@ import webpack from 'webpack';
 import webpackDevServer from 'webpack-dev-server';
 import { argv } from 'yargs';
 import { createWebpackConfig } from '../config/create-webpack-config';
+import { generateDts } from '../lib/generate-dts';
 import { getConfig } from '../lib/get-config';
 import { logToStdout } from '../lib/log-to-stdout';
 import { prepareUrls } from '../lib/prepare-url';
@@ -35,6 +36,8 @@ export async function startDevServer(
   const config = getConfig('development', configFile, userConfig);
 
   const { devServerPort, assetDir } = config;
+
+  await generateDts(config, true);
 
   const HOST = '0.0.0.0';
   const PORT = Number((argv as any).port ?? process.env.PORT ?? devServerPort);

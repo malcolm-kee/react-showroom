@@ -1,17 +1,27 @@
 import * as docgen from 'react-docgen-typescript';
 import type { LoaderDefinition } from 'webpack';
 import { logToStdout } from '../lib/log-to-stdout';
-
+import { isString } from '@showroomjs/core';
 export interface ShowroomAllComponentLoaderOptions {
   parse: (
     sourcePaths: Array<string>
   ) => Array<docgen.ComponentDoc & { id: string }>;
+  dts?: string | false;
   debug?: boolean;
 }
 
 const showroomAllComponentPropLoader: LoaderDefinition<ShowroomAllComponentLoaderOptions> =
   function (content) {
     const loaderOptions = this.getOptions();
+
+    if (loaderOptions.dts === false) {
+      return `export default '';`;
+    }
+
+    if (loaderOptions.dts && isString(loaderOptions.dts)) {
+      return `import dts from '${loaderOptions.dts}?raw';
+      export default dts;`;
+    }
 
     const paths = JSON.parse(content) as Array<string>;
 
@@ -140,7 +150,13 @@ const showroomAllComponentPropLoader: LoaderDefinition<ShowroomAllComponentLoade
       };
     });
 
-    return `export default ${JSON.stringify(allCompDefs, null, 2)};`;
+    return `export default \`import * as React from 'react';
+    ${allCompDefs
+      .map(
+        (compDef) =>
+          `export declare const ${compDef.name}: React.ComponentType<${compDef.props}>`
+      )
+      .join('\n')}\`;`;
   };
 
 const normalizeType = (type: string): string => {
@@ -162,7 +178,14 @@ const normalizeType = (type: string): string => {
   return type;
 };
 
-const REACT_TYPES = ['ReactNode', 'Key', 'CSSProperties', 'AriaRole'];
+const REACT_TYPES = [
+  'ReactNode',
+  'Key',
+  'CSSProperties',
+  'AriaRole',
+  'HTMLAttributeReferrerPolicy',
+  'HTMLInputTypeAttribute',
+];
 const REACT_EVENT_HANDLERS_PATTERN = /^(\w)+EventHandler/;
 
 module.exports = showroomAllComponentPropLoader;

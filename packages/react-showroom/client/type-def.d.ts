@@ -63,11 +63,7 @@ declare module 'react-showroom-comp-metadata?showroomAllComp' {
 }
 
 declare module 'react-showroom-comp-metadata?showroomCompProp' {
-  declare const allComponentProps: Array<{
-    id: string;
-    name: string;
-    props: string;
-  }>;
+  declare const allComponentProps: string;
 
   export default allComponentProps;
 }

@@ -212,6 +212,7 @@ export interface ReactShowroomConfiguration {
   componentsEntry?: {
     name: string;
     path: string;
+    dts?: string | false;
   };
   /**
    * packages to be available in examples via `import`.
@@ -282,7 +283,7 @@ export interface ReactShowroomConfiguration {
    *
    * @default '.showroom_cache'
    */
-  cacheDir?: string | false;
+  cacheDir?: string;
   debug?: boolean;
 }
 
@@ -349,7 +350,7 @@ export interface NormalizedReactShowroomConfiguration
   ignores: Array<string>;
   outDir: string;
   imports: Array<ImportConfig>;
-  cacheDir: string | null;
+  cacheDir: string;
   prerender: boolean;
   basePath: string;
   devServerPort: number;

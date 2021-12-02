@@ -328,6 +328,17 @@ const createBaseWebpackConfig = (
                       id: createHash(doc.filePath),
                     })
                   ),
+                dts:
+                  componentsEntry &&
+                  (isDefined(componentsEntry.dts)
+                    ? isString(componentsEntry.dts)
+                      ? path.resolve(paths.appPath, componentsEntry.dts)
+                      : componentsEntry.dts
+                    : path.resolve(
+                        cacheDir,
+                        'dts',
+                        `${path.parse(componentsEntry.path).name}.d.ts`
+                      )),
                 debug,
               },
             },

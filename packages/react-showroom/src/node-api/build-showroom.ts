@@ -16,6 +16,7 @@ import { createSSrBundle } from '../lib/create-ssr-bundle';
 import { getConfig } from '../lib/get-config';
 import { cyan, logToStdout, yellow } from '../lib/log-to-stdout';
 import { resolveApp, resolveShowroom } from '../lib/paths';
+import { generateDts } from '../lib/generate-dts';
 
 async function buildStaticSite(
   config: NormalizedReactShowroomConfiguration,
@@ -157,6 +158,8 @@ export async function buildShowroom(
   profile?: boolean
 ) {
   const config = getConfig('production', configFile, userConfig);
+
+  await generateDts(config, false);
 
   const ssrDir = resolveShowroom(
     `ssr-result-${Date.now() + performance.now()}`
