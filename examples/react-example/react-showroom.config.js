@@ -42,7 +42,7 @@ module.exports = defineConfig({
   },
   componentsEntry: {
     name: 'components',
-    path: './src/components',
+    path: './src/components/index.ts',
   },
   docgen: {
     tsconfigPath: path.resolve(__dirname, 'tsconfig.build.json'),

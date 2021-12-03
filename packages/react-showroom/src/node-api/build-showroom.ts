@@ -13,8 +13,9 @@ import { performance } from 'perf_hooks';
 import webpack from 'webpack';
 import { createWebpackConfig } from '../config/create-webpack-config';
 import { createSSrBundle } from '../lib/create-ssr-bundle';
+import { generateDts } from '../lib/generate-dts';
 import { getConfig } from '../lib/get-config';
-import { cyan, logToStdout, yellow } from '../lib/log-to-stdout';
+import { green, logToStdout } from '../lib/log-to-stdout';
 import { resolveApp, resolveShowroom } from '../lib/paths';
 
 async function buildStaticSite(
@@ -68,11 +69,11 @@ async function prerenderSite(
     logToStdout(`Prerender with basePath: ${config.basePath}`);
   }
 
-  logToStdout(cyan('Prerendering...'));
+  let pageCount = 0;
 
   for (const route of routes) {
     if (route !== '') {
-      logToStdout(cyan(` - /${route}`));
+      pageCount++;
 
       await fs.outputFile(
         resolveApp(`${config.outDir}/${route}/index.html`),
@@ -80,8 +81,6 @@ async function prerenderSite(
       );
     }
   }
-
-  logToStdout(cyan(` - /`));
 
   await fs.outputFile(htmlPath, await getHtml('/'));
 
@@ -103,6 +102,8 @@ async function prerenderSite(
 
     return finalHtml;
   }
+
+  return pageCount + 1;
 }
 
 async function prerenderPreview(
@@ -118,11 +119,11 @@ async function prerenderPreview(
 
   const routes = await ssr.getRoutes();
 
-  logToStdout(yellow('Prerendering preview...'));
+  let pageCount = 0;
 
   for (const route of routes) {
     if (route !== '') {
-      logToStdout(yellow(` - /_preview/${route}`));
+      pageCount++;
 
       await fs.outputFile(
         resolveApp(`${config.outDir}/_preview/${route}/index.html`),
@@ -149,6 +150,8 @@ async function prerenderPreview(
 
     return finalHtml;
   }
+
+  return pageCount;
 }
 
 export async function buildShowroom(
@@ -157,6 +160,8 @@ export async function buildShowroom(
   profile?: boolean
 ) {
   const config = getConfig('production', configFile, userConfig);
+
+  await generateDts(config, false);
 
   const ssrDir = resolveShowroom(
     `ssr-result-${Date.now() + performance.now()}`
@@ -171,10 +176,16 @@ export async function buildShowroom(
         buildStaticSite(config, profile),
         createSSrBundle(config, ssrDir, profile),
       ]);
-      await Promise.all([
+      logToStdout('Prerendering...');
+      const [sitePageCount, previewPageCount] = await Promise.all([
         prerenderSite(config, ssrDir),
         prerenderPreview(config, ssrDir),
       ]);
+      logToStdout(
+        green(`Prerendered ${sitePageCount + previewPageCount} pages.`)
+      );
+      logToStdout(`Generated showroom at`);
+      logToStdout(`  -  ${green(resolveApp(config.outDir))}`);
     }
   } finally {
     await fs.remove(ssrDir);

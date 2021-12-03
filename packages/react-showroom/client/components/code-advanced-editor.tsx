@@ -4,10 +4,10 @@ import { styled, useStableCallback } from '@showroomjs/ui';
 import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { Language } from 'prism-react-renderer';
 import * as React from 'react';
-import allComponentProps from 'react-showroom-comp-metadata?showroomCompProp';
+import allComponentDts from 'react-showroom-comp-metadata?showroomCompProp';
 import { useLoadDts } from '../lib/code-imports-context';
 import { useComponentMeta } from '../lib/component-props-context';
-import { componentsEntryName, compilerOptions } from '../lib/config';
+import { compilerOptions, componentsEntryName } from '../lib/config';
 
 type Monaco = typeof monaco;
 export interface CodeAdvancedEditorProps {
@@ -131,7 +131,7 @@ const setupLanguage = (
   monaco: Monaco,
   language: Language,
   isModule: boolean,
-  componentMeta: { id: string } | undefined
+  componentMeta: { id: string; displayName: string } | undefined
 ) => {
   const defaultService =
     language === 'tsx' ||
@@ -165,47 +165,50 @@ const setupLanguage = (
       onlyVisible: true,
     });
 
-    const componentDef =
-      componentMeta &&
-      allComponentProps.find((comp) => comp.id === componentMeta.id);
+    const componentPkgName = componentsEntryName || 'react-showroom-components';
+
+    const hasComponentDef = !!(allComponentDts && componentMeta?.displayName);
+
+    if (allComponentDts) {
+      defaultService.addExtraLib(
+        JSON.stringify({
+          name: componentPkgName,
+          version: '1.0.0',
+          types: 'index.d.ts',
+        }),
+        `file:///node_modules/${componentPkgName}/package.json`
+      );
+      defaultService.addExtraLib(
+        allComponentDts,
+        `file:///node_modules/${componentPkgName}/index.d.ts`
+      );
+    }
 
     const global = isModule
       ? `import * as React from 'react';
+${
+  hasComponentDef
+    ? `import { ${componentMeta.displayName} as Comp } from '${componentPkgName}';`
+    : ''
+}
+
 declare global {
   const React: typeof React;
-  const function render(ui: React.ReactElement): void;
 
-  ${
-    componentDef
-      ? `const ${componentDef.name}: React.ComponentType<${componentDef.props}>`
-      : ''
-  }
+  ${hasComponentDef ? `const ${componentMeta.displayName}: typeof Comp;` : ''}
+
+  function render(ui: React.ReactElement): void;
 }`
       : `/// <reference types="react" />
-
 declare function render(ui: React.ReactElement): void;
 
 ${
-  componentDef
-    ? `declare const ${componentDef.name}: React.ComponentType<${componentDef.props}>;`
+  hasComponentDef
+    ? `declare const ${componentMeta.displayName}: import('${componentPkgName}').${componentMeta.displayName};`
     : ''
 }`;
 
     defaultService.addExtraLib(global, 'global.d.ts');
-
-    if (componentsEntryName) {
-      defaultService.addExtraLib(
-        `import * as React from 'react';
-        
-        ${allComponentProps
-          .map(
-            (component) =>
-              `export const ${component.name}: React.ComponentType<${component.props}>`
-          )
-          .join('\n')}`,
-        `file:///node_modules/${componentsEntryName}/index.d.ts`
-      );
-    }
 
     return defaultService;
   }

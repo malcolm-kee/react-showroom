@@ -6,9 +6,11 @@
   "private": true,
   "scripts": {
     "doc": "react-showroom dev",
-    "build": "pnpm run build:doc-ssr && pnpm run build:doc-spa",
+    "build": "pnpm run component:dts && pnpm run build:doc-ssr && pnpm run build:doc-spa",
     "build:doc-ssr": "react-showroom build",
-    "build:doc-spa": "node react-showroom-script.js"
+    "build:doc-spa": "node react-showroom-script.js",
+    "component:dts": "tsup",
+    "component:dts-watch": "tsup --watch"
   },
   "dependencies": {
     "@babel/runtime": "^7.16.3",
@@ -24,6 +26,7 @@
     "postcss": "^8.4.4",
     "postcss-loader": "^6.2.1",
     "tailwindcss": "^2.2.19",
+    "tsup": "5.10.0",
     "typescript": "^4.5.2"
   },
   "msw": {

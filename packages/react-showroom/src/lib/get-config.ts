@@ -176,7 +176,7 @@ export const getConfig = (
       : defaultConfig.basePath,
     assetDir: providedConfig.assetDir && resolveApp(providedConfig.assetDir),
     wrapper: providedConfig.wrapper && resolveApp(providedConfig.wrapper),
-    cacheDir: cacheDir ? resolveApp(cacheDir) : null,
+    cacheDir: resolveApp(cacheDir),
     outDir,
     prerender,
     devServerPort: providedDevServerConfig.port || 6969,
