@@ -1,5 +1,17 @@
 # react-showroom
 
+## 1.12.0
+
+### Minor Changes
+
+- d3d1f81: Use tsup to generate type definitions
+
+### Patch Changes
+
+- Updated dependencies [d3d1f81]
+  - @showroomjs/core@1.9.0
+  - @showroomjs/ui@1.6.2
+
 ## 1.11.0
 
 ### Minor Changes

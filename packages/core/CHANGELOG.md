@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 1.9.0
+
+### Minor Changes
+
+- d3d1f81: Use tsup to generate type definitions
+
 ## 1.8.0
 
 ### Minor Changes
