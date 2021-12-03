@@ -9,8 +9,6 @@ import { useLoadDts } from '../lib/code-imports-context';
 import { useComponentMeta } from '../lib/component-props-context';
 import { compilerOptions, componentsEntryName } from '../lib/config';
 
-console.log(allComponentDts);
-
 type Monaco = typeof monaco;
 export interface CodeAdvancedEditorProps {
   value: string;

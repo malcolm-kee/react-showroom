@@ -3,7 +3,7 @@ import { NormalizedReactShowroomConfiguration } from '@showroomjs/core/react';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as tsup from 'tsup';
-import { logToStdout } from './log-to-stdout';
+import { green, logToStdout } from './log-to-stdout';
 import { paths, resolveApp } from './paths';
 
 export const generateDts = async (
@@ -36,7 +36,7 @@ export const generateDts = async (
 
     await waitFileExist(path.resolve(cacheDir, 'dts', `${name}.d.ts`));
 
-    logToStdout(`Generated d.ts for ${componentsEntry.path}.`);
+    logToStdout(green(`Generated d.ts for ${componentsEntry.path}.`));
   }
 };
 
