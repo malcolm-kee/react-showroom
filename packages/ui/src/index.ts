@@ -8,6 +8,7 @@ export { Breadcrumbs } from './components/breadcrumbs';
 export { Button } from './components/button';
 export { Checkbox } from './components/checkbox';
 export * as Collapsible from './components/collapsible';
+export { ColorInput } from './components/color-input';
 export { CopyButton } from './components/copy-button';
 export * from './components/dialog';
 export { DropdownMenu } from './components/dropdown-menu';

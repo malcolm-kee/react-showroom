@@ -35,12 +35,15 @@ const allMetadata = Object.values(allComponentsMetadata);
 const buttonData = allMetadata.find((m) => m.displayName === 'Button')!;
 const { pre: Pre, code: Code } = mdxComponents;
 
+const mockLoadDts = () => Promise.resolve({ default: {} });
+
 const playgroundContent = {
   doc: ButtonPlaygroundDocs,
   headings,
   imports,
   codeblocks: playgroundCodeBlocks,
   Component: Button,
+  loadDts: mockLoadDts,
 };
 
 export const PlaygroundSource = () => {
@@ -77,6 +80,7 @@ const playgroundContent2 = {
   imports: imports2,
   codeblocks: playgroundCodeBlocks2,
   Component: Button,
+  loadDts: mockLoadDts,
 };
 
 export const PlaygroundSource2 = () => {
@@ -108,6 +112,7 @@ const controlOptionsContent = {
   imports: controlOptionsImports,
   codeblocks: controlOptionsCodeBlocks,
   Component: Button,
+  loadDts: mockLoadDts,
 };
 
 export const ControlOptionsSource = () => {
@@ -117,7 +122,7 @@ export const ControlOptionsSource = () => {
         className="language-mdx"
         static
         fileName="src/components/button.mdx"
-        highlights="{26-37}"
+        highlights="{26-38}"
       >
         {controlOptionsSource}
       </Code>

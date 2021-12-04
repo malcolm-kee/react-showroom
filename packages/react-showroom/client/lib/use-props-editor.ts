@@ -16,7 +16,14 @@ import {
   useComponentMeta,
 } from './component-props-context';
 
-export type ControlType = 'checkbox' | 'text' | 'object' | 'file' | 'number';
+export type ControlType =
+  | 'checkbox'
+  | 'text'
+  | 'object'
+  | 'file'
+  | 'number'
+  | 'date'
+  | 'color';
 
 export const NonLiteralValue = createSymbol('NonLiteral');
 
@@ -138,6 +145,12 @@ export type PropsEditorControlDef =
     }
   | {
       type: 'file';
+    }
+  | {
+      type: 'date';
+    }
+  | {
+      type: 'color';
     };
 
 export type PropsEditorControl = EditorControlBase & PropsEditorControlDef;
@@ -296,6 +309,11 @@ const initState = ({
       return;
     }
 
+    if (isType(prop, 'Date')) {
+      addControl({ type: 'date' });
+      return;
+    }
+
     if (prop.type.name === 'enum') {
       if (prop.type.raw === 'ReactNode') {
         return;
@@ -371,6 +389,8 @@ const VALID_TYPES: Array<PropsEditorControlDef['type']> = [
   'file',
   'number',
   'select',
+  'date',
+  'color',
 ];
 
 const controlByTypeMap: Record<string, ControlType | undefined> = {
@@ -379,11 +399,12 @@ const controlByTypeMap: Record<string, ControlType | undefined> = {
   boolean: 'checkbox',
   object: 'object',
   File: 'file',
+  Date: 'date',
 };
 
 const isValidControlConfig = (controlConfig: PropsEditorControlDef) => {
   if (
-    ['checkbox', 'text', 'object', 'number', 'file'].includes(
+    ['checkbox', 'text', 'object', 'number', 'file', 'date', 'color'].includes(
       controlConfig.type
     )
   ) {

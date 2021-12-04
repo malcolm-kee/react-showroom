@@ -28,6 +28,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       fullWidth = false,
       leftIcon = variant === 'outline' ? <span>✔</span> : undefined,
       children,
+      color,
+      style = {},
       size,
       ...props
     },
@@ -45,6 +47,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           fullWidth && 'w-full justify-center',
           props.className
         )}
+        style={{
+          ...(color ? { color } : {}),
+          ...style,
+        }}
         ref={ref}
       >
         {leftIcon}

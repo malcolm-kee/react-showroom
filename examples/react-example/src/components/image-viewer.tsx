@@ -3,10 +3,11 @@ import * as React from 'react';
 export interface ImageViewerProps
   extends React.ComponentPropsWithoutRef<'img'> {
   file?: File | null;
+  lastUpdated?: Date;
 }
 
 export const ImageViewer = React.forwardRef<HTMLImageElement, ImageViewerProps>(
-  function ImageViewer({ file, src, ...props }, ref) {
+  function ImageViewer({ file, src, lastUpdated, ...props }, ref) {
     const [previewUrl, setPreviewUrl] = React.useState('');
 
     React.useEffect(() => {
