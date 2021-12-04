@@ -5,6 +5,6 @@ export const Textarea = styled(TextareaAutosize, {
   width: '100%',
   resize: 'block',
   borderRadius: '$base',
-  border: '1px solid $gray-100',
+  border: '1px solid $gray-300',
   outlineRing: '',
 });

@@ -34,12 +34,15 @@ const Demo = () => {
       disabled: 'checkbox',
       style: 'object',
       tabIndex: 'number',
+      color: 'color',
     },
   });
 
+  const { color, ...btnProps } = propsEditor.props;
+
   return (
-    <div>
-      <Button {...propsEditor.props} />
+    <div style={color ? { backgroundColor: color } : undefined}>
+      <Button {...btnProps} />
       <PropsEditor editor={propsEditor} />
     </div>
   );

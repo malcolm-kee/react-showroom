@@ -104,6 +104,7 @@ const Label = styled('label', {
   borderWidth: 2,
   borderStyle: 'dashed',
   color: '$gray-400',
+  borderColor: '$gray-300',
   backgroundColor: 'White',
   cursor: 'pointer',
   variants: {

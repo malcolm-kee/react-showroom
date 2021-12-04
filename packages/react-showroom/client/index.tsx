@@ -32,6 +32,7 @@ export { MarkdownArticle } from './components/markdown-article';
 export { MarkdownDataProvider } from './components/markdown-data-provider';
 export { mdxComponents } from './components/mdx-components';
 export {
+  ColorControl,
   ObjectValueEditor,
   PropsEditor,
   SelectButton,

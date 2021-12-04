@@ -2,14 +2,17 @@ import { isDefined, safeEval } from '@showroomjs/core';
 import {
   Button,
   Checkbox,
-  NumberInput,
+  ColorInput,
   FileInput,
+  NumberInput,
+  Popover,
   Select,
   styled,
   Textarea,
   TextInput,
 } from '@showroomjs/ui';
 import * as React from 'react';
+import { HexColorPicker } from 'react-colorful';
 import stringifyObject from 'stringify-object';
 import {
   PropsEditorControlData,
@@ -112,11 +115,73 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
           );
         }
 
+        if (ctrl.type === 'date') {
+          return (
+            <React.Fragment key={ctrl.key}>
+              <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
+              <ControlWrapper>
+                <TextInput
+                  type="date"
+                  id={ctrl.key}
+                  value={ctrl.value ? dateToString(ctrl.value) : ''}
+                  onChange={(ev) => ctrl.setValue(ev.target.valueAsDate)}
+                />
+              </ControlWrapper>
+            </React.Fragment>
+          );
+        }
+
+        if (ctrl.type === 'color') {
+          return (
+            <React.Fragment key={ctrl.key}>
+              <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
+              <ControlWrapper>
+                <ColorControl
+                  value={ctrl.value}
+                  onChange={ctrl.setValue}
+                  id={ctrl.key}
+                />
+              </ControlWrapper>
+            </React.Fragment>
+          );
+        }
+
         return null;
       })}
     </Root>
   );
 };
+
+export const ColorControl = (props: {
+  value: string;
+  id?: string;
+  onChange: (color: string) => void;
+}) => {
+  const [showPopover, setShowPopover] = React.useState(false);
+  return (
+    <Popover onOpenChange={setShowPopover} open={showPopover}>
+      <Popover.Trigger asChild>
+        <ColorInput
+          id={props.id}
+          value={props.value || ''}
+          onValue={props.onChange}
+          css={{
+            maxWidth: '10rem',
+          }}
+          placeholder="#rrggbb"
+        />
+      </Popover.Trigger>
+      <Popover.Content>
+        <HexColorPicker color={props.value} onChange={props.onChange} />
+      </Popover.Content>
+    </Popover>
+  );
+};
+
+const dateToString = (date: Date) =>
+  `${date.getFullYear()}-${(date.getMonth() + 1)
+    .toString()
+    .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 
 const PropsSelectControl = (props: {
   control: PropsEditorControlData & { type: 'select' };
