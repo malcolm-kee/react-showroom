@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 1.10.1
+
+### Patch Changes
+
+- 83a19ab: Allow disabling advanced editor as type generation may slow down build in large codebase
+
 ## 1.10.0
 
 ### Minor Changes

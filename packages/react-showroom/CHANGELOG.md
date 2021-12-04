@@ -1,5 +1,14 @@
 # react-showroom
 
+## 1.13.1
+
+### Patch Changes
+
+- 83a19ab: Allow disabling advanced editor as type generation may slow down build in large codebase
+- Updated dependencies [83a19ab]
+  - @showroomjs/core@1.10.1
+  - @showroomjs/ui@1.7.1
+
 ## 1.13.0
 
 ### Minor Changes

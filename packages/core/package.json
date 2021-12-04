@@ -1,6 +1,6 @@
 {
   "name": "@showroomjs/core",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist-esm/index.js",
