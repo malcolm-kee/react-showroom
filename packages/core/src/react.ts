@@ -173,6 +173,14 @@ export interface ExampleConfiguration {
    * path to a module/file that export default a React component that should be displayed when there is no associated markdown file for component.
    */
   placeholder?: string;
+  /**
+   * whether to allow using advanced editor (which is monaco editor) in standalone view.
+   *
+   * Enable this may cause some performance issue, so you can decide to disable it for development.
+   *
+   * @default true
+   */
+  enableAdvancedEditor: boolean;
 }
 
 export interface ShowroomHtmlConfiguration {

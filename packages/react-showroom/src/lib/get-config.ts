@@ -20,11 +20,11 @@ import * as path from 'path';
 import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
 import type { ParserOptions } from 'react-docgen-typescript';
 import slugify from 'slugify';
+import * as ts from 'typescript';
 import type { defineConfig } from '../index';
 import { createHash } from './create-hash';
 import { logToStdout } from './log-to-stdout';
 import { paths, resolveApp } from './paths';
-import * as ts from 'typescript';
 
 const DEFAULT_COMPONENTS_GLOB = 'src/components/**/*.tsx';
 const DEFAULT_IGNORES = [
@@ -99,7 +99,11 @@ export const getConfig = (
     css = {
       postcss: fs.existsSync(paths.appPostcssConfig),
     },
-    example: { widths = [320, 768, 1024], placeholder } = {},
+    example: {
+      widths = [320, 768, 1024],
+      placeholder,
+      enableAdvancedEditor = true,
+    } = {},
     html = {},
     ...providedConfig
   } = userConfig || getUserConfig(env, configFile);
@@ -163,6 +167,7 @@ export const getConfig = (
     example: {
       widths,
       placeholder: placeholder && resolveApp(placeholder),
+      enableAdvancedEditor,
     },
     html,
     css: {

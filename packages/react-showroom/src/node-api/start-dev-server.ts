@@ -35,9 +35,11 @@ export async function startDevServer(
 
   const config = getConfig('development', configFile, userConfig);
 
-  const { devServerPort, assetDir } = config;
+  const { devServerPort, assetDir, example } = config;
 
-  await generateDts(config, true);
+  if (example.enableAdvancedEditor) {
+    await generateDts(config, true);
+  }
 
   const HOST = '0.0.0.0';
   const PORT = Number((argv as any).port ?? process.env.PORT ?? devServerPort);

@@ -2,7 +2,7 @@
 const path = require('path');
 const { defineConfig } = require('react-showroom');
 
-module.exports = defineConfig({
+module.exports = defineConfig((command) => ({
   require: ['tailwindcss/tailwind.css', './src/custom.css'],
   items: [
     {
@@ -40,6 +40,9 @@ module.exports = defineConfig({
     title: 'React Showroom Example',
     resetCss: false,
   },
+  example: {
+    enableAdvancedEditor: command === 'build',
+  },
   componentsEntry: {
     name: 'components',
     path: './src/components/index.ts',
@@ -49,4 +52,4 @@ module.exports = defineConfig({
   },
   assetDir: 'public',
   wrapper: 'docs/provider.tsx',
-});
+}));
