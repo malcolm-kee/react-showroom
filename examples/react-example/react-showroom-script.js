@@ -2,7 +2,7 @@ const { buildShowroom } = require('react-showroom');
 const config = require('./react-showroom.config');
 
 buildShowroom({
-  ...config,
+  ...config('build'),
   build: {
     outDir: 'showroom-spa',
     prerender: false,

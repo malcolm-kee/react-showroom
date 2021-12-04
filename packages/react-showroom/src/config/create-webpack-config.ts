@@ -330,6 +330,7 @@ const createBaseWebpackConfig = (
                     })
                   ),
                 dts:
+                  exampleConfig.enableAdvancedEditor &&
                   componentsEntry &&
                   (isDefined(componentsEntry.dts)
                     ? isString(componentsEntry.dts)
