@@ -57,8 +57,15 @@ export const generateCodeblocksData = (
 
 function compileComponentSection(
   component: ReactShowroomComponentSectionConfig,
-  rootDir: string,
-  metadataIdentifier: string
+  {
+    rootDir,
+    metadataIdentifier,
+    enableAdvancedEditor,
+  }: {
+    rootDir: string;
+    metadataIdentifier: string;
+    enableAdvancedEditor: boolean;
+  }
 ): string {
   const { docPath, sourcePath } = component;
 
@@ -80,7 +87,11 @@ function compileComponentSection(
     Component: Component.default || Component[${metadataIdentifier}.displayName] || Component,
     imports: imports || {},
     codeblocks: (await loadCodeBlocks).default || {},
-    loadDts: () => import('${docPath}?showroomRemarkImportsDts'),
+    loadDts: () => ${
+      enableAdvancedEditor
+        ? `import('${docPath}?showroomRemarkImportsDts')`
+        : `Promise.resolve({default: {}})`
+    },
   }    
 }`
     : `async () => {
@@ -92,7 +103,7 @@ function compileComponentSection(
         headings: [],
         imports: {},
         codeblocks: {},
-        loadDts: () => Promise.resolve({}),
+        loadDts: () => Promise.resolve({ default: {} }),
       }
     }`;
 
@@ -112,6 +123,7 @@ export const generateSectionsAndImports = (
   sections: Array<ReactShowroomSectionConfig>,
   options: {
     rootDir: string;
+    enableAdvancedEditor: boolean;
     skipEmptyComponent?: boolean;
   }
 ) => {
@@ -155,7 +167,11 @@ export const generateSectionsAndImports = (
 
           return `${name} ? {
               type: 'component',
-              data: ${compileComponentSection(section, options.rootDir, name)},
+              data: ${compileComponentSection(section, {
+                rootDir: options.rootDir,
+                enableAdvancedEditor: options.enableAdvancedEditor,
+                metadataIdentifier: name,
+              })},
               metadata: ${name},
               title: ${name}.displayName,
               description: ${name}.description,
@@ -238,11 +254,15 @@ export const generateSectionsAndImports = (
                   headings,
                   imports,
                   codeblocks: (await loadCodeblocks).default || {},
-                  loadDts: () => import('${section.sourcePath}?${
-            isTreatedAsComponentDoc
-              ? 'showroomRemarkImportsDts'
-              : 'showroomRemarkDocImportsDts'
-          }'),
+                  loadDts: () => ${
+                    options.enableAdvancedEditor
+                      ? `import('${section.sourcePath}?${
+                          isTreatedAsComponentDoc
+                            ? 'showroomRemarkImportsDts'
+                            : 'showroomRemarkDocImportsDts'
+                        }')`
+                      : 'Promise.resolve({ default: {} })'
+                  },
                 }
               },
             }`;

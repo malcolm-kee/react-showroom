@@ -234,35 +234,37 @@ export const StandaloneCodeLiveEditor = ({
                     <Tooltip.Arrow />
                   </Tooltip.Content>
                 </Tooltip.Root>
-                {showEditor && (
-                  <Tooltip.Root>
-                    <Tooltip.Trigger asChild>
-                      <ToggleButton
-                        pressed={useAdvancedEditor}
-                        onPressedChange={setUseAdvancedEditor}
-                        css={{
-                          display: 'none',
-                          '@md': {
-                            display: 'flex',
-                          },
-                          ...(useAdvancedEditor
-                            ? {
-                                color: '$gray-600',
-                                backgroundColor: '$gray-100',
-                              }
-                            : {}),
-                        }}
-                        data-testid="advanced-editor-toggle"
-                      >
-                        <TerminalIcon width={20} height={20} />
-                      </ToggleButton>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>
-                      Advanced Editor
-                      <Tooltip.Arrow />
-                    </Tooltip.Content>
-                  </Tooltip.Root>
-                )}
+                {process.env.ENABLE_ADVANCED_EDITOR
+                  ? showEditor && (
+                      <Tooltip.Root>
+                        <Tooltip.Trigger asChild>
+                          <ToggleButton
+                            pressed={useAdvancedEditor}
+                            onPressedChange={setUseAdvancedEditor}
+                            css={{
+                              display: 'none',
+                              '@md': {
+                                display: 'flex',
+                              },
+                              ...(useAdvancedEditor
+                                ? {
+                                    color: '$gray-600',
+                                    backgroundColor: '$gray-100',
+                                  }
+                                : {}),
+                            }}
+                            data-testid="advanced-editor-toggle"
+                          >
+                            <TerminalIcon width={20} height={20} />
+                          </ToggleButton>
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>
+                          Advanced Editor
+                          <Tooltip.Arrow />
+                        </Tooltip.Content>
+                      </Tooltip.Root>
+                    )
+                  : null}
                 <Tooltip.Root>
                   <Tooltip.Trigger asChild>
                     <ToggleButton
@@ -649,11 +651,15 @@ const AdvancedEditor = (props: {
   language: Language;
   initialResult: CompileResult | undefined;
 }) => {
-  return (
-    <Suspense fallback={null}>
-      <CodeAdvancedEditor {...props} />
-    </Suspense>
-  );
+  if (process.env.ENABLE_ADVANCED_EDITOR) {
+    return (
+      <Suspense fallback={null}>
+        <CodeAdvancedEditor {...props} />
+      </Suspense>
+    );
+  }
+
+  return null;
 };
 
 const zoomOptions = [

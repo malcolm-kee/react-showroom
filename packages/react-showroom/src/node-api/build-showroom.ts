@@ -161,7 +161,9 @@ export async function buildShowroom(
 ) {
   const config = getConfig('production', configFile, userConfig);
 
-  await generateDts(config, false);
+  if (config.example.enableAdvancedEditor) {
+    await generateDts(config, false);
+  }
 
   const ssrDir = resolveShowroom(
     `ssr-result-${Date.now() + performance.now()}`

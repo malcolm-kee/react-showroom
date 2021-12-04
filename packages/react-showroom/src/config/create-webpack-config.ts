@@ -250,6 +250,7 @@ const createBaseWebpackConfig = (
   const generated = generateSectionsAndImports(sections, {
     rootDir: paths.showroomPath,
     skipEmptyComponent: config.skipEmptyComponent,
+    enableAdvancedEditor: exampleConfig.enableAdvancedEditor,
   });
 
   const virtualModules = new VirtualModulesPlugin({
@@ -329,6 +330,7 @@ const createBaseWebpackConfig = (
                     })
                   ),
                 dts:
+                  exampleConfig.enableAdvancedEditor &&
                   componentsEntry &&
                   (isDefined(componentsEntry.dts)
                     ? isString(componentsEntry.dts)
@@ -407,21 +409,23 @@ const createBaseWebpackConfig = (
                 },
               ],
             },
-            {
-              resourceQuery: /showroomRemarkImportsDts/,
-              use: [
-                {
-                  loader: 'showroom-remark-codeblocks-dts-loader',
-                  options: {
-                    imports,
-                  },
-                },
-                {
-                  loader: 'showroom-remark-codeblocks-loader',
-                  options: codeBlocksOptions,
-                },
-              ],
-            },
+            exampleConfig.enableAdvancedEditor
+              ? {
+                  resourceQuery: /showroomRemarkImportsDts/,
+                  use: [
+                    {
+                      loader: 'showroom-remark-codeblocks-dts-loader',
+                      options: {
+                        imports,
+                      },
+                    },
+                    {
+                      loader: 'showroom-remark-codeblocks-loader',
+                      options: codeBlocksOptions,
+                    },
+                  ],
+                }
+              : undefined,
             {
               resourceQuery: /showroomRemarkImports/,
               use: [
@@ -438,21 +442,23 @@ const createBaseWebpackConfig = (
                 },
               ],
             },
-            {
-              resourceQuery: /showroomRemarkDocImportsDts/,
-              use: [
-                {
-                  loader: 'showroom-remark-codeblocks-dts-loader',
-                  options: {
-                    imports,
-                  },
-                },
-                {
-                  loader: 'showroom-remark-codeblocks-loader',
-                  options: docsCodeBlocksOptions,
-                },
-              ],
-            },
+            exampleConfig.enableAdvancedEditor
+              ? {
+                  resourceQuery: /showroomRemarkDocImportsDts/,
+                  use: [
+                    {
+                      loader: 'showroom-remark-codeblocks-dts-loader',
+                      options: {
+                        imports,
+                      },
+                    },
+                    {
+                      loader: 'showroom-remark-codeblocks-loader',
+                      options: docsCodeBlocksOptions,
+                    },
+                  ],
+                }
+              : undefined,
             {
               resourceQuery: /showroomRemarkDocImports/,
               use: [
@@ -504,7 +510,7 @@ const createBaseWebpackConfig = (
                 },
               ],
             },
-          ],
+          ].filter(isDefined),
         },
         {
           test: /\.wasm$/,
@@ -599,6 +605,7 @@ const createBaseWebpackConfig = (
         REACT_SHOWROOM_THEME: theme,
         NODE_ENV: mode,
         EXAMPLE_WIDTHS: exampleConfig.widths,
+        ENABLE_ADVANCED_EDITOR: exampleConfig.enableAdvancedEditor,
         SITE_URL: url,
         AUDIENCE_TOGGLE: theme.audienceToggle,
         COMPONENTS_ENTRY_NAME: (componentsEntry && componentsEntry.name) || '',
