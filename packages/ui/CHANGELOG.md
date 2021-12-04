@@ -1,5 +1,16 @@
 # @showroomjs/ui
 
+## 1.7.0
+
+### Minor Changes
+
+- 31f0078: Add date and color control
+
+### Patch Changes
+
+- Updated dependencies [31f0078]
+  - @showroomjs/core@1.10.0
+
 ## 1.6.2
 
 ### Patch Changes

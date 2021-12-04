@@ -1,5 +1,18 @@
 # react-showroom
 
+## 1.13.0
+
+### Minor Changes
+
+- 31f0078: Add date and color control
+
+### Patch Changes
+
+- 31f0078: Fix file and object control styling
+- Updated dependencies [31f0078]
+  - @showroomjs/core@1.10.0
+  - @showroomjs/ui@1.7.0
+
 ## 1.12.0
 
 ### Minor Changes

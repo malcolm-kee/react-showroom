@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 1.10.0
+
+### Minor Changes
+
+- 31f0078: Add date and color control
+
 ## 1.9.0
 
 ### Minor Changes
