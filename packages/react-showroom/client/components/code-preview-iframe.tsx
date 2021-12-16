@@ -26,6 +26,7 @@ export interface CodePreviewIframeProps {
   className?: string;
   imperativeRef?: React.Ref<CodePreviewIframeImperative>;
   onStateChange?: (data: { stateId: string; stateValue: any }) => void;
+  onScrollChange?: (xy: [number | null, number | null]) => void;
   nonVisual?: boolean;
   onIsCompilingChange?: (isCompiling: boolean) => void;
   initialHeight?: number;
@@ -41,6 +42,7 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   resizable,
   className,
   onStateChange,
+  onScrollChange,
   imperativeRef,
   nonVisual,
   onIsCompilingChange,
@@ -80,6 +82,10 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
       }
     } else if (ev.type === 'compileStatus') {
       onIsCompilingChangeCb(ev.isCompiling);
+    } else if (ev.type === 'scroll') {
+      if (onScrollChange) {
+        onScrollChange(ev.scrollPercentageXY);
+      }
     }
   });
 

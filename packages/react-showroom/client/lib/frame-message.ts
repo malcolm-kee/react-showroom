@@ -35,6 +35,10 @@ export type Message =
   | {
       type: 'compileStatus';
       isCompiling: boolean;
+    }
+  | {
+      type: 'scroll';
+      scrollPercentageXY: [number | null, number | null];
     };
 
 export const usePreviewWindow = (onMessage: (data: Message) => void) => {

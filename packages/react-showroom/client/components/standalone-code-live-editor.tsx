@@ -10,6 +10,7 @@ import {
 import {
   AnnotationIcon as FilledAnnotationIcon,
   LocationMarkerIcon,
+  SwitchVerticalIcon,
 } from '@heroicons/react/solid';
 import {
   CompileResult,
@@ -176,6 +177,8 @@ export const StandaloneCodeLiveEditor = ({
     targetAudience === 'developer',
     'syncState'
   );
+
+  const [syncScroll, setSyncScroll] = usePersistedState(true, 'syncScroll');
 
   const [useAdvancedEditor, setUseAdvancedEditor] = usePersistedState(
     false,
@@ -425,6 +428,28 @@ export const StandaloneCodeLiveEditor = ({
                     </Tooltip.Content>
                   </Tooltip.Root>
                 )}
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <ToggleButton
+                      pressed={syncScroll}
+                      onPressedChange={setSyncScroll}
+                      css={
+                        syncScroll
+                          ? {
+                              backgroundColor: '$primary-700',
+                            }
+                          : undefined
+                      }
+                      data-testid="sync-scroll-toggle"
+                    >
+                      <ScrollIcon active={syncScroll} />
+                    </ToggleButton>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    Sync Scroll
+                    <Tooltip.Arrow />
+                  </Tooltip.Content>
+                </Tooltip.Root>
               </Div>
             )}
           </Div>
@@ -498,6 +523,7 @@ export const StandaloneCodeLiveEditor = ({
                 }}
                 ref={previewListRef}
                 syncState={syncState}
+                syncScroll={syncScroll}
               >
                 {isCommenting && targetCoord ? (
                   <StandaloneCodeLiveEditorCommentPopover
@@ -739,6 +765,19 @@ const CommentOnIcon = styled(FilledAnnotationIcon, {
 });
 
 const SyncIcon = styled(RefreshIcon, {
+  width: 20,
+  height: 20,
+  color: '$gray-400',
+  variants: {
+    active: {
+      true: {
+        color: 'White',
+      },
+    },
+  },
+});
+
+const ScrollIcon = styled(SwitchVerticalIcon, {
   width: 20,
   height: 20,
   color: '$gray-400',

@@ -27,6 +27,7 @@ export const generateDts = async (
       silent: true,
       dts: {
         only: true,
+        resolve: true,
       },
       tsconfig: path.isAbsolute(docgen.tsconfigPath)
         ? path.relative(paths.appPath, docgen.tsconfigPath)

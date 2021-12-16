@@ -1,5 +1,10 @@
-import { isDefined, isFunction, SupportedLanguage } from '@showroomjs/core';
-import { Alert, IdProvider, useConstant, useId } from '@showroomjs/ui';
+import {
+  isDefined,
+  isFunction,
+  SupportedLanguage,
+  isNumber,
+} from '@showroomjs/core';
+import { Alert, useConstant, useId } from '@showroomjs/ui';
 import * as React from 'react';
 import allImports from 'react-showroom-all-imports';
 import CodeblockData from 'react-showroom-codeblocks';
@@ -20,23 +25,21 @@ const componentsMetas = Object.values(allCompMetadata);
 
 export const PreviewApp = () => {
   return (
-    <IdProvider>
-      <Wrapper>
-        <CodeImportsContextProvider value={allImports}>
-          <Switch>
-            <Route path="/:codeHash/:componentId">
-              <ComponentPreviewPage />
-            </Route>
-            <Route path="/:codeHash">
-              <GenericPreviewPage />
-            </Route>
-            <Route>
-              <ErrorPage />
-            </Route>
-          </Switch>
-        </CodeImportsContextProvider>
-      </Wrapper>
-    </IdProvider>
+    <Wrapper>
+      <CodeImportsContextProvider value={allImports}>
+        <Switch>
+          <Route path="/:codeHash/:componentId">
+            <ComponentPreviewPage />
+          </Route>
+          <Route path="/:codeHash">
+            <GenericPreviewPage />
+          </Route>
+          <Route>
+            <ErrorPage />
+          </Route>
+        </Switch>
+      </CodeImportsContextProvider>
+    </Wrapper>
   );
 };
 
@@ -133,6 +136,9 @@ const PreviewPage = () => {
     []
   );
 
+  const isUpdatingRef = React.useRef(false);
+  const timerId = React.useRef<number | null>(null);
+
   const { sendParent } = usePreviewWindow((data) => {
     if (data.type === 'code') {
       setState(data);
@@ -142,8 +148,63 @@ const PreviewPage = () => {
         setStateFn(data.stateValue);
       }
       latestStateValueMap.set(data.stateId, data.stateValue);
+    } else if (data.type === 'scroll') {
+      const tValue = timerId.current;
+
+      if (isNumber(tValue)) {
+        window.clearTimeout(tValue);
+      }
+
+      const docEl = window.document.documentElement;
+
+      if (docEl) {
+        const [xPct, yPct] = data.scrollPercentageXY;
+
+        isUpdatingRef.current = true;
+
+        if (isNumber(xPct)) {
+          window.document.documentElement.scrollLeft = Math.round(
+            xPct * (docEl.scrollWidth - docEl.clientWidth)
+          );
+        }
+
+        if (isNumber(yPct)) {
+          window.document.documentElement.scrollTop = Math.round(
+            yPct * (docEl.scrollHeight - docEl.clientHeight)
+          );
+        }
+
+        timerId.current = window.setTimeout(() => {
+          isUpdatingRef.current = false;
+        }, 500);
+      }
     }
   });
+
+  React.useEffect(() => {
+    function getHeight() {
+      if (isUpdatingRef.current) {
+        return;
+      }
+
+      const docEl = window.document.documentElement;
+
+      const xTotal = docEl.scrollWidth - docEl.clientWidth;
+      const yTotal = docEl.scrollHeight - docEl.clientHeight;
+
+      sendParent({
+        type: 'scroll',
+        scrollPercentageXY: [
+          xTotal ? docEl.scrollLeft / xTotal : null,
+          yTotal ? docEl.scrollTop / yTotal : null,
+        ],
+      });
+    }
+
+    window.addEventListener('scroll', getHeight);
+
+    return () => window.removeEventListener('scroll', getHeight);
+  }, []);
 
   useHeightChange(
     typeof window === 'undefined' ? null : window.document.documentElement,

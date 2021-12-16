@@ -20,6 +20,7 @@ export interface StandaloneCodeLiveEditorPreviewListProps {
   zoom: string;
   children?: React.ReactNode;
   syncState?: boolean;
+  syncScroll?: boolean;
 }
 
 const PARAM_KEY = '_fS';
@@ -134,6 +135,18 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
               setQueryParams({
                 [PARAM_KEY]: serializeStateMaps(stateMaps) || undefined,
               });
+            }}
+            onScrollChange={(xy) => {
+              if (props.syncScroll) {
+                frameMap.forEach((frame, frameWidth) => {
+                  if (frameWidth !== exampleWidth) {
+                    frame.sendToChild({
+                      type: 'scroll',
+                      scrollPercentageXY: xy,
+                    });
+                  }
+                });
+              }
             }}
           />
         </Screen>
