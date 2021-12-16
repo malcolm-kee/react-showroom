@@ -8,21 +8,30 @@ interface LogMessage extends Omit<ConsoleMessage, 'count'> {
   type: 'log';
 }
 
+interface DomEventBase<Type extends string> {
+  eventType: Type;
+  tag: string;
+  index: number;
+  tagTotal: number;
+}
+
+interface KeyboardEventBase<Type extends string> extends DomEventBase<Type> {
+  key: string;
+  code: string;
+  keyCode: number;
+  ctrlKey: boolean;
+  shiftKey: boolean;
+  metaKey: boolean;
+}
+
 export type DomEvent =
-  | {
-      eventType: 'click';
-      elementType: string;
-      elementIndex: number;
-      elementTypeTotal: number;
-    }
-  | {
-      eventType: 'change';
-      elementType: string;
-      elementIndex: number;
-      elementTypeTotal: number;
+  | DomEventBase<'click'>
+  | (DomEventBase<'change'> & {
       value: string;
       checked: boolean;
-    };
+    })
+  | KeyboardEventBase<'keyUp'>
+  | KeyboardEventBase<'keyDown'>;
 
 export type Message =
   | {
