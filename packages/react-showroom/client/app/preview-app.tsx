@@ -250,6 +250,35 @@ const PreviewPage = () => {
     });
   }, [sendParent]);
 
+  const createKeyboardEventHandler =
+    (eventType: 'keyUp' | 'keyDown') => (ev: React.KeyboardEvent) => {
+      if (process.env.SYNC_STATE_TYPE === 'state') {
+        return;
+      }
+
+      if (isFiringEventRef.current) {
+        return;
+      }
+
+      const domInfo = getDomEventInfo(ev);
+
+      if (domInfo) {
+        sendParent({
+          type: 'domEvent',
+          data: {
+            ...domInfo,
+            eventType,
+            key: ev.key,
+            code: ev.code,
+            keyCode: ev.keyCode,
+            ctrlKey: ev.ctrlKey,
+            shiftKey: ev.shiftKey,
+            metaKey: ev.metaKey,
+          },
+        });
+      }
+    };
+
   return (
     <UseCustomStateContext.Provider
       value={
@@ -267,7 +296,7 @@ const PreviewPage = () => {
               isCompiling,
             })
           }
-          onChange={(ev) => {
+          onChangeCapture={(ev) => {
             if (process.env.SYNC_STATE_TYPE === 'state') {
               return;
             }
@@ -292,7 +321,7 @@ const PreviewPage = () => {
               });
             }
           }}
-          onClick={(ev) => {
+          onClickCapture={(ev) => {
             if (process.env.SYNC_STATE_TYPE === 'state') {
               return;
             }
@@ -313,6 +342,8 @@ const PreviewPage = () => {
               });
             }
           }}
+          onKeyUpCapture={createKeyboardEventHandler('keyUp')}
+          onKeyDownCapture={createKeyboardEventHandler('keyDown')}
         />
       </ConsoleContext.Provider>
     </UseCustomStateContext.Provider>
@@ -325,16 +356,14 @@ const getDomEventInfo = (ev: React.SyntheticEvent) => {
   const { tagName } = el;
 
   if (tagName) {
-    const selector = tagName.toLowerCase();
+    const tag = tagName.toLowerCase();
 
-    const allElements = Array.from(document.querySelectorAll(selector));
-
-    const elementIndex = allElements.indexOf(el);
+    const allElements = Array.from(document.querySelectorAll(tag));
 
     return {
-      elementType: selector,
-      elementIndex,
-      elementTypeTotal: allElements.length,
+      tag,
+      index: allElements.indexOf(el),
+      tagTotal: allElements.length,
     };
   }
 };
