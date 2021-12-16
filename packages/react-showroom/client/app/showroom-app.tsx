@@ -1,5 +1,4 @@
 import {
-  IdProvider,
   IsClientContextProvider,
   NotificationProvider,
   QueryParamProvider,
@@ -92,66 +91,62 @@ export const ShowroomApp = () => {
 
   return (
     <Wrapper>
-      <IdProvider>
-        <IsClientContextProvider>
-          <NotificationProvider>
-            <TargetAudienceProvider>
-              <Div className={colorTheme}>
-                <QueryParamProvider>
-                  <CodeThemeContext.Provider value={THEME.codeTheme}>
-                    <MenuContextProvider sections={sections}>
-                      <Div
-                        css={{
-                          height: '100%',
-                          display: 'flex',
-                          flexDirection: 'column',
-                        }}
-                      >
-                        {!shouldHideHeader && <Header />}
-                        <Div css={{ display: 'flex', flex: 1 }}>
-                          {!shouldHideSidebar && (
-                            <Sidebar sections={sections} />
-                          )}
-                          <Suspense
-                            fallback={<PageFallback title={matchedTitle} />}
-                          >
-                            <Switch>
-                              {routes.map(function dataToRoute(route) {
-                                if (!route) {
-                                  return null;
-                                }
+      <IsClientContextProvider>
+        <NotificationProvider>
+          <TargetAudienceProvider>
+            <Div className={colorTheme}>
+              <QueryParamProvider>
+                <CodeThemeContext.Provider value={THEME.codeTheme}>
+                  <MenuContextProvider sections={sections}>
+                    <Div
+                      css={{
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                    >
+                      {!shouldHideHeader && <Header />}
+                      <Div css={{ display: 'flex', flex: 1 }}>
+                        {!shouldHideSidebar && <Sidebar sections={sections} />}
+                        <Suspense
+                          fallback={<PageFallback title={matchedTitle} />}
+                        >
+                          <Switch>
+                            {routes.map(function dataToRoute(route) {
+                              if (!route) {
+                                return null;
+                              }
 
-                                const Ui = route.ui;
+                              const Ui = route.ui;
 
-                                return (
-                                  <Route
-                                    path={route.path}
-                                    exact={route.exact}
-                                    key={route.path}
-                                  >
-                                    {Array.isArray(Ui) ? (
-                                      Ui.map(dataToRoute)
-                                    ) : (
-                                      <Ui />
-                                    )}
-                                  </Route>
-                                );
-                              })}
-                              <Route path="/" exact>
-                                <DefaultHomePage />
-                              </Route>
-                            </Switch>
-                          </Suspense>
-                        </Div>
+                              return (
+                                <Route
+                                  path={route.path}
+                                  exact={route.exact}
+                                  key={route.path}
+                                >
+                                  {Array.isArray(Ui) ? (
+                                    Ui.map(dataToRoute)
+                                  ) : (
+                                    <Ui />
+                                  )}
+                                </Route>
+                              );
+                            })}
+                            <Route path="/" exact>
+                              <DefaultHomePage />
+                            </Route>
+                          </Switch>
+                        </Suspense>
                       </Div>
-                    </MenuContextProvider>
-                  </CodeThemeContext.Provider>
-                </QueryParamProvider>
-              </Div>
-            </TargetAudienceProvider>
-          </NotificationProvider>
-        </IsClientContextProvider>
-      </IdProvider>
+                    </Div>
+                  </MenuContextProvider>
+                </CodeThemeContext.Provider>
+              </QueryParamProvider>
+            </Div>
+          </TargetAudienceProvider>
+        </NotificationProvider>
+      </IsClientContextProvider>
     </Wrapper>
   );
 };

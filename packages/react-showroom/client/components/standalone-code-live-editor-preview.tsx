@@ -20,6 +20,7 @@ export interface StandaloneCodeLiveEditorPreviewListProps {
   zoom: string;
   children?: React.ReactNode;
   syncState?: boolean;
+  syncScroll?: boolean;
 }
 
 const PARAM_KEY = '_fS';
@@ -66,21 +67,23 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
   }, [isReady]);
 
   React.useEffect(() => {
-    // fitHeight props will cause the iframe to remount
-    // so we need to sync the state
-    stateMaps.forEach((stateMap, width) => {
-      const frame = frameMap.get(width);
+    if (process.env.SYNC_STATE_TYPE === 'state') {
+      // fitHeight props will cause the iframe to remount
+      // so we need to sync the state
+      stateMaps.forEach((stateMap, width) => {
+        const frame = frameMap.get(width);
 
-      if (frame) {
-        stateMap.forEach((stateValue, stateId) => {
-          frame.sendToChild({
-            type: 'syncState',
-            stateId,
-            stateValue,
+        if (frame) {
+          stateMap.forEach((stateValue, stateId) => {
+            frame.sendToChild({
+              type: 'syncState',
+              stateId,
+              stateValue,
+            });
           });
-        });
-      }
-    });
+        }
+      });
+    }
   }, [props.fitHeight, stateMaps]);
 
   const content = EXAMPLE_WIDTHS.map((exampleWidth) =>
@@ -116,24 +119,50 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
               }
             }}
             onStateChange={(change) => {
+              if (process.env.SYNC_STATE_TYPE === 'state') {
+                if (props.syncState) {
+                  frameMap.forEach((frame, frameWidth) => {
+                    if (frameWidth !== exampleWidth) {
+                      frame.sendToChild({
+                        type: 'syncState',
+                        stateId: change.stateId,
+                        stateValue: change.stateValue,
+                      });
+                    }
+                    storeState(frameWidth, change.stateId, change.stateValue);
+                  });
+                } else {
+                  storeState(exampleWidth, change.stateId, change.stateValue);
+                }
+
+                setQueryParams({
+                  [PARAM_KEY]: serializeStateMaps(stateMaps) || undefined,
+                });
+              }
+            }}
+            onScrollChange={(xy) => {
+              if (props.syncScroll) {
+                frameMap.forEach((frame, frameWidth) => {
+                  if (frameWidth !== exampleWidth) {
+                    frame.sendToChild({
+                      type: 'scroll',
+                      scrollPercentageXY: xy,
+                    });
+                  }
+                });
+              }
+            }}
+            onDomEvent={(ev) => {
               if (props.syncState) {
                 frameMap.forEach((frame, frameWidth) => {
                   if (frameWidth !== exampleWidth) {
                     frame.sendToChild({
-                      type: 'syncState',
-                      stateId: change.stateId,
-                      stateValue: change.stateValue,
+                      type: 'domEvent',
+                      data: ev,
                     });
                   }
-                  storeState(frameWidth, change.stateId, change.stateValue);
                 });
-              } else {
-                storeState(exampleWidth, change.stateId, change.stateValue);
               }
-
-              setQueryParams({
-                [PARAM_KEY]: serializeStateMaps(stateMaps) || undefined,
-              });
             }}
           />
         </Screen>

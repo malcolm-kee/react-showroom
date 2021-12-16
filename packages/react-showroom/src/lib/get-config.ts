@@ -103,6 +103,7 @@ export const getConfig = (
       widths = [320, 768, 1024],
       placeholder,
       enableAdvancedEditor = true,
+      syncStateType = 'state',
     } = {},
     html = {},
     ...providedConfig
@@ -168,6 +169,7 @@ export const getConfig = (
       widths,
       placeholder: placeholder && resolveApp(placeholder),
       enableAdvancedEditor,
+      syncStateType,
     },
     html,
     css: {

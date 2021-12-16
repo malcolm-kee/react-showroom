@@ -10,7 +10,7 @@ import cx from 'classnames';
 import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
 import { useComponentMeta } from '../lib/component-props-context';
-import { Message, useParentWindow } from '../lib/frame-message';
+import { Message, useParentWindow, DomEvent } from '../lib/frame-message';
 import { getPreviewUrl } from '../lib/preview-url';
 import { useConsole } from '../lib/use-preview-console';
 
@@ -26,6 +26,8 @@ export interface CodePreviewIframeProps {
   className?: string;
   imperativeRef?: React.Ref<CodePreviewIframeImperative>;
   onStateChange?: (data: { stateId: string; stateValue: any }) => void;
+  onScrollChange?: (xy: [number | null, number | null]) => void;
+  onDomEvent?: (ev: DomEvent) => void;
   nonVisual?: boolean;
   onIsCompilingChange?: (isCompiling: boolean) => void;
   initialHeight?: number;
@@ -41,6 +43,8 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   resizable,
   className,
   onStateChange,
+  onScrollChange,
+  onDomEvent,
   imperativeRef,
   nonVisual,
   onIsCompilingChange,
@@ -67,19 +71,39 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
 
   const onIsCompilingChangeCb = useStableCallback(onIsCompilingChange);
   const { targetRef, sendMessage } = useParentWindow((ev) => {
-    if (ev.type === 'heightChange') {
-      if (!providedHeight) {
-        setFrameHeight(ev.height);
-        saveHeight(ev.height);
-      }
-    } else if (ev.type === 'log') {
-      previewConsole[ev.level](...(ev.data || []));
-    } else if (ev.type === 'stateChange') {
-      if (onStateChange) {
-        onStateChange(ev);
-      }
-    } else if (ev.type === 'compileStatus') {
-      onIsCompilingChangeCb(ev.isCompiling);
+    switch (ev.type) {
+      case 'heightChange':
+        if (!providedHeight) {
+          setFrameHeight(ev.height);
+          saveHeight(ev.height);
+        }
+        return;
+
+      case 'log':
+        previewConsole[ev.level](...(ev.data || []));
+        return;
+
+      case 'compileStatus':
+        onIsCompilingChangeCb(ev.isCompiling);
+        return;
+
+      case 'stateChange':
+        if (onStateChange) {
+          onStateChange(ev);
+        }
+        return;
+
+      case 'scroll':
+        if (onScrollChange) {
+          onScrollChange(ev.scrollPercentageXY);
+        }
+        return;
+
+      case 'domEvent':
+        if (onDomEvent) {
+          onDomEvent(ev.data);
+        }
+        return;
     }
   });
 

@@ -1,7 +1,7 @@
 import useConstantImpl from 'use-constant';
 
 export const useConstant = useConstantImpl;
-export { IdProvider, useId } from '@radix-ui/react-id';
+export { useId } from '@radix-ui/react-id';
 export { Root as Portal } from '@radix-ui/react-portal';
 export * from './components/alert';
 export { Breadcrumbs } from './components/breadcrumbs';

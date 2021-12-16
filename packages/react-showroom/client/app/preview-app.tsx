@@ -1,5 +1,10 @@
-import { isDefined, isFunction, SupportedLanguage } from '@showroomjs/core';
-import { Alert, IdProvider, useConstant, useId } from '@showroomjs/ui';
+import {
+  isDefined,
+  isFunction,
+  isNumber,
+  SupportedLanguage,
+} from '@showroomjs/core';
+import { Alert, useConstant, useId } from '@showroomjs/ui';
 import * as React from 'react';
 import allImports from 'react-showroom-all-imports';
 import CodeblockData from 'react-showroom-codeblocks';
@@ -20,23 +25,21 @@ const componentsMetas = Object.values(allCompMetadata);
 
 export const PreviewApp = () => {
   return (
-    <IdProvider>
-      <Wrapper>
-        <CodeImportsContextProvider value={allImports}>
-          <Switch>
-            <Route path="/:codeHash/:componentId">
-              <ComponentPreviewPage />
-            </Route>
-            <Route path="/:codeHash">
-              <GenericPreviewPage />
-            </Route>
-            <Route>
-              <ErrorPage />
-            </Route>
-          </Switch>
-        </CodeImportsContextProvider>
-      </Wrapper>
-    </IdProvider>
+    <Wrapper>
+      <CodeImportsContextProvider value={allImports}>
+        <Switch>
+          <Route path="/:codeHash/:componentId">
+            <ComponentPreviewPage />
+          </Route>
+          <Route path="/:codeHash">
+            <GenericPreviewPage />
+          </Route>
+          <Route>
+            <ErrorPage />
+          </Route>
+        </Switch>
+      </CodeImportsContextProvider>
+    </Wrapper>
   );
 };
 
@@ -133,17 +136,90 @@ const PreviewPage = () => {
     []
   );
 
+  const isUpdatingRef = React.useRef(false);
+  const isUpdatingTimerId = React.useRef<number | null>(null);
+
+  const isFiringEventRef = React.useRef(false);
+  const isFiringEventTimerId = React.useRef<number | null>(null);
+
   const { sendParent } = usePreviewWindow((data) => {
     if (data.type === 'code') {
       setState(data);
     } else if (data.type === 'syncState') {
-      const setStateFn = setStateMap.get(data.stateId);
-      if (setStateFn) {
-        setStateFn(data.stateValue);
+      if (process.env.SYNC_STATE_TYPE === 'state') {
+        const setStateFn = setStateMap.get(data.stateId);
+        if (setStateFn) {
+          setStateFn(data.stateValue);
+        }
+        latestStateValueMap.set(data.stateId, data.stateValue);
       }
-      latestStateValueMap.set(data.stateId, data.stateValue);
+    } else if (data.type === 'scroll') {
+      clearTimer(isUpdatingTimerId);
+
+      const docEl = window.document.documentElement;
+
+      if (docEl) {
+        const [xPct, yPct] = data.scrollPercentageXY;
+
+        isUpdatingRef.current = true;
+
+        if (isNumber(xPct)) {
+          window.document.documentElement.scrollLeft = Math.round(
+            xPct * (docEl.scrollWidth - docEl.clientWidth)
+          );
+        }
+
+        if (isNumber(yPct)) {
+          window.document.documentElement.scrollTop = Math.round(
+            yPct * (docEl.scrollHeight - docEl.clientHeight)
+          );
+        }
+
+        isUpdatingTimerId.current = window.setTimeout(() => {
+          isUpdatingRef.current = false;
+        }, 500);
+      }
+    } else if (data.type === 'domEvent') {
+      if (process.env.SYNC_STATE_TYPE === 'event') {
+        clearTimer(isFiringEventTimerId);
+
+        isFiringEventRef.current = true;
+
+        import(/* webpackPrefetch: true */ '../lib/fire-event').then((m) =>
+          m.fireValidDomEvent(data.data)
+        );
+
+        isFiringEventTimerId.current = window.setTimeout(() => {
+          isFiringEventRef.current = false;
+        }, 500);
+      }
     }
   });
+
+  React.useEffect(() => {
+    function getHeight() {
+      if (isUpdatingRef.current) {
+        return;
+      }
+
+      const docEl = window.document.documentElement;
+
+      const xTotal = docEl.scrollWidth - docEl.clientWidth;
+      const yTotal = docEl.scrollHeight - docEl.clientHeight;
+
+      sendParent({
+        type: 'scroll',
+        scrollPercentageXY: [
+          xTotal ? docEl.scrollLeft / xTotal : null,
+          yTotal ? docEl.scrollTop / yTotal : null,
+        ],
+      });
+    }
+
+    window.addEventListener('scroll', getHeight);
+
+    return () => window.removeEventListener('scroll', getHeight);
+  }, []);
 
   useHeightChange(
     typeof window === 'undefined' ? null : window.document.documentElement,
@@ -175,7 +251,13 @@ const PreviewPage = () => {
   }, [sendParent]);
 
   return (
-    <UseCustomStateContext.Provider value={customUseState as any}>
+    <UseCustomStateContext.Provider
+      value={
+        process.env.SYNC_STATE_TYPE === 'state'
+          ? (customUseState as any)
+          : React.useState
+      }
+    >
       <ConsoleContext.Provider value={previewConsole}>
         <CodePreviewFrame
           {...state}
@@ -185,10 +267,84 @@ const PreviewPage = () => {
               isCompiling,
             })
           }
+          onChange={(ev) => {
+            if (process.env.SYNC_STATE_TYPE === 'state') {
+              return;
+            }
+
+            if (isFiringEventRef.current) {
+              return;
+            }
+
+            const domInfo = getDomEventInfo(ev);
+
+            if (domInfo) {
+              const { value, checked } = ev.target as HTMLInputElement;
+
+              sendParent({
+                type: 'domEvent',
+                data: {
+                  eventType: 'change',
+                  value,
+                  checked,
+                  ...domInfo,
+                },
+              });
+            }
+          }}
+          onClick={(ev) => {
+            if (process.env.SYNC_STATE_TYPE === 'state') {
+              return;
+            }
+
+            if (isFiringEventRef.current) {
+              return;
+            }
+
+            const domInfo = getDomEventInfo(ev);
+
+            if (domInfo) {
+              sendParent({
+                type: 'domEvent',
+                data: {
+                  eventType: 'click',
+                  ...domInfo,
+                },
+              });
+            }
+          }}
         />
       </ConsoleContext.Provider>
     </UseCustomStateContext.Provider>
   );
+};
+
+const getDomEventInfo = (ev: React.SyntheticEvent) => {
+  const el = ev.target as HTMLElement;
+
+  const { tagName } = el;
+
+  if (tagName) {
+    const selector = tagName.toLowerCase();
+
+    const allElements = Array.from(document.querySelectorAll(selector));
+
+    const elementIndex = allElements.indexOf(el);
+
+    return {
+      elementType: selector,
+      elementIndex,
+      elementTypeTotal: allElements.length,
+    };
+  }
+};
+
+const clearTimer = (ref: React.RefObject<null | number>) => {
+  const tValue = ref.current;
+
+  if (isNumber(tValue)) {
+    window.clearTimeout(tValue);
+  }
 };
 
 const createCustomUseState =

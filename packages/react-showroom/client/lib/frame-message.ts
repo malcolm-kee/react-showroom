@@ -8,6 +8,22 @@ interface LogMessage extends Omit<ConsoleMessage, 'count'> {
   type: 'log';
 }
 
+export type DomEvent =
+  | {
+      eventType: 'click';
+      elementType: string;
+      elementIndex: number;
+      elementTypeTotal: number;
+    }
+  | {
+      eventType: 'change';
+      elementType: string;
+      elementIndex: number;
+      elementTypeTotal: number;
+      value: string;
+      checked: boolean;
+    };
+
 export type Message =
   | {
       type: 'code';
@@ -35,6 +51,14 @@ export type Message =
   | {
       type: 'compileStatus';
       isCompiling: boolean;
+    }
+  | {
+      type: 'scroll';
+      scrollPercentageXY: [number | null, number | null];
+    }
+  | {
+      type: 'domEvent';
+      data: DomEvent;
     };
 
 export const usePreviewWindow = (onMessage: (data: Message) => void) => {
