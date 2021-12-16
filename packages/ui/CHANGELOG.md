@@ -1,5 +1,17 @@
 # @showroomjs/ui
 
+## 1.8.0
+
+### Minor Changes
+
+- 2d4947b: Force bump version as dependencies change
+
+### Patch Changes
+
+- Updated dependencies [2d4947b]
+  - @showroomjs/bundles@1.8.0
+  - @showroomjs/core@1.11.0
+
 ## 1.7.1
 
 ### Patch Changes

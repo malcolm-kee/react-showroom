@@ -1,5 +1,14 @@
 # react-showroom
 
+## 1.14.1
+
+### Patch Changes
+
+- Updated dependencies [2d4947b]
+  - @showroomjs/bundles@1.8.0
+  - @showroomjs/core@1.11.0
+  - @showroomjs/ui@1.8.0
+
 ## 1.14.0
 
 ### Minor Changes

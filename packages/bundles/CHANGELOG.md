@@ -1,5 +1,11 @@
 # @showroomjs/bundles
 
+## 1.8.0
+
+### Minor Changes
+
+- 2d4947b: Force bump version as dependencies change
+
 ## 1.7.0
 
 ### Minor Changes
