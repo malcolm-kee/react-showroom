@@ -1,5 +1,11 @@
 # react-showroom
 
+## 1.14.0
+
+### Minor Changes
+
+- 4d9c9ea: Support sync scroll and sync actions across iframes
+
 ## 1.13.1
 
 ### Patch Changes
