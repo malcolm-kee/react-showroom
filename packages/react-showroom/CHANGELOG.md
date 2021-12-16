@@ -1,5 +1,11 @@
 # react-showroom
 
+## 1.14.2
+
+### Patch Changes
+
+- 95934ea: Make event sync more accurate
+
 ## 1.14.1
 
 ### Patch Changes
