@@ -30,6 +30,7 @@
     "@showroomjs/bundles": "workspace:*",
     "@showroomjs/core": "workspace:*",
     "@showroomjs/ui": "workspace:*",
+    "@testing-library/dom": "^8.11.1",
     "babel-loader": "^8.2.3",
     "bundle-require": "^2.1.8",
     "classnames": "^2.3.1",

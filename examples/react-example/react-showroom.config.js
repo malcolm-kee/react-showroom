@@ -42,6 +42,7 @@ module.exports = defineConfig((command) => ({
   },
   example: {
     enableAdvancedEditor: command === 'build',
+    syncStateType: 'event',
   },
   componentsEntry: {
     name: 'components',

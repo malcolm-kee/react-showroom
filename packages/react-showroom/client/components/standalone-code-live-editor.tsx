@@ -423,7 +423,9 @@ export const StandaloneCodeLiveEditor = ({
                       </ToggleButton>
                     </Tooltip.Trigger>
                     <Tooltip.Content>
-                      Sync State
+                      {process.env.SYNC_STATE_TYPE === 'state'
+                        ? 'Sync State'
+                        : 'Sync Input/Click'}
                       <Tooltip.Arrow />
                     </Tooltip.Content>
                   </Tooltip.Root>

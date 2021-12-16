@@ -1,8 +1,8 @@
 import {
   isDefined,
   isFunction,
-  SupportedLanguage,
   isNumber,
+  SupportedLanguage,
 } from '@showroomjs/core';
 import { Alert, useConstant, useId } from '@showroomjs/ui';
 import * as React from 'react';
@@ -137,23 +137,24 @@ const PreviewPage = () => {
   );
 
   const isUpdatingRef = React.useRef(false);
-  const timerId = React.useRef<number | null>(null);
+  const isUpdatingTimerId = React.useRef<number | null>(null);
+
+  const isFiringEventRef = React.useRef(false);
+  const isFiringEventTimerId = React.useRef<number | null>(null);
 
   const { sendParent } = usePreviewWindow((data) => {
     if (data.type === 'code') {
       setState(data);
     } else if (data.type === 'syncState') {
-      const setStateFn = setStateMap.get(data.stateId);
-      if (setStateFn) {
-        setStateFn(data.stateValue);
+      if (process.env.SYNC_STATE_TYPE === 'state') {
+        const setStateFn = setStateMap.get(data.stateId);
+        if (setStateFn) {
+          setStateFn(data.stateValue);
+        }
+        latestStateValueMap.set(data.stateId, data.stateValue);
       }
-      latestStateValueMap.set(data.stateId, data.stateValue);
     } else if (data.type === 'scroll') {
-      const tValue = timerId.current;
-
-      if (isNumber(tValue)) {
-        window.clearTimeout(tValue);
-      }
+      clearTimer(isUpdatingTimerId);
 
       const docEl = window.document.documentElement;
 
@@ -174,8 +175,22 @@ const PreviewPage = () => {
           );
         }
 
-        timerId.current = window.setTimeout(() => {
+        isUpdatingTimerId.current = window.setTimeout(() => {
           isUpdatingRef.current = false;
+        }, 500);
+      }
+    } else if (data.type === 'domEvent') {
+      if (process.env.SYNC_STATE_TYPE === 'event') {
+        clearTimer(isFiringEventTimerId);
+
+        isFiringEventRef.current = true;
+
+        import(/* webpackPrefetch: true */ '../lib/fire-event').then((m) =>
+          m.fireValidDomEvent(data.data)
+        );
+
+        isFiringEventTimerId.current = window.setTimeout(() => {
+          isFiringEventRef.current = false;
         }, 500);
       }
     }
@@ -236,7 +251,13 @@ const PreviewPage = () => {
   }, [sendParent]);
 
   return (
-    <UseCustomStateContext.Provider value={customUseState as any}>
+    <UseCustomStateContext.Provider
+      value={
+        process.env.SYNC_STATE_TYPE === 'state'
+          ? (customUseState as any)
+          : React.useState
+      }
+    >
       <ConsoleContext.Provider value={previewConsole}>
         <CodePreviewFrame
           {...state}
@@ -246,10 +267,84 @@ const PreviewPage = () => {
               isCompiling,
             })
           }
+          onChange={(ev) => {
+            if (process.env.SYNC_STATE_TYPE === 'state') {
+              return;
+            }
+
+            if (isFiringEventRef.current) {
+              return;
+            }
+
+            const domInfo = getDomEventInfo(ev);
+
+            if (domInfo) {
+              const { value, checked } = ev.target as HTMLInputElement;
+
+              sendParent({
+                type: 'domEvent',
+                data: {
+                  eventType: 'change',
+                  value,
+                  checked,
+                  ...domInfo,
+                },
+              });
+            }
+          }}
+          onClick={(ev) => {
+            if (process.env.SYNC_STATE_TYPE === 'state') {
+              return;
+            }
+
+            if (isFiringEventRef.current) {
+              return;
+            }
+
+            const domInfo = getDomEventInfo(ev);
+
+            if (domInfo) {
+              sendParent({
+                type: 'domEvent',
+                data: {
+                  eventType: 'click',
+                  ...domInfo,
+                },
+              });
+            }
+          }}
         />
       </ConsoleContext.Provider>
     </UseCustomStateContext.Provider>
   );
+};
+
+const getDomEventInfo = (ev: React.SyntheticEvent) => {
+  const el = ev.target as HTMLElement;
+
+  const { tagName } = el;
+
+  if (tagName) {
+    const selector = tagName.toLowerCase();
+
+    const allElements = Array.from(document.querySelectorAll(selector));
+
+    const elementIndex = allElements.indexOf(el);
+
+    return {
+      elementType: selector,
+      elementIndex,
+      elementTypeTotal: allElements.length,
+    };
+  }
+};
+
+const clearTimer = (ref: React.RefObject<null | number>) => {
+  const tValue = ref.current;
+
+  if (isNumber(tValue)) {
+    window.clearTimeout(tValue);
+  }
 };
 
 const createCustomUseState =

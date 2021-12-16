@@ -181,6 +181,12 @@ export interface ExampleConfiguration {
    * @default true
    */
   enableAdvancedEditor: boolean;
+  /**
+   * mechanism to sync states across frames.
+   *
+   * @default 'state'
+   */
+  syncStateType: 'state' | 'event';
 }
 
 export interface ShowroomHtmlConfiguration {

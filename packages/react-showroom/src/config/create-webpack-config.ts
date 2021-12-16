@@ -606,6 +606,7 @@ const createBaseWebpackConfig = (
         NODE_ENV: mode,
         EXAMPLE_WIDTHS: exampleConfig.widths,
         ENABLE_ADVANCED_EDITOR: exampleConfig.enableAdvancedEditor,
+        SYNC_STATE_TYPE: exampleConfig.syncStateType,
         SITE_URL: url,
         AUDIENCE_TOGGLE: theme.audienceToggle,
         COMPONENTS_ENTRY_NAME: (componentsEntry && componentsEntry.name) || '',

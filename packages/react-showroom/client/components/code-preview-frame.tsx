@@ -9,22 +9,26 @@ import { Div, Span } from './base';
 import { CodePreview } from './code-preview';
 import { ErrorFallback } from './error-fallback';
 
-export interface CodePreviewFrameProps {
+export interface CodePreviewFrameProps
+  extends React.ComponentPropsWithoutRef<'div'> {
   code: string;
   lang: SupportedLanguage;
   nonVisual?: boolean;
   onIsCompilingChange?: (isCompiling: boolean) => void;
 }
 
-export const CodePreviewFrame = (props: CodePreviewFrameProps) => {
+export const CodePreviewFrame = ({
+  code,
+  lang,
+  nonVisual,
+  onIsCompilingChange,
+  ...divProps
+}: CodePreviewFrameProps) => {
   const errorBoundaryRef = React.useRef<ErrorBoundary>(null);
 
-  const { data, isCompiling, error, isError } = useCodeCompilation(
-    props.code,
-    props.lang
-  );
+  const { data, isCompiling, error, isError } = useCodeCompilation(code, lang);
 
-  const onIsCompilingChangeCb = useStableCallback(props.onIsCompilingChange);
+  const onIsCompilingChangeCb = useStableCallback(onIsCompilingChange);
   React.useEffect(() => {
     onIsCompilingChangeCb(isCompiling);
   }, [isCompiling]);
@@ -33,16 +37,17 @@ export const CodePreviewFrame = (props: CodePreviewFrameProps) => {
     if (errorBoundaryRef.current) {
       errorBoundaryRef.current.reset();
     }
-  }, [props.code]);
+  }, [code]);
 
   return (
     <Div
       css={{
         position: 'relative',
-        padding: props.nonVisual ? 0 : '$1',
-        minHeight: props.nonVisual ? 0 : 30,
+        padding: nonVisual ? 0 : '$1',
+        minHeight: nonVisual ? 0 : 30,
         backgroundColor: 'White',
       }}
+      {...divProps}
     >
       {isError ? (
         <Alert variant="error">
@@ -57,14 +62,14 @@ export const CodePreviewFrame = (props: CodePreviewFrameProps) => {
           >
             <CodePreview
               {...data}
-              skipConsoleForInitialRender={props.lang === 'html'}
+              skipConsoleForInitialRender={lang === 'html'}
             />
           </ErrorBoundary>
         ) : (
           <Alert variant="error">{formatError(data.error)}</Alert>
         ))
       )}
-      {isCompiling && !props.nonVisual && (
+      {isCompiling && !nonVisual && (
         <Div
           css={{
             position: 'absolute',
