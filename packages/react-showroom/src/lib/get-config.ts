@@ -3,6 +3,8 @@ import {
   flattenArray,
   isString,
   removeTrailingSlash,
+  deviceDimensions,
+  FrameDimension,
 } from '@showroomjs/core';
 import {
   ImportConfig,
@@ -12,6 +14,7 @@ import {
   ReactShowroomConfiguration,
   ReactShowroomSectionConfig,
   ThemeConfiguration,
+  FrameWithMaybeName,
 } from '@showroomjs/core/react';
 import * as fs from 'fs';
 import * as glob from 'glob';
@@ -75,6 +78,14 @@ const defaultThemeConfiguration: ThemeConfiguration = {
   },
 };
 
+type DeviceName = keyof typeof deviceDimensions;
+
+const deviceDevices: Array<DeviceName> = [
+  'iPhone 6/7/8',
+  'iPad',
+  'Macbook Air',
+];
+
 let _normalizedConfig: NormalizedReactShowroomConfiguration;
 export const getConfig = (
   env: Environment,
@@ -100,7 +111,17 @@ export const getConfig = (
       postcss: fs.existsSync(paths.appPostcssConfig),
     },
     example: {
-      widths = [320, 768, 1024],
+      widths,
+      dimensions = widths
+        ? widths.map(
+            (width) =>
+              ({
+                width: width,
+                height: '100%',
+                name: `${width}px`,
+              } as FrameDimension)
+          )
+        : deviceDevices,
       placeholder,
       enableAdvancedEditor = true,
       syncStateType = 'state',
@@ -166,8 +187,8 @@ export const getConfig = (
     ...providedConfig,
     componentsEntry,
     example: {
-      widths,
       placeholder: placeholder && resolveApp(placeholder),
+      dimensions: normalizeDimensions(dimensions),
       enableAdvancedEditor,
       syncStateType,
     },
@@ -455,6 +476,31 @@ export const getConfig = (
     });
   }
 };
+
+function normalizeDimensions(
+  dimensions: Array<FrameWithMaybeName | DeviceName>
+): Array<FrameDimension> {
+  const result: Array<FrameDimension> = [];
+
+  dimensions.forEach((d) => {
+    if (isString(d)) {
+      if (deviceDimensions[d]) {
+        result.push(deviceDimensions[d]);
+      } else {
+        logToStdout(`Invalid device preset: ${d}`);
+      }
+    } else {
+      const { width, height, name = String(width) } = d;
+      result.push({
+        width,
+        height,
+        name,
+      });
+    }
+  });
+
+  return result;
+}
 
 const getUserConfig = (
   env: Environment,

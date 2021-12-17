@@ -1,8 +1,8 @@
-import { SupportedLanguage } from '@showroomjs/core';
+import { SupportedLanguage, isNumber } from '@showroomjs/core';
 import { css, styled, useConstant, useQueryParams } from '@showroomjs/ui';
 import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
-import { EXAMPLE_WIDTHS } from '../lib/config';
+import { EXAMPLE_DIMENSIONS } from '../lib/config';
 import { safeCompress, safeDecompress } from '../lib/compress';
 import {
   CodePreviewIframe,
@@ -25,7 +25,7 @@ export interface StandaloneCodeLiveEditorPreviewListProps {
 
 const PARAM_KEY = '_fS';
 
-type StateMaps = Map<number, Map<string, any>>;
+type StateMaps = Map<string, Map<string, any>>;
 
 export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
   HTMLDivElement,
@@ -35,17 +35,17 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
   const shouldAdjustZoom = !isNaN(zoomValue) && zoomValue !== 100;
 
   const frameMap = useConstant(
-    () => new Map<number, CodePreviewIframeImperative>()
+    () => new Map<string, CodePreviewIframeImperative>()
   );
   const currentStateMaps = useConstant<StateMaps>(() => new Map());
   const [stateMaps, setStateMaps] = React.useState(currentStateMaps);
   const storeState = React.useCallback(
-    (frameWidth: number, stateId: string, stateValue: any) => {
-      let stateMap = stateMaps.get(frameWidth);
+    (frameName: string, stateId: string, stateValue: any) => {
+      let stateMap = stateMaps.get(frameName);
 
       if (!stateMap) {
         stateMap = new Map<string, any>();
-        stateMaps.set(frameWidth, stateMap);
+        stateMaps.set(frameName, stateMap);
       }
 
       stateMap.set(stateId, stateValue);
@@ -86,16 +86,23 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
     }
   }, [props.fitHeight, stateMaps]);
 
-  const content = EXAMPLE_WIDTHS.map((exampleWidth) =>
-    props.hiddenSizes.includes(exampleWidth) ? null : (
-      <ScreenWrapper isCommenting={props.isCommenting} key={exampleWidth}>
+  const content = EXAMPLE_DIMENSIONS.map((dimension) =>
+    props.hiddenSizes.includes(dimension.width) ? null : (
+      <ScreenWrapper isCommenting={props.isCommenting} key={dimension.name}>
         <Screen
           css={{
             width: `${
               shouldAdjustZoom
-                ? Math.round((exampleWidth * zoomValue) / 100)
-                : exampleWidth
+                ? Math.round((dimension.width * zoomValue) / 100)
+                : dimension.width
             }px`,
+            height: isNumber(dimension.height)
+              ? `${
+                  shouldAdjustZoom
+                    ? Math.round((dimension.height * zoomValue) / 100)
+                    : dimension.height
+                }px`
+              : dimension.height,
           }}
         >
           <CodePreviewIframe
@@ -103,7 +110,10 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
             lang={props.lang}
             codeHash={props.codeHash}
             css={{
-              width: `${exampleWidth}px`,
+              width: `${dimension.width}px`,
+              height: isNumber(dimension.height)
+                ? `${dimension.height}px`
+                : dimension.height,
               ...(shouldAdjustZoom
                 ? {
                     transform: `scale(${zoomValue / 100})`,
@@ -114,26 +124,26 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
             }}
             imperativeRef={(ref) => {
               if (ref) {
-                frameMap.set(exampleWidth, ref);
+                frameMap.set(dimension.name, ref);
               } else {
-                frameMap.delete(exampleWidth);
+                frameMap.delete(dimension.name);
               }
             }}
             onStateChange={(change) => {
               if (process.env.SYNC_STATE_TYPE === 'state') {
                 if (props.syncState) {
-                  frameMap.forEach((frame, frameWidth) => {
-                    if (frameWidth !== exampleWidth) {
+                  frameMap.forEach((frame, frameName) => {
+                    if (frameName !== dimension.name) {
                       frame.sendToChild({
                         type: 'syncState',
                         stateId: change.stateId,
                         stateValue: change.stateValue,
                       });
                     }
-                    storeState(frameWidth, change.stateId, change.stateValue);
+                    storeState(frameName, change.stateId, change.stateValue);
                   });
                 } else {
-                  storeState(exampleWidth, change.stateId, change.stateValue);
+                  storeState(dimension.name, change.stateId, change.stateValue);
                 }
 
                 setQueryParams({
@@ -143,8 +153,8 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
             }}
             onScrollChange={(xy) => {
               if (props.syncScroll) {
-                frameMap.forEach((frame, frameWidth) => {
-                  if (frameWidth !== exampleWidth) {
+                frameMap.forEach((frame, frameName) => {
+                  if (frameName !== dimension.name) {
                     frame.sendToChild({
                       type: 'scroll',
                       scrollPercentageXY: xy,
@@ -156,7 +166,7 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
             onDomEvent={(ev) => {
               if (props.syncState) {
                 frameMap.forEach((frame, frameWidth) => {
-                  if (frameWidth !== exampleWidth) {
+                  if (frameWidth !== dimension.name) {
                     frame.sendToChild({
                       type: 'domEvent',
                       data: ev,
@@ -167,7 +177,7 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
             }}
           />
         </Screen>
-        <ScreenSize>{exampleWidth}px</ScreenSize>
+        <ScreenSize>{dimension.name}</ScreenSize>
       </ScreenWrapper>
     )
   );
@@ -268,10 +278,10 @@ const ScreenWrapper = styled('div', {
 });
 
 const serializeStateMaps = (stateMaps: StateMaps): string => {
-  const mapObj: Record<number, string> = {};
+  const mapObj: Record<string, string> = {};
 
-  stateMaps.forEach((stateMap, width) => {
-    mapObj[width] = JSON.stringify(Array.from(stateMap.entries()));
+  stateMaps.forEach((stateMap, frameName) => {
+    mapObj[frameName] = JSON.stringify(Array.from(stateMap.entries()));
   });
 
   try {
@@ -290,12 +300,8 @@ const deserializeStateMap = (string: string): StateMaps | null => {
 
       const result: StateMaps = new Map();
 
-      Object.entries(mapObj).forEach(([widthStr, stateString]) => {
-        const width = Number(widthStr);
-
-        if (!isNaN(width)) {
-          result.set(width, new Map(JSON.parse(stateString)));
-        }
+      Object.entries(mapObj).forEach(([frameName, stateString]) => {
+        result.set(frameName, new Map(JSON.parse(stateString)));
       });
 
       return result;

@@ -85,12 +85,29 @@ module.exports = defineConfig({
 });
 ```
 
+### `example.dimensions`
+
+- Type: `Array<string | { width: number; height: number | '100%'; name?: string; }>`
+- Default: `['iPhone 6/7/8', 'iPad', 'Macbook Air']`
+
+Dimensions for the preview in example standalone view. The value could be an object with `width`, `height`, and `name` properties, or one of the preset device names.
+
+Also will be used to display markers for code example with `frame` modifier, like below:
+
+```jsx frame live initialHeight=56
+<h1 className="text-center p-3">
+  Hover above the marker above or drag the handle at the right until it aligns
+  with the marker.
+</h1>
+```
+
 ### `example.widths`
 
 - Type: `Array<number>`
-- Default: `[320, 768, 1024]`
 
 Widths for the preview in example standalone view.
+
+Use `example.dimensions` instead.
 
 ### `build.outDir`
 

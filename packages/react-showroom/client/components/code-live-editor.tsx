@@ -80,7 +80,6 @@ export const CodeLiveEditor = ({
                 backgroundColor: '$gray-400',
                 borderBottomRightRadius: '$base',
                 width: '100%',
-                overflowX: 'hidden',
               }
             : {
                 minHeight: 48,

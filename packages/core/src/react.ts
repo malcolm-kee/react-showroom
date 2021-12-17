@@ -1,12 +1,13 @@
+import type { Options as HtmlWebpackTagsPluginOptions } from 'html-webpack-tags-plugin';
 import type { PrismTheme } from 'prism-react-renderer';
 import type { ComponentType } from 'react';
-import type { CompilerOptions } from 'typescript';
 import type {
   ComponentDoc as DocgenComponentDoc,
   ParserOptions,
 } from 'react-docgen-typescript';
+import type { CompilerOptions } from 'typescript';
 import type { Configuration } from 'webpack';
-import type { Options as HtmlWebpackTagsPluginOptions } from 'html-webpack-tags-plugin';
+import type { deviceDimensions, FrameDimension } from './device-dimensions';
 import { CodeBlocks, Environment } from './index';
 
 export interface HtmlOptions
@@ -167,8 +168,12 @@ export interface DocgenConfiguration {
   options: ParserOptions;
 }
 
+export interface FrameWithMaybeName extends Omit<FrameDimension, 'name'> {
+  name?: string;
+}
+
 export interface ExampleConfiguration {
-  widths: Array<number>;
+  dimensions: Array<FrameDimension>;
   /**
    * path to a module/file that export default a React component that should be displayed when there is no associated markdown file for component.
    */
@@ -218,7 +223,10 @@ export interface ReactShowroomConfiguration {
    */
   skipEmptyComponent?: boolean;
   items?: Array<ItemConfiguration>;
-  example?: Partial<ExampleConfiguration>;
+  example?: Partial<Omit<ExampleConfiguration, 'dimensions'>> & {
+    dimensions?: Array<FrameWithMaybeName | keyof typeof deviceDimensions>;
+    widths?: Array<number>;
+  };
   /**
    * Webpack configuration to load your components (or any other resources that are needed by the components, e.g. CSS)
    */

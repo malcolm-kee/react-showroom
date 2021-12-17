@@ -2,7 +2,7 @@ export const isPrerender = process.env.PRERENDER;
 
 export const basename = process.env.BASE_PATH;
 
-export const EXAMPLE_WIDTHS = process.env.EXAMPLE_WIDTHS;
+export const EXAMPLE_DIMENSIONS = process.env.EXAMPLE_DIMENSIONS;
 
 export const prerenderExample = process.env.PRERENDER_EXAMPLE;
 

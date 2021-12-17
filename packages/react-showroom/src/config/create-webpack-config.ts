@@ -604,7 +604,7 @@ const createBaseWebpackConfig = (
         PRERENDER_EXAMPLE: !!prerenderConfig,
         REACT_SHOWROOM_THEME: theme,
         NODE_ENV: mode,
-        EXAMPLE_WIDTHS: exampleConfig.widths,
+        EXAMPLE_DIMENSIONS: exampleConfig.dimensions,
         ENABLE_ADVANCED_EDITOR: exampleConfig.enableAdvancedEditor,
         SYNC_STATE_TYPE: exampleConfig.syncStateType,
         SITE_URL: url,

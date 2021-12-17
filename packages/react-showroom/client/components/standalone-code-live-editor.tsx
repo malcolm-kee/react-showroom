@@ -31,7 +31,7 @@ import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { safeCompress, safeDecompress } from '../lib/compress';
-import { EXAMPLE_WIDTHS } from '../lib/config';
+import { EXAMPLE_DIMENSIONS } from '../lib/config';
 import { lazy, Suspense } from '../lib/lazy';
 import { getScrollFn } from '../lib/scroll-into-view';
 import { useCodeCompilationCache } from '../lib/use-code-compilation';
@@ -109,11 +109,11 @@ export const StandaloneCodeLiveEditor = ({
     'hidePreview',
     (paramValue) => !paramValue
   );
-  const [zoomLevel, setZoomLevel] = useStateWithParams('100', 'zoom', (x) => x);
+  const [zoomLevel, setZoomLevel] = useStateWithParams('75', 'zoom', (x) => x);
 
   const [hiddenSizes, _setHiddenSizes] = usePersistedState<Array<number>>(
     [],
-    'hiddenScreen'
+    'hiddenSizes'
   );
   const setHiddenSizes = (sizes: Array<number>) => {
     _setHiddenSizes(sizes);
@@ -131,7 +131,9 @@ export const StandaloneCodeLiveEditor = ({
         const serializedHiddenSizes = queryParams.hiddenSizes
           .split('_')
           .map(Number)
-          .filter((v) => !isNaN(v) && EXAMPLE_WIDTHS.includes(v));
+          .filter(
+            (v) => !isNaN(v) && EXAMPLE_DIMENSIONS.some((d) => d.width === v)
+          );
 
         if (serializedHiddenSizes.length > 0) {
           _setHiddenSizes(serializedHiddenSizes);
@@ -313,24 +315,25 @@ export const StandaloneCodeLiveEditor = ({
                     </MenuButton>
                   </DropdownMenu.Trigger>
                   <CheckboxDropdown>
-                    {EXAMPLE_WIDTHS.map((width) => (
+                    {EXAMPLE_DIMENSIONS.map((frame) => (
                       <CheckboxDropdown.Item
-                        checked={!hiddenSizes.includes(width)}
+                        checked={!hiddenSizes.includes(frame.width)}
                         onCheckedChange={(checked) => {
                           if (checked) {
                             setHiddenSizes(
                               hiddenSizes.filter(
                                 (s) =>
-                                  s !== width && EXAMPLE_WIDTHS.includes(width)
+                                  s !== frame.width &&
+                                  EXAMPLE_DIMENSIONS.includes(frame)
                               )
                             );
                           } else {
-                            setHiddenSizes(hiddenSizes.concat(width));
+                            setHiddenSizes(hiddenSizes.concat(frame.width));
                           }
                         }}
-                        key={width}
+                        key={frame.name}
                       >
-                        {width}px
+                        {frame.name}
                       </CheckboxDropdown.Item>
                     ))}
                   </CheckboxDropdown>
@@ -349,23 +352,24 @@ export const StandaloneCodeLiveEditor = ({
             >
               {showMultipleScreens &&
                 showPreview &&
-                EXAMPLE_WIDTHS.map((width) => (
+                EXAMPLE_DIMENSIONS.map((d) => (
                   <ToggleButton
-                    pressed={!hiddenSizes.includes(width)}
+                    pressed={!hiddenSizes.includes(d.width)}
                     onPressedChange={(isPressed) => {
                       if (isPressed) {
                         setHiddenSizes(
                           hiddenSizes.filter(
-                            (s) => s !== width && EXAMPLE_WIDTHS.includes(width)
+                            (s) =>
+                              s !== d.width && EXAMPLE_DIMENSIONS.includes(d)
                           )
                         );
                       } else {
-                        setHiddenSizes(hiddenSizes.concat(width));
+                        setHiddenSizes(hiddenSizes.concat(d.width));
                       }
                     }}
-                    key={width}
+                    key={d.name}
                   >
-                    {width}
+                    {d.name}
                   </ToggleButton>
                 ))}
             </Div>
@@ -472,7 +476,7 @@ export const StandaloneCodeLiveEditor = ({
                 <RadioDropdown
                   value={zoomLevel}
                   onChangeValue={(level) =>
-                    setZoomLevel(level, level === '100' ? undefined : level)
+                    setZoomLevel(level, level === '75' ? undefined : level)
                   }
                   options={zoomOptions}
                   className={zoomDropdown()}
@@ -539,7 +543,7 @@ export const StandaloneCodeLiveEditor = ({
                       add({
                         text: newComment,
                         zoomLevel,
-                        hiddenSizes,
+                        hiddenSizes: hiddenSizes,
                         left: targetCoord.x,
                         top: targetCoord.y,
                       });
@@ -692,6 +696,18 @@ const AdvancedEditor = (props: {
 
 const zoomOptions = [
   {
+    value: '20',
+    label: '20%',
+  },
+  {
+    value: '30',
+    label: '30%',
+  },
+  {
+    value: '40',
+    label: '40%',
+  },
+  {
     value: '50',
     label: '50%',
   },
@@ -713,7 +729,7 @@ const zoomOptions = [
   },
 ];
 
-const showMultipleScreens = EXAMPLE_WIDTHS.length > 0;
+const showMultipleScreens = EXAMPLE_DIMENSIONS.length > 0;
 
 const zoomDropdown = css({
   minWidth: '80px !important',
