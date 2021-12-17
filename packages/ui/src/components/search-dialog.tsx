@@ -261,6 +261,7 @@ const SearchIcon = styled(PlainSearchIcon, {
 const OptionItem = styled('div', {
   px: '$3',
   py: '$2',
+  color: 'Black',
   cursor: 'pointer',
   variants: {
     highlighted: {
