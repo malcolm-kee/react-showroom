@@ -1,5 +1,13 @@
 # react-showroom
 
+## 1.14.3
+
+### Patch Changes
+
+- ed35609: Fix styles for search dialog
+- Updated dependencies [ed35609]
+  - @showroomjs/ui@1.8.1
+
 ## 1.14.2
 
 ### Patch Changes

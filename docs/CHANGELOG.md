@@ -1,5 +1,12 @@
 # react-showroom-docs
 
+## 1.1.8
+
+### Patch Changes
+
+- Updated dependencies [ed35609]
+  - react-showroom@1.14.3
+
 ## 1.1.7
 
 ### Patch Changes

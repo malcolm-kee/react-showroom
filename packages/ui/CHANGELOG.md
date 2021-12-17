@@ -1,5 +1,11 @@
 # @showroomjs/ui
 
+## 1.8.1
+
+### Patch Changes
+
+- ed35609: Fix styles for search dialog
+
 ## 1.8.0
 
 ### Minor Changes
