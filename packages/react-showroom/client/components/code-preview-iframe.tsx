@@ -10,9 +10,10 @@ import cx from 'classnames';
 import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
 import { useComponentMeta } from '../lib/component-props-context';
-import { Message, useParentWindow, DomEvent } from '../lib/frame-message';
+import { DomEvent, Message, useParentWindow } from '../lib/frame-message';
 import { getPreviewUrl } from '../lib/preview-url';
 import { useConsole } from '../lib/use-preview-console';
+import { useActiveWidth, WidthMarkers } from './width-markers';
 
 export interface CodePreviewIframeImperative {
   sendToChild: (msg: Message) => void;
@@ -119,6 +120,8 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
 
   const height = providedHeight || frameHeight;
 
+  const [activeWidth, setActiveWidth] = useActiveWidth();
+
   const content = codeHash ? (
     <Frame
       ref={targetRef}
@@ -131,37 +134,44 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   ) : null;
 
   return resizable ? (
-    <Resizable
-      className={cx(
-        resizableStyle({
-          animate: !isResizing,
-        }),
-        className
-      )}
-      minHeight={height}
-      maxHeight={height}
-      minWidth={320 + handleWidth + 2}
-      maxWidth={'100%'}
-      enable={resizeEnable}
-      handleStyles={{
-        right: {
-          width: 4 + handleWidth,
-        },
-      }}
-      onResizeStart={() => setIsResizing(true)}
-      onResizeStop={() => setIsResizing(false)}
-      onResize={(_, __, el) => {
-        if (sizeEl.current) {
-          sizeEl.current.textContent = `${el.clientWidth - handleWidth}px`;
-        }
-      }}
-    >
-      {content}
-      <ResizeHandle>
-        <HandleIcon width={16} height={16} />
-      </ResizeHandle>
-      {isResizing && <SizeDisplay ref={sizeEl} />}
-    </Resizable>
+    <WidthMarkers currentWidth={activeWidth}>
+      <Resizable
+        className={cx(
+          resizableStyle({
+            animate: !isResizing,
+          }),
+          className
+        )}
+        minHeight={height}
+        maxHeight={height}
+        minWidth={320 + handleWidth + 2}
+        maxWidth={'100%'}
+        enable={resizeEnable}
+        handleStyles={{
+          right: {
+            width: 4 + handleWidth,
+          },
+        }}
+        onResizeStart={() => setIsResizing(true)}
+        onResizeStop={() => {
+          setIsResizing(false);
+          setActiveWidth(undefined);
+        }}
+        onResize={(_, __, el) => {
+          if (sizeEl.current) {
+            const width = el.clientWidth - handleWidth;
+            sizeEl.current.textContent = `${width}px`;
+            setActiveWidth(width);
+          }
+        }}
+      >
+        {content}
+        <ResizeHandle>
+          <HandleIcon width={16} height={16} />
+        </ResizeHandle>
+        {isResizing && <SizeDisplay ref={sizeEl} />}
+      </Resizable>
+    </WidthMarkers>
   ) : (
     content
   );
