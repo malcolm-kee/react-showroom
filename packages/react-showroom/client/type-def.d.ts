@@ -69,6 +69,7 @@ declare module 'react-showroom-comp-metadata?showroomCompProp' {
 }
 
 declare namespace NodeJS {
+  import type { FrameDimension } from '@showroomjs/core';
   import type { ThemeConfiguration } from '@showroomjs/core/react';
   import type { CompilerOptions } from 'typescript';
 
@@ -80,7 +81,7 @@ declare namespace NodeJS {
     readonly BASE_PATH: string;
     readonly SSR: boolean;
     readonly AUDIENCE_TOGGLE: 'design' | 'code' | false;
-    readonly EXAMPLE_WIDTHS: Array<number>;
+    readonly EXAMPLE_DIMENSIONS: Array<FrameDimension>;
     readonly ENABLE_ADVANCED_EDITOR: boolean;
     readonly SYNC_STATE_TYPE: 'state' | 'event';
     readonly COMPONENTS_ENTRY_NAME: string | undefined;
