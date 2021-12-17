@@ -1,5 +1,17 @@
 # react-showroom
 
+## 1.15.0
+
+### Minor Changes
+
+- fc0d52f: Allow configure frames height and name
+
+### Patch Changes
+
+- Updated dependencies [fc0d52f]
+  - @showroomjs/core@1.12.0
+  - @showroomjs/ui@1.8.2
+
 ## 1.14.3
 
 ### Patch Changes
