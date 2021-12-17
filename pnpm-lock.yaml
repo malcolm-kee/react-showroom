@@ -9,7 +9,6 @@ importers:
       '@rollup/plugin-commonjs': ^21.0.1
       '@rollup/plugin-node-resolve': ^13.1.1
       '@rollup/plugin-typescript': ^8.3.0
-      '@types/copy-webpack-plugin': ^10.1.0
       '@types/cross-spawn': ^6.0.2
       '@types/fs-extra': ^9.0.13
       '@types/glob': ^7.2.0
@@ -45,7 +44,6 @@ importers:
       '@rollup/plugin-commonjs': 21.0.1_rollup@2.61.1
       '@rollup/plugin-node-resolve': 13.1.1_rollup@2.61.1
       '@rollup/plugin-typescript': 8.3.0_rollup@2.61.1
-      '@types/copy-webpack-plugin': 10.1.0
       '@types/cross-spawn': 6.0.2
       '@types/fs-extra': 9.0.13
       '@types/glob': 7.2.0
@@ -3225,15 +3223,6 @@ packages:
     resolution: {integrity: sha512-XW/Aa8APYr6jSVVA1y/DEIZX0/GMKLEVekNG727R8cs56ahETkRAy/3DR7+fJyh7oUgGwNQaRfXCun0+KbWY7Q==}
     dev: false
 
-  /@types/copy-webpack-plugin/10.1.0:
-    resolution: {integrity: sha512-Dk0NUW3X6hVQdkH2n9R7NejjPNCocZBiv8XF8Ac5su2d6EKzCcG/yWDwnWGrEsAWvogoADJyUKULwncx0G9Jkg==}
-    deprecated: This is a stub types definition. copy-webpack-plugin provides its own type definitions, so you do not need this installed.
-    dependencies:
-      copy-webpack-plugin: 10.2.0
-    transitivePeerDependencies:
-      - webpack
-    dev: true
-
   /@types/cross-spawn/6.0.2:
     resolution: {integrity: sha512-KuwNhp3eza+Rhu8IFI5HUXRP0LIhqH5cAjubUvGXXthh4YYBuP2ntwEX+Cz8GJoZUHlKo247wPWOfA9LYEq4cw==}
     dependencies:
@@ -3957,6 +3946,7 @@ packages:
   /array-union/3.0.1:
     resolution: {integrity: sha512-1OvF9IbWwaeiM9VhzYXVQacMibxpXOMYVNIvMtKRyX9SImBXpKcFr8XvFDeEslCyuH/t6KRt7HEO94AlP8Iatw==}
     engines: {node: '>=12'}
+    dev: false
 
   /arrify/1.0.1:
     resolution: {integrity: sha1-iYUI2iIm84DfkEcoRWhJwVAaSw0=}
@@ -4776,20 +4766,6 @@ packages:
     resolution: {integrity: sha512-ZwrFkGJxUR3EIoXtO+yVE69Eb7KlixbaeAWfBQB9vVsNn/o+Yw69gBWSSDK825hQNdN+wF8zELf3dFNl/kxkUA==}
     engines: {node: '>= 0.6'}
     dev: false
-
-  /copy-webpack-plugin/10.2.0:
-    resolution: {integrity: sha512-my6iXII95c78w14HzYCNya5TlJYa44lOppAge5GSTMM1SyDxNsVGCJvhP4/ld6snm8lzjn3XOonMZD6s1L86Og==}
-    engines: {node: '>= 12.20.0'}
-    peerDependencies:
-      webpack: ^5.1.0
-    dependencies:
-      fast-glob: 3.2.7
-      glob-parent: 6.0.2
-      globby: 12.0.2
-      normalize-path: 3.0.0
-      schema-utils: 4.0.0
-      serialize-javascript: 6.0.0
-    dev: true
 
   /copy-webpack-plugin/10.2.0_webpack@5.65.0:
     resolution: {integrity: sha512-my6iXII95c78w14HzYCNya5TlJYa44lOppAge5GSTMM1SyDxNsVGCJvhP4/ld6snm8lzjn3XOonMZD6s1L86Og==}
@@ -6171,6 +6147,7 @@ packages:
     engines: {node: '>=10.13.0'}
     dependencies:
       is-glob: 4.0.3
+    dev: false
 
   /glob-to-regexp/0.4.1:
     resolution: {integrity: sha512-lkX1HJXwyMcprw/5YUZc2s7DrpAiHB21/V+E1rHUrVNokkvB6bqMzT0VfV6/86ZNabt1k14YOIaT7nDvOX3Iiw==}
@@ -6220,6 +6197,7 @@ packages:
       ignore: 5.1.9
       merge2: 1.4.1
       slash: 4.0.0
+    dev: false
 
   /got/11.8.2:
     resolution: {integrity: sha512-D0QywKgIe30ODs+fm8wMZiAcZjypcCodPNuMz5H9Mny7RJ+IjJ10BdmGW7OM7fHXP+O7r6ZwapQ/YQmMSvB0UQ==}
@@ -10581,6 +10559,7 @@ packages:
   /slash/4.0.0:
     resolution: {integrity: sha512-3dOsAHXXUkQTpOYcoAxLIorMTp4gIQr5IW3iVb7A7lFIp0VHhnynm9izx6TssdrIcVIESAlVjtnO2K8bg+Coew==}
     engines: {node: '>=12'}
+    dev: false
 
   /slugify/1.6.4:
     resolution: {integrity: sha512-Pcz296CK0uGnTf4iNQId79Uv6/5G16t0g0x3OsxWS8qVSOW+JXNnNHKVcuDiMgEGTWyK6zjlWXo2dvzV/FLf9Q==}

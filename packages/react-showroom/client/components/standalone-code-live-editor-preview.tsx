@@ -107,6 +107,7 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
               ...(shouldAdjustZoom
                 ? {
                     transform: `scale(${zoomValue / 100})`,
+                    height: `${(100 * 100) / zoomValue}%`,
                     transformOrigin: 'top left',
                   }
                 : {}),
