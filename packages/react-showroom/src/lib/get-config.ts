@@ -1,12 +1,14 @@
 import {
+  deviceDimensionsByName,
+  DeviceName,
   Environment,
   flattenArray,
+  FrameDimension,
   isString,
   removeTrailingSlash,
-  deviceDimensions,
-  FrameDimension,
 } from '@showroomjs/core';
 import {
+  FrameWithMaybeName,
   ImportConfig,
   ItemConfiguration,
   NormalizedReactShowroomConfiguration,
@@ -14,7 +16,6 @@ import {
   ReactShowroomConfiguration,
   ReactShowroomSectionConfig,
   ThemeConfiguration,
-  FrameWithMaybeName,
 } from '@showroomjs/core/react';
 import * as fs from 'fs';
 import * as glob from 'glob';
@@ -78,8 +79,6 @@ const defaultThemeConfiguration: ThemeConfiguration = {
   },
 };
 
-type DeviceName = keyof typeof deviceDimensions;
-
 const deviceDevices: Array<DeviceName> = [
   'iPhone 6/7/8',
   'iPad',
@@ -124,6 +123,7 @@ export const getConfig = (
         : deviceDevices,
       placeholder,
       enableAdvancedEditor = true,
+      showDeviceFrame = true,
       syncStateType = 'state',
     } = {},
     html = {},
@@ -191,6 +191,7 @@ export const getConfig = (
       dimensions: normalizeDimensions(dimensions),
       enableAdvancedEditor,
       syncStateType,
+      showDeviceFrame,
     },
     html,
     css: {
@@ -484,8 +485,8 @@ function normalizeDimensions(
 
   dimensions.forEach((d) => {
     if (isString(d)) {
-      if (deviceDimensions[d]) {
-        result.push(deviceDimensions[d]);
+      if (deviceDimensionsByName[d]) {
+        result.push(deviceDimensionsByName[d]);
       } else {
         logToStdout(`Invalid device preset: ${d}`);
       }

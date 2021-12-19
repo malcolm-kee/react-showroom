@@ -3,6 +3,7 @@ import {
   ComponentDataProvider,
   ComponentDocArticle,
   ComponentDocStandaloneEditor,
+  deviceDimensionsByName,
   MemoryRouter,
   QueryParamProvider,
   Route,
@@ -27,8 +28,15 @@ export const ComponentDocRoute = (
           <Suspense fallback={null}>
             <Switch>
               <Route path="/_standalone/:codeHash">
-                <div className="flex flex-col h-[50vh] min-h-[500px]">
-                  <ComponentDocStandaloneEditor />
+                <div className="flex flex-col min-h-[500px]">
+                  <ComponentDocStandaloneEditor
+                    codeFrameDimensions={[
+                      deviceDimensionsByName['iPhone 6/7/8'],
+                      deviceDimensionsByName.iPad,
+                      deviceDimensionsByName['Macbook Air'],
+                    ]}
+                    showDeviceFrame
+                  />
                 </div>
               </Route>
               <Route>

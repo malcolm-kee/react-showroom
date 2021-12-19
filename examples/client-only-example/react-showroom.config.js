@@ -9,4 +9,7 @@ module.exports = defineConfig({
   build: {
     prerender: false,
   },
+  example: {
+    showDeviceFrame: false,
+  },
 });

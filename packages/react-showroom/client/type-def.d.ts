@@ -83,6 +83,7 @@ declare namespace NodeJS {
     readonly AUDIENCE_TOGGLE: 'design' | 'code' | false;
     readonly EXAMPLE_DIMENSIONS: Array<FrameDimension>;
     readonly ENABLE_ADVANCED_EDITOR: boolean;
+    readonly SHOW_DEVICE_FRAME: boolean;
     readonly SYNC_STATE_TYPE: 'state' | 'event';
     readonly COMPONENTS_ENTRY_NAME: string | undefined;
     readonly COMPILER_OPTIONS: Partial<CompilerOptions>;

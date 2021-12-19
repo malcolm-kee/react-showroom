@@ -5,7 +5,11 @@ export {
   SupportedLanguage,
   SUPPORTED_LANGUAGES,
 } from './compilation';
-export { deviceDimensions } from './device-dimensions';
+export {
+  deviceDimensions,
+  deviceDimensionsByName,
+  DeviceName,
+} from './device-dimensions';
 export type { FrameDimension } from './device-dimensions';
 export { decodeDisplayName, encodeDisplayName } from './display-name';
 export { flattenArray, NestedArray } from './flatten-array';

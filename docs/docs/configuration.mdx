@@ -2,6 +2,8 @@
 description: Learn how to configure React Showroom to fit your use case.
 ---
 
+import { DeviceFrame, deviceDimensionsByName } from 'react-showroom/client';
+
 # Configuration
 
 Learn how to configure React Showroom to fit your use case.
@@ -84,30 +86,6 @@ module.exports = defineConfig({
   ],
 });
 ```
-
-### `example.dimensions`
-
-- Type: `Array<string | { width: number; height: number | '100%'; name?: string; }>`
-- Default: `['iPhone 6/7/8', 'iPad', 'Macbook Air']`
-
-Dimensions for the preview in example standalone view. The value could be an object with `width`, `height`, and `name` properties, or one of the preset device names.
-
-Also will be used to display markers for code example with `frame` modifier, like below:
-
-```jsx frame live initialHeight=56
-<h1 className="text-center p-3">
-  Hover above the marker above or drag the handle at the right until it aligns
-  with the marker.
-</h1>
-```
-
-### `example.widths`
-
-- Type: `Array<number>`
-
-Widths for the preview in example standalone view.
-
-Use `example.dimensions` instead.
 
 ### `build.outDir`
 
@@ -279,7 +257,59 @@ Patterns to ignore for components.
 
 - Type: `boolean | undefined`
 
-Ignore components that don’t have an example file nor props definition other than defined in `'@types/react'`.
+Ignore components that don't have an example file nor props definition other than defined in `'@types/react'`.
+
+### `example.dimensions`
+
+- Type: `Array<string | { width: number; height: number | '100%'; name?: string; }>`
+- Default: `['iPhone 6/7/8', 'iPad', 'Macbook Air']`
+
+Dimensions for the previews in example standalone view. The value could be an object with `width`, `height`, and `name` properties, or one of the preset device names.
+
+Also will be used to display markers for code examples with `frame` modifier, like below:
+
+```jsx frame live initialHeight=56
+<h1 className="text-center p-3">
+  Hover above the marker above or drag the handle at the right until it aligns
+  with the marker.
+</h1>
+```
+
+<aside className="h-[450px] w-[220px] overflow-hidden float-right">
+  <DeviceFrame
+    showFrame
+    dimension={deviceDimensionsByName['iPhone X']}
+    className="scale-50 origin-top-left"
+  >
+    <div className="text-3xl p-3 space-y-12">
+      <p className="text-3xl">
+        This is an example if you provide <code>'iPhone X'</code> in{' '}
+        <code>example.dimensions</code> array.
+      </p>
+      <p>
+        You can remove the frame by passing <code>false</code> to{' '}
+        <code>example</code>. <code>showDeviceFrame</code> configuration
+        options.
+      </p>
+      <p className="text-3xl">This example is zoomed at 50%.</p>
+    </div>
+  </DeviceFrame>
+</aside>
+
+### `example.showDeviceFrame`
+
+- Type: `boolean`
+- Default: `true`
+
+Whether the previews in example standalone view should be wrapped with device frame.
+
+### `example.widths`
+
+- Type: `Array<number>`
+
+Widths for the preview in example standalone view.
+
+Use `example.dimensions` instead.
 
 ### `example.placeholder`
 

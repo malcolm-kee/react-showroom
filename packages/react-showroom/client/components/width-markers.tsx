@@ -1,9 +1,11 @@
 import * as React from 'react';
+import { isDefined } from '@showroomjs/core';
 import { styled, Tooltip } from '@showroomjs/ui';
 import { EXAMPLE_DIMENSIONS } from '../lib/config';
 
 export const WidthMarkers = (props: {
   children: React.ReactNode;
+  onMarkerClick?: (width: number) => void;
   currentWidth?: number;
 }) =>
   EXAMPLE_DIMENSIONS.length > 1 ? (
@@ -19,9 +21,19 @@ export const WidthMarkers = (props: {
                 <Marker
                   css={{
                     left: d.width - 4,
+                    cursor:
+                      isDefined(props.currentWidth) || !props.onMarkerClick
+                        ? 'default'
+                        : 'pointer',
                   }}
-                  active={active}
-                />
+                  onClick={() => {
+                    if (props.onMarkerClick) {
+                      props.onMarkerClick(d.width);
+                    }
+                  }}
+                >
+                  <MarkerTriangle active={active} />
+                </Marker>
               </Tooltip.Trigger>
               <Tooltip.Content side="top">
                 {d.name} ({d.width}px)
@@ -43,15 +55,13 @@ const MarkerContainer = styled('div', {
   position: 'absolute',
   left: 0,
   right: 0,
-  top: -5,
-  height: 5,
+  top: -10,
+  height: 10,
   overflow: 'hidden',
 });
 
-const Marker = styled('div', {
-  position: 'absolute',
-  width: 0,
-  height: 0,
+const MarkerTriangle = styled('span', {
+  display: 'block',
   borderLeft: '5px solid transparent',
   borderRight: '5px solid transparent',
   borderTop: '5px solid $gray-400',
@@ -61,6 +71,21 @@ const Marker = styled('div', {
         borderTop: '5px solid $primary-500',
       },
     },
+  },
+});
+
+const Marker = styled('div', {
+  display: 'block',
+  appearance: 'none',
+  position: 'absolute',
+  width: 10,
+  height: 10,
+  paddingTop: 5,
+  '&:active': {
+    top: 1,
+  },
+  [`&:active ${MarkerTriangle}`]: {
+    borderTop: '5px solid $primary-500',
   },
 });
 

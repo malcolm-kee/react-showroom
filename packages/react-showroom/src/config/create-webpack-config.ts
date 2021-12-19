@@ -520,45 +520,49 @@ const createBaseWebpackConfig = (
           resourceQuery: /raw/,
           type: 'asset/source',
         },
-        css.enabled
-          ? {
-              test: /\.css$/,
-              sideEffects: true,
-              use: [
-                isProd
-                  ? {
-                      loader: MiniCssExtractPlugin.loader,
-                      options: {
-                        emit: !options.ssr,
-                      },
-                    }
-                  : require.resolve('style-loader'),
-                {
-                  loader: require.resolve('css-loader'),
+        {
+          test: /\.css$/,
+          // if app don't need CSS, we still need to handle css in @showroomjs/device-frames
+          ...(css.enabled
+            ? {}
+            : {
+                include: [/node_modules\/@showroomjs\/device-frames/],
+              }),
+          sideEffects: true,
+          use: [
+            isProd
+              ? {
+                  loader: MiniCssExtractPlugin.loader,
                   options: {
-                    importLoaders: css.usePostcss ? 1 : 0,
-                    modules: {
-                      auto: true,
-                      localIdentName: isProd
-                        ? '[hash:base64]'
-                        : '[path][name]__[local]',
+                    emit: !options.ssr,
+                  },
+                }
+              : require.resolve('style-loader'),
+            {
+              loader: require.resolve('css-loader'),
+              options: {
+                importLoaders: css.usePostcss ? 1 : 0,
+                modules: {
+                  auto: true,
+                  localIdentName: isProd
+                    ? '[hash:base64]'
+                    : '[path][name]__[local]',
+                },
+              },
+            },
+            css.usePostcss
+              ? {
+                  loader: require.resolve('postcss-loader'),
+                  options: {
+                    sourceMap: isProd,
+                    postcssOptions: {
+                      config: paths.appPostcssConfig,
                     },
                   },
-                },
-                css.usePostcss
-                  ? {
-                      loader: require.resolve('postcss-loader'),
-                      options: {
-                        sourceMap: isProd,
-                        postcssOptions: {
-                          config: paths.appPostcssConfig,
-                        },
-                      },
-                    }
-                  : undefined,
-              ].filter(isDefined),
-            }
-          : undefined,
+                }
+              : undefined,
+          ].filter(isDefined),
+        },
       ].filter(isDefined),
     },
     resolveLoader: {
@@ -607,6 +611,7 @@ const createBaseWebpackConfig = (
         EXAMPLE_DIMENSIONS: exampleConfig.dimensions,
         ENABLE_ADVANCED_EDITOR: exampleConfig.enableAdvancedEditor,
         SYNC_STATE_TYPE: exampleConfig.syncStateType,
+        SHOW_DEVICE_FRAME: exampleConfig.showDeviceFrame,
         SITE_URL: url,
         AUDIENCE_TOGGLE: theme.audienceToggle,
         COMPONENTS_ENTRY_NAME: (componentsEntry && componentsEntry.name) || '',

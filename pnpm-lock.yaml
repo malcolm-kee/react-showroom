@@ -273,6 +273,17 @@ importers:
       typescript: 4.5.4
       webpack: 5.65.0_esbuild@0.14.5
 
+  packages/device-frames:
+    specifiers:
+      '@heroicons/react': ^1.0.5
+      tsup: 5.11.6
+      typescript: ^4.5.4
+    dependencies:
+      '@heroicons/react': 1.0.5_react@17.0.2
+    devDependencies:
+      tsup: 5.11.6_typescript@4.5.4
+      typescript: 4.5.4
+
   packages/react-showroom:
     specifiers:
       '@babel/core': ^7.16.5
@@ -285,6 +296,7 @@ importers:
       '@pmmmwh/react-refresh-webpack-plugin': ^0.5.3
       '@showroomjs/bundles': workspace:*
       '@showroomjs/core': workspace:*
+      '@showroomjs/device-frames': workspace:*
       '@showroomjs/ui': workspace:*
       '@testing-library/dom': ^8.11.1
       '@types/lodash': ^4.14.178
@@ -368,6 +380,7 @@ importers:
       '@pmmmwh/react-refresh-webpack-plugin': 0.5.3_b2ed9102ec5bf509e70c7bad8b9ef1e4
       '@showroomjs/bundles': link:../bundles
       '@showroomjs/core': link:../core
+      '@showroomjs/device-frames': link:../device-frames
       '@showroomjs/ui': link:../ui
       '@testing-library/dom': 8.11.1
       babel-loader: 8.2.3_26251eab09162b25a254715ee98d7c5c

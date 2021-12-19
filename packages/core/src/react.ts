@@ -7,7 +7,7 @@ import type {
 } from 'react-docgen-typescript';
 import type { CompilerOptions } from 'typescript';
 import type { Configuration } from 'webpack';
-import type { deviceDimensions, FrameDimension } from './device-dimensions';
+import type { DeviceName, FrameDimension } from './device-dimensions';
 import { CodeBlocks, Environment } from './index';
 
 export interface HtmlOptions
@@ -192,6 +192,12 @@ export interface ExampleConfiguration {
    * @default 'state'
    */
   syncStateType: 'state' | 'event';
+  /**
+   * whether to show device frame in standalone view
+   *
+   * @default true
+   */
+  showDeviceFrame: boolean;
 }
 
 export interface ShowroomHtmlConfiguration {
@@ -224,7 +230,7 @@ export interface ReactShowroomConfiguration {
   skipEmptyComponent?: boolean;
   items?: Array<ItemConfiguration>;
   example?: Partial<Omit<ExampleConfiguration, 'dimensions'>> & {
-    dimensions?: Array<FrameWithMaybeName | keyof typeof deviceDimensions>;
+    dimensions?: Array<FrameWithMaybeName | DeviceName>;
     widths?: Array<number>;
   };
   /**

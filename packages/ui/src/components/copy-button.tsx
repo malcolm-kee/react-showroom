@@ -1,4 +1,4 @@
-import { noop } from '@showroomjs/core';
+import { callAll, noop } from '@showroomjs/core';
 import * as React from 'react';
 import { copyText } from '../lib/copy';
 import { useTransientState } from '../lib/use-transient-state';
@@ -22,6 +22,7 @@ export const CopyButton = React.forwardRef<HTMLButtonElement, CopyButtonProps>(
       successLabel = 'Copied!',
       className,
       onCopy = noop,
+      onClick,
       ...btnProps
     },
     forwardedRef
@@ -31,12 +32,12 @@ export const CopyButton = React.forwardRef<HTMLButtonElement, CopyButtonProps>(
     return (
       <Button
         type="button"
-        onClick={() =>
+        onClick={callAll(onClick, () =>
           copyText(getTextToCopy()).then(() => {
             setCopied(true);
             onCopy();
           })
-        }
+        )}
         className={className}
         {...btnProps}
         ref={forwardedRef}

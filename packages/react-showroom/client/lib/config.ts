@@ -4,6 +4,8 @@ export const basename = process.env.BASE_PATH;
 
 export const EXAMPLE_DIMENSIONS = process.env.EXAMPLE_DIMENSIONS;
 
+export const showDeviceFrame = process.env.SHOW_DEVICE_FRAME;
+
 export const prerenderExample = process.env.PRERENDER_EXAMPLE;
 
 export const audienceDefault = process.env.AUDIENCE_TOGGLE;

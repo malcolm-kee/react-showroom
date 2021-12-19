@@ -1,13 +1,14 @@
-import { SupportedLanguage, isNumber } from '@showroomjs/core';
+import { isNumber, SupportedLanguage } from '@showroomjs/core';
 import { css, styled, useConstant, useQueryParams } from '@showroomjs/ui';
 import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
-import { EXAMPLE_DIMENSIONS } from '../lib/config';
+import { useCodeFrameContext } from '../lib/code-frame-context';
 import { safeCompress, safeDecompress } from '../lib/compress';
 import {
   CodePreviewIframe,
   CodePreviewIframeImperative,
 } from './code-preview-iframe';
+import { DeviceFrame } from './device-frame';
 
 export interface StandaloneCodeLiveEditorPreviewListProps {
   code: string;
@@ -15,7 +16,7 @@ export interface StandaloneCodeLiveEditorPreviewListProps {
   codeHash: string;
   isCommenting: boolean;
   onClickCommentPoint: (coordinate: { x: number; y: number }) => void;
-  hiddenSizes: Array<number>;
+  hiddenSizes: Array<[number, number | '100%']>;
   fitHeight: boolean;
   zoom: string;
   children?: React.ReactNode;
@@ -86,101 +87,140 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
     }
   }, [props.fitHeight, stateMaps]);
 
-  const content = EXAMPLE_DIMENSIONS.map((dimension) =>
-    props.hiddenSizes.includes(dimension.width) ? null : (
+  const codeFrameSetttings = useCodeFrameContext();
+
+  const visibleFrames = codeFrameSetttings.frameDimensions.filter(
+    (f) => !props.hiddenSizes.some(([w, h]) => w === f.width && h === f.height)
+  );
+
+  const maxFrameHeight = Math.max.apply(
+    null,
+    visibleFrames.map((f) => (isNumber(f.height) ? f.height : 0))
+  );
+
+  const maxEffectiveHeight =
+    maxFrameHeight &&
+    (codeFrameSetttings.showDeviceFrame
+      ? maxFrameHeight + 300
+      : maxFrameHeight + 100);
+
+  const adjustedEffectiveHeight =
+    maxEffectiveHeight &&
+    (shouldAdjustZoom
+      ? Math.ceil((maxEffectiveHeight * zoomValue) / 100)
+      : maxEffectiveHeight) + 30; // additional 30px for device label
+
+  const content = visibleFrames.map((dimension) => {
+    return (
       <ScreenWrapper isCommenting={props.isCommenting} key={dimension.name}>
-        <Screen
-          css={{
-            width: `${
-              shouldAdjustZoom
-                ? Math.round((dimension.width * zoomValue) / 100)
-                : dimension.width
-            }px`,
-            height: isNumber(dimension.height)
-              ? `${
-                  shouldAdjustZoom
-                    ? Math.round((dimension.height * zoomValue) / 100)
-                    : dimension.height
-                }px`
-              : dimension.height,
-          }}
+        <DeviceFrame
+          dimension={dimension}
+          showFrame={codeFrameSetttings.showDeviceFrame}
         >
-          <CodePreviewIframe
-            code={props.code}
-            lang={props.lang}
-            codeHash={props.codeHash}
-            css={{
-              width: `${dimension.width}px`,
-              height: isNumber(dimension.height)
-                ? `${dimension.height}px`
-                : dimension.height,
-              ...(shouldAdjustZoom
+          <Screen
+            css={
+              codeFrameSetttings.showDeviceFrame
                 ? {
-                    transform: `scale(${zoomValue / 100})`,
-                    height: `${(100 * 100) / zoomValue}%`,
-                    transformOrigin: 'top left',
+                    width: '100%',
+                    height: '100%',
                   }
-                : {}),
-            }}
-            imperativeRef={(ref) => {
-              if (ref) {
-                frameMap.set(dimension.name, ref);
-              } else {
-                frameMap.delete(dimension.name);
-              }
-            }}
-            onStateChange={(change) => {
-              if (process.env.SYNC_STATE_TYPE === 'state') {
+                : {
+                    width: `${dimension.width}px`,
+                    height: isNumber(dimension.height)
+                      ? `${dimension.height}px`
+                      : dimension.height,
+                  }
+            }
+          >
+            <CodePreviewIframe
+              code={props.code}
+              lang={props.lang}
+              codeHash={props.codeHash}
+              css={{
+                width: `${dimension.width}px`,
+                height: codeFrameSetttings.showDeviceFrame
+                  ? '100%'
+                  : isNumber(dimension.height)
+                  ? `${dimension.height}px`
+                  : dimension.height,
+              }}
+              imperativeRef={(ref) => {
+                if (ref) {
+                  frameMap.set(dimension.name, ref);
+                } else {
+                  frameMap.delete(dimension.name);
+                }
+              }}
+              onStateChange={(change) => {
+                if (process.env.SYNC_STATE_TYPE === 'state') {
+                  if (props.syncState) {
+                    frameMap.forEach((frame, frameName) => {
+                      if (frameName !== dimension.name) {
+                        frame.sendToChild({
+                          type: 'syncState',
+                          stateId: change.stateId,
+                          stateValue: change.stateValue,
+                        });
+                      }
+                      storeState(frameName, change.stateId, change.stateValue);
+                    });
+                  } else {
+                    storeState(
+                      dimension.name,
+                      change.stateId,
+                      change.stateValue
+                    );
+                  }
+
+                  setQueryParams({
+                    [PARAM_KEY]: serializeStateMaps(stateMaps) || undefined,
+                  });
+                }
+              }}
+              onScrollChange={(xy) => {
+                if (props.syncScroll) {
+                  frameMap.forEach((frame, frameName) => {
+                    if (frameName !== dimension.name) {
+                      frame.sendToChild({
+                        type: 'scroll',
+                        scrollPercentageXY: xy,
+                      });
+                    }
+                  });
+                }
+              }}
+              onDomEvent={(ev) => {
                 if (props.syncState) {
                   frameMap.forEach((frame, frameName) => {
                     if (frameName !== dimension.name) {
                       frame.sendToChild({
-                        type: 'syncState',
-                        stateId: change.stateId,
-                        stateValue: change.stateValue,
+                        type: 'domEvent',
+                        data: ev,
                       });
                     }
-                    storeState(frameName, change.stateId, change.stateValue);
                   });
-                } else {
-                  storeState(dimension.name, change.stateId, change.stateValue);
                 }
-
-                setQueryParams({
-                  [PARAM_KEY]: serializeStateMaps(stateMaps) || undefined,
-                });
-              }
-            }}
-            onScrollChange={(xy) => {
-              if (props.syncScroll) {
-                frameMap.forEach((frame, frameName) => {
-                  if (frameName !== dimension.name) {
-                    frame.sendToChild({
-                      type: 'scroll',
-                      scrollPercentageXY: xy,
-                    });
+              }}
+            />
+          </Screen>
+        </DeviceFrame>
+        <ScreenSize>
+          <ScreenSizeText
+            css={
+              shouldAdjustZoom
+                ? {
+                    transform: `scale(${100 / zoomValue})`,
+                    transformOrigin: 'top left',
                   }
-                });
-              }
-            }}
-            onDomEvent={(ev) => {
-              if (props.syncState) {
-                frameMap.forEach((frame, frameWidth) => {
-                  if (frameWidth !== dimension.name) {
-                    frame.sendToChild({
-                      type: 'domEvent',
-                      data: ev,
-                    });
-                  }
-                });
-              }
-            }}
-          />
-        </Screen>
-        <ScreenSize>{dimension.name}</ScreenSize>
+                : undefined
+            }
+          >
+            {dimension.name}
+          </ScreenSizeText>
+        </ScreenSize>
       </ScreenWrapper>
-    )
-  );
+    );
+  });
 
   const rootProps = {
     className: resizeStyle({
@@ -197,13 +237,39 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
   };
 
   return props.fitHeight ? (
-    <ScreenList {...rootProps} ref={forwardedRef}>
-      {content}
+    <Root {...rootProps} ref={forwardedRef}>
+      <ScreenList
+        css={
+          shouldAdjustZoom
+            ? {
+                transform: `scale(${zoomValue / 100})`,
+                transformOrigin: 'top left',
+              }
+            : {}
+        }
+      >
+        {content}
+      </ScreenList>
       {props.children}
-    </ScreenList>
+    </Root>
   ) : (
-    <Resizable enable={resizeEnable} {...rootProps}>
-      {content}
+    <Resizable
+      enable={resizeEnable}
+      maxHeight={adjustedEffectiveHeight || undefined}
+      {...rootProps}
+    >
+      <ScreenList
+        css={
+          shouldAdjustZoom
+            ? {
+                transform: `scale(${zoomValue / 100})`,
+                transformOrigin: 'top left',
+              }
+            : {}
+        }
+      >
+        {content}
+      </ScreenList>
       {props.children}
     </Resizable>
   );
@@ -220,15 +286,18 @@ const resizeEnable: ResizeEnable = {
   topLeft: false,
 };
 
-const ScreenList = styled('div', {
+const Root = styled('div', {
   flex: 1,
 });
 
-const resizeStyle = css({
+const ScreenList = styled('div', {
   display: 'flex',
+  gap: '$6',
+});
+
+const resizeStyle = css({
   overflowX: 'auto',
   overflowY: 'hidden',
-  gap: '$3',
   paddingTop: '$3',
   paddingBottom: '$6',
   px: '$3',
@@ -247,6 +316,10 @@ const resizeStyle = css({
 const ScreenSize = styled('div', {
   px: '$2',
   py: '$1',
+});
+
+const ScreenSizeText = styled('span', {
+  display: 'inline-block', // required for transform to work
   fontSize: '$sm',
   lineHeight: '$sm',
   color: '$gray-500',

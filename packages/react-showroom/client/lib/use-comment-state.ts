@@ -5,7 +5,7 @@ import * as React from 'react';
 export interface CommentData {
   text: string;
   zoomLevel: string;
-  hiddenSizes: Array<number>;
+  hiddenSizes: Array<[number, number | '100%']>;
   top: number;
   left: number;
   id: string;

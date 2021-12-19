@@ -24,7 +24,7 @@
     "webpack": "^5.65.0"
   },
   "peerDependencies": {
-    "esbuild": "^0.13.0",
+    "esbuild": "^0.14.0",
     "webpack": "^5.0.0"
   },
   "dependencies": {

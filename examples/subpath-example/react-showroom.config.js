@@ -11,4 +11,17 @@ module.exports = defineConfig({
     basePath: '/some-subpath',
     outDir: 'public/some-subpath',
   },
+  example: {
+    dimensions: [
+      'iPhone 6/7/8',
+      'iPhone X',
+      'iPad Mini',
+      'iPad',
+      'iPad Pro',
+      'Galaxy Note 10',
+      'Macbook Pro',
+      'Macbook Air',
+    ],
+    syncStateType: 'event',
+  },
 });
