@@ -12,6 +12,8 @@ import { Seo } from '../components/seo';
 import { StandalonePageContainer } from '../components/standalone-page-container';
 import { ExampleRootContextProvider } from '../lib/example-root-context';
 import { lazy } from '../lib/lazy';
+import { CodeFrameContextProvider } from '../lib/code-frame-context';
+import { EXAMPLE_DIMENSIONS, showDeviceFrame } from '../lib/config';
 
 const StandaloneEditor = lazy(
   () =>
@@ -52,7 +54,17 @@ export const MarkdownRoute = ({
                   },
                 ]}
               />
-              <StandaloneEditor />
+              <CodeFrameContextProvider
+                value={React.useMemo(
+                  () => ({
+                    showDeviceFrame,
+                    frameDimensions: EXAMPLE_DIMENSIONS,
+                  }),
+                  []
+                )}
+              >
+                <StandaloneEditor />
+              </CodeFrameContextProvider>
             </StandalonePageContainer>
           </Route>
           <Route path={url}>

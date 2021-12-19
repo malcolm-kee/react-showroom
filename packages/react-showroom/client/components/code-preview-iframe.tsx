@@ -122,6 +122,8 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
 
   const [activeWidth, setActiveWidth] = useActiveWidth();
 
+  const resizableRef = React.useRef<Resizable>(null);
+
   const content = codeHash ? (
     <Frame
       ref={targetRef}
@@ -134,7 +136,17 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   ) : null;
 
   return resizable ? (
-    <WidthMarkers currentWidth={activeWidth}>
+    <WidthMarkers
+      currentWidth={activeWidth}
+      onMarkerClick={(newWidth) => {
+        if (resizableRef.current) {
+          resizableRef.current.updateSize({
+            width: newWidth + handleWidth + 2,
+            height,
+          });
+        }
+      }}
+    >
       <Resizable
         className={cx(
           resizableStyle({
@@ -164,6 +176,7 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
             setActiveWidth(width);
           }
         }}
+        ref={resizableRef}
       >
         {content}
         <ResizeHandle>

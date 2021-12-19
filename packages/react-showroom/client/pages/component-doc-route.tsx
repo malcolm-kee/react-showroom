@@ -11,6 +11,7 @@ import { Seo } from '../components/seo';
 import { StandalonePageContainer } from '../components/standalone-page-container';
 import { ExampleRootContextProvider } from '../lib/example-root-context';
 import { Route, Switch, useRouteMatch } from '../lib/routing';
+import { showDeviceFrame, EXAMPLE_DIMENSIONS } from '../lib/config';
 
 export const ComponentDocRoute = ({
   section,
@@ -33,7 +34,10 @@ export const ComponentDocRoute = ({
                 title={metadata.displayName}
                 description={metadata.description}
               />
-              <ComponentDocStandaloneEditor />
+              <ComponentDocStandaloneEditor
+                showDeviceFrame={showDeviceFrame}
+                codeFrameDimensions={EXAMPLE_DIMENSIONS}
+              />
             </StandalonePageContainer>
           </Route>
           <Route path={url}>

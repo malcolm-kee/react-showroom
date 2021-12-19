@@ -17,9 +17,13 @@ const Demo = () => {
 
 ```jsx
 <div className="flex items-center gap-3">
-  <Button>Hello</Button>
-  <Button variant="primary">Primary</Button>
-  <Button variant="outline">Outline</Button>
+  <Button onClick={() => console.log('Hello!')}>Hello</Button>
+  <Button variant="primary" onClick={() => console.log('Wuha')}>
+    Primary
+  </Button>
+  <Button variant="outline" onClick={() => console.log('Whurt')}>
+    Outline
+  </Button>
 </div>
 ```
 

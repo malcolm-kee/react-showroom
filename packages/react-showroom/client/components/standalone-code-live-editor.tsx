@@ -29,9 +29,9 @@ import {
 } from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
+import { useCodeFrameContext } from '../lib/code-frame-context';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { safeCompress, safeDecompress } from '../lib/compress';
-import { EXAMPLE_DIMENSIONS } from '../lib/config';
 import { lazy, Suspense } from '../lib/lazy';
 import { getScrollFn } from '../lib/scroll-into-view';
 import { useCodeCompilationCache } from '../lib/use-code-compilation';
@@ -58,6 +58,8 @@ const CodeAdvancedEditor = lazy(() =>
     default: m.CodeAdvancedEditor,
   }))
 );
+
+type Dimension = [width: number, height: number | '100%'];
 
 export interface StandaloneCodeLiveEditorProps {
   code: string;
@@ -111,14 +113,17 @@ export const StandaloneCodeLiveEditor = ({
   );
   const [zoomLevel, setZoomLevel] = useStateWithParams('75', 'zoom', (x) => x);
 
-  const [hiddenSizes, _setHiddenSizes] = usePersistedState<Array<number>>(
+  const [hiddenSizes, _setHiddenSizes] = usePersistedState<Array<Dimension>>(
     [],
     'hiddenSizes'
   );
-  const setHiddenSizes = (sizes: Array<number>) => {
+  const setHiddenSizes = (sizes: Array<Dimension>) => {
     _setHiddenSizes(sizes);
     setQueryParams({
-      hiddenSizes: sizes.length === 0 ? undefined : sizes.join('_'),
+      hiddenSizes:
+        sizes.length === 0
+          ? undefined
+          : sizes.map((s) => `${s[0]}x${s[1]}`).join('_'),
     });
   };
 
@@ -130,13 +135,16 @@ export const StandaloneCodeLiveEditor = ({
       if (queryParams.hiddenSizes) {
         const serializedHiddenSizes = queryParams.hiddenSizes
           .split('_')
-          .map(Number)
+          .map((xAndY) => xAndY.split('x').map(Number))
           .filter(
-            (v) => !isNaN(v) && EXAMPLE_DIMENSIONS.some((d) => d.width === v)
+            (v) =>
+              v.length === 2 &&
+              v.every((n) => !isNaN(n)) &&
+              frameDimensions.some((d) => d.width === v[0] && d.height === v[1])
           );
 
         if (serializedHiddenSizes.length > 0) {
-          _setHiddenSizes(serializedHiddenSizes);
+          _setHiddenSizes(serializedHiddenSizes as any as Array<Dimension>);
         }
       }
 
@@ -188,6 +196,9 @@ export const StandaloneCodeLiveEditor = ({
   );
 
   const initialCompilation = useCodeCompilationCache(props.code, props.lang);
+
+  const { frameDimensions } = useCodeFrameContext();
+  const showMultipleScreens = frameDimensions.length > 0;
 
   return (
     <PreviewConsoleProvider>
@@ -315,27 +326,40 @@ export const StandaloneCodeLiveEditor = ({
                     </MenuButton>
                   </DropdownMenu.Trigger>
                   <CheckboxDropdown>
-                    {EXAMPLE_DIMENSIONS.map((frame) => (
-                      <CheckboxDropdown.Item
-                        checked={!hiddenSizes.includes(frame.width)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setHiddenSizes(
-                              hiddenSizes.filter(
-                                (s) =>
-                                  s !== frame.width &&
-                                  EXAMPLE_DIMENSIONS.includes(frame)
-                              )
-                            );
-                          } else {
-                            setHiddenSizes(hiddenSizes.concat(frame.width));
+                    {frameDimensions.map((frame) => {
+                      return (
+                        <CheckboxDropdown.Item
+                          checked={
+                            !hiddenSizes.some(
+                              ([w, h]) =>
+                                w === frame.width && h === frame.height
+                            )
                           }
-                        }}
-                        key={frame.name}
-                      >
-                        {frame.name}
-                      </CheckboxDropdown.Item>
-                    ))}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setHiddenSizes(
+                                hiddenSizes.filter(
+                                  (s) =>
+                                    !(
+                                      s[0] === frame.width &&
+                                      s[1] === frame.height
+                                    ) && frameDimensions.includes(frame)
+                                )
+                              );
+                            } else {
+                              setHiddenSizes(
+                                hiddenSizes.concat([
+                                  [frame.width, frame.height],
+                                ])
+                              );
+                            }
+                          }}
+                          key={frame.name}
+                        >
+                          {frame.name}
+                        </CheckboxDropdown.Item>
+                      );
+                    })}
                   </CheckboxDropdown>
                 </DropdownMenu>
               )}
@@ -352,24 +376,32 @@ export const StandaloneCodeLiveEditor = ({
             >
               {showMultipleScreens &&
                 showPreview &&
-                EXAMPLE_DIMENSIONS.map((d) => (
+                frameDimensions.map((frame) => (
                   <ToggleButton
-                    pressed={!hiddenSizes.includes(d.width)}
+                    pressed={
+                      !hiddenSizes.some(
+                        ([w, h]) => w === frame.width && h === frame.height
+                      )
+                    }
                     onPressedChange={(isPressed) => {
                       if (isPressed) {
                         setHiddenSizes(
                           hiddenSizes.filter(
                             (s) =>
-                              s !== d.width && EXAMPLE_DIMENSIONS.includes(d)
+                              !(
+                                s[0] === frame.width && s[1] === frame.height
+                              ) && frameDimensions.includes(frame)
                           )
                         );
                       } else {
-                        setHiddenSizes(hiddenSizes.concat(d.width));
+                        setHiddenSizes(
+                          hiddenSizes.concat([[frame.width, frame.height]])
+                        );
                       }
                     }}
-                    key={d.name}
+                    key={frame.name}
                   >
-                    {d.name}
+                    {frame.name}
                   </ToggleButton>
                 ))}
             </Div>
@@ -728,8 +760,6 @@ const zoomOptions = [
     label: '125%',
   },
 ];
-
-const showMultipleScreens = EXAMPLE_DIMENSIONS.length > 0;
 
 const zoomDropdown = css({
   minWidth: '80px !important',

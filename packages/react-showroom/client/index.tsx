@@ -2,8 +2,8 @@ import type { ComponentDoc } from 'react-docgen-typescript';
 import allCompMetadata from 'react-showroom-comp-metadata?showroomAllComp';
 import { lazy } from './lib/lazy';
 export { useQueryClient } from '@showroomjs/bundles/query';
-export { getCompilationKey } from '@showroomjs/core';
-export type { CodeBlocks } from '@showroomjs/core';
+export { deviceDimensionsByName, getCompilationKey } from '@showroomjs/core';
+export type { CodeBlocks, FrameDimension } from '@showroomjs/core';
 export type {
   ComponentDocItem,
   ReactShowroomComponentContent,
@@ -26,6 +26,7 @@ export { ComponentDocArticle } from './components/component-doc-article';
 export { ComponentDocStandaloneEditor } from './components/component-doc-standalone-editor';
 export { ComponentMeta } from './components/component-meta';
 export type { ComponentMetaProps } from './components/component-meta';
+export { DeviceFrame } from './components/device-frame';
 export { DocPlaceholder } from './components/doc-placeholder';
 export type { DocPlaceholderProps } from './components/doc-placeholder';
 export { MarkdownArticle } from './components/markdown-article';

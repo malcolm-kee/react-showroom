@@ -92,7 +92,7 @@ module.exports = defineConfig({
       items: [
         {
           type: 'content',
-          content: 'docs/configuration.md',
+          content: 'docs/configuration.mdx',
         },
       ],
     },

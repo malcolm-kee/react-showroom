@@ -29,6 +29,7 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@showroomjs/bundles": "workspace:*",
     "@showroomjs/core": "workspace:*",
+    "@showroomjs/device-frames": "workspace:*",
     "@showroomjs/ui": "workspace:*",
     "@testing-library/dom": "^8.11.1",
     "babel-loader": "^8.2.3",
