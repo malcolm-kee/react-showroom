@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-  ComponentItem,
-  Link,
-  ReactShowroomSection,
-  useComponentList,
-  useMenu,
-} from 'react-showroom/client';
+import { Link, ReactShowroomSection, useMenu } from 'react-showroom/client';
 
 export const Menu = () => {
   const menu = useMenu();
