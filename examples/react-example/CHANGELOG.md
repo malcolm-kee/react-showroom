@@ -1,5 +1,12 @@
 # react-example
 
+## 1.1.11
+
+### Patch Changes
+
+- Updated dependencies [1b6cf77]
+  - react-showroom@1.16.1
+
 ## 1.1.10
 
 ### Patch Changes

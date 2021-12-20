@@ -1,5 +1,16 @@
 # react-showroom
 
+## 1.16.1
+
+### Patch Changes
+
+- 1b6cf77: Update README
+- Updated dependencies [1b6cf77]
+- Updated dependencies [1b6cf77]
+  - @showroomjs/device-frames@0.2.1
+  - @showroomjs/core@1.12.1
+  - @showroomjs/ui@1.9.1
+
 ## 1.16.0
 
 ### Minor Changes
