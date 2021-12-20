@@ -1,5 +1,17 @@
 # react-showroom
 
+## 1.16.0
+
+### Minor Changes
+
+- d192daa: Add device frames in standalone view
+
+### Patch Changes
+
+- Updated dependencies [d192daa]
+  - @showroomjs/ui@1.9.0
+  - @showroomjs/device-frames@0.2.0
+
 ## 1.15.0
 
 ### Minor Changes

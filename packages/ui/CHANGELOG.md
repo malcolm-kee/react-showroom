@@ -1,5 +1,11 @@
 # @showroomjs/ui
 
+## 1.9.0
+
+### Minor Changes
+
+- d192daa: Add device frames in standalone view
+
 ## 1.8.2
 
 ### Patch Changes
