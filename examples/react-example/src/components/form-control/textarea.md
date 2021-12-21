@@ -17,7 +17,7 @@ const Demo = () => {
   const [name, setName] = React.useState('');
 
   return (
-    <div className="p-6 grid sm:grid-cols-2 gap-5">
+    <div className="px-6 py-12 grid sm:grid-cols-2 gap-5">
       <div className="flex flex-col gap-2">
         <label htmlFor="name">Name</label>
         <TextInput id="name" value={name} onValue={setName} />
@@ -33,6 +33,10 @@ const Demo = () => {
           <option value="ng">Angular</option>
           <option value="vue">Vue</option>
         </Select>
+      </div>
+      <div className="flex flex-col gap-2">
+        <label htmlFor="other-details">Other Details</label>
+        <Textarea id="other-details" minRows={5} />
       </div>
       <div>
         <label className="flex items-center gap-2">
