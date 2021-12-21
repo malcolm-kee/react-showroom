@@ -5,7 +5,7 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "@changesets/cli": "^2.18.1",
+    "@changesets/cli": "^2.19.0",
     "@playwright/test": "^1.17.1",
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^13.1.1",
@@ -27,7 +27,7 @@
     "@types/stringify-object": "4.0.0",
     "@types/temp": "^0.9.1",
     "@types/yargs": "^17.0.7",
-    "concurrently": "^6.4.0",
+    "concurrently": "^6.5.1",
     "http-server": "^14.0.0",
     "jest": "^27.4.5",
     "monaco-editor": "^0.30.1",
