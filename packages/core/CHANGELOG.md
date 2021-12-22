@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 1.12.2
+
+### Patch Changes
+
+- 8acc05b: Fix preview overscroll
+
 ## 1.12.1
 
 ### Patch Changes

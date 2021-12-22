@@ -1,5 +1,15 @@
 # react-showroom
 
+## 1.16.2
+
+### Patch Changes
+
+- 8acc05b: Fix preview overscroll
+- Updated dependencies [8acc05b]
+  - @showroomjs/bundles@1.8.1
+  - @showroomjs/core@1.12.2
+  - @showroomjs/ui@1.9.2
+
 ## 1.16.1
 
 ### Patch Changes

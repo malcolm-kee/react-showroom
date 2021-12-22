@@ -1,5 +1,11 @@
 # @showroomjs/bundles
 
+## 1.8.1
+
+### Patch Changes
+
+- 8acc05b: Fix preview overscroll
+
 ## 1.8.0
 
 ### Minor Changes
