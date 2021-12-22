@@ -1,4 +1,5 @@
 import { Environment } from '@showroomjs/core';
+import * as path from 'path';
 
 export const createBabelPreset = (env: Environment) => {
   const runTimeVersion = (function getBabelRuntimeVersion():
@@ -10,6 +11,15 @@ export const createBabelPreset = (env: Environment) => {
   })();
 
   const isDev = env === 'development';
+
+  let absoluteRuntimePath: string | undefined = undefined;
+
+  try {
+    absoluteRuntimePath = path.dirname(
+      require.resolve('@babel/runtime/package.json')
+    );
+  } catch (err) {}
+
   return {
     presets: [
       [
@@ -37,7 +47,7 @@ export const createBabelPreset = (env: Environment) => {
         require.resolve('@babel/plugin-transform-runtime'),
         {
           version: runTimeVersion,
-          absoluteRuntime: true,
+          absoluteRuntime: absoluteRuntimePath,
         },
       ],
     ],
