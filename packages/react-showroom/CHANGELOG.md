@@ -1,5 +1,11 @@
 # react-showroom
 
+## 1.16.3
+
+### Patch Changes
+
+- 137f2d6: Fix babel runtime resolution
+
 ## 1.16.2
 
 ### Patch Changes
