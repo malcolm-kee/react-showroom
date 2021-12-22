@@ -102,6 +102,11 @@ module.exports = defineConfig({
       items: [
         {
           type: 'link',
+          href: 'https://react-showroom-cra5-example.netlify.app/',
+          title: 'CRA 5 Example',
+        },
+        {
+          type: 'link',
           href: 'https://react-showroom-prerender.netlify.app/',
           title: 'Prerender Example',
         },

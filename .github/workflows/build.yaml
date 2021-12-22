@@ -115,3 +115,17 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_CLIENT_ONLY_SITE_ID }}
+
+      - name: Deploy CRA 5 Only Example to Netlify
+        uses: nwtgck/actions-netlify@v1.2
+        if: matrix.node-version == 14
+        with:
+          publish-dir: examples/cra-example/showroom
+          production-deploy: ${{ github.ref == 'refs/heads/main'}}
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: 'Deploy from GitHub Actions'
+          github-deployment-environment: CRA 5 Example
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_CRA5_EXAMPLE_SITE_ID }}
