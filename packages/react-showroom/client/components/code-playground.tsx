@@ -1,14 +1,16 @@
-import { Collapsible } from '@showroomjs/ui';
 import { SupportedLanguage } from '@showroomjs/core';
+import { Collapsible } from '@showroomjs/ui';
 import * as React from 'react';
+import { useCodeBlocks } from '../lib/codeblocks-context';
 import { PreviewConsoleProvider } from '../lib/use-preview-console';
 import { PropsEditorProvider } from '../lib/use-props-editor';
+import { useTargetAudience } from '../lib/use-target-audience';
 import { Div } from './base';
 import { CodePreviewFrame } from './code-preview-frame';
-import { ConsolePanel } from './console-panel';
-import { PropsEditorPanel } from './props-editor-panel';
-import { useCodeBlocks } from '../lib/codeblocks-context';
 import { CodePreviewIframe } from './code-preview-iframe';
+import { ConsolePanel } from './console-panel';
+import { LinkToStandaloneView } from './link-to-standalone-view';
+import { PropsEditorPanel } from './props-editor-panel';
 
 export interface CodePlaygroundProps {
   code: string;
@@ -29,6 +31,8 @@ export const CodePlayground = ({
   const [showPropsEditor, setShowPropsEditor] = React.useState<
     boolean | undefined
   >(false);
+
+  const targetAudience = useTargetAudience();
 
   const codeBlocks = useCodeBlocks();
   const matchedCodeData = codeBlocks[props.code];
@@ -113,6 +117,10 @@ export const CodePlayground = ({
             />
             Props
           </Collapsible.Button>
+          <LinkToStandaloneView
+            codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
+            isDesigner={targetAudience === 'designer'}
+          />
         </Div>
         <Collapsible.Content animate>
           <PropsEditorPanel />
