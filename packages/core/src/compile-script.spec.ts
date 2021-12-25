@@ -1,13 +1,18 @@
 import { compileScript } from './compile-script';
 import * as esbuild from 'esbuild';
 
-describe('postCompile', () => {
+describe('compileScript', () => {
   it('able to get the import and packages', async () => {
     const result = await compileScript(
-      `
-        import * as React from 'react';
-        import formik from 'formik';
-        import { useForm } from 'react-hook-form';`,
+      `import * as React from 'react';
+      import formik from 'formik';
+      import { useForm } from 'react-hook-form';
+        
+      const obj = {
+        React,
+        formik,
+        useForm
+      };`,
       esbuild,
       { insertRenderIfEndWithJsx: true, language: 'ts' }
     );
@@ -34,8 +39,10 @@ describe('postCompile', () => {
     expect(result.code).toMatchInlineSnapshot(`
       "const {Button} = imports['components'];
 
-              
-          React.createElement(Button, { className: 'bg' }, 'Hello');"
+      /* @__PURE__ */ React.createElement(Button, {
+        className: \\"bg\\"
+      }, \\"Hello\\");
+      "
     `);
   });
 
@@ -51,8 +58,7 @@ describe('postCompile', () => {
     expect(result.code).toMatchInlineSnapshot(`
       "const {Button} = imports['components'];
 
-              
-          render(React.createElement(Button, { className: 'bg' }, 'Hello'));"
+      render(React.createElement(Button, { className: \\"bg\\" }, \\"Hello\\"));"
     `);
   });
 });
