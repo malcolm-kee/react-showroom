@@ -268,12 +268,14 @@ const PreviewPage = () => {
           data: {
             ...domInfo,
             eventType,
-            key: ev.key,
-            code: ev.code,
-            keyCode: ev.keyCode,
-            ctrlKey: ev.ctrlKey,
-            shiftKey: ev.shiftKey,
-            metaKey: ev.metaKey,
+            init: {
+              key: ev.key,
+              code: ev.code,
+              keyCode: ev.keyCode,
+              ctrlKey: ev.ctrlKey,
+              shiftKey: ev.shiftKey,
+              metaKey: ev.metaKey,
+            },
           },
         });
       }
@@ -308,15 +310,27 @@ const PreviewPage = () => {
             const domInfo = getDomEventInfo(ev);
 
             if (domInfo) {
-              const { value, checked } = ev.target as HTMLInputElement;
+              const { value, checked, type, files } =
+                ev.target as HTMLInputElement;
 
               sendParent({
                 type: 'domEvent',
                 data: {
-                  eventType: 'change',
-                  value,
-                  checked,
                   ...domInfo,
+                  eventType: 'change',
+                  init:
+                    type === 'file'
+                      ? {
+                          target: {
+                            files: files && Array.from(files),
+                          },
+                        }
+                      : {
+                          target: {
+                            checked,
+                            value,
+                          },
+                        },
                 },
               });
             }
@@ -333,6 +347,20 @@ const PreviewPage = () => {
             const domInfo = getDomEventInfo(ev);
 
             if (domInfo) {
+              if (domInfo.tag === 'label') {
+                // fire this will cause double click on the associated input
+                return;
+              }
+
+              if (domInfo.tag === 'input') {
+                const { type } = ev.target as HTMLInputElement;
+
+                // fire this will cause all screen prompt for file selection.
+                if (type === 'file') {
+                  return;
+                }
+              }
+
               sendParent({
                 type: 'domEvent',
                 data: {

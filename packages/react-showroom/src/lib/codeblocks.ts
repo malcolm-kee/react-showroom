@@ -1,8 +1,7 @@
 import {
   CodeBlocks,
   compileHtml,
-  compileTarget,
-  postCompile,
+  compileScript,
   SupportedLanguage,
   SUPPORTED_LANGUAGES,
 } from '@showroomjs/core';
@@ -103,16 +102,13 @@ export const mdToCodeBlocks = async (
               type: 'success',
               messageId: -1,
               initialCodeHash: createHash(code),
+              features: [],
               lang,
             };
           } else {
-            const transformResult = await esbuild.transform(code, {
-              loader: lang,
-              target: compileTarget,
-            });
-
-            const postTranspileResult = postCompile(transformResult.code, {
+            const postTranspileResult = await compileScript(code, esbuild, {
               insertRenderIfEndWithJsx: true,
+              language: lang,
             });
 
             result[code] = {

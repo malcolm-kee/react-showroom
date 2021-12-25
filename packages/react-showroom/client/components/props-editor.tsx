@@ -32,8 +32,25 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
         if (ctrl.type === 'checkbox') {
           return (
             <React.Fragment key={ctrl.key}>
-              <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
-              <ControlWrapper>
+              <Label
+                htmlFor={ctrl.key}
+                css={{
+                  marginBottom: '$4',
+                  '@sm': {
+                    marginBottom: 0,
+                  },
+                }}
+              >
+                {ctrl.label}
+              </Label>
+              <ControlWrapper
+                css={{
+                  marginBottom: '$4',
+                  '@sm': {
+                    marginBottom: 0,
+                  },
+                }}
+              >
                 <Checkbox
                   checked={isDefined(ctrl.value) ? ctrl.value : 'indeterminate'}
                   onCheckedChange={ctrl.setValue}
@@ -52,7 +69,16 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
           return (
             <React.Fragment key={ctrl.key}>
               <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
-              <ControlWrapper>
+              <ControlWrapper
+                css={{
+                  gridColumn: '1 / -1',
+                  marginBottom: '$4',
+                  '@sm': {
+                    gridColumn: 'auto',
+                    marginBottom: 0,
+                  },
+                }}
+              >
                 <TextInput
                   id={ctrl.key}
                   value={ctrl.value || ''}
@@ -70,7 +96,16 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
           return (
             <React.Fragment key={ctrl.key}>
               <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
-              <ControlWrapper>
+              <ControlWrapper
+                css={{
+                  gridColumn: '1 / -1',
+                  marginBottom: '$4',
+                  '@sm': {
+                    gridColumn: 'auto',
+                    marginBottom: 0,
+                  },
+                }}
+              >
                 <NumberInput
                   id={ctrl.key}
                   value={ctrl.value || ''}
@@ -89,7 +124,16 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
           return (
             <React.Fragment key={ctrl.key}>
               <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
-              <ControlWrapper>
+              <ControlWrapper
+                css={{
+                  gridColumn: '1 / -1',
+                  marginBottom: '$4',
+                  '@sm': {
+                    gridColumn: 'auto',
+                    marginBottom: 0,
+                  },
+                }}
+              >
                 <ObjectValueEditor
                   id={ctrl.key}
                   value={ctrl.value || ''}
@@ -104,7 +148,16 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
           return (
             <React.Fragment key={ctrl.key}>
               <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
-              <ControlWrapper>
+              <ControlWrapper
+                css={{
+                  gridColumn: '1 / -1',
+                  marginBottom: '$4',
+                  '@sm': {
+                    gridColumn: 'auto',
+                    marginBottom: 0,
+                  },
+                }}
+              >
                 <FileInput
                   id={ctrl.key}
                   file={ctrl.value}
@@ -119,7 +172,16 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
           return (
             <React.Fragment key={ctrl.key}>
               <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
-              <ControlWrapper>
+              <ControlWrapper
+                css={{
+                  gridColumn: '1 / -1',
+                  marginBottom: '$4',
+                  '@sm': {
+                    gridColumn: 'auto',
+                    marginBottom: 0,
+                  },
+                }}
+              >
                 <TextInput
                   type="date"
                   id={ctrl.key}
@@ -212,7 +274,16 @@ const PropsSelectControl = (props: {
   return (
     <React.Fragment>
       <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
-      <ControlWrapper>
+      <ControlWrapper
+        css={{
+          gridColumn: '1 / -1',
+          marginBottom: '$4',
+          '@sm': {
+            gridColumn: 'auto',
+            marginBottom: 0,
+          },
+        }}
+      >
         <Select
           id={ctrl.key}
           value={selectedOptionIndex}
@@ -316,22 +387,29 @@ const PropsSelectControl = (props: {
 
 const Root = styled('div', {
   display: 'grid',
-  gridTemplateColumns: 'max-content 1fr',
   alignItems: 'center',
-  gap: '$2',
   py: '$1',
+  gridTemplateColumns: 'max-content 1fr',
+  columnGap: '$2',
+  '@sm': {
+    gap: '$2',
+  },
 });
 
 const Label = styled('label', {
-  px: '$2',
-  py: '$1',
   color: '$gray-600',
   fontFamily: '$mono',
+  '@sm': {
+    px: '$2',
+    py: '$1',
+  },
 });
 
 const ControlWrapper = styled('div', {
-  px: '$2',
-  py: '$1',
+  '@sm': {
+    px: '$2',
+    py: '$1',
+  },
 });
 
 export const ToggleGroup = styled('div', {

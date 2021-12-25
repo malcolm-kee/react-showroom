@@ -11,22 +11,17 @@ export const fireValidDomEvent = (ev: DomEvent) => {
     if (ev.eventType === 'click') {
       // click label will cause focus change to other frame, so skip it
       if (eType !== 'label') {
-        fireEvent.click(target);
+        fireEvent.click(target, ev.init);
       }
       return;
     }
-    if (ev.eventType === 'change') {
-      fireEvent.change(target, {
-        target: { value: ev.value, checked: ev.checked },
-      });
 
-      return;
-    }
-
-    if (ev.eventType === 'keyDown' || ev.eventType === 'keyUp') {
-      const { eventType, index, tag, tagTotal, ...init } = ev;
-
-      fireEvent[ev.eventType](target, init);
+    if (
+      ev.eventType === 'keyDown' ||
+      ev.eventType === 'keyUp' ||
+      ev.eventType === 'change'
+    ) {
+      fireEvent[ev.eventType](target, ev.init);
       return;
     }
   }

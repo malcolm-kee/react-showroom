@@ -11,7 +11,28 @@ This example is created as a playground and showcase of `react-showroom`.
 ```tsx live frame
 import { Button } from 'components';
 
-<Button>Hello</Button>;
+const Demo = () => {
+  const [file, setFile] = React.useState<File | undefined>(undefined);
+
+  return (
+    <div className="flex items-center gap-3">
+      <Button>Hello</Button>
+      <div>
+        <input
+          type="file"
+          onChange={(ev) => {
+            if (ev.target.files) {
+              setFile(ev.target.files[0]);
+            }
+          }}
+        />
+        {file && <p>Selected file: {file.name}</p>}
+      </div>
+    </div>
+  );
+};
+
+<Demo />;
 ```
 
 Pure TS example:

@@ -1,12 +1,22 @@
-import { NON_VISUAL_LANGUAGES, SUPPORTED_LANGUAGES } from '@showroomjs/core';
+import {
+  NON_VISUAL_LANGUAGES,
+  SUPPORTED_LANGUAGES,
+  PropsEditorFeature,
+} from '@showroomjs/core';
 import { styled } from '@showroomjs/ui';
-import parseNumRange from 'parse-numeric-range';
 import cx from 'classnames';
+import parseNumRange from 'parse-numeric-range';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
+import { useCodeCompilationCache } from '../lib/use-code-compilation';
 import { Div } from './base';
 import { CodeHighlight } from './code-highlight';
-import { CodeLiveEditor, NonVisualCodeLiveEditor } from './code-live-editor';
+import {
+  CodeLiveEditor,
+  CodeLiveEditorProps,
+  NonVisualCodeLiveEditor,
+} from './code-live-editor';
+import { CodePlayground } from './code-playground';
 import { LanguageTag } from './language-tag';
 
 const IsBlockCodeContext = React.createContext(false);
@@ -49,6 +59,16 @@ export const Code = ({
 }: CodeProps) => {
   const isBlockCode = React.useContext(IsBlockCodeContext);
 
+  const theme = useCodeTheme();
+
+  const highlightedLines = React.useMemo(
+    () =>
+      highlights
+        ? parseNumRange(highlights.replace(/^\{|\}$/g, ''))
+        : undefined,
+    []
+  );
+
   if (!isBlockCode || typeof props.children !== 'string') {
     return <InlineCode {...props} />;
   }
@@ -70,13 +90,6 @@ export const Code = ({
       <code>{fileName}</code>
     </Div>
   ) : null;
-
-  const theme = useCodeTheme();
-
-  const highlightedLines = React.useMemo(
-    () => highlights && parseNumRange(highlights.replace(/^\{|\}$/g, '')),
-    []
-  );
 
   if (!SUPPORTED_LANGUAGES.includes(lang) || isStatic) {
     return (
@@ -104,7 +117,7 @@ export const Code = ({
             code={code}
             language={lang}
             theme={theme}
-            highlights={highlightedLines || undefined}
+            highlights={highlightedLines}
           />
           {!inlineBlock && lang && <LanguageTag language={lang} />}
         </Div>
@@ -124,7 +137,7 @@ export const Code = ({
           frame={frame}
         />
       ) : (
-        <CodeLiveEditor
+        <VisualCodeBlock
           code={code}
           lang={lang}
           id={props.id}
@@ -136,6 +149,49 @@ export const Code = ({
         />
       )}
     </>
+  );
+};
+
+const VisualCodeBlock = (props: CodeLiveEditorProps) => {
+  const compileCache = useCodeCompilationCache(props.code, props.lang);
+
+  const propsEditorFeature = React.useMemo(
+    () =>
+      compileCache.data &&
+      compileCache.data.type === 'success' &&
+      (compileCache.data.features.find((f) => f.feature === 'propsEditor') as
+        | PropsEditorFeature
+        | undefined),
+    [compileCache.data]
+  );
+
+  const hasUnionProps = React.useMemo(
+    () =>
+      compileCache.data &&
+      compileCache.data.type === 'success' &&
+      compileCache.data.features.some((f) => f.feature === 'unionProps'),
+    [compileCache.data]
+  );
+
+  if (propsEditorFeature) {
+    return (
+      <CodePlayground
+        code={props.code}
+        lang={props.lang}
+        hasPropsEditor={propsEditorFeature.hasRenderEditor}
+      />
+    );
+  }
+
+  return (
+    <CodeLiveEditor
+      {...props}
+      {...(hasUnionProps
+        ? {
+            noEditor: true,
+          }
+        : {})}
+    />
   );
 };
 

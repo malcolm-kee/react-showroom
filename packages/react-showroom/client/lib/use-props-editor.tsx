@@ -5,8 +5,9 @@ import {
   isNil,
   isNumber,
   isString,
+  noop,
 } from '@showroomjs/core';
-import { NumberInput, useId } from '@showroomjs/ui';
+import { NumberInput, useId, createNameContext } from '@showroomjs/ui';
 import * as React from 'react';
 import { ComponentDoc } from 'react-docgen-typescript';
 import { findBestMatch } from 'string-similarity';
@@ -38,6 +39,45 @@ export type PropsEditorControlData = PropsEditorControl & {
   setValue: (val: any) => void;
 };
 
+const stateToEditor = (
+  state: PropsEditorState,
+  id: string,
+  dispatch: (event: { type: 'setValue'; prop: string; value: any }) => void,
+  includes?: Array<string>
+) => {
+  const props = { ...state.values };
+
+  Object.entries(state.values).forEach(([prop, value]) => {
+    const control = state.controls.find((ctrl) => ctrl.key === prop);
+
+    if (control) {
+      if (control.type === 'number') {
+        props[prop] = NumberInput.getNumberValue(value);
+      }
+    }
+  });
+
+  return {
+    props,
+    controls: (includes
+      ? state.controls.filter((ctrl) => includes.includes(ctrl.key))
+      : state.controls
+    ).map(
+      (ctrl): PropsEditorControlData => ({
+        ...ctrl,
+        key: `${id}${ctrl.key}`,
+        value: state.values[ctrl.label],
+        setValue: (value: any) =>
+          dispatch({
+            type: 'setValue',
+            prop: ctrl.label,
+            value,
+          }),
+      })
+    ),
+  };
+};
+
 export const usePropsEditor = ({
   initialProps = {},
   controls: providedControls = {},
@@ -48,41 +88,25 @@ export const usePropsEditor = ({
   const componentMeta = useComponentMeta();
   const id = useId();
 
-  const [state, dispatch] = React.useReducer(
+  const [_state, _dispatch] = React.useReducer(
     propsEditorReducer,
     { componentMeta, initialProps, controls },
     initState
   );
 
-  const props = { ...state.values };
+  const injectedEditor = React.useContext(PropsEditorContext);
 
-  Object.entries(state.values).forEach(([prop, value]) => {
-    const control = state.controls.find((ctrl) => ctrl.key === prop);
+  const state = injectedEditor[0] ? injectedEditor[0] : _state;
+  const dispatch = injectedEditor[0] ? injectedEditor[1] : _dispatch;
 
-    if (control && control.type === 'number') {
-      props[prop] = NumberInput.getNumberValue(value);
-    }
-  });
+  React.useEffect(() => {
+    injectedEditor[1]({
+      type: 'init',
+      initialState: _state,
+    });
+  }, []);
 
-  return {
-    props,
-    controls: (includes
-      ? state.controls.filter((ctrl) => includes.includes(ctrl.key))
-      : state.controls
-    ).map(
-      (control): PropsEditorControlData => ({
-        ...control,
-        key: `${id}${control.key}`,
-        value: state.values[control.label],
-        setValue: (value: any) =>
-          dispatch({
-            type: 'setValue',
-            prop: control.label,
-            value,
-          }),
-      })
-    ),
-  };
+  return stateToEditor(state, id, dispatch, includes);
 };
 
 const normalizeControls = (
@@ -115,6 +139,7 @@ const normalizeControls = (
 
   return result;
 };
+
 export interface SelectOption {
   label: string;
   value: any;
@@ -173,15 +198,20 @@ type PropsEditorEvent =
       value: any;
     };
 
-const initState = ({
-  componentMeta,
-  initialProps,
-  controls: controlOverrides,
-}: {
+interface ComputeConfigOptions {
   componentMeta: ComponentDoc | undefined;
   initialProps: Record<string, any>;
   controls: Record<string, PropsEditorControlDef | undefined>;
-}): PropsEditorState => {
+}
+
+function computeConfig({
+  componentMeta,
+  initialProps,
+  controls: controlOverrides,
+}: ComputeConfigOptions): {
+  controls: Array<PropsEditorControl>;
+  values: Record<string, any>;
+} {
   if (!componentMeta) {
     return {
       controls: [],
@@ -380,7 +410,9 @@ const initState = ({
     controls,
     values,
   };
-};
+}
+
+const initState = computeConfig;
 
 const VALID_TYPES: Array<PropsEditorControlDef['type']> = [
   'checkbox',
@@ -464,3 +496,69 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 const hasProperty = (obj: Record<string, unknown>, property: string) =>
   hasOwnProperty.call(obj, property);
+
+type PropsEditorProviderEvent =
+  | {
+      type: 'init';
+      initialState: PropsEditorState;
+    }
+  | {
+      type: 'setValue';
+      prop: string;
+      value: any;
+    };
+
+const propsEditorProviderReducer = (
+  state: PropsEditorState | undefined,
+  event: PropsEditorProviderEvent
+): PropsEditorState | undefined => {
+  switch (event.type) {
+    case 'init':
+      return event.initialState;
+
+    case 'setValue':
+      return (
+        state && {
+          ...state,
+          values: {
+            ...state.values,
+            [event.prop]: event.value,
+          },
+        }
+      );
+
+    default:
+      return state;
+  }
+};
+
+const usePropsEditorProviderState = () =>
+  React.useReducer(propsEditorProviderReducer, undefined);
+
+export type PropsEditorContextType = ReturnType<
+  typeof usePropsEditorProviderState
+>;
+
+export const PropsEditorContext = createNameContext<PropsEditorContextType>(
+  'PropsEditorContext',
+  [undefined, noop]
+);
+
+export const PropsEditorProvider = (props: { children: React.ReactNode }) => {
+  const reducerReturn = usePropsEditorProviderState();
+
+  return (
+    <PropsEditorContext.Provider value={reducerReturn}>
+      {props.children}
+    </PropsEditorContext.Provider>
+  );
+};
+
+export const usePropsEditorContext = () => {
+  const [state, dispatch] = React.useContext(PropsEditorContext);
+  const id = useId();
+
+  if (state) {
+    return stateToEditor(state, id, dispatch);
+  }
+};

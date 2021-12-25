@@ -1,13 +1,15 @@
-import { postCompile } from './post-compile';
+import { compileScript } from './compile-script';
+import * as esbuild from 'esbuild';
 
 describe('postCompile', () => {
-  it('able to get the import and packages', () => {
-    const result = postCompile(
+  it('able to get the import and packages', async () => {
+    const result = await compileScript(
       `
         import * as React from 'react';
         import formik from 'formik';
         import { useForm } from 'react-hook-form';`,
-      { insertRenderIfEndWithJsx: true }
+      esbuild,
+      { insertRenderIfEndWithJsx: true, language: 'ts' }
     );
 
     expect(result.importNames).toStrictEqual(['React', 'formik', 'useForm']);
@@ -18,11 +20,15 @@ describe('postCompile', () => {
     ]);
   });
 
-  it('will not wrap JSX with render call by default', () => {
-    const result = postCompile(
+  it('will not wrap JSX with render call by default', async () => {
+    const result = await compileScript(
       `import { Button } from 'components';
         
-    React.createElement(Button, { className: 'bg' }, 'Hello');`
+    <Button className="bg">Hello</Button>;`,
+      esbuild,
+      {
+        language: 'tsx',
+      }
     );
 
     expect(result.code).toMatchInlineSnapshot(`
@@ -33,12 +39,13 @@ describe('postCompile', () => {
     `);
   });
 
-  it('wraps JSX with render call', () => {
-    const result = postCompile(
+  it('wraps JSX with render call', async () => {
+    const result = await compileScript(
       `import { Button } from 'components';
         
     React.createElement(Button, { className: 'bg' }, 'Hello');`,
-      { insertRenderIfEndWithJsx: true }
+      esbuild,
+      { language: 'js', insertRenderIfEndWithJsx: true }
     );
 
     expect(result.code).toMatchInlineSnapshot(`

@@ -1,6 +1,5 @@
 import type * as esbuild from 'esbuild';
-import { compileTarget } from './compilation';
-import { postCompile } from './post-compile';
+import { compileScript } from './compile-script';
 import { isNumber } from './type-guard';
 
 const processHtml = async (oriHtml: string) => {
@@ -140,13 +139,9 @@ export const compileHtml = async (
 ) => {
   const { html, script, useTs, useJsx } = await processHtml(oriHtml);
 
-  const transpiledScript = await compiler.transform(script, {
-    loader: useJsx ? (useTs ? 'tsx' : 'jsx') : useTs ? 'ts' : 'js',
-    target: compileTarget,
-  });
-
-  const postCompileResult = postCompile(transpiledScript.code, {
+  const postCompileResult = await compileScript(script, compiler, {
     insertRenderIfEndWithJsx: useJsx,
+    language: useJsx ? (useTs ? 'tsx' : 'jsx') : useTs ? 'ts' : 'js',
   });
 
   return {

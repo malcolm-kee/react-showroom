@@ -4,8 +4,9 @@ export const getSafeName = (pkgName: string): string => {
   }
 
   return pkgName
-    .replace(/(-|\/)([a-z])/g, function (_, __, x) {
+    .replace(/(-)([a-z])/g, function (_, __, x) {
       return x.toUpperCase();
     })
-    .replace(/\W/g, '');
+    .replace(/\//, '__')
+    .replace(/[^a-zA-Z\_]/g, '');
 };
