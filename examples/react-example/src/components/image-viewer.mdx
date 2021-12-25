@@ -1,15 +1,10 @@
-```jsx
-import { usePropsEditor, PropsEditor } from 'react-showroom/client';
+```jsx frame
+import { usePropsEditor } from 'react-showroom/client';
 
 const Playground = () => {
   const propsEditor = usePropsEditor();
 
-  return (
-    <div>
-      <ImageViewer {...propsEditor.props} />
-      <PropsEditor editor={propsEditor} />
-    </div>
-  );
+  return <ImageViewer {...propsEditor.props} />;
 };
 
 <Playground />;

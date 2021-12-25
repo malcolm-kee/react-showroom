@@ -3,6 +3,7 @@ import { useConstant } from '@showroomjs/ui';
 import { useCallback, useEffect, useRef } from 'react';
 import { useStableCallback } from './callback';
 import type { ConsoleMessage } from './use-preview-console';
+import type { PropsEditorState } from './use-props-editor';
 
 interface LogMessage extends Omit<ConsoleMessage, 'count'> {
   type: 'log';
@@ -75,6 +76,10 @@ export type Message =
   | {
       type: 'domEvent';
       data: DomEvent;
+    }
+  | {
+      type: 'syncPropsEditor';
+      data: PropsEditorState;
     };
 
 export const usePreviewWindow = (onMessage: (data: Message) => void) => {

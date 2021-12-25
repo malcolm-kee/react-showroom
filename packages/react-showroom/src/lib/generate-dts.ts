@@ -45,7 +45,7 @@ async function waitFileExist(path: string, timeout = 20000) {
   let totalTime = 0;
   let checkTime = timeout / 10;
 
-  return await new Promise((resolve, reject) => {
+  return await new Promise((resolve) => {
     const timer = setInterval(function () {
       totalTime += checkTime;
 

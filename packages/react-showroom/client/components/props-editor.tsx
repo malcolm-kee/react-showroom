@@ -261,10 +261,10 @@ const PropsSelectControl = (props: {
       ? ctrl.options.findIndex((opt) => opt.value === ctrl.value)
       : ctrl.options.findIndex((opt) => opt.type === type);
 
-  const handleSelectOption = (option: SelectOption) => {
+  const handleSelectOption = (option: SelectOption, index: number) => {
     if (option.type === 'literal') {
       setType('literal');
-      ctrl.setValue(option.value);
+      ctrl.setValue(option.value, index);
     } else {
       setType(option.type);
       ctrl.setValue(undefined);
@@ -290,7 +290,7 @@ const PropsSelectControl = (props: {
           onValue={(value) => {
             const valueIndex = Number(value);
 
-            handleSelectOption(ctrl.options[valueIndex]);
+            handleSelectOption(ctrl.options[valueIndex], valueIndex);
           }}
           css={{
             maxWidth: '36rem',
@@ -312,7 +312,7 @@ const PropsSelectControl = (props: {
               (opt.type !== 'literal' || ctrl.value === opt.value);
             return (
               <SelectButton
-                onClick={() => handleSelectOption(opt)}
+                onClick={() => handleSelectOption(opt, i)}
                 selected={selected}
                 key={i}
               >

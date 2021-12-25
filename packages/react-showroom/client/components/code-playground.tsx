@@ -105,7 +105,9 @@ export const CodePlayground = ({
           >
             <Collapsible.ToggleIcon
               hide={showPropsEditor}
-              aria-label={showPropsEditor ? 'Hide' : 'View'}
+              aria-label={
+                showPropsEditor ? 'Hide Props Editor' : 'View Props Editor'
+              }
               width="16"
               height="16"
             />

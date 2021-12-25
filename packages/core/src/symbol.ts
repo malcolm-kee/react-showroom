@@ -1,6 +1,3 @@
-export const createSymbol =
-  typeof Symbol === 'undefined'
-    ? function (description: string) {
-        return '@' + (description || '@') + Math.random();
-      }
-    : Symbol;
+export const createSymbol = function (description: string) {
+  return '@' + (description || '@') + Math.random();
+};

@@ -1,13 +1,15 @@
 import {
   createSymbol,
+  dedupeArray,
   isBoolean,
   isDefined,
   isNil,
   isNumber,
+  isPrimitive,
   isString,
   noop,
 } from '@showroomjs/core';
-import { NumberInput, useId, createNameContext } from '@showroomjs/ui';
+import { createNameContext, NumberInput, useId } from '@showroomjs/ui';
 import * as React from 'react';
 import { ComponentDoc } from 'react-docgen-typescript';
 import { findBestMatch } from 'string-similarity';
@@ -36,23 +38,53 @@ export interface UsePropsEditorOptions {
 
 export type PropsEditorControlData = PropsEditorControl & {
   value: any;
-  setValue: (val: any) => void;
+  setValue: (val: any, index?: number) => void;
 };
 
+/**
+ *
+ * @param state
+ * @param id
+ * @param dispatch
+ * @param controls the controls config to be used. This is important as some config cannot be serialized.
+ * @param includes
+ * @returns
+ */
 const stateToEditor = (
   state: PropsEditorState,
   id: string,
-  dispatch: (event: { type: 'setValue'; prop: string; value: any }) => void,
+  dispatch: (event: {
+    type: 'setValue';
+    prop: string;
+    value: any;
+    index?: number;
+  }) => void,
+  controls = state.controls,
   includes?: Array<string>
 ) => {
   const props = { ...state.values };
 
   Object.entries(state.values).forEach(([prop, value]) => {
-    const control = state.controls.find((ctrl) => ctrl.key === prop);
+    const control = controls.find((ctrl) => ctrl.key === prop);
 
     if (control) {
       if (control.type === 'number') {
         props[prop] = NumberInput.getNumberValue(value);
+      }
+
+      if (
+        control.type === 'select' &&
+        state.propWithValueEncodedWithIndex.includes(prop)
+      ) {
+        const currentValue = props[prop];
+
+        if (isNumber(currentValue)) {
+          const selectedOption = control.options[currentValue];
+
+          if (selectedOption) {
+            props[prop] = selectedOption.value;
+          }
+        }
       }
     }
   });
@@ -60,21 +92,44 @@ const stateToEditor = (
   return {
     props,
     controls: (includes
-      ? state.controls.filter((ctrl) => includes.includes(ctrl.key))
-      : state.controls
-    ).map(
-      (ctrl): PropsEditorControlData => ({
+      ? controls.filter((ctrl) => includes.includes(ctrl.key))
+      : controls
+    ).map((ctrl): PropsEditorControlData => {
+      const value = (function getValue() {
+        const stateValue = state.values[ctrl.key];
+        if (ctrl.type !== 'select') {
+          return stateValue;
+        }
+
+        if (
+          !isNumber(stateValue) ||
+          !state.propWithValueEncodedWithIndex.includes(ctrl.key)
+        ) {
+          return stateValue;
+        }
+
+        const selectedOption = ctrl.options[stateValue];
+
+        if (!selectedOption) {
+          return stateValue;
+        }
+
+        return selectedOption.value;
+      })();
+
+      return {
         ...ctrl,
         key: `${id}${ctrl.key}`,
-        value: state.values[ctrl.label],
-        setValue: (value: any) =>
+        value,
+        setValue: (value: any, index?: number) =>
           dispatch({
             type: 'setValue',
             prop: ctrl.label,
             value,
+            index,
           }),
-      })
-    ),
+      };
+    }),
   };
 };
 
@@ -88,11 +143,17 @@ export const usePropsEditor = ({
   const componentMeta = useComponentMeta();
   const id = useId();
 
-  const [_state, _dispatch] = React.useReducer(
-    propsEditorReducer,
-    { componentMeta, initialProps, controls },
-    initState
+  const config = React.useMemo(
+    () =>
+      computeConfig({
+        componentMeta,
+        initialProps,
+        controls,
+      }),
+    []
   );
+
+  const [_state, _dispatch] = React.useReducer(propsEditorReducer, config);
 
   const injectedEditor = React.useContext(PropsEditorContext);
 
@@ -106,7 +167,7 @@ export const usePropsEditor = ({
     });
   }, []);
 
-  return stateToEditor(state, id, dispatch, includes);
+  return stateToEditor(state, id, dispatch, config.controls, includes);
 };
 
 const normalizeControls = (
@@ -183,20 +244,15 @@ export type PropsEditorControl = EditorControlBase & PropsEditorControlDef;
 export interface PropsEditorState {
   controls: Array<PropsEditorControl>;
   values: Record<string, any>;
+  propWithValueEncodedWithIndex: Array<string>;
 }
 
-type PropsEditorEvent =
-  | {
-      type: 'init';
-      componentMeta: ComponentDoc | undefined;
-      controls: Record<string, PropsEditorControlDef | undefined>;
-      initialProps: Record<string, any>;
-    }
-  | {
-      type: 'setValue';
-      prop: string;
-      value: any;
-    };
+type PropsEditorEvent = {
+  type: 'setValue';
+  prop: string;
+  value: any;
+  index?: number;
+};
 
 interface ComputeConfigOptions {
   componentMeta: ComponentDoc | undefined;
@@ -208,20 +264,19 @@ function computeConfig({
   componentMeta,
   initialProps,
   controls: controlOverrides,
-}: ComputeConfigOptions): {
-  controls: Array<PropsEditorControl>;
-  values: Record<string, any>;
-} {
+}: ComputeConfigOptions): PropsEditorState {
   if (!componentMeta) {
     return {
       controls: [],
       values: initialProps,
+      propWithValueEncodedWithIndex: [],
     };
   }
 
   const propItems = Object.values(componentMeta.props);
   const controls: Array<PropsEditorControl> = [];
   const values: Record<string, any> = { ...initialProps };
+  const propWithValueEncodedWithIndex: Array<string> = [];
 
   propItems.forEach((prop) => {
     const isDeprecated = prop.tags && hasProperty(prop.tags, 'deprecated');
@@ -232,7 +287,7 @@ function computeConfig({
 
     const initialValue = (function getInitialValue() {
       if (hasProperty(initialProps, prop.name)) {
-        return undefined;
+        return initialProps[prop.name];
       }
       const declaredDefaultValue = prop.defaultValue && prop.defaultValue.value;
 
@@ -287,7 +342,7 @@ function computeConfig({
                   },
                 ];
 
-          controls.push({
+          const selectControlConfig: PropsEditorControl = {
             type: 'select',
             label: prop.name,
             key: prop.name,
@@ -296,17 +351,23 @@ function computeConfig({
                 ? optionsWithType
                 : optionsWithType.filter((opt) => opt.value !== null)
             ),
-          });
+          };
+
+          controls.push(selectControlConfig);
 
           if (
             isDefined(initialValue) &&
             config.options.some((opt) => opt.value === initialValue)
           ) {
-            values[prop.name] = initialValue;
+            values[prop.name] = selectControlConfig.options.findIndex(
+              (opt) => opt.value === initialValue
+            );
+            propWithValueEncodedWithIndex.push(prop.name);
           }
 
           if (prop.required && !isDefined(values[prop.name])) {
-            values[prop.name] = config.options[0].value;
+            values[prop.name] = 0;
+            propWithValueEncodedWithIndex.push(prop.name);
           }
         }
       }
@@ -409,10 +470,9 @@ function computeConfig({
   return {
     controls,
     values,
+    propWithValueEncodedWithIndex,
   };
 }
-
-const initState = computeConfig;
 
 const VALID_TYPES: Array<PropsEditorControlDef['type']> = [
   'checkbox',
@@ -475,9 +535,6 @@ const propsEditorReducer = (
   event: PropsEditorEvent
 ): PropsEditorState => {
   switch (event.type) {
-    case 'init':
-      return initState(event);
-
     case 'setValue':
       return {
         ...state,
@@ -485,6 +542,9 @@ const propsEditorReducer = (
           ...state.values,
           [event.prop]: event.value,
         },
+        propWithValueEncodedWithIndex: isNumber(event.index)
+          ? dedupeArray(state.propWithValueEncodedWithIndex.concat(event.prop))
+          : state.propWithValueEncodedWithIndex.filter((p) => p !== event.prop),
       };
 
     default:
@@ -506,6 +566,7 @@ type PropsEditorProviderEvent =
       type: 'setValue';
       prop: string;
       value: any;
+      index?: number;
     };
 
 const propsEditorProviderReducer = (
@@ -517,13 +578,22 @@ const propsEditorProviderReducer = (
       return event.initialState;
 
     case 'setValue':
+      const useValueIndex = isNumber(event.index);
+
       return (
         state && {
           ...state,
           values: {
             ...state.values,
-            [event.prop]: event.value,
+            [event.prop]: useValueIndex ? event.index : event.value,
           },
+          propWithValueEncodedWithIndex: useValueIndex
+            ? dedupeArray(
+                state.propWithValueEncodedWithIndex.concat(event.prop)
+              )
+            : state.propWithValueEncodedWithIndex.filter(
+                (p) => p !== event.prop
+              ),
         }
       );
 
@@ -561,4 +631,36 @@ export const usePropsEditorContext = () => {
   if (state) {
     return stateToEditor(state, id, dispatch);
   }
+};
+
+const serializedSymbol = createSymbol('serialized');
+
+/**
+ * serialized props editor state so it can be safely posted
+ * via postMessage.
+ */
+export const serializePropsEditor = (
+  state: PropsEditorState
+): PropsEditorState => {
+  const values = { ...state.values };
+
+  return {
+    ...state,
+    values,
+    controls: state.controls.map((ctrl) =>
+      ctrl.type === 'select'
+        ? {
+            ...ctrl,
+            options: ctrl.options.map((m, i) =>
+              isPrimitive(m.value)
+                ? m
+                : {
+                    ...m,
+                    value: `${serializedSymbol}${i}`,
+                  }
+            ),
+          }
+        : ctrl
+    ),
+  };
 };

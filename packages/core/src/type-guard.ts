@@ -29,3 +29,8 @@ export function isPlainObject(value: unknown): value is object {
 
   return proto === baseProto;
 }
+
+export const isPrimitive = (value: any) => {
+  const valueType = typeof value;
+  return value === null || (valueType !== 'object' && valueType !== 'function');
+};

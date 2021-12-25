@@ -7,6 +7,7 @@ export {
   SUPPORTED_LANGUAGES,
 } from './compilation';
 export { compileScript, ImportMapData, Packages } from './compile-script';
+export { dedupeArray } from './dedupe-array';
 export {
   deviceDimensions,
   deviceDimensionsByName,
@@ -33,6 +34,7 @@ export {
   isNil,
   isNumber,
   isPlainObject,
+  isPrimitive,
   isString,
 } from './type-guard';
 

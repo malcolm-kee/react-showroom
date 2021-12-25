@@ -176,8 +176,7 @@ const VisualCodeBlock = (props: CodeLiveEditorProps) => {
   if (propsEditorFeature) {
     return (
       <CodePlayground
-        code={props.code}
-        lang={props.lang}
+        {...props}
         hasPropsEditor={propsEditorFeature.hasRenderEditor}
       />
     );
