@@ -20,6 +20,11 @@ import { Route, Switch, useParams } from '../lib/routing';
 import { UseCustomStateContext } from '../lib/use-custom-state';
 import { useHeightChange } from '../lib/use-height-change';
 import { ConsoleContext, LogLevel } from '../lib/use-preview-console';
+import {
+  PropsEditorContext,
+  PropsEditorState,
+  serializePropsEditor,
+} from '../lib/use-props-editor';
 
 const componentsMetas = Object.values(allCompMetadata);
 
@@ -142,24 +147,28 @@ const PreviewPage = () => {
   const isFiringEventRef = React.useRef(false);
   const isFiringEventTimerId = React.useRef<number | null>(null);
 
-  const { sendParent } = usePreviewWindow((data) => {
-    if (data.type === 'code') {
-      setState(data);
-    } else if (data.type === 'syncState') {
+  const [propsEditor, setPropsEditor] = React.useState<
+    PropsEditorState | undefined
+  >(undefined);
+
+  const { sendParent } = usePreviewWindow((ev) => {
+    if (ev.type === 'code') {
+      setState(ev);
+    } else if (ev.type === 'syncState') {
       if (process.env.SYNC_STATE_TYPE === 'state') {
-        const setStateFn = setStateMap.get(data.stateId);
+        const setStateFn = setStateMap.get(ev.stateId);
         if (setStateFn) {
-          setStateFn(data.stateValue);
+          setStateFn(ev.stateValue);
         }
-        latestStateValueMap.set(data.stateId, data.stateValue);
+        latestStateValueMap.set(ev.stateId, ev.stateValue);
       }
-    } else if (data.type === 'scroll') {
+    } else if (ev.type === 'scroll') {
       clearTimer(isUpdatingTimerId);
 
       const docEl = window.document.documentElement;
 
       if (docEl) {
-        const [xPct, yPct] = data.scrollPercentageXY;
+        const [xPct, yPct] = ev.scrollPercentageXY;
 
         isUpdatingRef.current = true;
 
@@ -179,20 +188,22 @@ const PreviewPage = () => {
           isUpdatingRef.current = false;
         }, 500);
       }
-    } else if (data.type === 'domEvent') {
+    } else if (ev.type === 'domEvent') {
       if (process.env.SYNC_STATE_TYPE === 'event') {
         clearTimer(isFiringEventTimerId);
 
         isFiringEventRef.current = true;
 
         import(/* webpackPrefetch: true */ '../lib/fire-event').then((m) =>
-          m.fireValidDomEvent(data.data)
+          m.fireValidDomEvent(ev.data)
         );
 
         isFiringEventTimerId.current = window.setTimeout(() => {
           isFiringEventRef.current = false;
         }, 500);
       }
+    } else if (ev.type === 'syncPropsEditor') {
+      setPropsEditor(ev.data);
     }
   });
 
@@ -268,12 +279,14 @@ const PreviewPage = () => {
           data: {
             ...domInfo,
             eventType,
-            key: ev.key,
-            code: ev.code,
-            keyCode: ev.keyCode,
-            ctrlKey: ev.ctrlKey,
-            shiftKey: ev.shiftKey,
-            metaKey: ev.metaKey,
+            init: {
+              key: ev.key,
+              code: ev.code,
+              keyCode: ev.keyCode,
+              ctrlKey: ev.ctrlKey,
+              shiftKey: ev.shiftKey,
+              metaKey: ev.metaKey,
+            },
           },
         });
       }
@@ -288,63 +301,103 @@ const PreviewPage = () => {
       }
     >
       <ConsoleContext.Provider value={previewConsole}>
-        <CodePreviewFrame
-          {...state}
-          onIsCompilingChange={(isCompiling) =>
-            sendParent({
-              type: 'compileStatus',
-              isCompiling,
-            })
-          }
-          onChangeCapture={(ev) => {
-            if (process.env.SYNC_STATE_TYPE === 'state') {
-              return;
-            }
-
-            if (isFiringEventRef.current) {
-              return;
-            }
-
-            const domInfo = getDomEventInfo(ev);
-
-            if (domInfo) {
-              const { value, checked } = ev.target as HTMLInputElement;
-
+        <PropsEditorContext.Provider
+          value={[
+            propsEditor,
+            function onPropsEditorEvent(ev) {
+              if (ev.type === 'init') {
+                sendParent({
+                  type: 'syncPropsEditor',
+                  data: serializePropsEditor(ev.initialState),
+                });
+              }
+            },
+          ]}
+        >
+          <CodePreviewFrame
+            {...state}
+            onIsCompilingChange={(isCompiling) =>
               sendParent({
-                type: 'domEvent',
-                data: {
-                  eventType: 'change',
-                  value,
-                  checked,
-                  ...domInfo,
-                },
-              });
+                type: 'compileStatus',
+                isCompiling,
+              })
             }
-          }}
-          onClickCapture={(ev) => {
-            if (process.env.SYNC_STATE_TYPE === 'state') {
-              return;
-            }
+            onChangeCapture={(ev) => {
+              if (process.env.SYNC_STATE_TYPE === 'state') {
+                return;
+              }
 
-            if (isFiringEventRef.current) {
-              return;
-            }
+              if (isFiringEventRef.current) {
+                return;
+              }
 
-            const domInfo = getDomEventInfo(ev);
+              const domInfo = getDomEventInfo(ev);
 
-            if (domInfo) {
-              sendParent({
-                type: 'domEvent',
-                data: {
-                  eventType: 'click',
-                  ...domInfo,
-                },
-              });
-            }
-          }}
-          onKeyUpCapture={createKeyboardEventHandler('keyUp')}
-          onKeyDownCapture={createKeyboardEventHandler('keyDown')}
-        />
+              if (domInfo) {
+                const { value, checked, type, files } =
+                  ev.target as HTMLInputElement;
+
+                sendParent({
+                  type: 'domEvent',
+                  data: {
+                    ...domInfo,
+                    eventType: 'change',
+                    init:
+                      type === 'file'
+                        ? {
+                            target: {
+                              files: files && Array.from(files),
+                            },
+                          }
+                        : {
+                            target: {
+                              checked,
+                              value,
+                            },
+                          },
+                  },
+                });
+              }
+            }}
+            onClickCapture={(ev) => {
+              if (process.env.SYNC_STATE_TYPE === 'state') {
+                return;
+              }
+
+              if (isFiringEventRef.current) {
+                return;
+              }
+
+              const domInfo = getDomEventInfo(ev);
+
+              if (domInfo) {
+                if (domInfo.tag === 'label') {
+                  // fire this will cause double click on the associated input
+                  return;
+                }
+
+                if (domInfo.tag === 'input') {
+                  const { type } = ev.target as HTMLInputElement;
+
+                  // fire this will cause all screen prompt for file selection.
+                  if (type === 'file') {
+                    return;
+                  }
+                }
+
+                sendParent({
+                  type: 'domEvent',
+                  data: {
+                    eventType: 'click',
+                    ...domInfo,
+                  },
+                });
+              }
+            }}
+            onKeyUpCapture={createKeyboardEventHandler('keyUp')}
+            onKeyDownCapture={createKeyboardEventHandler('keyDown')}
+          />
+        </PropsEditorContext.Provider>
       </ConsoleContext.Provider>
     </UseCustomStateContext.Provider>
   );

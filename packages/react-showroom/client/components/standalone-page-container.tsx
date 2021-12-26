@@ -10,7 +10,6 @@ export const StandalonePageContainer = (props: {
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        height: 'calc(100vh - 62px)',
         maxWidth: '100%',
       }}
     >

@@ -10,6 +10,7 @@ import {
   Switch,
 } from 'react-showroom/client';
 import { BrowserWindowInRouter } from './browser-window-in-router';
+import { cssVariables } from './css-variables';
 
 export const MarkdownDocRoute = (props: {
   data: React.ComponentPropsWithoutRef<typeof MarkdownDataProvider>['data'];
@@ -19,7 +20,7 @@ export const MarkdownDocRoute = (props: {
     <QueryParamProvider>
       <BrowserWindowInRouter className="mb-4">
         <MarkdownDataProvider data={props.data}>
-          <div>
+          <div style={cssVariables}>
             <Switch>
               <Route path="/_standalone/:codeHash">
                 <Breadcrumbs

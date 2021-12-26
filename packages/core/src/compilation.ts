@@ -9,4 +9,13 @@ export const getCompilationKey = (
   language: SupportedLanguage
 ) => ['codeCompilation', source, language];
 
-export const compileTarget = 'es2018';
+export interface PropsEditorFeature {
+  feature: 'propsEditor';
+  hasRenderEditor: boolean;
+}
+
+export type ReactShowroomFeatureCompilation =
+  | PropsEditorFeature
+  | {
+      feature: 'unionProps';
+    };

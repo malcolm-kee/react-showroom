@@ -23,7 +23,7 @@ import {
 
 # Component Playground
 
-By using `usePropsEditor` custom hook and `PropsEditor` component (available at `react-showroom/client`) in your example, you can create a playground for your components (similar to Storybook's [Controls/Knobs](https://storybook.js.org/docs/react/essentials/controls)).
+By using `usePropsEditor` custom hook (available at `react-showroom/client`) in your example, you can create a playground for your components (similar to Storybook's [Controls/Knobs](https://storybook.js.org/docs/react/essentials/controls)).
 
 You don't have to manually configure the controls because we extract the props from your props definition and provide sensible default controls.
 
@@ -32,10 +32,6 @@ You don't have to manually configure the controls because we extract the props f
 <PlaygroundSource />
 
 <PlaygroundResult />
-
-As `usePropsEditor` and `PropsEditor` is rendered by you in the example, it is up to you to decide how you want to compose them for your use case.
-
-For instance, you can place the `<PropsEditor />` above your example if that make sense, or adding additional props/state that you doesn't want the `usePropsEditor` to manage.
 
 ## Setting Initial Props
 

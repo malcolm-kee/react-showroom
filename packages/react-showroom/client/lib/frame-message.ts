@@ -1,21 +1,23 @@
-import { SupportedLanguage } from '@showroomjs/core';
-import { useCallback, useEffect, useRef } from 'react';
+import type { SupportedLanguage } from '@showroomjs/core';
 import { useConstant } from '@showroomjs/ui';
+import { useCallback, useEffect, useRef } from 'react';
 import { useStableCallback } from './callback';
-import { ConsoleMessage } from './use-preview-console';
+import type { ConsoleMessage } from './use-preview-console';
+import type { PropsEditorState } from './use-props-editor';
 
 interface LogMessage extends Omit<ConsoleMessage, 'count'> {
   type: 'log';
 }
 
-interface DomEventBase<Type extends string> {
+interface DomEventBase<Type extends string, Init extends object = {}> {
   eventType: Type;
   tag: string;
   index: number;
   tagTotal: number;
+  init?: Init;
 }
 
-interface KeyboardEventBase<Type extends string> extends DomEventBase<Type> {
+interface KeyboardEventInit {
   key: string;
   code: string;
   keyCode: number;
@@ -26,12 +28,18 @@ interface KeyboardEventBase<Type extends string> extends DomEventBase<Type> {
 
 export type DomEvent =
   | DomEventBase<'click'>
-  | (DomEventBase<'change'> & {
-      value: string;
-      checked: boolean;
-    })
-  | KeyboardEventBase<'keyUp'>
-  | KeyboardEventBase<'keyDown'>;
+  | DomEventBase<
+      'change',
+      {
+        target: {
+          value?: string;
+          checked?: boolean;
+          files?: Array<File> | null;
+        };
+      }
+    >
+  | DomEventBase<'keyUp', KeyboardEventInit>
+  | DomEventBase<'keyDown', KeyboardEventInit>;
 
 export type Message =
   | {
@@ -68,6 +76,10 @@ export type Message =
   | {
       type: 'domEvent';
       data: DomEvent;
+    }
+  | {
+      type: 'syncPropsEditor';
+      data: PropsEditorState;
     };
 
 export const usePreviewWindow = (onMessage: (data: Message) => void) => {

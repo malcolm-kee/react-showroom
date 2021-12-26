@@ -59,56 +59,58 @@ export interface HeaderProps {
   backUrl?: string;
 }
 
-export const Header = (props: HeaderProps) => {
-  const history = useHistory();
-  const location = useLocation<{ searchNavigated?: boolean }>();
+export const Header = React.forwardRef<HTMLElement, HeaderProps>(
+  function Header(props, forwardedRef) {
+    const history = useHistory();
+    const location = useLocation<{ searchNavigated?: boolean }>();
 
-  return (
-    <HeaderRoot>
-      <HeaderInner>
-        <TitleWrapper>
-          {props.backUrl && (
-            <HeaderLink href={props.backUrl}>
-              <ArrowLeftIcon aria-label="Back" width={20} height={20} />
-            </HeaderLink>
-          )}
-          {navbarOptions.logo && <Logo {...navbarOptions.logo} />}
-          <Title to="/">
-            {THEME.title}{' '}
-            {navbarOptions.version && (
-              <Version>v{navbarOptions.version}</Version>
-            )}
-          </Title>
-        </TitleWrapper>
-        <ItemWrapper>
-          {navbarOptions.items &&
-            navbarOptions.items.map((item, i) => (
-              <HeaderLink href={item.to} key={i}>
-                {item.label}
+    return (
+      <HeaderRoot ref={forwardedRef}>
+        <HeaderInner>
+          <TitleWrapper>
+            {props.backUrl && (
+              <HeaderLink href={props.backUrl}>
+                <ArrowLeftIcon aria-label="Back" width={20} height={20} />
               </HeaderLink>
-            ))}
-          <SearchDialog.Root>
-            <SearchDialog.Trigger
-              autoFocus={!!(location.state && location.state.searchNavigated)}
-            >
-              <SearchText>Search</SearchText>
-            </SearchDialog.Trigger>
-            <SearchDialog
-              options={options}
-              placeholder="Search docs"
-              onSelect={(result) => {
-                if (result) {
-                  history.push(`/${result}`, { searchNavigated: true });
-                }
-              }}
-              className={colorTheme}
-            />
-          </SearchDialog.Root>
-        </ItemWrapper>
-      </HeaderInner>
-    </HeaderRoot>
-  );
-};
+            )}
+            {navbarOptions.logo && <Logo {...navbarOptions.logo} />}
+            <Title to="/">
+              {THEME.title}{' '}
+              {navbarOptions.version && (
+                <Version>v{navbarOptions.version}</Version>
+              )}
+            </Title>
+          </TitleWrapper>
+          <ItemWrapper>
+            {navbarOptions.items &&
+              navbarOptions.items.map((item, i) => (
+                <HeaderLink href={item.to} key={i}>
+                  {item.label}
+                </HeaderLink>
+              ))}
+            <SearchDialog.Root>
+              <SearchDialog.Trigger
+                autoFocus={!!(location.state && location.state.searchNavigated)}
+              >
+                <SearchText>Search</SearchText>
+              </SearchDialog.Trigger>
+              <SearchDialog
+                options={options}
+                placeholder="Search docs"
+                onSelect={(result) => {
+                  if (result) {
+                    history.push(`/${result}`, { searchNavigated: true });
+                  }
+                }}
+                className={colorTheme}
+              />
+            </SearchDialog.Root>
+          </ItemWrapper>
+        </HeaderInner>
+      </HeaderRoot>
+    );
+  }
+);
 
 const Logo = styled('img', {
   maxHeight: '40px',

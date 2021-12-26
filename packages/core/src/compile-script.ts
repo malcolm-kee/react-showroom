@@ -1,6 +1,8 @@
 import { Node, Options, parse } from 'acorn';
 import * as walk from 'acorn-walk';
 import { getSafeName } from './get-safe-name';
+import type * as esbuild from 'esbuild';
+import { ReactShowroomFeatureCompilation } from './compilation';
 
 export interface ImportMapData {
   name: string;
@@ -14,26 +16,34 @@ const ACORN_OPTIONS: Options = {
   sourceType: 'module',
 };
 
-export interface PostCompileResult {
+export interface CompileScriptResult {
   code: string;
   importNames: Array<string>;
   importedPackages: Array<string>;
-  isPlayground: boolean;
+  features: Array<ReactShowroomFeatureCompilation>;
 }
 
 /**
  * Additional compilation after compiled by esbuild to JavaScript
  */
-export const postCompile = (
+export const compileScript = async (
   providedCode: string,
+  compiler: typeof esbuild,
   options: {
     insertRenderIfEndWithJsx?: boolean;
-  } = {}
-): PostCompileResult => {
-  let code = providedCode;
+    language: esbuild.Loader;
+  }
+): Promise<CompileScriptResult> => {
+  const transpiled = await compiler.transform(providedCode, {
+    loader: options.language,
+    target: 'es2018',
+  });
+
+  let code = transpiled.code;
   const importNames: Array<string> = [];
   const importedPackages: Array<string> = [];
-  let isPlayground = false;
+
+  const features: Array<ReactShowroomFeatureCompilation> = [];
 
   code = options.insertRenderIfEndWithJsx
     ? insertRenderIfEndWithJsx(code)
@@ -63,14 +73,24 @@ export const postCompile = (
 
         if (importedPkg === 'react-showroom/client') {
           const { namedImports } = categorizeImports(declarationNode);
+
           if (
-            namedImports.some(
-              (imp) =>
-                imp.imported.name === 'usePropsEditor' ||
-                imp.imported.name === 'useUnionProps'
-            )
+            namedImports.some((imp) => imp.imported.name === 'usePropsEditor')
           ) {
-            isPlayground = true;
+            features.push({
+              feature: 'propsEditor',
+              hasRenderEditor: namedImports.some(
+                (imp) => imp.imported.name === 'PropsEditor'
+              ),
+            });
+          }
+
+          if (
+            namedImports.some((imp) => imp.imported.name === 'useUnionProps')
+          ) {
+            features.push({
+              feature: 'unionProps',
+            });
           }
         }
 
@@ -82,7 +102,7 @@ export const postCompile = (
     });
   }
 
-  return { code, importNames, importedPackages, isPlayground };
+  return { code, importNames, importedPackages, features };
 };
 
 // Strip semicolon (;) at the end

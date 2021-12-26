@@ -4,8 +4,7 @@ import {
   CompilationError,
   compileHtml,
   CompileResult,
-  compileTarget,
-  postCompile,
+  compileScript,
   RequestCompileData,
 } from '@showroomjs/core';
 import wasmPath from 'esbuild-wasm/esbuild.wasm';
@@ -58,24 +57,18 @@ self.onmessage = (ev) => {
   } else {
     esBuildIsReady
       .then(() =>
-        esbuild
-          .transform(data.source, {
-            loader: lang,
-            target: compileTarget,
-          })
-          .then((transformOutput) => {
-            const compileResult = postCompile(transformOutput.code, {
-              insertRenderIfEndWithJsx: true,
-            });
-
-            const result: CompileResult = {
-              ...compileResult,
-              type: 'success',
-              messageId: data.messageId,
-              lang: data.lang,
-            };
-            self.postMessage(result);
-          })
+        compileScript(data.source, esbuild, {
+          insertRenderIfEndWithJsx: true,
+          language: lang,
+        }).then((compileResult) => {
+          const result: CompileResult = {
+            ...compileResult,
+            type: 'success',
+            messageId: data.messageId,
+            lang: data.lang,
+          };
+          self.postMessage(result);
+        })
       )
       .catch(handleError);
   }

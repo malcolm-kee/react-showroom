@@ -14,6 +14,7 @@ import { DomEvent, Message, useParentWindow } from '../lib/frame-message';
 import { getPreviewUrl } from '../lib/preview-url';
 import { useConsole } from '../lib/use-preview-console';
 import { useActiveWidth, WidthMarkers } from './width-markers';
+import { PropsEditorContext } from '../lib/use-props-editor';
 
 export interface CodePreviewIframeImperative {
   sendToChild: (msg: Message) => void;
@@ -70,6 +71,8 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   const [isResizing, setIsResizing] = React.useState(false);
   const sizeEl = React.useRef<HTMLDivElement>(null);
 
+  const [propsEditor, syncPropsEditor] = React.useContext(PropsEditorContext);
+
   const onIsCompilingChangeCb = useStableCallback(onIsCompilingChange);
   const { targetRef, sendMessage } = useParentWindow((ev) => {
     switch (ev.type) {
@@ -105,6 +108,13 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
           onDomEvent(ev.data);
         }
         return;
+
+      case 'syncPropsEditor':
+        syncPropsEditor({
+          type: 'init',
+          initialState: ev.data,
+        });
+        return;
     }
   });
 
@@ -117,6 +127,12 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   React.useEffect(() => {
     sendMessage({ type: 'code', code, lang });
   }, [code, lang]);
+
+  React.useEffect(() => {
+    if (propsEditor) {
+      sendMessage({ type: 'syncPropsEditor', data: propsEditor });
+    }
+  }, [propsEditor]);
 
   const height = providedHeight || frameHeight;
 

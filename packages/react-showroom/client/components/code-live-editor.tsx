@@ -1,19 +1,9 @@
-import { ArrowsExpandIcon } from '@heroicons/react/outline';
-import { removeTrailingSlash, SupportedLanguage } from '@showroomjs/core';
-import {
-  Collapsible,
-  css,
-  icons,
-  styled,
-  Tooltip,
-  useDebounce,
-} from '@showroomjs/ui';
+import { SupportedLanguage } from '@showroomjs/core';
+import { Collapsible, css, useDebounce } from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { useCodeBlocks } from '../lib/codeblocks-context';
-import { Link, useRouteMatch } from '../lib/routing';
-import { useCodeCompilationCache } from '../lib/use-code-compilation';
 import { PreviewConsoleProvider } from '../lib/use-preview-console';
 import { useTargetAudience } from '../lib/use-target-audience';
 import { Div } from './base';
@@ -21,6 +11,7 @@ import { CodeEditor } from './code-editor';
 import { CodePreviewFrame } from './code-preview-frame';
 import { CodePreviewIframe } from './code-preview-iframe';
 import { ConsolePanel } from './console-panel';
+import { LinkToStandaloneView } from './link-to-standalone-view';
 
 export interface CodeLiveEditorProps {
   code: string;
@@ -47,14 +38,6 @@ export const CodeLiveEditor = ({
   const theme = useCodeTheme();
 
   const [code, setCode] = React.useState(props.code);
-
-  const compilationCache = useCodeCompilationCache(props.code, lang);
-
-  const hideEditor =
-    noEditor ||
-    (compilationCache.data &&
-      compilationCache.data.type === 'success' &&
-      compilationCache.data.isPlayground);
 
   const debouncedCode = useDebounce(code);
 
@@ -108,7 +91,7 @@ export const CodeLiveEditor = ({
         )}
       </Div>
       <ConsolePanel />
-      {!hideEditor && (
+      {!noEditor && (
         <Collapsible.Root open={showCode} onOpenChange={setShowCode}>
           <Div
             css={{
@@ -219,43 +202,6 @@ export const NonVisualCodeLiveEditor = (props: {
     </div>
   );
 };
-
-const LinkToStandaloneView = (props: {
-  codeHash: string | undefined;
-  isDesigner: boolean;
-}) => {
-  const { url } = useRouteMatch();
-
-  return props.codeHash ? (
-    <Tooltip.Root>
-      <Tooltip.Trigger asChild>
-        <StyledLink
-          to={`${removeTrailingSlash(url)}/_standalone/${props.codeHash}${
-            props.isDesigner ? '?commentMode=true' : ''
-          }`}
-          data-testid="standalone-link"
-        >
-          <ArrowsExpandIcon width={20} height={20} className={icons()} />
-        </StyledLink>
-      </Tooltip.Trigger>
-      <Tooltip.Content>
-        Standalone
-        <Tooltip.Arrow />
-      </Tooltip.Content>
-    </Tooltip.Root>
-  ) : null;
-};
-
-const StyledLink = styled(Link, {
-  display: 'inline-flex',
-  alignItems: 'center',
-  textDecoration: 'none',
-  px: '$1',
-  gap: '$1',
-  fontSize: '$sm',
-  color: '$gray-500',
-  outlineRing: '',
-});
 
 const editorBottom = css({
   borderRadius: '$base',

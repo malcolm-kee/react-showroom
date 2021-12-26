@@ -1,5 +1,5 @@
 ```jsx
-import { usePropsEditor, PropsEditor } from 'react-showroom/client';
+import { usePropsEditor } from 'react-showroom/client';
 import { PencilIcon } from '@heroicons/react/solid';
 
 const childrenOptions = [
@@ -43,7 +43,6 @@ const Demo = () => {
   return (
     <div style={color ? { backgroundColor: color } : undefined}>
       <Button {...btnProps} />
-      <PropsEditor editor={propsEditor} />
     </div>
   );
 };

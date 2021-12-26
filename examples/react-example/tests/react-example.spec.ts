@@ -80,25 +80,31 @@ test.describe('react example', () => {
   test('props editor should works', async ({ page }) => {
     await page.goto('/core/button');
 
-    await expect(
-      page.locator('data-testid=props-editor-example')
-    ).toBeVisible();
+    const firstFrame = page.mainFrame().childFrames()[0];
+
+    await expect(firstFrame.locator('button')).toHaveText('Hello');
+
+    await page.click('[aria-label="View Props Editor"]');
 
     await page.fill('text=children', 'Hello Whurt');
 
-    await expect(
-      page.locator('[data-testid=props-editor-example] button').first()
-    ).toHaveText('Hello Whurt');
+    await expect(firstFrame.locator('button')).toHaveText('Hello Whurt');
 
     await page.fill('text=className', 'w-full');
 
-    await expect(
-      page.locator('[data-testid=props-editor-example] button').first()
-    ).toHaveClass(/w-full/);
+    await expect(firstFrame.locator('button')).toHaveClass(/w-full/);
   });
 
   test('props editor for complex prop', async ({ page }) => {
     await page.goto('/core/imageviewer');
+
+    await page.waitForSelector('[aria-label="View Props Editor"]');
+
+    const firstFrame = page.mainFrame().childFrames()[0];
+
+    await firstFrame.waitForLoadState('domcontentloaded');
+
+    await page.click('[aria-label="View Props Editor"]');
 
     await page.click('button:has-text("(file)")');
 

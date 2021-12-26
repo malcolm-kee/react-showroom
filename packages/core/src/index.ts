@@ -1,10 +1,13 @@
 export {
-  compileTarget,
   getCompilationKey,
   NON_VISUAL_LANGUAGES,
+  PropsEditorFeature,
+  ReactShowroomFeatureCompilation,
   SupportedLanguage,
   SUPPORTED_LANGUAGES,
 } from './compilation';
+export { compileScript, ImportMapData, Packages } from './compile-script';
+export { dedupeArray } from './dedupe-array';
 export {
   deviceDimensions,
   deviceDimensionsByName,
@@ -18,7 +21,6 @@ export type { Callback } from './fn-lib';
 export { getSafeName } from './get-safe-name';
 export { isEqualArray } from './is-equal-array';
 export { omit } from './object';
-export { ImportMapData, Packages, postCompile } from './post-compile';
 export { compileHtml } from './process-html';
 export { parseQueryString, stringifyQueryString } from './query-string';
 export { removeTrailingSlash } from './remove-trailing-slash';
@@ -32,10 +34,14 @@ export {
   isNil,
   isNumber,
   isPlainObject,
+  isPrimitive,
   isString,
 } from './type-guard';
 
-import { SupportedLanguage } from './compilation';
+import {
+  ReactShowroomFeatureCompilation,
+  SupportedLanguage,
+} from './compilation';
 export interface RequestCompileData {
   source: string;
   messageId: number;
@@ -57,7 +63,7 @@ export interface CompilationSuccessResult {
   importNames: Array<string>;
   importedPackages: Array<string>;
   lang: SupportedLanguage;
-  isPlayground: boolean;
+  features: Array<ReactShowroomFeatureCompilation>;
   initialCodeHash?: string;
 }
 
