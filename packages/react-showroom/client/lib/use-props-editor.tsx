@@ -575,7 +575,7 @@ const propsEditorProviderReducer = (
 ): PropsEditorState | undefined => {
   switch (event.type) {
     case 'init':
-      return event.initialState;
+      return state || event.initialState;
 
     case 'setValue':
       const useValueIndex = isNumber(event.index);

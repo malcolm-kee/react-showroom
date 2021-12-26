@@ -723,76 +723,82 @@ export const StandaloneCodeLiveEditor = ({
                 ))}
               <ConsolePanel />
             </Div>
-            <Div
-              css={{
-                display: 'flex',
-                minWidth: editorPosition === 'right' ? '30rem' : 'auto',
-              }}
-            >
-              {isPropsEditor && (
-                <Div css={{ flex: 1 }}>
-                  <PropsEditorPanel background="white" />
-                </Div>
-              )}
-              {showEditor &&
-                !isCommenting &&
-                !isPropsEditor &&
-                (useAdvancedEditor ? (
-                  isCodeParsed && (
+            {(isCommenting || isPropsEditor || showEditor) && (
+              <Div
+                css={{
+                  display: 'flex',
+                  minWidth:
+                    editorPosition === 'right'
+                      ? isCommenting
+                        ? '23.5rem'
+                        : '30rem'
+                      : 'auto',
+                }}
+              >
+                {isPropsEditor && (
+                  <Div css={{ flex: 1 }}>
+                    <PropsEditorPanel background="white" />
+                  </Div>
+                )}
+                {showEditor &&
+                  !isCommenting &&
+                  !isPropsEditor &&
+                  (useAdvancedEditor ? (
+                    isCodeParsed && (
+                      <Div css={{ flex: 1 }}>
+                        <AdvancedEditor
+                          value={code}
+                          onChange={setCode}
+                          language={props.lang as Language}
+                          initialResult={initialCompilation.data}
+                        />
+                      </Div>
+                    )
+                  ) : (
                     <Div css={{ flex: 1 }}>
-                      <AdvancedEditor
-                        value={code}
+                      <CodeEditor
+                        code={code}
                         onChange={setCode}
                         language={props.lang as Language}
-                        initialResult={initialCompilation.data}
+                        theme={theme}
+                        className={editor()}
+                        wrapperClass={editorWrapper()}
                       />
                     </Div>
-                  )
-                ) : (
-                  <Div css={{ flex: 1 }}>
-                    <CodeEditor
-                      code={code}
-                      onChange={setCode}
-                      language={props.lang as Language}
-                      theme={theme}
-                      className={editor()}
-                      wrapperClass={editorWrapper()}
-                    />
+                  ))}
+                {isCommenting && (
+                  <Div
+                    css={{
+                      height: editorPosition === 'bottom' ? 200 : '100%',
+                      width: '100%',
+                      backgroundColor: '$gray-100',
+                    }}
+                  >
+                    {commentState.items.length > 0 && (
+                      <CommentList>
+                        {commentState.items.map((comment) => (
+                          <CommentList.Item
+                            active={comment.id === activeComment}
+                            onClick={() => {
+                              setHiddenSizes(comment.hiddenSizes);
+                              setZoomLevel(
+                                comment.zoomLevel,
+                                comment.zoomLevel === '100'
+                                  ? undefined
+                                  : comment.zoomLevel
+                              );
+                              setActiveComment(comment.id);
+                            }}
+                            onDismiss={() => remove(comment.id)}
+                            key={comment.id}
+                          >
+                            {comment.text}
+                          </CommentList.Item>
+                        ))}
+                      </CommentList>
+                    )}
                   </Div>
-                ))}
-              {isCommenting && (
-                <Div
-                  css={{
-                    height: 200,
-                    backgroundColor: '$gray-100',
-                  }}
-                >
-                  {commentState.items.length > 0 && (
-                    <CommentList>
-                      {commentState.items.map((comment) => (
-                        <CommentList.Item
-                          active={comment.id === activeComment}
-                          onClick={() => {
-                            setHiddenSizes(comment.hiddenSizes);
-                            setZoomLevel(
-                              comment.zoomLevel,
-                              comment.zoomLevel === '100'
-                                ? undefined
-                                : comment.zoomLevel
-                            );
-                            setActiveComment(comment.id);
-                          }}
-                          onDismiss={() => remove(comment.id)}
-                          key={comment.id}
-                        >
-                          {comment.text}
-                        </CommentList.Item>
-                      ))}
-                    </CommentList>
-                  )}
-                </Div>
-              )}
-              {!isCommenting && (isPropsEditor || showEditor) && (
+                )}
                 <Div
                   css={{
                     display: 'flex',
@@ -826,8 +832,8 @@ export const StandaloneCodeLiveEditor = ({
                     </Tooltip.Content>
                   </Tooltip.Root>
                 </Div>
-              )}
-            </Div>
+              </Div>
+            )}
           </Div>
         </PropsEditorProvider>
       </Div>
