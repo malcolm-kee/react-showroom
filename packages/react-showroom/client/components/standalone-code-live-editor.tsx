@@ -726,6 +726,7 @@ export const StandaloneCodeLiveEditor = ({
             <Div
               css={{
                 display: 'flex',
+                minWidth: editorPosition === 'right' ? '30rem' : 'auto',
               }}
             >
               {isPropsEditor && (
