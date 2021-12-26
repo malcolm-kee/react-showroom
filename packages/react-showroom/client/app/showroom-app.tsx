@@ -13,6 +13,7 @@ import { Sidebar } from '../components/sidebar';
 import { CodeThemeContext } from '../lib/code-theme-context';
 import { Suspense } from '../lib/lazy';
 import { matchPath, Route, Switch, useLocation } from '../lib/routing';
+import { useSize } from '../lib/use-size';
 import { getScrollFn } from '../lib/scroll-into-view';
 import { MenuContextProvider } from '../lib/use-menu';
 import { TargetAudienceProvider } from '../lib/use-target-audience';
@@ -90,19 +91,12 @@ export const ShowroomApp = () => {
       matchedSection.frontmatter.hideSidebar);
 
   const headerRef = React.useRef<HTMLElement>(null);
-  const [headerHeight, setHeaderHeight] = React.useState<number | undefined>(
-    undefined
-  );
 
-  React.useEffect(() => {
-    if (headerRef.current) {
-      setHeaderHeight(headerRef.current.getBoundingClientRect().height);
-    }
-  }, []);
+  const headerSize = useSize(headerRef);
 
-  const cssVariables = headerHeight
+  const cssVariables = headerSize
     ? ({
-        '--header-height': `${headerHeight}px`,
+        '--header-height': `${headerSize.height}px`,
       } as React.CSSProperties)
     : undefined;
 

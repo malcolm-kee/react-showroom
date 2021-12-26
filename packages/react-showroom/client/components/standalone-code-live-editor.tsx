@@ -42,6 +42,7 @@ import { useCodeCompilationCache } from '../lib/use-code-compilation';
 import { useCommentState } from '../lib/use-comment-state';
 import { PreviewConsoleProvider } from '../lib/use-preview-console';
 import { PropsEditorProvider } from '../lib/use-props-editor';
+import { useSize } from '../lib/use-size';
 import { useStateWithParams } from '../lib/use-state-with-params';
 import { useTargetAudience } from '../lib/use-target-audience';
 import { Div } from './base';
@@ -222,6 +223,12 @@ export const StandaloneCodeLiveEditor = ({
     'bottom' | 'right'
   >('bottom', 'editorPosition');
 
+  const isDockToRight = editorPosition === 'right';
+
+  const toolbarRef = React.useRef<HTMLDivElement>(null);
+
+  const toolbarSize = useSize(toolbarRef);
+
   return (
     <PreviewConsoleProvider>
       <Div css={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -229,6 +236,7 @@ export const StandaloneCodeLiveEditor = ({
           style={{
             top: 'var(--header-height, 0px)',
           }}
+          ref={toolbarRef}
         >
           <Div
             css={{
@@ -590,21 +598,30 @@ export const StandaloneCodeLiveEditor = ({
           <Div
             className={className}
             css={{
-              flex: 1,
               display: 'flex',
-              flexDirection: 'column',
-              ...(editorPosition === 'right'
+              backgroundColor: '$gray-200',
+              ...(isDockToRight
                 ? {
                     flexDirection: 'row',
                     width: '100%',
                   }
-                : {}),
+                : {
+                    flex: 1,
+                    flexDirection: 'column',
+                  }),
             }}
+            style={
+              isDockToRight && toolbarSize
+                ? {
+                    height: `calc(100vh - var(--header-height, 64px) - var(--breadcrumb-height, 0px) - ${toolbarSize.height}px)`,
+                  }
+                : undefined
+            }
           >
             <Div
               css={
-                editorPosition === 'right'
-                  ? { flex: 1, overflow: 'hidden' }
+                isDockToRight
+                  ? { flex: 1, overflow: 'auto', overscrollBehavior: 'contain' }
                   : undefined
               }
             >
@@ -727,12 +744,17 @@ export const StandaloneCodeLiveEditor = ({
               <Div
                 css={{
                   display: 'flex',
-                  minWidth:
-                    editorPosition === 'right'
-                      ? isCommenting
-                        ? '23.5rem'
-                        : '30rem'
-                      : 'auto',
+                  background: 'White',
+                  ...(isDockToRight
+                    ? isCommenting
+                      ? {
+                          minWidth: '23.5rem',
+                        }
+                      : {
+                          width: '30rem',
+                          borderLeft: '1px solid $gray-200',
+                        }
+                    : {}),
                 }}
               >
                 {isPropsEditor && (
@@ -745,7 +767,15 @@ export const StandaloneCodeLiveEditor = ({
                   !isPropsEditor &&
                   (useAdvancedEditor ? (
                     isCodeParsed && (
-                      <Div css={{ flex: 1 }}>
+                      <Div
+                        css={{
+                          flex: 1,
+                          overflow: 'hidden',
+                          height: isDockToRight
+                            ? '100%'
+                            : `${code.split(/\r\n|\r|\n/).length + 3}rem`,
+                        }}
+                      >
                         <AdvancedEditor
                           value={code}
                           onChange={setCode}
@@ -769,7 +799,7 @@ export const StandaloneCodeLiveEditor = ({
                 {isCommenting && (
                   <Div
                     css={{
-                      height: editorPosition === 'bottom' ? 200 : '100%',
+                      height: isDockToRight ? '100%' : 200,
                       width: '100%',
                       backgroundColor: '$gray-100',
                     }}
@@ -801,10 +831,13 @@ export const StandaloneCodeLiveEditor = ({
                 )}
                 <Div
                   css={{
-                    display: 'flex',
-                    flexFlow: 'column',
-                    padding: '$2',
-                    borderLeft: '1px solid $gray-200',
+                    display: 'none',
+                    '@sm': {
+                      display: 'flex',
+                      flexFlow: 'column',
+                      padding: '$2',
+                      borderLeft: '1px solid $gray-200',
+                    },
                   }}
                 >
                   <Tooltip.Root>
@@ -817,17 +850,15 @@ export const StandaloneCodeLiveEditor = ({
                           )
                         }
                       >
-                        {editorPosition === 'bottom' ? (
-                          <EditorBottomIcon />
-                        ) : (
+                        {isDockToRight ? (
                           <EditorRightIcon />
+                        ) : (
+                          <EditorBottomIcon />
                         )}
                       </IconButton>
                     </Tooltip.Trigger>
                     <Tooltip.Content>
-                      {editorPosition === 'bottom'
-                        ? 'Dock to bottom'
-                        : 'Dock to right'}
+                      {isDockToRight ? 'Dock to right' : 'Dock to bottom'}
                       <Tooltip.Arrow />
                     </Tooltip.Content>
                   </Tooltip.Root>
@@ -841,12 +872,14 @@ export const StandaloneCodeLiveEditor = ({
   );
 };
 
-const AdvancedEditor = (props: {
+interface AdvancedEditorProps {
   value: string;
   onChange: (code: string) => void;
   language: Language;
   initialResult: CompileResult | undefined;
-}) => {
+}
+
+function AdvancedEditor(props: AdvancedEditorProps) {
   if (process.env.ENABLE_ADVANCED_EDITOR) {
     return (
       <Suspense fallback={null}>
@@ -856,7 +889,7 @@ const AdvancedEditor = (props: {
   }
 
   return null;
-};
+}
 
 const zoomOptions = [
   {

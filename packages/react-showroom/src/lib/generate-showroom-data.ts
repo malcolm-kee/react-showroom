@@ -25,12 +25,18 @@ export const generateCodeblocksData = (
 
         break;
 
-      case 'markdown':
-        codeBlocksImportPaths.push(
-          `${section.sourcePath}?showroomRemarkDocCodeblocks`
-        );
-
+      case 'markdown': {
+        if (section._associatedComponentName) {
+          codeBlocksImportPaths.push(
+            `${section.sourcePath}?showroomRemarkCodeblocks`
+          );
+        } else {
+          codeBlocksImportPaths.push(
+            `${section.sourcePath}?showroomRemarkDocCodeblocks`
+          );
+        }
         break;
+      }
 
       case 'group':
         section.items.forEach(collectCodeblocks);

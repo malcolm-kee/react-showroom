@@ -9,6 +9,7 @@ import {
   CodePreviewIframeImperative,
 } from './code-preview-iframe';
 import { DeviceFrame } from './device-frame';
+import { useSize } from '../lib/use-size';
 
 export interface StandaloneCodeLiveEditorPreviewListProps {
   code: string;
@@ -112,17 +113,8 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
       : maxEffectiveHeight) + 30; // additional 30px for device label
 
   const screenListRef = React.useRef<HTMLDivElement>(null);
-  const [screenListHeight, setScreenListHeight] = React.useState<
-    number | undefined
-  >();
 
-  React.useEffect(() => {
-    if (screenListRef.current) {
-      const rect = screenListRef.current.getBoundingClientRect();
-
-      setScreenListHeight(rect.height + 36); // 36px of vertical padding
-    }
-  }, [zoomValue, props.wrapContent]);
+  const screenListSize = useSize(screenListRef);
 
   const content = visibleFrames.map((dimension) => {
     return (
@@ -254,9 +246,9 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
     <Root
       {...rootProps}
       css={
-        screenListHeight
+        screenListSize
           ? {
-              height: screenListHeight,
+              height: screenListSize.height + 36,
               flex: 'none',
             }
           : {}
@@ -288,8 +280,9 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
     <Resizable
       enable={resizeEnable}
       maxHeight={
-        (props.wrapContent ? screenListHeight : adjustedEffectiveHeight) ||
-        undefined
+        (props.wrapContent
+          ? screenListSize && screenListSize.height + 36
+          : adjustedEffectiveHeight) || undefined
       }
       {...rootProps}
     >

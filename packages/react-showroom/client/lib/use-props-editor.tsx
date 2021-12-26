@@ -536,16 +536,7 @@ const propsEditorReducer = (
 ): PropsEditorState => {
   switch (event.type) {
     case 'setValue':
-      return {
-        ...state,
-        values: {
-          ...state.values,
-          [event.prop]: event.value,
-        },
-        propWithValueEncodedWithIndex: isNumber(event.index)
-          ? dedupeArray(state.propWithValueEncodedWithIndex.concat(event.prop))
-          : state.propWithValueEncodedWithIndex.filter((p) => p !== event.prop),
-      };
+      return reduceNextStateForValue(state, event);
 
     default:
       return state;
@@ -569,6 +560,29 @@ type PropsEditorProviderEvent =
       index?: number;
     };
 
+const reduceNextStateForValue = (
+  state: PropsEditorState,
+  event: {
+    type: 'setValue';
+    prop: string;
+    value: any;
+    index?: number;
+  }
+) => {
+  const useValueIndex = isNumber(event.index);
+
+  return {
+    ...state,
+    values: {
+      ...state.values,
+      [event.prop]: useValueIndex ? event.index : event.value,
+    },
+    propWithValueEncodedWithIndex: useValueIndex
+      ? dedupeArray(state.propWithValueEncodedWithIndex.concat(event.prop))
+      : state.propWithValueEncodedWithIndex.filter((p) => p !== event.prop),
+  };
+};
+
 const propsEditorProviderReducer = (
   state: PropsEditorState | undefined,
   event: PropsEditorProviderEvent
@@ -578,24 +592,7 @@ const propsEditorProviderReducer = (
       return state || event.initialState;
 
     case 'setValue':
-      const useValueIndex = isNumber(event.index);
-
-      return (
-        state && {
-          ...state,
-          values: {
-            ...state.values,
-            [event.prop]: useValueIndex ? event.index : event.value,
-          },
-          propWithValueEncodedWithIndex: useValueIndex
-            ? dedupeArray(
-                state.propWithValueEncodedWithIndex.concat(event.prop)
-              )
-            : state.propWithValueEncodedWithIndex.filter(
-                (p) => p !== event.prop
-              ),
-        }
-      );
+      return state && reduceNextStateForValue(state, event);
 
     default:
       return state;
