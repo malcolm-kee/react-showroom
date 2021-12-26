@@ -1,5 +1,16 @@
 # @showroomjs/core
 
+## 1.13.0
+
+### Minor Changes
+
+- 5ab8217: Auto render PropsEditor below example if example call usePropsEditor hook
+- 5ab8217: Support frame for usePropsEditor
+
+### Patch Changes
+
+- 5ab8217: Bump dependencies
+
 ## 1.12.2
 
 ### Patch Changes

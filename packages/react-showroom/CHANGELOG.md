@@ -1,5 +1,24 @@
 # react-showroom
 
+## 1.17.0
+
+### Minor Changes
+
+- 5ab8217: Auto render PropsEditor below example if example call usePropsEditor hook
+- 5ab8217: Support frame for usePropsEditor
+- 5ab8217: Allow dock editor to right
+
+### Patch Changes
+
+- 5ab8217: Bump dependencies
+- Updated dependencies [5ab8217]
+- Updated dependencies [5ab8217]
+- Updated dependencies [5ab8217]
+- Updated dependencies [5ab8217]
+  - @showroomjs/bundles@1.8.2
+  - @showroomjs/core@1.13.0
+  - @showroomjs/ui@1.10.0
+
 ## 1.16.3
 
 ### Patch Changes

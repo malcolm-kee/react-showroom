@@ -1,5 +1,11 @@
 # @showroomjs/bundles
 
+## 1.8.2
+
+### Patch Changes
+
+- 5ab8217: Bump dependencies
+
 ## 1.8.1
 
 ### Patch Changes

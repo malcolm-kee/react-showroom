@@ -1,5 +1,19 @@
 # @showroomjs/ui
 
+## 1.10.0
+
+### Minor Changes
+
+- 5ab8217: Allow dock editor to right
+
+### Patch Changes
+
+- Updated dependencies [5ab8217]
+- Updated dependencies [5ab8217]
+- Updated dependencies [5ab8217]
+  - @showroomjs/bundles@1.8.2
+  - @showroomjs/core@1.13.0
+
 ## 1.9.2
 
 ### Patch Changes
