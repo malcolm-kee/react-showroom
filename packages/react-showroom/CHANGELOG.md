@@ -1,5 +1,14 @@
 # react-showroom
 
+## 1.17.1
+
+### Patch Changes
+
+- 6e5d64e: Fix: Tweak dock to right style
+- Updated dependencies [6e5d64e]
+  - @showroomjs/device-frames@0.2.2
+  - @showroomjs/ui@1.10.1
+
 ## 1.17.0
 
 ### Minor Changes

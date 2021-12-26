@@ -1,5 +1,11 @@
 # @showroomjs/device-frames
 
+## 0.2.2
+
+### Patch Changes
+
+- 6e5d64e: Fix: Tweak dock to right style
+
 ## 0.2.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @showroomjs/ui
 
+## 1.10.1
+
+### Patch Changes
+
+- 6e5d64e: Fix: Tweak dock to right style
+
 ## 1.10.0
 
 ### Minor Changes
