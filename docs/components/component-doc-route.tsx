@@ -7,10 +7,11 @@ import {
   MemoryRouter,
   QueryParamProvider,
   Route,
-  Switch,
   Suspense,
+  Switch,
 } from 'react-showroom/client';
 import { BrowserWindowInRouter } from './browser-window-in-router';
+import { cssVariables } from './css-variables';
 
 type ComponentDataProviderProps = React.ComponentPropsWithRef<
   typeof ComponentDataProvider
@@ -28,7 +29,10 @@ export const ComponentDocRoute = (
           <Suspense fallback={null}>
             <Switch>
               <Route path="/_standalone/:codeHash">
-                <div className="flex flex-col min-h-[500px]">
+                <div
+                  className="flex flex-col min-h-[500px]"
+                  style={cssVariables}
+                >
                   <ComponentDocStandaloneEditor
                     codeFrameDimensions={[
                       deviceDimensionsByName['iPhone 6/7/8'],
@@ -40,7 +44,7 @@ export const ComponentDocRoute = (
                 </div>
               </Route>
               <Route>
-                <div className="px-6 pb-6">
+                <div className="px-6 pb-6" style={cssVariables}>
                   <ComponentDocArticle
                     slug={props.slug}
                     content={props.content}

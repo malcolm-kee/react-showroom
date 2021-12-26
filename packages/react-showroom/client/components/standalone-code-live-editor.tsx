@@ -10,6 +10,7 @@ import {
 import {
   AnnotationIcon as FilledAnnotationIcon,
   LocationMarkerIcon,
+  ReplyIcon,
   SwitchVerticalIcon,
 } from '@heroicons/react/solid';
 import {
@@ -22,10 +23,13 @@ import {
   DropdownMenu,
   styled,
   ToggleButton,
+  IconButton,
   Tooltip,
   useDebounce,
   usePersistedState,
   useQueryParams,
+  EditorBottomIcon,
+  EditorRightIcon,
 } from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
@@ -209,18 +213,21 @@ export const StandaloneCodeLiveEditor = ({
     [initialCompilation.data]
   );
 
-  const { frameDimensions } = useCodeFrameContext();
+  const { frameDimensions, showDeviceFrame } = useCodeFrameContext();
   const showMultipleScreens = frameDimensions.length > 0;
+
+  const [wrapPreview, setWrapPreview] = usePersistedState(false, 'wrapPreview');
+
+  const [editorPosition, setEditorPosition] = usePersistedState<
+    'bottom' | 'right'
+  >('bottom', 'editorPosition');
 
   return (
     <PreviewConsoleProvider>
       <Div css={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <Div
-          css={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            px: '$3',
+        <Toolbar
+          style={{
+            top: 'var(--header-height, 0px)',
           }}
         >
           <Div
@@ -228,12 +235,52 @@ export const StandaloneCodeLiveEditor = ({
               display: 'flex',
             }}
           >
+            {/* TODO: encode props edit to URL bar so it is shareable */}
+            {!isPropsEditor && (
+              <Div
+                css={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '$2',
+                  paddingRight: '$2',
+                  borderRight: '1px solid $gray-200',
+                }}
+              >
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <ToggleButton
+                      pressed={isCommenting}
+                      onPressedChange={(isCommentMode) =>
+                        setIsCommenting(
+                          isCommentMode,
+                          isCommentMode ? 'true' : undefined
+                        )
+                      }
+                      css={
+                        isCommenting
+                          ? {
+                              backgroundColor: '$primary-700',
+                            }
+                          : undefined
+                      }
+                      data-testid="comment-toggle"
+                    >
+                      {isCommenting ? <CommentOnIcon /> : <CommentIcon />}
+                    </ToggleButton>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    Comment
+                    <Tooltip.Arrow />
+                  </Tooltip.Content>
+                </Tooltip.Root>
+              </Div>
+            )}
             {!isCommenting && !isPropsEditor && (
               <Div
                 css={{
                   display: 'flex',
                   gap: '$2',
-                  paddingRight: '$2',
+                  px: '$2',
                   borderRight: '1px solid $gray-200',
                 }}
               >
@@ -330,7 +377,7 @@ export const StandaloneCodeLiveEditor = ({
                 },
               }}
             >
-              {showMultipleScreens && showPreview && (
+              {showMultipleScreens && (showPreview || isCommenting) && (
                 <DropdownMenu>
                   <DropdownMenu.Trigger asChild>
                     <MenuButton>
@@ -376,19 +423,19 @@ export const StandaloneCodeLiveEditor = ({
                 </DropdownMenu>
               )}
             </Div>
-            <Div
-              css={{
-                display: 'none',
-                '@sm': {
-                  display: 'flex',
-                  gap: '$1',
-                  px: '$2',
-                },
-              }}
-            >
-              {showMultipleScreens &&
-                showPreview &&
-                frameDimensions.map((frame) => (
+            {showMultipleScreens && (showPreview || isCommenting) && (
+              <Div
+                css={{
+                  display: 'none',
+                  '@sm': {
+                    display: 'flex',
+                    gap: '$1',
+                    px: '$2',
+                    borderRight: '1px solid $gray-200',
+                  },
+                }}
+              >
+                {frameDimensions.map((frame) => (
                   <ToggleButton
                     pressed={
                       !hiddenSizes.some(
@@ -416,42 +463,17 @@ export const StandaloneCodeLiveEditor = ({
                     {frame.name}
                   </ToggleButton>
                 ))}
-            </Div>
-            {showPreview && (
+              </Div>
+            )}
+            {(showPreview || isCommenting) && (
               <Div
                 css={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '$2',
+                  px: '$2',
                 }}
               >
-                <Tooltip.Root>
-                  <Tooltip.Trigger asChild>
-                    <ToggleButton
-                      pressed={isCommenting}
-                      onPressedChange={(isCommentMode) =>
-                        setIsCommenting(
-                          isCommentMode,
-                          isCommentMode ? 'true' : undefined
-                        )
-                      }
-                      css={
-                        isCommenting
-                          ? {
-                              backgroundColor: '$primary-700',
-                            }
-                          : undefined
-                      }
-                      data-testid="comment-toggle"
-                    >
-                      {isCommenting ? <CommentOnIcon /> : <CommentIcon />}
-                    </ToggleButton>
-                  </Tooltip.Trigger>
-                  <Tooltip.Content>
-                    Comment
-                    <Tooltip.Arrow />
-                  </Tooltip.Content>
-                </Tooltip.Root>
                 {!isCommenting && (
                   <Tooltip.Root>
                     <Tooltip.Trigger asChild>
@@ -506,26 +528,53 @@ export const StandaloneCodeLiveEditor = ({
           <Div
             css={{
               display: 'inline-flex',
+              alignItems: 'center',
               gap: '$1',
             }}
           >
             {showMultipleScreens && showPreview && (
-              <DropdownMenu>
-                <DropdownMenu.Trigger asChild>
-                  <MenuButton>
-                    <BtnText>{zoomLevel}% </BtnText>
-                    <ZoomIcon width={20} height={20} />
-                  </MenuButton>
-                </DropdownMenu.Trigger>
-                <RadioDropdown
-                  value={zoomLevel}
-                  onChangeValue={(level) =>
-                    setZoomLevel(level, level === '75' ? undefined : level)
-                  }
-                  options={zoomOptions}
-                  className={zoomDropdown()}
-                />
-              </DropdownMenu>
+              <>
+                <DropdownMenu>
+                  <DropdownMenu.Trigger asChild>
+                    <MenuButton>
+                      <BtnText>{zoomLevel}% </BtnText>
+                      <ZoomIcon width={20} height={20} />
+                    </MenuButton>
+                  </DropdownMenu.Trigger>
+                  <RadioDropdown
+                    value={zoomLevel}
+                    onChangeValue={(level) =>
+                      setZoomLevel(level, level === '75' ? undefined : level)
+                    }
+                    options={zoomOptions}
+                    className={zoomDropdown()}
+                  />
+                </DropdownMenu>
+                {!isCommenting && (
+                  <Tooltip.Root>
+                    <Tooltip.Trigger asChild>
+                      <ToggleButton
+                        pressed={wrapPreview}
+                        onPressedChange={setWrapPreview}
+                        css={
+                          wrapPreview
+                            ? {
+                                backgroundColor: '$primary-700',
+                              }
+                            : undefined
+                        }
+                        data-testid="sync-scroll-toggle"
+                      >
+                        <WrapIcon active={wrapPreview} />
+                      </ToggleButton>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      Wrap
+                      <Tooltip.Arrow />
+                    </Tooltip.Content>
+                  </Tooltip.Root>
+                )}
+              </>
             )}
             <StandaloneCodeLiveEditorCopyButton
               getTextToCopy={() => {
@@ -536,7 +585,7 @@ export const StandaloneCodeLiveEditor = ({
               }}
             />
           </Div>
-        </Div>
+        </Toolbar>
         <PropsEditorProvider>
           <Div
             className={className}
@@ -544,180 +593,240 @@ export const StandaloneCodeLiveEditor = ({
               flex: 1,
               display: 'flex',
               flexDirection: 'column',
+              ...(editorPosition === 'right'
+                ? {
+                    flexDirection: 'row',
+                    width: '100%',
+                  }
+                : {}),
             }}
           >
-            {showPreview &&
-              (showMultipleScreens ? (
-                <StandaloneCodeLiveEditorPreviewList
-                  code={debouncedCode}
-                  lang={props.lang}
-                  codeHash={props.codeHash}
-                  isCommenting={isCommenting}
-                  hiddenSizes={hiddenSizes}
-                  fitHeight={!showEditor || isCommenting}
-                  zoom={zoomLevel}
-                  onClickCommentPoint={(coord) => {
-                    const previewList = previewListRef.current;
+            <Div
+              css={
+                editorPosition === 'right'
+                  ? { flex: 1, overflow: 'hidden' }
+                  : undefined
+              }
+            >
+              {(showPreview || isCommenting) &&
+                (showMultipleScreens ? (
+                  <StandaloneCodeLiveEditorPreviewList
+                    code={debouncedCode}
+                    lang={props.lang}
+                    codeHash={props.codeHash}
+                    isCommenting={isCommenting}
+                    hiddenSizes={hiddenSizes}
+                    fitHeight={showDeviceFrame || !showEditor || isCommenting}
+                    zoom={zoomLevel}
+                    onClickCommentPoint={(coord) => {
+                      const previewList = previewListRef.current;
 
-                    if (previewList) {
-                      const listRect = previewList.getBoundingClientRect();
+                      if (previewList) {
+                        const listRect = previewList.getBoundingClientRect();
 
-                      const listX = listRect.left + window.pageXOffset;
-                      const listY = listRect.top + window.pageYOffset;
-                      const elementRelative = {
-                        x: coord.x - listX + previewList.scrollLeft,
-                        y: coord.y - listY + previewList.scrollTop,
-                      };
+                        const listX = listRect.left + window.pageXOffset;
+                        const listY = listRect.top + window.pageYOffset;
+                        const elementRelative = {
+                          x: coord.x - listX + previewList.scrollLeft,
+                          y: coord.y - listY + previewList.scrollTop,
+                        };
 
-                      setTargetCoord(elementRelative);
-                    }
-                  }}
-                  ref={previewListRef}
-                  syncState={syncState}
-                  syncScroll={syncScroll}
-                >
-                  {isCommenting && targetCoord ? (
-                    <StandaloneCodeLiveEditorCommentPopover
-                      open
-                      onOpenChange={(shouldOpen) => {
-                        if (!shouldOpen) {
-                          setTargetCoord(undefined);
-                        }
-                      }}
-                      onAdd={(newComment) => {
-                        add({
-                          text: newComment,
-                          zoomLevel,
-                          hiddenSizes: hiddenSizes,
-                          left: targetCoord.x,
-                          top: targetCoord.y,
-                        });
-                        setTargetCoord(undefined);
-                      }}
-                    >
-                      <Marker
-                        css={{
-                          position: 'absolute',
-                          top: targetCoord.y,
-                          left: targetCoord.x,
+                        setTargetCoord(elementRelative);
+                      }
+                    }}
+                    ref={previewListRef}
+                    syncState={syncState}
+                    syncScroll={syncScroll}
+                    wrapContent={!isCommenting && wrapPreview}
+                  >
+                    {isCommenting && targetCoord ? (
+                      <StandaloneCodeLiveEditorCommentPopover
+                        open
+                        onOpenChange={(shouldOpen) => {
+                          if (!shouldOpen) {
+                            setTargetCoord(undefined);
+                          }
                         }}
-                      />
-                    </StandaloneCodeLiveEditorCommentPopover>
-                  ) : null}
-                  {isCommenting &&
-                    displayedComments.map((comment) => {
-                      const isActive = comment.id === activeComment;
-                      return (
-                        <Div
+                        onAdd={(newComment) => {
+                          add({
+                            text: newComment,
+                            zoomLevel,
+                            hiddenSizes: hiddenSizes,
+                            left: targetCoord.x,
+                            top: targetCoord.y,
+                          });
+                          setTargetCoord(undefined);
+                        }}
+                      >
+                        <Marker
                           css={{
                             position: 'absolute',
-                            top: comment.top,
-                            left: comment.left,
-                            pointerEvents: 'auto',
-                            cursor: 'pointer',
-                            width: 20,
-                            height: 20,
+                            top: targetCoord.y,
+                            left: targetCoord.x,
                           }}
-                          key={comment.id}
-                        >
-                          <MarkerButton
-                            onClick={(ev) => {
-                              ev.stopPropagation();
-                              setActiveComment(comment.id);
+                        />
+                      </StandaloneCodeLiveEditorCommentPopover>
+                    ) : null}
+                    {isCommenting &&
+                      displayedComments.map((comment) => {
+                        const isActive = comment.id === activeComment;
+                        return (
+                          <Div
+                            css={{
+                              position: 'absolute',
+                              top: comment.top,
+                              left: comment.left,
+                              pointerEvents: 'auto',
+                              cursor: 'pointer',
+                              width: 20,
+                              height: 20,
                             }}
-                            type="button"
+                            key={comment.id}
                           >
-                            <Marker
-                              iconClass={iconClass({
-                                active: isActive,
-                              })}
-                              data-active-comment={isActive ? true : null}
-                            />
-                          </MarkerButton>
-                        </Div>
-                      );
-                    })}
-                  {isCommenting && (
-                    <Div
-                      onClick={(ev) => ev.stopPropagation()}
-                      css={{
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        height: 12,
-                        pointerEvents: 'auto',
-                      }}
-                    />
-                  )}
-                </StandaloneCodeLiveEditorPreviewList>
-              ) : (
-                <CodePreviewIframe
-                  code={debouncedCode}
-                  lang={props.lang}
-                  codeHash={props.codeHash}
-                />
-              ))}
-            <ConsolePanel />
-            {isPropsEditor && <PropsEditorPanel background="white" />}
-            {showEditor &&
-              !isCommenting &&
-              !isPropsEditor &&
-              (useAdvancedEditor ? (
-                isCodeParsed && (
+                            <MarkerButton
+                              onClick={(ev) => {
+                                ev.stopPropagation();
+                                setActiveComment(comment.id);
+                              }}
+                              type="button"
+                            >
+                              <Marker
+                                iconClass={iconClass({
+                                  active: isActive,
+                                })}
+                                data-active-comment={isActive ? true : null}
+                              />
+                            </MarkerButton>
+                          </Div>
+                        );
+                      })}
+                    {isCommenting && (
+                      <Div
+                        onClick={(ev) => ev.stopPropagation()}
+                        css={{
+                          position: 'absolute',
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          height: 12,
+                          pointerEvents: 'auto',
+                        }}
+                      />
+                    )}
+                  </StandaloneCodeLiveEditorPreviewList>
+                ) : (
+                  <CodePreviewIframe
+                    code={debouncedCode}
+                    lang={props.lang}
+                    codeHash={props.codeHash}
+                  />
+                ))}
+              <ConsolePanel />
+            </Div>
+            <Div
+              css={{
+                display: 'flex',
+              }}
+            >
+              {isPropsEditor && (
+                <Div css={{ flex: 1 }}>
+                  <PropsEditorPanel background="white" />
+                </Div>
+              )}
+              {showEditor &&
+                !isCommenting &&
+                !isPropsEditor &&
+                (useAdvancedEditor ? (
+                  isCodeParsed && (
+                    <Div css={{ flex: 1 }}>
+                      <AdvancedEditor
+                        value={code}
+                        onChange={setCode}
+                        language={props.lang as Language}
+                        initialResult={initialCompilation.data}
+                      />
+                    </Div>
+                  )
+                ) : (
                   <Div css={{ flex: 1 }}>
-                    <AdvancedEditor
-                      value={code}
+                    <CodeEditor
+                      code={code}
                       onChange={setCode}
                       language={props.lang as Language}
-                      initialResult={initialCompilation.data}
+                      theme={theme}
+                      className={editor()}
+                      wrapperClass={editorWrapper()}
                     />
                   </Div>
-                )
-              ) : (
-                <Div css={{ flex: 1 }}>
-                  <CodeEditor
-                    code={code}
-                    onChange={setCode}
-                    language={props.lang as Language}
-                    theme={theme}
-                    className={editor()}
-                    wrapperClass={editorWrapper()}
-                  />
+                ))}
+              {isCommenting && (
+                <Div
+                  css={{
+                    height: 200,
+                    backgroundColor: '$gray-100',
+                  }}
+                >
+                  {commentState.items.length > 0 && (
+                    <CommentList>
+                      {commentState.items.map((comment) => (
+                        <CommentList.Item
+                          active={comment.id === activeComment}
+                          onClick={() => {
+                            setHiddenSizes(comment.hiddenSizes);
+                            setZoomLevel(
+                              comment.zoomLevel,
+                              comment.zoomLevel === '100'
+                                ? undefined
+                                : comment.zoomLevel
+                            );
+                            setActiveComment(comment.id);
+                          }}
+                          onDismiss={() => remove(comment.id)}
+                          key={comment.id}
+                        >
+                          {comment.text}
+                        </CommentList.Item>
+                      ))}
+                    </CommentList>
+                  )}
                 </Div>
-              ))}
-            {isCommenting && (
-              <Div
-                css={{
-                  height: 200,
-                  backgroundColor: '$gray-100',
-                }}
-              >
-                {commentState.items.length > 0 && (
-                  <CommentList>
-                    {commentState.items.map((comment) => (
-                      <CommentList.Item
-                        active={comment.id === activeComment}
-                        onClick={() => {
-                          setHiddenSizes(comment.hiddenSizes);
-                          setZoomLevel(
-                            comment.zoomLevel,
-                            comment.zoomLevel === '100'
-                              ? undefined
-                              : comment.zoomLevel
-                          );
-                          setActiveComment(comment.id);
-                        }}
-                        onDismiss={() => remove(comment.id)}
-                        key={comment.id}
+              )}
+              {!isCommenting && (isPropsEditor || showEditor) && (
+                <Div
+                  css={{
+                    display: 'flex',
+                    flexFlow: 'column',
+                    padding: '$2',
+                    borderLeft: '1px solid $gray-200',
+                  }}
+                >
+                  <Tooltip.Root>
+                    <Tooltip.Trigger asChild>
+                      <IconButton
+                        data-testid="editor-position-button"
+                        onClick={() =>
+                          setEditorPosition(
+                            editorPosition === 'bottom' ? 'right' : 'bottom'
+                          )
+                        }
                       >
-                        {comment.text}
-                      </CommentList.Item>
-                    ))}
-                  </CommentList>
-                )}
-              </Div>
-            )}
+                        {editorPosition === 'bottom' ? (
+                          <EditorBottomIcon />
+                        ) : (
+                          <EditorRightIcon />
+                        )}
+                      </IconButton>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      {editorPosition === 'bottom'
+                        ? 'Dock to bottom'
+                        : 'Dock to right'}
+                      <Tooltip.Arrow />
+                    </Tooltip.Content>
+                  </Tooltip.Root>
+                </Div>
+              )}
+            </Div>
           </Div>
         </PropsEditorProvider>
       </Div>
@@ -816,6 +925,19 @@ const MarkerButton = styled('button', {
   height: 40,
 });
 
+const Toolbar = styled('div', {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  px: '$3',
+  backgroundColor: 'White',
+  borderBottom: '1px solid $gray-200',
+  '@lg': {
+    position: 'sticky',
+    zIndex: 10,
+  },
+});
+
 const CommentIcon = styled(AnnotationIcon, {
   width: 20,
   height: 20,
@@ -845,6 +967,20 @@ const ScrollIcon = styled(SwitchVerticalIcon, {
   width: 20,
   height: 20,
   color: '$gray-400',
+  variants: {
+    active: {
+      true: {
+        color: 'White',
+      },
+    },
+  },
+});
+
+const WrapIcon = styled(ReplyIcon, {
+  width: 20,
+  height: 20,
+  color: '$gray-400',
+  transform: 'scaleY(-1)',
   variants: {
     active: {
       true: {

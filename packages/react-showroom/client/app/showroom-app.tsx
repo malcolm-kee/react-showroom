@@ -89,6 +89,23 @@ export const ShowroomApp = () => {
       matchedSection.type === 'markdown' &&
       matchedSection.frontmatter.hideSidebar);
 
+  const headerRef = React.useRef<HTMLElement>(null);
+  const [headerHeight, setHeaderHeight] = React.useState<number | undefined>(
+    undefined
+  );
+
+  React.useEffect(() => {
+    if (headerRef.current) {
+      setHeaderHeight(headerRef.current.getBoundingClientRect().height);
+    }
+  }, []);
+
+  const cssVariables = headerHeight
+    ? ({
+        '--header-height': `${headerHeight}px`,
+      } as React.CSSProperties)
+    : undefined;
+
   return (
     <Wrapper>
       <IsClientContextProvider>
@@ -98,15 +115,9 @@ export const ShowroomApp = () => {
               <QueryParamProvider>
                 <CodeThemeContext.Provider value={THEME.codeTheme}>
                   <MenuContextProvider sections={sections}>
-                    <Div
-                      css={{
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                      }}
-                    >
-                      {!shouldHideHeader && <Header />}
-                      <Div css={{ display: 'flex', flex: 1 }}>
+                    <Div style={cssVariables}>
+                      {!shouldHideHeader && <Header ref={headerRef} />}
+                      <Div css={{ display: 'flex' }}>
                         {!shouldHideSidebar && <Sidebar sections={sections} />}
                         <Suspense
                           fallback={<PageFallback title={matchedTitle} />}

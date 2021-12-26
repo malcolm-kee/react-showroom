@@ -22,6 +22,7 @@ export interface StandaloneCodeLiveEditorPreviewListProps {
   children?: React.ReactNode;
   syncState?: boolean;
   syncScroll?: boolean;
+  wrapContent?: boolean;
 }
 
 const PARAM_KEY = '_fS';
@@ -109,6 +110,19 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
     (shouldAdjustZoom
       ? Math.ceil((maxEffectiveHeight * zoomValue) / 100)
       : maxEffectiveHeight) + 30; // additional 30px for device label
+
+  const screenListRef = React.useRef<HTMLDivElement>(null);
+  const [screenListHeight, setScreenListHeight] = React.useState<
+    number | undefined
+  >();
+
+  React.useEffect(() => {
+    if (screenListRef.current) {
+      const rect = screenListRef.current.getBoundingClientRect();
+
+      setScreenListHeight(rect.height + 36); // 36px of vertical padding
+    }
+  }, [zoomValue, props.wrapContent]);
 
   const content = visibleFrames.map((dimension) => {
     return (
@@ -237,16 +251,34 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
   };
 
   return props.fitHeight ? (
-    <Root {...rootProps} ref={forwardedRef}>
+    <Root
+      {...rootProps}
+      css={
+        screenListHeight
+          ? {
+              height: screenListHeight,
+              flex: 'none',
+            }
+          : {}
+      }
+      ref={forwardedRef}
+    >
       <ScreenList
         css={
           shouldAdjustZoom
             ? {
                 transform: `scale(${zoomValue / 100})`,
                 transformOrigin: 'top left',
+                ...(props.wrapContent
+                  ? {
+                      width: `${(100 * 100) / zoomValue}%`,
+                    }
+                  : {}),
               }
             : {}
         }
+        wrap={props.wrapContent}
+        ref={screenListRef}
       >
         {content}
       </ScreenList>
@@ -255,7 +287,10 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
   ) : (
     <Resizable
       enable={resizeEnable}
-      maxHeight={adjustedEffectiveHeight || undefined}
+      maxHeight={
+        (props.wrapContent ? screenListHeight : adjustedEffectiveHeight) ||
+        undefined
+      }
       {...rootProps}
     >
       <ScreenList
@@ -264,9 +299,16 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
             ? {
                 transform: `scale(${zoomValue / 100})`,
                 transformOrigin: 'top left',
+                ...(props.wrapContent
+                  ? {
+                      width: `${(100 * 100) / zoomValue}%`,
+                    }
+                  : {}),
               }
             : {}
         }
+        wrap={props.wrapContent}
+        ref={screenListRef}
       >
         {content}
       </ScreenList>
@@ -293,6 +335,13 @@ const Root = styled('div', {
 const ScreenList = styled('div', {
   display: 'flex',
   gap: '$6',
+  variants: {
+    wrap: {
+      true: {
+        flexWrap: 'wrap',
+      },
+    },
+  },
 });
 
 const resizeStyle = css({
