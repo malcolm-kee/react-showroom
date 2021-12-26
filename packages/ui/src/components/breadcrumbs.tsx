@@ -1,4 +1,5 @@
 import { Link } from '@showroomjs/bundles/routing';
+import * as React from 'react';
 import { styled } from '../stitches.config';
 
 export interface BreadcrumbsProps {
@@ -8,40 +9,44 @@ export interface BreadcrumbsProps {
   }>;
 }
 
-export const Breadcrumbs = (props: BreadcrumbsProps) => (
-  <Root aria-label="Breadcrumb">
-    <Ol role="list">
-      {props.items.map((item, i) => (
-        <Item key={i}>
-          {i > 0 && (
-            <Svg
-              viewBox="0 0 24 44"
-              preserveAspectRatio="none"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
-            </Svg>
-          )}
-          {item.url ? (
-            <Text
-              as={Link}
-              to={item.url}
-              css={{
-                '&:hover': {
-                  borderBottomColor: '$gray-300',
-                },
-              }}
-            >
-              {item.label}
-            </Text>
-          ) : (
-            <Text>{item.label}</Text>
-          )}
-        </Item>
-      ))}
-    </Ol>
-  </Root>
+export const Breadcrumbs = React.forwardRef<HTMLElement, BreadcrumbsProps>(
+  function Breadcrumbs(props, forwardedRef) {
+    return (
+      <Root aria-label="Breadcrumb" ref={forwardedRef}>
+        <Ol role="list">
+          {props.items.map((item, i) => (
+            <Item key={i}>
+              {i > 0 && (
+                <Svg
+                  viewBox="0 0 24 44"
+                  preserveAspectRatio="none"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
+                </Svg>
+              )}
+              {item.url ? (
+                <Text
+                  as={Link}
+                  to={item.url}
+                  css={{
+                    '&:hover': {
+                      borderBottomColor: '$gray-300',
+                    },
+                  }}
+                >
+                  {item.label}
+                </Text>
+              ) : (
+                <Text>{item.label}</Text>
+              )}
+            </Item>
+          ))}
+        </Ol>
+      </Root>
+    );
+  }
 );
 
 const Root = styled('nav', {

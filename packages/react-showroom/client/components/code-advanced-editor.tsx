@@ -44,12 +44,7 @@ export const CodeAdvancedEditor = styled(function CodeAdvancedEditor({
 
   const onEditorChange = React.useCallback<
     NonNullable<EditorProps['onChange']>
-  >(
-    (value) => {
-      onChangeCallback(value || '');
-    },
-    [onChangeCallback]
-  );
+  >((value) => onChangeCallback(value || ''), [onChangeCallback]);
 
   const mappedLanguage = languageMapping[language];
 
@@ -125,6 +120,8 @@ const editorOptions: EditorProps['options'] = {
   inlayHints: {
     enabled: true,
   },
+  scrollBeyondLastLine: false,
+  lineNumbers: 'off',
 };
 
 const setupLanguage = (

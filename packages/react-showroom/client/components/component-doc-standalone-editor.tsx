@@ -5,6 +5,7 @@ import { CodeFrameContextProvider } from '../lib/code-frame-context';
 import { useComponentMeta } from '../lib/component-props-context';
 import { useExampleRoot } from '../lib/example-root-context';
 import { lazy } from '../lib/lazy';
+import { useSize } from '../lib/use-size';
 import { Div } from './base';
 
 const StandaloneEditor = lazy(() => import('./standalone-editor-lazy'));
@@ -15,6 +16,16 @@ export const ComponentDocStandaloneEditor = (props: {
 }) => {
   const exampleRoot = useExampleRoot();
   const componentMetadata = useComponentMeta();
+
+  const breadcrumbRef = React.useRef<HTMLElement>(null);
+
+  const breadcrumbSize = useSize(breadcrumbRef);
+
+  const variables = breadcrumbSize
+    ? ({
+        '--breadcrumb-height': `${breadcrumbSize.height}px`,
+      } as React.CSSProperties)
+    : undefined;
 
   return (
     <>
@@ -28,8 +39,9 @@ export const ComponentDocStandaloneEditor = (props: {
             label: 'Example',
           },
         ]}
+        ref={breadcrumbRef}
       />
-      <Div css={{ flex: 1 }}>
+      <Div css={{ flex: 1 }} style={variables}>
         <CodeFrameContextProvider
           value={React.useMemo(
             () => ({

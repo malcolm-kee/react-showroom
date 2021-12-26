@@ -1,7 +1,7 @@
+import { styled } from '@showroomjs/ui';
 import * as React from 'react';
 import { usePropsEditorContext } from '../lib/use-props-editor';
 import { PropsEditor } from './props-editor';
-import { Div } from './base';
 
 export const PropsEditorPanel = ({
   background = 'gray',
@@ -11,15 +11,19 @@ export const PropsEditorPanel = ({
   const editor = usePropsEditorContext();
 
   return editor ? (
-    <Div
+    <Panel
       css={{
-        shadow: 'inner',
-        borderRadius: '$base',
         backgroundColor: background === 'gray' ? '$gray-200' : 'White',
-        px: '$2',
       }}
     >
       <PropsEditor editor={editor} />
-    </Div>
+    </Panel>
   ) : null;
 };
+
+const Panel = styled('div', {
+  shadow: 'inner',
+  borderRadius: '$base',
+  px: '$2',
+  py: '$4',
+});
