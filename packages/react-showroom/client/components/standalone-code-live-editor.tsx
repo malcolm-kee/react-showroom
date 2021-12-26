@@ -2,13 +2,14 @@ import {
   AdjustmentsIcon,
   AnnotationIcon,
   CodeIcon,
-  DesktopComputerIcon,
+  EyeIcon,
   RefreshIcon,
   TerminalIcon,
   ZoomInIcon,
 } from '@heroicons/react/outline';
 import {
   AnnotationIcon as FilledAnnotationIcon,
+  DeviceMobileIcon,
   LocationMarkerIcon,
   ReplyIcon,
   SwitchVerticalIcon,
@@ -21,15 +22,15 @@ import {
 import {
   css,
   DropdownMenu,
+  EditorBottomIcon,
+  EditorRightIcon,
+  IconButton,
   styled,
   ToggleButton,
-  IconButton,
   Tooltip,
   useDebounce,
   usePersistedState,
   useQueryParams,
-  EditorBottomIcon,
-  EditorRightIcon,
 } from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
@@ -134,6 +135,16 @@ export const StandaloneCodeLiveEditor = ({
     });
   };
 
+  const { frameDimensions, showDeviceFrame: showDeviceFrameSetting } =
+    useCodeFrameContext();
+  const showMultipleScreens = frameDimensions.length > 0;
+
+  const [showDeviceFrame, setShowDeviceFrame] = useStateWithParams(
+    showDeviceFrameSetting,
+    'showFrame',
+    (value) => value === 'true'
+  );
+
   React.useEffect(() => {
     if (isReady) {
       if (queryParams.code) {
@@ -184,7 +195,8 @@ export const StandaloneCodeLiveEditor = ({
       commentState.items.filter(
         (item) =>
           item.zoomLevel === zoomLevel &&
-          isEqualArray(item.hiddenSizes, hiddenSizes, { ignoreOrder: true })
+          isEqualArray(item.hiddenSizes, hiddenSizes, { ignoreOrder: true }) &&
+          item.showFrame === showDeviceFrame
       ),
     [commentState.items, zoomLevel, hiddenSizes]
   );
@@ -213,9 +225,6 @@ export const StandaloneCodeLiveEditor = ({
       ),
     [initialCompilation.data]
   );
-
-  const { frameDimensions, showDeviceFrame } = useCodeFrameContext();
-  const showMultipleScreens = frameDimensions.length > 0;
 
   const [wrapPreview, setWrapPreview] = usePersistedState(false, 'wrapPreview');
 
@@ -366,7 +375,7 @@ export const StandaloneCodeLiveEditor = ({
                       }
                       data-testid="preview-toggle"
                     >
-                      <DesktopComputerIcon width={20} height={20} />
+                      <EyeIcon width={20} height={20} />
                     </ToggleButton>
                   </Tooltip.Trigger>
                   <Tooltip.Content>
@@ -558,6 +567,37 @@ export const StandaloneCodeLiveEditor = ({
                     className={zoomDropdown()}
                   />
                 </DropdownMenu>
+                {showDeviceFrameSetting && (
+                  <Tooltip.Root>
+                    <Tooltip.Trigger asChild>
+                      <ToggleButton
+                        pressed={showDeviceFrame}
+                        onPressedChange={(pressed) =>
+                          setShowDeviceFrame(
+                            pressed,
+                            pressed ? undefined : 'false'
+                          )
+                        }
+                        css={
+                          showDeviceFrame
+                            ? {
+                                backgroundColor: '$primary-700',
+                              }
+                            : undefined
+                        }
+                        data-testid="device-toggle"
+                      >
+                        <DeviceIcon active={showDeviceFrame} />
+                      </ToggleButton>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      {showDeviceFrame
+                        ? 'Hide device frame'
+                        : 'Show device frame'}
+                      <Tooltip.Arrow />
+                    </Tooltip.Content>
+                  </Tooltip.Root>
+                )}
                 {!isCommenting && (
                   <Tooltip.Root>
                     <Tooltip.Trigger asChild>
@@ -633,8 +673,9 @@ export const StandaloneCodeLiveEditor = ({
                     codeHash={props.codeHash}
                     isCommenting={isCommenting}
                     hiddenSizes={hiddenSizes}
-                    fitHeight={showDeviceFrame || !showEditor || isCommenting}
+                    fitHeight={showDeviceFrame && (!showEditor || isCommenting)}
                     zoom={zoomLevel}
+                    showFrame={showDeviceFrame}
                     onClickCommentPoint={(coord) => {
                       const previewList = previewListRef.current;
 
@@ -671,6 +712,7 @@ export const StandaloneCodeLiveEditor = ({
                             hiddenSizes: hiddenSizes,
                             left: targetCoord.x,
                             top: targetCoord.y,
+                            showFrame: showDeviceFrame,
                           });
                           setTargetCoord(undefined);
                         }}
@@ -697,6 +739,7 @@ export const StandaloneCodeLiveEditor = ({
                               cursor: 'pointer',
                               width: 20,
                               height: 20,
+                              zIndex: 5,
                             }}
                             key={comment.id}
                           >
@@ -817,6 +860,12 @@ export const StandaloneCodeLiveEditor = ({
                                   ? undefined
                                   : comment.zoomLevel
                               );
+                              if (showDeviceFrameSetting) {
+                                setShowDeviceFrame(
+                                  comment.showFrame,
+                                  comment.showFrame ? undefined : 'false'
+                                );
+                              }
                               setActiveComment(comment.id);
                             }}
                             onDismiss={() => remove(comment.id)}
@@ -1017,6 +1066,20 @@ const ScrollIcon = styled(SwitchVerticalIcon, {
 });
 
 const WrapIcon = styled(ReplyIcon, {
+  width: 20,
+  height: 20,
+  color: '$gray-400',
+  transform: 'scaleY(-1)',
+  variants: {
+    active: {
+      true: {
+        color: 'White',
+      },
+    },
+  },
+});
+
+const DeviceIcon = styled(DeviceMobileIcon, {
   width: 20,
   height: 20,
   color: '$gray-400',

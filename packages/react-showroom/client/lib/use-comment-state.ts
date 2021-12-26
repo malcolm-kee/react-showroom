@@ -9,6 +9,7 @@ export interface CommentData {
   top: number;
   left: number;
   id: string;
+  showFrame: boolean;
 }
 
 type CommentEvent =

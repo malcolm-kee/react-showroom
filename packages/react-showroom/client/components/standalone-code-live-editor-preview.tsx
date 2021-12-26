@@ -20,6 +20,7 @@ export interface StandaloneCodeLiveEditorPreviewListProps {
   hiddenSizes: Array<[number, number | '100%']>;
   fitHeight: boolean;
   zoom: string;
+  showFrame: boolean;
   children?: React.ReactNode;
   syncState?: boolean;
   syncScroll?: boolean;
@@ -102,9 +103,7 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
 
   const maxEffectiveHeight =
     maxFrameHeight &&
-    (codeFrameSetttings.showDeviceFrame
-      ? maxFrameHeight + 300
-      : maxFrameHeight + 100);
+    (props.showFrame ? maxFrameHeight + 300 : maxFrameHeight + 100);
 
   const adjustedEffectiveHeight =
     maxEffectiveHeight &&
@@ -119,22 +118,17 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
   const content = visibleFrames.map((dimension) => {
     return (
       <ScreenWrapper isCommenting={props.isCommenting} key={dimension.name}>
-        <DeviceFrame
-          dimension={dimension}
-          showFrame={codeFrameSetttings.showDeviceFrame}
-        >
+        <DeviceFrame dimension={dimension} showFrame={props.showFrame}>
           <Screen
             css={
-              codeFrameSetttings.showDeviceFrame
+              props.showFrame
                 ? {
                     width: '100%',
                     height: '100%',
                   }
                 : {
                     width: `${dimension.width}px`,
-                    height: isNumber(dimension.height)
-                      ? `${dimension.height}px`
-                      : dimension.height,
+                    height: '100%',
                   }
             }
           >
@@ -144,11 +138,7 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
               codeHash={props.codeHash}
               css={{
                 width: `${dimension.width}px`,
-                height: codeFrameSetttings.showDeviceFrame
-                  ? '100%'
-                  : isNumber(dimension.height)
-                  ? `${dimension.height}px`
-                  : dimension.height,
+                height: '100%',
               }}
               imperativeRef={(ref) => {
                 if (ref) {
@@ -383,6 +373,7 @@ const ScreenWrapper = styled('div', {
   [`&:hover ${Screen}`]: {
     shadow: 'lg',
   },
+  marginBottom: '$6',
   variants: {
     isCommenting: {
       true: {
