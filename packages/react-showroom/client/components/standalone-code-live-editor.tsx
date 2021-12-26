@@ -495,7 +495,7 @@ export const StandaloneCodeLiveEditor = ({
                     <Tooltip.Content>
                       {process.env.SYNC_STATE_TYPE === 'state'
                         ? 'Sync State'
-                        : 'Sync Input/Click'}
+                        : 'Sync Interactions'}
                       <Tooltip.Arrow />
                     </Tooltip.Content>
                   </Tooltip.Root>
@@ -563,7 +563,7 @@ export const StandaloneCodeLiveEditor = ({
                               }
                             : undefined
                         }
-                        data-testid="sync-scroll-toggle"
+                        data-testid="wrap-preview-toggle"
                       >
                         <WrapIcon active={wrapPreview} />
                       </ToggleButton>
