@@ -1,4 +1,4 @@
-import { css, keyframes, styled } from '@showroomjs/ui';
+import { css, pulse, styled } from '@showroomjs/ui';
 import * as React from 'react';
 import { Article } from './article';
 import { Div as Base } from './base';
@@ -72,15 +72,6 @@ export const PageFallback = (props: { title?: string }) => {
     </DetailsPageContainer>
   );
 };
-
-const pulse = keyframes({
-  '0%, 100%': {
-    opacity: 1,
-  },
-  '50%': {
-    opacity: 0.5,
-  },
-});
 
 const pulseCs = css({
   animation: `${pulse} 2s cubic-bezier(0.4, 0, 0.6, 1) infinite`,
