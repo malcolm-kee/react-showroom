@@ -84,8 +84,6 @@ test.describe('react example', () => {
 
     await expect(firstFrame.locator('button')).toHaveText('Hello');
 
-    await page.click('[aria-label="View Props Editor"]');
-
     await page.fill('text=children', 'Hello Whurt');
 
     await expect(firstFrame.locator('button')).toHaveText('Hello Whurt');
@@ -98,13 +96,11 @@ test.describe('react example', () => {
   test('props editor for complex prop', async ({ page }) => {
     await page.goto('/core/imageviewer');
 
-    await page.waitForSelector('[aria-label="View Props Editor"]');
+    await page.waitForSelector('[aria-label="Hide Props Editor"]');
 
     const firstFrame = page.mainFrame().childFrames()[0];
 
     await firstFrame.waitForLoadState('domcontentloaded');
-
-    await page.click('[aria-label="View Props Editor"]');
 
     await page.click('button:has-text("(file)")');
 

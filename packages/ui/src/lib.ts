@@ -1,3 +1,5 @@
+import { keyframes } from './stitches.config';
+
 export interface Callback<Args extends any[]> {
   (...args: Args): void;
 }
@@ -12,3 +14,12 @@ export function callAll<Args extends any[]>(
     );
   };
 }
+
+export const pulse = keyframes({
+  '0%, 100%': {
+    opacity: 1,
+  },
+  '50%': {
+    opacity: 0.5,
+  },
+});

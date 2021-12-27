@@ -30,7 +30,7 @@ export const CodePlayground = ({
 }: CodePlaygroundProps) => {
   const [showPropsEditor, setShowPropsEditor] = React.useState<
     boolean | undefined
-  >(false);
+  >(true);
 
   const targetAudience = useTargetAudience();
 

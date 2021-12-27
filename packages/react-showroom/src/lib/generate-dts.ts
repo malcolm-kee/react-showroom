@@ -1,6 +1,6 @@
 import { isDefined } from '@showroomjs/core';
 import { NormalizedReactShowroomConfiguration } from '@showroomjs/core/react';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as tsup from 'tsup';
 import { green, logToStdout } from './log-to-stdout';
@@ -19,9 +19,15 @@ export const generateDts = async (
 
     const name = path.parse(componentsEntry.path).name;
 
+    const outDir = path.resolve(cacheDir, 'dts');
+
+    if (!watch) {
+      await fs.remove(outDir);
+    }
+
     await tsup.build({
       entryPoints: [resolveApp(componentsEntry.path)],
-      outDir: path.resolve(cacheDir, 'dts'),
+      outDir,
       watch,
       clean: !watch,
       silent: true,
