@@ -1,5 +1,11 @@
 # @showroomjs/ui
 
+## 1.10.2
+
+### Patch Changes
+
+- 3d14383: Props editor expanded by default
+
 ## 1.10.1
 
 ### Patch Changes

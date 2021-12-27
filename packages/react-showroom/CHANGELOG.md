@@ -1,5 +1,18 @@
 # react-showroom
 
+## 1.18.0
+
+### Minor Changes
+
+- 3d14383: Allow toggle device frame
+
+### Patch Changes
+
+- 3d14383: Fix race condition when generating dts file
+- 3d14383: Props editor expanded by default
+- Updated dependencies [3d14383]
+  - @showroomjs/ui@1.10.2
+
 ## 1.17.1
 
 ### Patch Changes
