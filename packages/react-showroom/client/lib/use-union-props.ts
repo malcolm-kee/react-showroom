@@ -1,9 +1,6 @@
 import { isDefined } from '@showroomjs/core';
-import {
-  isType,
-  useComponentMeta,
-  parseSafely,
-} from './component-props-context';
+import { isType, useComponentMeta } from './component-props-context';
+import { parseSafely } from './parse-safely';
 
 export const useUnionProps = (props: string) => {
   const componentMeta = useComponentMeta();

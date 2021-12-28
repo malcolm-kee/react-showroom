@@ -4,8 +4,8 @@ import {
   CopyButton,
   css,
   styled,
+  TextTooltip,
   useNotification,
-  Tooltip,
 } from '@showroomjs/ui';
 import * as React from 'react';
 
@@ -19,25 +19,19 @@ export const StandaloneCodeLiveEditorCopyButton = (
   const showMsg = useNotification();
 
   return (
-    <Tooltip.Root>
-      <Tooltip.Trigger asChild>
-        <CopyButton
-          {...props}
-          className={btn()}
-          onCopy={() => showMsg('URL copied')}
-          label={<StyledShareIcon width={20} height={20} />}
-          successLabel={
-            <>
-              <MiniCheckIcon width={20} height={20} />
-            </>
-          }
-        />
-      </Tooltip.Trigger>
-      <Tooltip.Content>
-        Share View
-        <Tooltip.Arrow />
-      </Tooltip.Content>
-    </Tooltip.Root>
+    <TextTooltip label="Share View">
+      <CopyButton
+        {...props}
+        className={btn()}
+        onCopy={() => showMsg('URL copied')}
+        label={<StyledShareIcon width={20} height={20} />}
+        successLabel={
+          <>
+            <MiniCheckIcon width={20} height={20} />
+          </>
+        }
+      />
+    </TextTooltip>
   );
 };
 

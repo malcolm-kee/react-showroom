@@ -20,6 +20,7 @@ import { Route, Switch, useParams } from '../lib/routing';
 import { UseCustomStateContext } from '../lib/use-custom-state';
 import { useHeightChange } from '../lib/use-height-change';
 import { ConsoleContext, LogLevel } from '../lib/use-preview-console';
+import { useMeasure } from '@showroomjs/measure';
 import {
   PropsEditorContext,
   PropsEditorState,
@@ -141,6 +142,8 @@ const PreviewPage = () => {
     []
   );
 
+  const [measuring, setMeasuring] = React.useState(false);
+
   const isUpdatingRef = React.useRef(false);
   const isUpdatingTimerId = React.useRef<number | null>(null);
 
@@ -204,6 +207,8 @@ const PreviewPage = () => {
       }
     } else if (ev.type === 'syncPropsEditor') {
       setPropsEditor(ev.data);
+    } else if (ev.type === 'toggleMeasure') {
+      setMeasuring(ev.active);
     }
   });
 
@@ -291,6 +296,10 @@ const PreviewPage = () => {
         });
       }
     };
+
+  useMeasure({
+    enabled: measuring,
+  });
 
   return (
     <UseCustomStateContext.Provider

@@ -80,6 +80,10 @@ export type Message =
   | {
       type: 'syncPropsEditor';
       data: PropsEditorState;
+    }
+  | {
+      type: 'toggleMeasure';
+      active: boolean;
     };
 
 export const usePreviewWindow = (onMessage: (data: Message) => void) => {

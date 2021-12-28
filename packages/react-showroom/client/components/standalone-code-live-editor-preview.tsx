@@ -16,6 +16,7 @@ export interface StandaloneCodeLiveEditorPreviewListProps {
   lang: SupportedLanguage;
   codeHash: string;
   isCommenting: boolean;
+  isMeasuring: boolean;
   onClickCommentPoint: (coordinate: { x: number; y: number }) => void;
   hiddenSizes: Array<[number, number | '100%']>;
   fitHeight: boolean;
@@ -89,6 +90,15 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
       });
     }
   }, [props.fitHeight, stateMaps]);
+
+  React.useEffect(() => {
+    frameMap.forEach((frame) => {
+      frame.sendToChild({
+        type: 'toggleMeasure',
+        active: props.isMeasuring,
+      });
+    });
+  }, [props.isMeasuring]);
 
   const codeFrameSetttings = useCodeFrameContext();
 

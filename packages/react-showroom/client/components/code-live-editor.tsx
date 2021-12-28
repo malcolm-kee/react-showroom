@@ -9,9 +9,13 @@ import { useTargetAudience } from '../lib/use-target-audience';
 import { Div } from './base';
 import { CodeEditor } from './code-editor';
 import { CodePreviewFrame } from './code-preview-frame';
-import { CodePreviewIframe } from './code-preview-iframe';
+import {
+  CodePreviewIframe,
+  CodePreviewIframeImperative,
+} from './code-preview-iframe';
 import { ConsolePanel } from './console-panel';
 import { LinkToStandaloneView } from './link-to-standalone-view';
+import { MeasuringButton } from './measuring-button';
 
 export interface CodeLiveEditorProps {
   code: string;
@@ -52,6 +56,9 @@ export const CodeLiveEditor = ({
   const initialHeightValue = initialHeight && Number(initialHeight);
   const heightValue = height && Number(height);
 
+  const frameRef = React.useRef<CodePreviewIframeImperative>(null);
+  const [isMeasuring, setIsMeasuring] = React.useState(false);
+
   const content = (
     <PreviewConsoleProvider>
       <Div
@@ -85,6 +92,7 @@ export const CodeLiveEditor = ({
               heightValue && !isNaN(heightValue) ? heightValue : undefined
             }
             resizable
+            imperativeRef={frameRef}
           />
         ) : (
           <CodePreviewFrame code={debouncedCode} lang={lang} />
@@ -121,10 +129,33 @@ export const CodeLiveEditor = ({
             ) : (
               <span />
             )}
-            <LinkToStandaloneView
-              codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
-              isDesigner={targetAudience === 'designer'}
-            />
+            <Div
+              css={{
+                display: 'inline-flex',
+                gap: '$1',
+              }}
+            >
+              {frame && (
+                <MeasuringButton
+                  onClick={() => {
+                    if (frameRef.current) {
+                      const nextIsMeasuring = !isMeasuring;
+
+                      frameRef.current.sendToChild({
+                        type: 'toggleMeasure',
+                        active: nextIsMeasuring,
+                      });
+                      setIsMeasuring(nextIsMeasuring);
+                    }
+                  }}
+                  isActive={isMeasuring}
+                />
+              )}
+              <LinkToStandaloneView
+                codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
+                isDesigner={targetAudience === 'designer'}
+              />
+            </Div>
           </Div>
           {isDeveloper && (
             <Collapsible.Content animate>
