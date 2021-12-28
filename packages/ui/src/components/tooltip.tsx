@@ -1,4 +1,5 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
+import * as React from 'react';
 import { styled } from '../stitches.config';
 import {
   slideDownAndFade,
@@ -36,3 +37,13 @@ export const Tooltip = Object.assign({}, TooltipPrimitive, {
   Content: StyledContent,
   Arrow: StyledArrow,
 });
+
+export const TextTooltip = (props: {
+  children: React.ReactNode;
+  label: string;
+}) => (
+  <Tooltip.Root>
+    <Tooltip.Trigger asChild>{props.children}</Tooltip.Trigger>
+    <Tooltip.Content>{props.label}</Tooltip.Content>
+  </Tooltip.Root>
+);

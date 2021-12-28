@@ -9,15 +9,18 @@ import {
   isString,
   noop,
 } from '@showroomjs/core';
-import { createNameContext, NumberInput, useId } from '@showroomjs/ui';
+import {
+  createNameContext,
+  NumberInput,
+  useId,
+  useQueryParams,
+} from '@showroomjs/ui';
 import * as React from 'react';
 import { ComponentDoc } from 'react-docgen-typescript';
 import { findBestMatch } from 'string-similarity';
-import {
-  isType,
-  parseSafely,
-  useComponentMeta,
-} from './component-props-context';
+import { isType, useComponentMeta } from './component-props-context';
+import { safeCompress, safeDecompress } from './compress';
+import { parseSafely, stringifySafely } from './parse-safely';
 
 export type ControlType =
   | 'checkbox'
@@ -611,8 +614,45 @@ export const PropsEditorContext = createNameContext<PropsEditorContextType>(
   [undefined, noop]
 );
 
-export const PropsEditorProvider = (props: { children: React.ReactNode }) => {
+export const PropsEditorProvider = (props: {
+  children: React.ReactNode;
+  serializeToParam?: boolean;
+}) => {
   const reducerReturn = usePropsEditorProviderState();
+
+  const [params, setParams, isReady] = useQueryParams();
+
+  const [editorState, dispatch] = reducerReturn;
+
+  React.useEffect(() => {
+    if (isReady && props.serializeToParam) {
+      const serializedProps = params.props;
+
+      if (serializedProps) {
+        const result = safeDecompress(serializedProps, '');
+        const initialState = result && parseSafely<PropsEditorState>(result);
+
+        if (initialState) {
+          dispatch({
+            type: 'init',
+            initialState,
+          });
+        }
+      }
+    }
+  }, [isReady, props.serializeToParam]);
+
+  React.useEffect(() => {
+    if (props.serializeToParam && editorState) {
+      const serialized = stringifySafely(editorState);
+
+      if (serialized) {
+        setParams({
+          props: safeCompress(serialized),
+        });
+      }
+    }
+  }, [editorState, props.serializeToParam]);
 
   return (
     <PropsEditorContext.Provider value={reducerReturn}>

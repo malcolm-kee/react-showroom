@@ -28,6 +28,9 @@ type CommentEvent =
   | {
       type: 'update';
       data: Partial<CommentData> & { id: string };
+    }
+  | {
+      type: 'clear';
     };
 
 interface CommentState {
@@ -68,6 +71,9 @@ const commentReducer = (
         ...state,
         items: state.items.filter((item) => item.id !== event.id),
       };
+
+    case 'clear':
+      return defaultState;
 
     default:
       throw new Error(`Unsupported event type: ${(event as any).type}`);
@@ -133,6 +139,13 @@ export const useCommentState = (idPrefix?: string) => {
         id,
       });
     }, []),
+    clear: React.useCallback(
+      () =>
+        dispatch({
+          type: 'clear',
+        }),
+      []
+    ),
   };
 };
 

@@ -4,6 +4,7 @@ import {
   CodeIcon,
   EyeIcon,
   RefreshIcon,
+  TemplateIcon,
   TerminalIcon,
   ZoomInIcon,
 } from '@heroicons/react/outline';
@@ -26,8 +27,8 @@ import {
   EditorRightIcon,
   IconButton,
   styled,
+  TextTooltip,
   ToggleButton,
-  Tooltip,
   useDebounce,
   usePersistedState,
   useQueryParams,
@@ -86,7 +87,12 @@ export const StandaloneCodeLiveEditor = ({
 
   const [isCodeParsed, setIsCodeParsed] = React.useState(false);
 
-  const { state: commentState, add, remove } = useCommentState(props.codeHash);
+  const {
+    state: commentState,
+    add,
+    remove,
+    clear,
+  } = useCommentState(props.codeHash);
   const [activeComment, setActiveComment] = React.useState('');
   React.useEffect(() => {
     if (activeComment) {
@@ -214,6 +220,8 @@ export const StandaloneCodeLiveEditor = ({
     'useAdvancedEditor'
   );
 
+  const [isMeasuring, setIsMeasuring] = React.useState(false);
+
   const initialCompilation = useCodeCompilationCache(props.code, props.lang);
 
   const isPropsEditor = React.useMemo(
@@ -252,46 +260,41 @@ export const StandaloneCodeLiveEditor = ({
               display: 'flex',
             }}
           >
-            {/* TODO: encode props edit to URL bar so it is shareable */}
-            {!isPropsEditor && (
-              <Div
-                css={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '$2',
-                  paddingRight: '$2',
-                  borderRight: '1px solid $gray-200',
-                }}
-              >
-                <Tooltip.Root>
-                  <Tooltip.Trigger asChild>
-                    <ToggleButton
-                      pressed={isCommenting}
-                      onPressedChange={(isCommentMode) =>
-                        setIsCommenting(
-                          isCommentMode,
-                          isCommentMode ? 'true' : undefined
-                        )
-                      }
-                      css={
-                        isCommenting
-                          ? {
-                              backgroundColor: '$primary-700',
-                            }
-                          : undefined
-                      }
-                      data-testid="comment-toggle"
-                    >
-                      {isCommenting ? <CommentOnIcon /> : <CommentIcon />}
-                    </ToggleButton>
-                  </Tooltip.Trigger>
-                  <Tooltip.Content>
-                    Comment
-                    <Tooltip.Arrow />
-                  </Tooltip.Content>
-                </Tooltip.Root>
-              </Div>
-            )}
+            <Div
+              css={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '$2',
+                paddingRight: '$2',
+                borderRight: '1px solid $gray-200',
+              }}
+            >
+              <TextTooltip label="Comment">
+                <ToggleButton
+                  pressed={isCommenting}
+                  onPressedChange={(isCommentMode) => {
+                    setIsCommenting(
+                      isCommentMode,
+                      isCommentMode ? 'true' : undefined
+                    );
+
+                    if (!isCommentMode) {
+                      clear();
+                    }
+                  }}
+                  css={
+                    isCommenting
+                      ? {
+                          backgroundColor: '$primary-700',
+                        }
+                      : undefined
+                  }
+                  data-testid="comment-toggle"
+                >
+                  {isCommenting ? <CommentOnIcon /> : <CommentIcon />}
+                </ToggleButton>
+              </TextTooltip>
+            </Div>
             {!isCommenting && !isPropsEditor && (
               <Div
                 css={{
@@ -301,88 +304,70 @@ export const StandaloneCodeLiveEditor = ({
                   borderRight: '1px solid $gray-200',
                 }}
               >
-                <Tooltip.Root>
-                  <Tooltip.Trigger asChild>
-                    <ToggleButton
-                      pressed={showEditor}
-                      onPressedChange={(show) =>
-                        setShowEditor(show, show ? undefined : 'true')
-                      }
-                      css={
-                        showEditor
-                          ? {
-                              color: '$gray-600',
-                              backgroundColor: '$gray-100',
-                            }
-                          : undefined
-                      }
-                      data-testid="editor-toggle"
-                    >
-                      <CodeIcon width={20} height={20} />
-                    </ToggleButton>
-                  </Tooltip.Trigger>
-                  <Tooltip.Content>
-                    Editor
-                    <Tooltip.Arrow />
-                  </Tooltip.Content>
-                </Tooltip.Root>
+                <TextTooltip label="Editor">
+                  <ToggleButton
+                    pressed={showEditor}
+                    onPressedChange={(show) =>
+                      setShowEditor(show, show ? undefined : 'true')
+                    }
+                    css={
+                      showEditor
+                        ? {
+                            color: '$gray-600',
+                            backgroundColor: '$gray-100',
+                          }
+                        : undefined
+                    }
+                    data-testid="editor-toggle"
+                  >
+                    <CodeIcon width={20} height={20} />
+                  </ToggleButton>
+                </TextTooltip>
                 {process.env.ENABLE_ADVANCED_EDITOR
                   ? showEditor && (
-                      <Tooltip.Root>
-                        <Tooltip.Trigger asChild>
-                          <ToggleButton
-                            pressed={useAdvancedEditor}
-                            onPressedChange={setUseAdvancedEditor}
-                            css={{
-                              display: 'none',
-                              '@md': {
-                                display: 'flex',
-                              },
-                              ...(useAdvancedEditor
-                                ? {
-                                    color: '$gray-600',
-                                    backgroundColor: '$gray-100',
-                                  }
-                                : {}),
-                            }}
-                            data-testid="advanced-editor-toggle"
-                          >
-                            <TerminalIcon width={20} height={20} />
-                          </ToggleButton>
-                        </Tooltip.Trigger>
-                        <Tooltip.Content>
-                          Advanced Editor
-                          <Tooltip.Arrow />
-                        </Tooltip.Content>
-                      </Tooltip.Root>
+                      <TextTooltip label="Advanced Editor">
+                        <ToggleButton
+                          pressed={useAdvancedEditor}
+                          onPressedChange={setUseAdvancedEditor}
+                          css={{
+                            display: 'none',
+                            '@md': {
+                              display: 'flex',
+                            },
+                            ...(useAdvancedEditor
+                              ? {
+                                  color: '$gray-600',
+                                  backgroundColor: '$gray-100',
+                                }
+                              : {}),
+                          }}
+                          data-testid="advanced-editor-toggle"
+                        >
+                          <TerminalIcon width={20} height={20} />
+                        </ToggleButton>
+                      </TextTooltip>
                     )
                   : null}
-                <Tooltip.Root>
-                  <Tooltip.Trigger asChild>
-                    <ToggleButton
-                      pressed={showPreview}
-                      onPressedChange={(show) =>
-                        setShowPreview(show, show ? undefined : 'true')
-                      }
-                      disabled={isCommenting}
-                      css={
-                        showPreview
-                          ? {
-                              color: '$gray-600',
-                              backgroundColor: '$gray-100',
-                            }
-                          : undefined
-                      }
-                      data-testid="preview-toggle"
-                    >
-                      <EyeIcon width={20} height={20} />
-                    </ToggleButton>
-                  </Tooltip.Trigger>
-                  <Tooltip.Content>
-                    Preview
-                    <Tooltip.Arrow />
-                  </Tooltip.Content>
-                </Tooltip.Root>
+                <TextTooltip label="Preview">
+                  <ToggleButton
+                    pressed={showPreview}
+                    onPressedChange={(show) =>
+                      setShowPreview(show, show ? undefined : 'true')
+                    }
+                    disabled={isCommenting}
+                    css={
+                      showPreview
+                        ? {
+                            color: '$gray-600',
+                            backgroundColor: '$gray-100',
+                          }
+                        : undefined
+                    }
+                    data-testid="preview-toggle"
+                  >
+                    <EyeIcon width={20} height={20} />
+                  </ToggleButton>
+                </TextTooltip>
               </Div>
             )}
             <Div
@@ -492,8 +477,34 @@ export const StandaloneCodeLiveEditor = ({
                 }}
               >
                 {!isCommenting && (
-                  <Tooltip.Root>
-                    <Tooltip.Trigger asChild>
+                  <>
+                    <TextTooltip label="Measure">
+                      <ToggleButton
+                        pressed={isMeasuring}
+                        onPressedChange={setIsMeasuring}
+                        css={
+                          isMeasuring
+                            ? {
+                                backgroundColor: '$primary-700',
+                              }
+                            : undefined
+                        }
+                        data-testid="measure-toggle"
+                      >
+                        <MeasureIcon
+                          active={isMeasuring}
+                          width={20}
+                          height={20}
+                        />
+                      </ToggleButton>
+                    </TextTooltip>
+                    <TextTooltip
+                      label={
+                        process.env.SYNC_STATE_TYPE === 'state'
+                          ? 'Sync State'
+                          : 'Sync Interactions'
+                      }
+                    >
                       <ToggleButton
                         pressed={syncState}
                         onPressedChange={setSyncState}
@@ -506,39 +517,27 @@ export const StandaloneCodeLiveEditor = ({
                         }
                         data-testid="sync-state-toggle"
                       >
-                        <SyncIcon active={syncState} />
+                        <SyncIcon active={syncState} width={20} height={20} />
                       </ToggleButton>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>
-                      {process.env.SYNC_STATE_TYPE === 'state'
-                        ? 'Sync State'
-                        : 'Sync Interactions'}
-                      <Tooltip.Arrow />
-                    </Tooltip.Content>
-                  </Tooltip.Root>
+                    </TextTooltip>
+                  </>
                 )}
-                <Tooltip.Root>
-                  <Tooltip.Trigger asChild>
-                    <ToggleButton
-                      pressed={syncScroll}
-                      onPressedChange={setSyncScroll}
-                      css={
-                        syncScroll
-                          ? {
-                              backgroundColor: '$primary-700',
-                            }
-                          : undefined
-                      }
-                      data-testid="sync-scroll-toggle"
-                    >
-                      <ScrollIcon active={syncScroll} />
-                    </ToggleButton>
-                  </Tooltip.Trigger>
-                  <Tooltip.Content>
-                    Sync Scroll
-                    <Tooltip.Arrow />
-                  </Tooltip.Content>
-                </Tooltip.Root>
+                <TextTooltip label="Sync Scroll">
+                  <ToggleButton
+                    pressed={syncScroll}
+                    onPressedChange={setSyncScroll}
+                    css={
+                      syncScroll
+                        ? {
+                            backgroundColor: '$primary-700',
+                          }
+                        : undefined
+                    }
+                    data-testid="sync-scroll-toggle"
+                  >
+                    <ScrollIcon active={syncScroll} />
+                  </ToggleButton>
+                </TextTooltip>
               </Div>
             )}
           </Div>
@@ -568,59 +567,51 @@ export const StandaloneCodeLiveEditor = ({
                   />
                 </DropdownMenu>
                 {showDeviceFrameSetting && (
-                  <Tooltip.Root>
-                    <Tooltip.Trigger asChild>
-                      <ToggleButton
-                        pressed={showDeviceFrame}
-                        onPressedChange={(pressed) =>
-                          setShowDeviceFrame(
-                            pressed,
-                            pressed ? undefined : 'false'
-                          )
-                        }
-                        css={
-                          showDeviceFrame
-                            ? {
-                                backgroundColor: '$primary-700',
-                              }
-                            : undefined
-                        }
-                        data-testid="device-toggle"
-                      >
-                        <DeviceIcon active={showDeviceFrame} />
-                      </ToggleButton>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>
-                      {showDeviceFrame
+                  <TextTooltip
+                    label={
+                      showDeviceFrame
                         ? 'Hide device frame'
-                        : 'Show device frame'}
-                      <Tooltip.Arrow />
-                    </Tooltip.Content>
-                  </Tooltip.Root>
+                        : 'Show device frame'
+                    }
+                  >
+                    <ToggleButton
+                      pressed={showDeviceFrame}
+                      onPressedChange={(pressed) =>
+                        setShowDeviceFrame(
+                          pressed,
+                          pressed ? undefined : 'false'
+                        )
+                      }
+                      css={
+                        showDeviceFrame
+                          ? {
+                              backgroundColor: '$primary-700',
+                            }
+                          : undefined
+                      }
+                      data-testid="device-toggle"
+                    >
+                      <DeviceIcon active={showDeviceFrame} />
+                    </ToggleButton>
+                  </TextTooltip>
                 )}
                 {!isCommenting && (
-                  <Tooltip.Root>
-                    <Tooltip.Trigger asChild>
-                      <ToggleButton
-                        pressed={wrapPreview}
-                        onPressedChange={setWrapPreview}
-                        css={
-                          wrapPreview
-                            ? {
-                                backgroundColor: '$primary-700',
-                              }
-                            : undefined
-                        }
-                        data-testid="wrap-preview-toggle"
-                      >
-                        <WrapIcon active={wrapPreview} />
-                      </ToggleButton>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>
-                      Wrap
-                      <Tooltip.Arrow />
-                    </Tooltip.Content>
-                  </Tooltip.Root>
+                  <TextTooltip label="Wrap">
+                    <ToggleButton
+                      pressed={wrapPreview}
+                      onPressedChange={setWrapPreview}
+                      css={
+                        wrapPreview
+                          ? {
+                              backgroundColor: '$primary-700',
+                            }
+                          : undefined
+                      }
+                      data-testid="wrap-preview-toggle"
+                    >
+                      <WrapIcon active={wrapPreview} />
+                    </ToggleButton>
+                  </TextTooltip>
                 )}
               </>
             )}
@@ -634,7 +625,7 @@ export const StandaloneCodeLiveEditor = ({
             />
           </Div>
         </Toolbar>
-        <PropsEditorProvider>
+        <PropsEditorProvider serializeToParam>
           <Div
             className={className}
             css={{
@@ -672,6 +663,7 @@ export const StandaloneCodeLiveEditor = ({
                     lang={props.lang}
                     codeHash={props.codeHash}
                     isCommenting={isCommenting}
+                    isMeasuring={isMeasuring}
                     hiddenSizes={hiddenSizes}
                     fitHeight={showDeviceFrame && (!showEditor || isCommenting)}
                     zoom={zoomLevel}
@@ -800,7 +792,7 @@ export const StandaloneCodeLiveEditor = ({
                     : {}),
                 }}
               >
-                {isPropsEditor && (
+                {!isCommenting && isPropsEditor && (
                   <Div css={{ flex: 1 }}>
                     <PropsEditorPanel background="white" />
                   </Div>
@@ -889,28 +881,24 @@ export const StandaloneCodeLiveEditor = ({
                     },
                   }}
                 >
-                  <Tooltip.Root>
-                    <Tooltip.Trigger asChild>
-                      <IconButton
-                        data-testid="editor-position-button"
-                        onClick={() =>
-                          setEditorPosition(
-                            editorPosition === 'bottom' ? 'right' : 'bottom'
-                          )
-                        }
-                      >
-                        {isDockToRight ? (
-                          <EditorRightIcon />
-                        ) : (
-                          <EditorBottomIcon />
-                        )}
-                      </IconButton>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>
-                      {isDockToRight ? 'Dock to right' : 'Dock to bottom'}
-                      <Tooltip.Arrow />
-                    </Tooltip.Content>
-                  </Tooltip.Root>
+                  <TextTooltip
+                    label={isDockToRight ? 'Dock to right' : 'Dock to bottom'}
+                  >
+                    <IconButton
+                      data-testid="editor-position-button"
+                      onClick={() =>
+                        setEditorPosition(
+                          editorPosition === 'bottom' ? 'right' : 'bottom'
+                        )
+                      }
+                    >
+                      {isDockToRight ? (
+                        <EditorRightIcon />
+                      ) : (
+                        <EditorBottomIcon />
+                      )}
+                    </IconButton>
+                  </TextTooltip>
                 </Div>
               </Div>
             )}
@@ -1040,6 +1028,19 @@ const CommentOnIcon = styled(FilledAnnotationIcon, {
 });
 
 const SyncIcon = styled(RefreshIcon, {
+  width: 20,
+  height: 20,
+  color: '$gray-400',
+  variants: {
+    active: {
+      true: {
+        color: 'White',
+      },
+    },
+  },
+});
+
+const MeasureIcon = styled(TemplateIcon, {
   width: 20,
   height: 20,
   color: '$gray-400',
