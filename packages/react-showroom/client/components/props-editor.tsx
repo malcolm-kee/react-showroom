@@ -492,6 +492,7 @@ export const SelectButton = styled(Button, {
   py: '$1',
   color: '$gray-600',
   backgroundColor: '$gray-100',
+  cursor: 'pointer',
   variants: {
     selected: {
       true: {
