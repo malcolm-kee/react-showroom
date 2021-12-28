@@ -1,5 +1,21 @@
 # react-showroom
 
+## 1.19.0
+
+### Minor Changes
+
+- 595a23d: Serialize props editor value as query params
+- 595a23d: Add measure like Storybook Measure Addon
+
+### Patch Changes
+
+- 595a23d: Bump dependencies
+- Updated dependencies [595a23d]
+- Updated dependencies [595a23d]
+  - @showroomjs/core@1.13.1
+  - @showroomjs/device-frames@0.2.3
+  - @showroomjs/ui@1.11.0
+
 ## 1.18.0
 
 ### Minor Changes
