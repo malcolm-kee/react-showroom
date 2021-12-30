@@ -78,8 +78,8 @@ export const A11yResultItem = (props: {
         </ResultTitle>
         <Collapsible.Content animate>
           <ItemDetails>
-            <p>{result.description}</p>
-            <p>
+            <Text>{result.description}</Text>
+            <Text>
               <ItemLink
                 href={result.helpUrl}
                 target="_blank"
@@ -87,7 +87,7 @@ export const A11yResultItem = (props: {
               >
                 Learn more
               </ItemLink>
-            </p>
+            </Text>
             <ElementList>
               {result.nodes.map((n, i) => (
                 <li key={i}>
@@ -111,6 +111,11 @@ export const A11yResultItem = (props: {
     </Item>
   );
 };
+
+const Text = styled('p', {
+  margin: 0,
+  padding: 0,
+});
 
 const ResultTitle = styled('div', {
   display: 'flex',
@@ -214,12 +219,18 @@ const ElementText = styled('div', {
 
 const Rules = (props: { rules: Array<CheckResult> }) => {
   return (
-    <ul>
+    <RulesRoot>
       {props.rules.map((r) => (
         <li key={r.id}>
           [{r.impact}] {r.message}
         </li>
       ))}
-    </ul>
+    </RulesRoot>
   );
 };
+
+const RulesRoot = styled('ul', {
+  listStyle: 'none',
+  margin: 0,
+  padding: 0,
+});

@@ -1,6 +1,6 @@
-import { styled, Tabs, Checkbox } from '@showroomjs/ui';
-import * as React from 'react';
 import { dedupeArray, flattenArray, isDefined } from '@showroomjs/core';
+import { Checkbox, styled, Tabs } from '@showroomjs/ui';
+import * as React from 'react';
 import { A11yResult, useA11yResult } from '../lib/use-a11y-result';
 import { A11yResultItem } from './a11y-result-item';
 
@@ -105,7 +105,7 @@ export const A11yResultPanel = (props: {
         <>
           <TabContent value="violations">
             {result.violations.length > 0 ? (
-              <ul>
+              <ResultItemList>
                 {result.violations.map((p) => (
                   <A11yResultItem
                     result={p}
@@ -116,14 +116,14 @@ export const A11yResultPanel = (props: {
                     key={p.id}
                   />
                 ))}
-              </ul>
+              </ResultItemList>
             ) : (
               <NoItemMsg>No applicable item</NoItemMsg>
             )}
           </TabContent>
           <TabContent value="passes">
             {result.passes.length > 0 ? (
-              <ul>
+              <ResultItemList>
                 {result.passes.map((p) => (
                   <A11yResultItem
                     result={p}
@@ -134,14 +134,14 @@ export const A11yResultPanel = (props: {
                     key={p.id}
                   />
                 ))}
-              </ul>
+              </ResultItemList>
             ) : (
               <NoItemMsg>No applicable item</NoItemMsg>
             )}
           </TabContent>
           <TabContent value="incompletes">
             {result.incomplete.length > 0 ? (
-              <ul>
+              <ResultItemList>
                 {result.incomplete.map((p) => (
                   <A11yResultItem
                     result={p}
@@ -152,7 +152,7 @@ export const A11yResultPanel = (props: {
                     key={p.id}
                   />
                 ))}
-              </ul>
+              </ResultItemList>
             ) : (
               <NoItemMsg>No applicable item</NoItemMsg>
             )}
@@ -162,6 +162,12 @@ export const A11yResultPanel = (props: {
     </Tabs.Root>
   );
 };
+
+const ResultItemList = styled('ul', {
+  listStyle: 'none',
+  margin: 0,
+  padding: 0,
+});
 
 const getDefaultTab = (result: A11yResult) => {
   if (result.violations.length > 0) {
@@ -188,7 +194,10 @@ const TabTrigger = styled(Tabs.RawTrigger, {
   py: '$1',
   fontSize: '$sm',
   lineHeight: '$sm',
+  border: 0,
+  cursor: 'pointer',
   borderBottom: '2px solid transparent',
+  backgroundColor: 'inherit',
   outlineRing: '',
   '&[data-state="active"]': {
     borderColor: '$primary-800',
@@ -218,6 +227,7 @@ const TabContent = styled(Tabs.RawContent, {
 const NoItemMsg = styled('p', {
   px: '$2',
   py: '$1',
+  margin: 0,
   color: '$gray-600',
   fontSize: '$sm',
   lineHeight: '$sm',
