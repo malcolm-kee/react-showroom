@@ -72,6 +72,7 @@ declare namespace NodeJS {
   import type { FrameDimension } from '@showroomjs/core';
   import type { ThemeConfiguration } from '@showroomjs/core/react';
   import type { CompilerOptions } from 'typescript';
+  import type { Spec } from 'axe-core';
 
   interface ProcessEnv {
     readonly REACT_SHOWROOM_THEME: ThemeConfiguration;
@@ -85,6 +86,7 @@ declare namespace NodeJS {
     readonly ENABLE_ADVANCED_EDITOR: boolean;
     readonly SHOW_DEVICE_FRAME: boolean;
     readonly SYNC_STATE_TYPE: 'state' | 'event';
+    readonly A11Y_CONFIG: Spec;
     readonly COMPONENTS_ENTRY_NAME: string | undefined;
     readonly COMPILER_OPTIONS: Partial<CompilerOptions>;
   }

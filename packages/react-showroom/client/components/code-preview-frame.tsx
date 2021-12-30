@@ -17,13 +17,13 @@ export interface CodePreviewFrameProps
   onIsCompilingChange?: (isCompiling: boolean) => void;
 }
 
-export const CodePreviewFrame = ({
-  code,
-  lang,
-  nonVisual,
-  onIsCompilingChange,
-  ...divProps
-}: CodePreviewFrameProps) => {
+export const CodePreviewFrame = React.forwardRef<
+  HTMLDivElement,
+  CodePreviewFrameProps
+>(function CodePreviewFrame(
+  { code, lang, nonVisual, onIsCompilingChange, ...divProps },
+  forwardedRef
+) {
   const errorBoundaryRef = React.useRef<ErrorBoundary>(null);
 
   const { data, isCompiling, error, isError } = useCodeCompilation(code, lang);
@@ -48,6 +48,7 @@ export const CodePreviewFrame = ({
         backgroundColor: 'White',
       }}
       {...divProps}
+      ref={forwardedRef}
     >
       {isError ? (
         <Alert variant="error">
@@ -96,6 +97,6 @@ export const CodePreviewFrame = ({
       )}
     </Div>
   );
-};
+});
 
 const formatError = (error: string) => error.replace(/<stdin>:|\"\\x0A\"/g, '');

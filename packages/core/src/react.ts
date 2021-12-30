@@ -8,6 +8,7 @@ import type {
 import type { CompilerOptions } from 'typescript';
 import type { Configuration } from 'webpack';
 import type { DeviceName, FrameDimension } from './device-dimensions';
+import type { Spec } from 'axe-core';
 import { CodeBlocks, Environment } from './index';
 
 export interface HtmlOptions
@@ -198,6 +199,9 @@ export interface ExampleConfiguration {
    * @default true
    */
   showDeviceFrame: boolean;
+  a11y: {
+    config: Spec;
+  };
 }
 
 export interface ShowroomHtmlConfiguration {

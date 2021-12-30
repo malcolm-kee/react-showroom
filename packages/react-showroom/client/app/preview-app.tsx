@@ -4,6 +4,7 @@ import {
   isNumber,
   SupportedLanguage,
 } from '@showroomjs/core';
+import { useMeasure } from '@showroomjs/measure';
 import { Alert, useConstant, useId } from '@showroomjs/ui';
 import * as React from 'react';
 import allImports from 'react-showroom-all-imports';
@@ -12,6 +13,7 @@ import allCompMetadata from 'react-showroom-comp-metadata?showroomAllComp';
 import Wrapper from 'react-showroom-wrapper';
 import { AllComponents } from '../all-components';
 import { CodePreviewFrame } from '../components/code-preview-frame';
+import { checkA11y } from '../lib/check-a11y';
 import { CodeImportsContextProvider } from '../lib/code-imports-context';
 import { CodeVariablesContextProvider } from '../lib/code-variables-context';
 import { ComponentMetaContext } from '../lib/component-props-context';
@@ -20,7 +22,6 @@ import { Route, Switch, useParams } from '../lib/routing';
 import { UseCustomStateContext } from '../lib/use-custom-state';
 import { useHeightChange } from '../lib/use-height-change';
 import { ConsoleContext, LogLevel } from '../lib/use-preview-console';
-import { useMeasure } from '@showroomjs/measure';
 import {
   PropsEditorContext,
   PropsEditorState,
@@ -154,6 +155,8 @@ const PreviewPage = () => {
     PropsEditorState | undefined
   >(undefined);
 
+  const rootRef = React.useRef<HTMLDivElement>(null);
+
   const { sendParent } = usePreviewWindow((ev) => {
     if (ev.type === 'code') {
       setState(ev);
@@ -209,8 +212,28 @@ const PreviewPage = () => {
       setPropsEditor(ev.data);
     } else if (ev.type === 'toggleMeasure') {
       setMeasuring(ev.active);
+    } else if (ev.type === 'requestA11yCheck') {
+      if (rootRef.current) {
+        checkA11y(rootRef.current).then((result) =>
+          sendParent({
+            type: 'a11yCheckResult',
+            result,
+          })
+        );
+      }
     }
   });
+
+  React.useEffect(() => {
+    if (rootRef.current) {
+      checkA11y(rootRef.current).then((result) => {
+        sendParent({
+          type: 'a11yCheckResult',
+          result,
+        });
+      });
+    }
+  }, []);
 
   React.useEffect(() => {
     function getHeight() {
@@ -325,6 +348,7 @@ const PreviewPage = () => {
         >
           <CodePreviewFrame
             {...state}
+            ref={rootRef}
             onIsCompilingChange={(isCompiling) =>
               sendParent({
                 type: 'compileStatus',

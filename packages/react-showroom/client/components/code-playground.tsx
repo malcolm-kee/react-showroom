@@ -2,9 +2,12 @@ import { SupportedLanguage } from '@showroomjs/core';
 import { Collapsible } from '@showroomjs/ui';
 import * as React from 'react';
 import { useCodeBlocks } from '../lib/codeblocks-context';
+import { useA11yResult } from '../lib/use-a11y-result';
 import { PreviewConsoleProvider } from '../lib/use-preview-console';
 import { PropsEditorProvider } from '../lib/use-props-editor';
 import { useTargetAudience } from '../lib/use-target-audience';
+import { A11yButton } from './a11y-button';
+import { A11yResultPanel } from './a11y-result-panel';
 import { Div } from './base';
 import { CodePreviewFrame } from './code-preview-frame';
 import {
@@ -47,6 +50,8 @@ export const CodePlayground = ({
   const frameRef = React.useRef<CodePreviewIframeImperative>(null);
   const [isMeasuring, setIsMeasuring] = React.useState(false);
 
+  const { setStatus } = useA11yResult();
+
   const content = (
     <PreviewConsoleProvider>
       <Div
@@ -67,21 +72,34 @@ export const CodePlayground = ({
         }}
       >
         {frame ? (
-          <CodePreviewIframe
-            code={props.code}
-            lang={props.lang}
-            codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
-            initialHeight={
-              initialHeightValue && !isNaN(initialHeightValue)
-                ? initialHeightValue
-                : undefined
-            }
-            height={
-              heightValue && !isNaN(heightValue) ? heightValue : undefined
-            }
-            imperativeRef={frameRef}
-            resizable
-          />
+          <>
+            <CodePreviewIframe
+              code={props.code}
+              lang={props.lang}
+              codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
+              initialHeight={
+                initialHeightValue && !isNaN(initialHeightValue)
+                  ? initialHeightValue
+                  : undefined
+              }
+              height={
+                heightValue && !isNaN(heightValue) ? heightValue : undefined
+              }
+              imperativeRef={frameRef}
+              resizable
+            />
+            <A11yResultPanel
+              onUpdate={() => {
+                if (frameRef.current) {
+                  setStatus('loading');
+
+                  frameRef.current.sendToChild({
+                    type: 'requestA11yCheck',
+                  });
+                }
+              }}
+            />
+          </>
         ) : (
           <CodePreviewFrame code={props.code} lang={props.lang} />
         )}

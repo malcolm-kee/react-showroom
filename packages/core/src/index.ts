@@ -20,7 +20,7 @@ export { callAll, noop } from './fn-lib';
 export type { Callback } from './fn-lib';
 export { getSafeName } from './get-safe-name';
 export { isEqualArray } from './is-equal-array';
-export { omit } from './object';
+export { omit, pick } from './object';
 export { compileHtml } from './process-html';
 export { parseQueryString, stringifyQueryString } from './query-string';
 export { removeTrailingSlash } from './remove-trailing-slash';

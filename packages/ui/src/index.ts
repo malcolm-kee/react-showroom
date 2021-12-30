@@ -4,6 +4,7 @@ export const useConstant = useConstantImpl;
 export { useId } from '@radix-ui/react-id';
 export { Root as Portal } from '@radix-ui/react-portal';
 export * from './components/alert';
+export { BareButton } from './components/bare-button';
 export { Breadcrumbs } from './components/breadcrumbs';
 export { Button } from './components/button';
 export { Checkbox } from './components/checkbox';
