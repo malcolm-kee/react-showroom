@@ -87,9 +87,6 @@ export type Message =
       active: boolean;
     }
   | {
-      type: 'requestA11yCheck';
-    }
-  | {
       type: 'a11yCheckResult';
       result: Pick<AxeResults, 'incomplete' | 'passes' | 'violations'>;
     }

@@ -64,8 +64,7 @@ export const CodeLiveEditor = ({
 
   const frameRef = React.useRef<CodePreviewIframeImperative>(null);
   const [isMeasuring, setIsMeasuring] = React.useState(false);
-  const [color, setColor] = React.useState('');
-  const highlightCurrentFrameItems = useHighlights({ color });
+  const highlightCurrentFrameItems = useHighlights();
 
   const highlightFrameItems = React.useCallback(
     (selectors: string[], newColor: string) => {
@@ -78,8 +77,7 @@ export const CodeLiveEditor = ({
           });
         }
       } else {
-        setColor(newColor);
-        highlightCurrentFrameItems(selectors);
+        highlightCurrentFrameItems(selectors, newColor);
       }
     },
     [highlightCurrentFrameItems]

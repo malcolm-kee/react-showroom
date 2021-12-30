@@ -25,8 +25,20 @@ export const PreviewConsoleProvider = (props: {
 }) => {
   const [msgs, setMsgs] = React.useState<Array<ConsoleMessage>>([]);
 
+  const isMountedRef = React.useRef(true);
+
+  React.useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   const previewContext = React.useMemo(() => {
     const addMessage = (level: LogLevel, ...msgs: any[]) => {
+      if (!isMountedRef.current) {
+        return;
+      }
+
       setMsgs((oldMsgs) => {
         const lastMessage = oldMsgs[oldMsgs.length - 1];
 

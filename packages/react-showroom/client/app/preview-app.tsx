@@ -2,11 +2,17 @@ import {
   isDefined,
   isFunction,
   isNumber,
-  SupportedLanguage,
   noop,
+  SupportedLanguage,
 } from '@showroomjs/core';
 import { useMeasure } from '@showroomjs/measure';
-import { Alert, useConstant, useId } from '@showroomjs/ui';
+import {
+  Alert,
+  useConstant,
+  useForceUpdateOnSubtreeChange,
+  useId,
+  useIsInViewport,
+} from '@showroomjs/ui';
 import * as React from 'react';
 import allImports from 'react-showroom-all-imports';
 import CodeblockData from 'react-showroom-codeblocks';
@@ -22,8 +28,8 @@ import { usePreviewWindow } from '../lib/frame-message';
 import { Route, Switch, useParams } from '../lib/routing';
 import { UseCustomStateContext } from '../lib/use-custom-state';
 import { useHeightChange } from '../lib/use-height-change';
-import { ConsoleContext, LogLevel } from '../lib/use-preview-console';
 import { useHighlights } from '../lib/use-highlights';
+import { ConsoleContext, LogLevel } from '../lib/use-preview-console';
 import {
   PropsEditorContext,
   PropsEditorState,
@@ -159,9 +165,7 @@ const PreviewPage = () => {
 
   const rootRef = React.useRef<HTMLDivElement>(null);
 
-  const [color, setColor] = React.useState('');
-
-  const highlightItems = useHighlights({ color });
+  const highlightItems = useHighlights();
 
   const { sendParent } = usePreviewWindow((ev) => {
     if (ev.type === 'code') {
@@ -218,22 +222,23 @@ const PreviewPage = () => {
       setPropsEditor(ev.data);
     } else if (ev.type === 'toggleMeasure') {
       setMeasuring(ev.active);
-    } else if (ev.type === 'requestA11yCheck') {
-      if (rootRef.current) {
-        checkA11y(rootRef.current).then((result) => {
-          sendParent({
-            type: 'a11yCheckResult',
-            result,
-          });
-        });
-      }
     } else if (ev.type === 'highlightElements') {
-      highlightItems(ev.selectors);
-      setColor(ev.color);
+      highlightItems(ev.selectors, ev.color);
     }
   });
 
+  const { inViewport } = useIsInViewport({
+    target: rootRef,
+    init: observerInit,
+  });
+
+  useForceUpdateOnSubtreeChange(rootRef);
+
   React.useEffect(() => {
+    if (!inViewport) {
+      return;
+    }
+
     if (rootRef.current) {
       let isCurrent = true;
       checkA11y(rootRef.current)
@@ -451,6 +456,10 @@ const PreviewPage = () => {
       </ConsoleContext.Provider>
     </UseCustomStateContext.Provider>
   );
+};
+
+const observerInit: IntersectionObserverInit = {
+  rootMargin: '20% 0px',
 };
 
 const getDomEventInfo = (ev: React.SyntheticEvent) => {

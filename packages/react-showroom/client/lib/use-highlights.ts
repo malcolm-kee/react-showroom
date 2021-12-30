@@ -2,9 +2,10 @@ import { isEqualArray, dedupeArray } from '@showroomjs/core';
 import { useId } from '@showroomjs/ui';
 import * as React from 'react';
 
-export const useHighlights = (options: { color: string; root?: boolean }) => {
-  const color = options.color || '#EF4444';
-  const root = options.root || '';
+export const useHighlights = () => {
+  const [colorValue, setColorValue] = React.useState('');
+
+  const color = colorValue || '#EF4444';
   const id = useId();
   const [elementSelectors, setElementSelectors] = React.useState<Array<string>>(
     []
@@ -20,7 +21,7 @@ export const useHighlights = (options: { color: string; root?: boolean }) => {
     sheet.innerHTML = elementSelectors
       .map(
         (target) =>
-          `${root} ${target}{
+          `${target}{
           ${highlightStyle(color)}
          }`
       )
@@ -30,11 +31,14 @@ export const useHighlights = (options: { color: string; root?: boolean }) => {
     return () => {
       document.head.removeChild(sheet);
     };
-  }, [elementSelectors, color, root]);
+  }, [elementSelectors, color]);
 
   return React.useCallback(function highlightElements(
-    newElements: Array<string>
+    newElements: Array<string>,
+    newColor: string
   ) {
+    setColorValue(newColor);
+
     const elements = dedupeArray(newElements);
 
     setElementSelectors((current) =>

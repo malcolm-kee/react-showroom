@@ -29,6 +29,29 @@ const A11yResultContext = createNameContext<A11yResultContextType>(
 
 export const useA11yResult = () => React.useContext(A11yResultContext);
 
+const isEqualLength = <T extends unknown>(arr1: T[], arr2: T[]) =>
+  arr1.length === arr2.length;
+
+const keys = ['violations', 'passes', 'incomplete'] as const;
+
+const isDifferentResult = (result1: A11yResult, result2: A11yResult) => {
+  if (keys.some((key) => !isEqualLength(result1[key], result2[key]))) {
+    return true;
+  }
+
+  if (
+    keys.some((key) =>
+      result1[key].some(
+        (v, i) => !isEqualLength(v.nodes, result2[key][i].nodes)
+      )
+    )
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
 export const A11yResultContextProvider = (props: {
   children: React.ReactNode;
 }) => {
@@ -40,9 +63,12 @@ export const A11yResultContextProvider = (props: {
       value={React.useMemo(
         () => ({
           result,
-          setResult: function (result) {
-            if (result) {
-              setResult(result);
+          setResult: function (newResult) {
+            if (
+              newResult &&
+              (!result || isDifferentResult(result, newResult))
+            ) {
+              setResult(newResult);
               setStatus('success');
             }
           },

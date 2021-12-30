@@ -23,6 +23,7 @@ export { isEqualArray } from './is-equal-array';
 export { omit, pick } from './object';
 export { compileHtml } from './process-html';
 export { parseQueryString, stringifyQueryString } from './query-string';
+export { Queue } from './queue';
 export { removeTrailingSlash } from './remove-trailing-slash';
 export { safeEval } from './safe-eval';
 export type { Ssr } from './ssr-types';
