@@ -31,7 +31,7 @@ export const A11yResultPanel = (props: {
         items.map((item) => item.nodes.map((node) => node.target[0]))
       ).filter(isDefined)
     );
-  }, [result]);
+  }, [result, activeTab]);
 
   const [highlightedItems, setHighlightedItems] = React.useState<Array<string>>(
     []

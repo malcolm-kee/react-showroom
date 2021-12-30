@@ -2,17 +2,10 @@ import {
   isDefined,
   isFunction,
   isNumber,
-  noop,
   SupportedLanguage,
 } from '@showroomjs/core';
 import { useMeasure } from '@showroomjs/measure';
-import {
-  Alert,
-  useConstant,
-  useForceUpdateOnSubtreeChange,
-  useId,
-  useIsInViewport,
-} from '@showroomjs/ui';
+import { Alert, useConstant, useId } from '@showroomjs/ui';
 import * as React from 'react';
 import allImports from 'react-showroom-all-imports';
 import CodeblockData from 'react-showroom-codeblocks';
@@ -20,12 +13,12 @@ import allCompMetadata from 'react-showroom-comp-metadata?showroomAllComp';
 import Wrapper from 'react-showroom-wrapper';
 import { AllComponents } from '../all-components';
 import { CodePreviewFrame } from '../components/code-preview-frame';
-import { checkA11y } from '../lib/check-a11y';
 import { CodeImportsContextProvider } from '../lib/code-imports-context';
 import { CodeVariablesContextProvider } from '../lib/code-variables-context';
 import { ComponentMetaContext } from '../lib/component-props-context';
 import { usePreviewWindow } from '../lib/frame-message';
 import { Route, Switch, useParams } from '../lib/routing';
+import { useA11yCheck } from '../lib/use-a11y-check';
 import { UseCustomStateContext } from '../lib/use-custom-state';
 import { useHeightChange } from '../lib/use-height-change';
 import { useHighlights } from '../lib/use-highlights';
@@ -227,35 +220,12 @@ const PreviewPage = () => {
     }
   });
 
-  const { inViewport } = useIsInViewport({
-    target: rootRef,
-    init: observerInit,
-  });
-
-  useForceUpdateOnSubtreeChange(rootRef);
-
-  React.useEffect(() => {
-    if (!inViewport) {
-      return;
-    }
-
-    if (rootRef.current) {
-      let isCurrent = true;
-      checkA11y(rootRef.current)
-        .then((result) => {
-          if (isCurrent) {
-            sendParent({
-              type: 'a11yCheckResult',
-              result,
-            });
-          }
-        })
-        .catch(noop);
-      return () => {
-        isCurrent = false;
-      };
-    }
-  });
+  useA11yCheck(rootRef, (result) =>
+    sendParent({
+      type: 'a11yCheckResult',
+      result,
+    })
+  );
 
   React.useEffect(() => {
     function getHeight() {

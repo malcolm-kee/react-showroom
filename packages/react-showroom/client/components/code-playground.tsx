@@ -2,17 +2,18 @@ import { SupportedLanguage } from '@showroomjs/core';
 import { Collapsible, Tabs } from '@showroomjs/ui';
 import * as React from 'react';
 import { useCodeBlocks } from '../lib/codeblocks-context';
+import { useHighlights } from '../lib/use-highlights';
 import { PreviewConsoleProvider } from '../lib/use-preview-console';
 import { PropsEditorProvider } from '../lib/use-props-editor';
 import { useTargetAudience } from '../lib/use-target-audience';
 import { A11yResultPanel } from './a11y-result-panel';
 import { A11ySummary } from './a11y-summary';
 import { Div } from './base';
-import { CodePreviewFrame } from './code-preview-frame';
 import {
   CodePreviewIframe,
   CodePreviewIframeImperative,
 } from './code-preview-iframe';
+import { CodePreviewShowroomFrame } from './code-preview-showroom-frame';
 import { ConsolePanel } from './console-panel';
 import { LinkToStandaloneView } from './link-to-standalone-view';
 import { MeasuringButton } from './measuring-button';
@@ -35,7 +36,7 @@ export const CodePlayground = ({
   ...props
 }: CodePlaygroundProps) => {
   const [showDetails, setShowDetails] = React.useState<boolean | undefined>(
-    true
+    !hasPropsEditor
   );
 
   const targetAudience = useTargetAudience();
@@ -49,54 +50,67 @@ export const CodePlayground = ({
   const frameRef = React.useRef<CodePreviewIframeImperative>(null);
   const [isMeasuring, setIsMeasuring] = React.useState(false);
 
-  const content = (
-    <PreviewConsoleProvider>
-      <Div
-        css={{
-          position: 'relative',
-          roundedT: '$base',
-          ...(frame
-            ? {
-                backgroundColor: '$gray-400',
-                borderBottomRightRadius: '$base',
-                width: '100%',
-              }
-            : {
-                minHeight: 48,
-                border: '1px solid',
-                borderColor: '$gray-300',
-              }),
-        }}
-      >
-        {frame ? (
-          <CodePreviewIframe
-            code={props.code}
-            lang={props.lang}
-            codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
-            initialHeight={
-              initialHeightValue && !isNaN(initialHeightValue)
-                ? initialHeightValue
-                : undefined
-            }
-            height={
-              heightValue && !isNaN(heightValue) ? heightValue : undefined
-            }
-            imperativeRef={frameRef}
-            resizable
-          />
-        ) : (
-          <CodePreviewFrame code={props.code} lang={props.lang} />
-        )}
-      </Div>
-      <ConsolePanel />
-    </PreviewConsoleProvider>
+  const highlightCurrentFrameItems = useHighlights();
+
+  const highlightFrameItems = React.useCallback(
+    (selectors: string[], newColor: string) => {
+      if (frame) {
+        if (frameRef.current) {
+          frameRef.current.sendToChild({
+            type: 'highlightElements',
+            selectors,
+            color: newColor,
+          });
+        }
+      } else {
+        highlightCurrentFrameItems(selectors, newColor);
+      }
+    },
+    [highlightCurrentFrameItems]
   );
 
-  return hasPropsEditor ? (
-    content
-  ) : (
+  return (
     <PropsEditorProvider>
-      {content}
+      <PreviewConsoleProvider>
+        <Div
+          css={{
+            position: 'relative',
+            roundedT: '$base',
+            ...(frame
+              ? {
+                  backgroundColor: '$gray-400',
+                  borderBottomRightRadius: '$base',
+                  width: '100%',
+                }
+              : {
+                  minHeight: 48,
+                  border: '1px solid',
+                  borderColor: '$gray-300',
+                }),
+          }}
+        >
+          {frame ? (
+            <CodePreviewIframe
+              code={props.code}
+              lang={props.lang}
+              codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
+              initialHeight={
+                initialHeightValue && !isNaN(initialHeightValue)
+                  ? initialHeightValue
+                  : undefined
+              }
+              height={
+                heightValue && !isNaN(heightValue) ? heightValue : undefined
+              }
+              imperativeRef={frameRef}
+              resizable
+            />
+          ) : (
+            <CodePreviewShowroomFrame code={props.code} lang={props.lang} />
+          )}
+        </Div>
+        <ConsolePanel />
+      </PreviewConsoleProvider>
       <Collapsible.Root open={showDetails} onOpenChange={setShowDetails}>
         <Div
           css={{
@@ -128,9 +142,9 @@ export const CodePlayground = ({
               gap: '$1',
             }}
           >
+            <A11ySummary />
             {frame && (
               <>
-                <A11ySummary />
                 <MeasuringButton
                   onClick={() => {
                     if (frameRef.current) {
@@ -154,16 +168,20 @@ export const CodePlayground = ({
           </Div>
         </Div>
         <Collapsible.Content animate>
-          {frame ? (
+          {hasPropsEditor ? (
+            <Div
+              css={{
+                backgroundColor: '$gray-200',
+              }}
+            >
+              <A11yResultPanel highlightItems={highlightFrameItems} />
+            </Div>
+          ) : (
             <Tabs.Root
               defaultValue="props"
               onValueChange={(tab) => {
-                if (tab === 'props' && frameRef.current) {
-                  frameRef.current.sendToChild({
-                    type: 'highlightElements',
-                    selectors: [],
-                    color: '',
-                  });
+                if (tab === 'props') {
+                  highlightFrameItems([], '');
                 }
               }}
             >
@@ -175,21 +193,9 @@ export const CodePlayground = ({
                 <PropsEditorPanel />
               </Tabs.Content>
               <Tabs.Content value="a11y">
-                <A11yResultPanel
-                  highlightItems={(selectors, color) => {
-                    if (frameRef.current) {
-                      frameRef.current.sendToChild({
-                        type: 'highlightElements',
-                        selectors,
-                        color,
-                      });
-                    }
-                  }}
-                />
+                <A11yResultPanel highlightItems={highlightFrameItems} />
               </Tabs.Content>
             </Tabs.Root>
-          ) : (
-            <PropsEditorPanel />
           )}
         </Collapsible.Content>
       </Collapsible.Root>
