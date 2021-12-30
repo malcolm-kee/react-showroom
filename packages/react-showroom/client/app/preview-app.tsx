@@ -3,6 +3,7 @@ import {
   isFunction,
   isNumber,
   SupportedLanguage,
+  noop,
 } from '@showroomjs/core';
 import { useMeasure } from '@showroomjs/measure';
 import { Alert, useConstant, useId } from '@showroomjs/ui';
@@ -22,6 +23,7 @@ import { Route, Switch, useParams } from '../lib/routing';
 import { UseCustomStateContext } from '../lib/use-custom-state';
 import { useHeightChange } from '../lib/use-height-change';
 import { ConsoleContext, LogLevel } from '../lib/use-preview-console';
+import { useHighlights } from '../lib/use-highlights';
 import {
   PropsEditorContext,
   PropsEditorState,
@@ -157,6 +159,10 @@ const PreviewPage = () => {
 
   const rootRef = React.useRef<HTMLDivElement>(null);
 
+  const [color, setColor] = React.useState('');
+
+  const highlightItems = useHighlights({ color });
+
   const { sendParent } = usePreviewWindow((ev) => {
     if (ev.type === 'code') {
       setState(ev);
@@ -214,26 +220,37 @@ const PreviewPage = () => {
       setMeasuring(ev.active);
     } else if (ev.type === 'requestA11yCheck') {
       if (rootRef.current) {
-        checkA11y(rootRef.current).then((result) =>
+        checkA11y(rootRef.current).then((result) => {
           sendParent({
             type: 'a11yCheckResult',
             result,
-          })
-        );
+          });
+        });
       }
+    } else if (ev.type === 'highlightElements') {
+      highlightItems(ev.selectors);
+      setColor(ev.color);
     }
   });
 
   React.useEffect(() => {
     if (rootRef.current) {
-      checkA11y(rootRef.current).then((result) => {
-        sendParent({
-          type: 'a11yCheckResult',
-          result,
-        });
-      });
+      let isCurrent = true;
+      checkA11y(rootRef.current)
+        .then((result) => {
+          if (isCurrent) {
+            sendParent({
+              type: 'a11yCheckResult',
+              result,
+            });
+          }
+        })
+        .catch(noop);
+      return () => {
+        isCurrent = false;
+      };
     }
-  }, []);
+  });
 
   React.useEffect(() => {
     function getHeight() {

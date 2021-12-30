@@ -23,6 +23,7 @@ export * from './components/search-dialog';
 export { Select } from './components/select';
 export { Switch } from './components/switch';
 export { Table } from './components/table';
+export { Tabs } from './components/tabs';
 export * from './components/text-input';
 export { Textarea } from './components/textarea';
 export { ToggleButton } from './components/toggle-button';

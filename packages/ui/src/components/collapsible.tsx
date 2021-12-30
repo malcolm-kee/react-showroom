@@ -47,5 +47,17 @@ export const ToggleIcon = styled(ChevronDownIcon, {
         transform: 'rotate(-180deg)',
       },
     },
+    direction: {
+      down: {},
+      up: {
+        transform: 'rotate(-180deg)',
+      },
+      right: {
+        transform: 'rotate(-90deg)',
+      },
+      left: {
+        transform: 'rotate(90deg)',
+      },
+    },
   },
 });

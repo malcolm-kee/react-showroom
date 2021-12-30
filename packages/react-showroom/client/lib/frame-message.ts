@@ -92,6 +92,11 @@ export type Message =
   | {
       type: 'a11yCheckResult';
       result: Pick<AxeResults, 'incomplete' | 'passes' | 'violations'>;
+    }
+  | {
+      type: 'highlightElements';
+      selectors: Array<string>;
+      color: string;
     };
 
 export const usePreviewWindow = (onMessage: (data: Message) => void) => {

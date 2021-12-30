@@ -1,105 +1,224 @@
-import {
-  CheckCircleIcon,
-  QuestionMarkCircleIcon,
-  XCircleIcon,
-} from '@heroicons/react/solid';
-import { pulse, styled, Tooltip } from '@showroomjs/ui';
+import { styled, Tabs, Checkbox } from '@showroomjs/ui';
 import * as React from 'react';
-import { useA11yResult } from '../lib/use-a11y-result';
-import { A11yButton } from './a11y-button';
+import { dedupeArray, flattenArray, isDefined } from '@showroomjs/core';
+import { A11yResult, useA11yResult } from '../lib/use-a11y-result';
+import { A11yResultItem } from './a11y-result-item';
 
-export const A11yResultPanel = (props: { onUpdate: () => void }) => {
-  const { result, status } = useA11yResult();
+export const A11yResultPanel = (props: {
+  highlightItems: (selectors: Array<string>, color: string) => void;
+}) => {
+  const { result } = useA11yResult();
+
+  const [activeTab, setActiveTab] = React.useState(() => {
+    if (result) {
+      return getDefaultTab(result);
+    }
+  });
+  const allSelectors = React.useMemo(() => {
+    if (!result || !activeTab) {
+      return [];
+    }
+
+    const items =
+      activeTab === 'violations'
+        ? result.violations
+        : activeTab === 'passes'
+        ? result.passes
+        : result.incomplete;
+
+    return dedupeArray(
+      flattenArray(
+        items.map((item) => item.nodes.map((node) => node.target[0]))
+      ).filter(isDefined)
+    );
+  }, [result]);
+
+  const [highlightedItems, setHighlightedItems] = React.useState<Array<string>>(
+    []
+  );
+  const toggleHighlight = React.useCallback((selector: string) => {
+    setHighlightedItems((prev) =>
+      prev.includes(selector)
+        ? prev.filter((s) => s !== selector)
+        : prev.concat(selector)
+    );
+  }, []);
+  React.useEffect(() => {
+    if (activeTab) {
+      props.highlightItems(highlightedItems, colorByType[activeTab] || '');
+    }
+  }, [highlightedItems]);
+
+  const checkStatus = React.useMemo(() => {
+    if (allSelectors.length === 0) {
+      return 'indeterminate';
+    }
+
+    return allSelectors.every((s) => highlightedItems.includes(s))
+      ? true
+      : allSelectors.some((s) => highlightedItems.includes(s))
+      ? 'indeterminate'
+      : false;
+  }, [allSelectors, highlightedItems]);
+
+  React.useEffect(() => {
+    if (result) {
+      const tab = getDefaultTab(result);
+
+      if (tab) {
+        setActiveTab((prevTab) => prevTab || tab);
+      }
+    }
+  }, [result]);
 
   return (
-    <Root>
-      <Summary>
-        <div>
-          {result && (
-            <Tooltip.Root>
-              <Tooltip.Trigger asChild>
-                <SummaryText loading={status === 'loading'}>
-                  <SummaryTextItem>
-                    {result.passes.length}{' '}
-                    <SuccessIcon aria-label="passes" width={16} height={16} />
-                  </SummaryTextItem>
-                  <SummaryTextItem>
-                    {result.violations.length}{' '}
-                    <DangerIcon
-                      aria-label="violations"
-                      width={16}
-                      height={16}
-                    />
-                  </SummaryTextItem>
-                  <SummaryTextItem>
-                    {result.incomplete.length}{' '}
-                    <UnknownIcon
-                      aria-label="incompletes"
-                      width={16}
-                      height={16}
-                    />
-                  </SummaryTextItem>
-                </SummaryText>
-              </Tooltip.Trigger>
-              <Tooltip.Content>
-                {result.passes.length} passes, {result.violations.length}{' '}
-                violations, {result.incomplete.length} incompletes
-              </Tooltip.Content>
-            </Tooltip.Root>
-          )}
-          <A11yButton onClick={props.onUpdate} />
-        </div>
-      </Summary>
-    </Root>
+    <Tabs.Root
+      value={activeTab}
+      onValueChange={(newTab) => {
+        setActiveTab(newTab);
+        setHighlightedItems([]);
+      }}
+    >
+      <TabNav>
+        <Tabs.RawList>
+          <TabTrigger value="violations">
+            Violations ({result ? result.violations.length : '?'})
+          </TabTrigger>
+          <TabTrigger value="passes">
+            Passes ({result ? result.passes.length : '?'})
+          </TabTrigger>
+          <TabTrigger value="incompletes">
+            Incomplete ({result ? result.incomplete.length : '?'})
+          </TabTrigger>
+        </Tabs.RawList>
+        <CheckboxLabel>
+          <span>Highlight</span>
+          <Checkbox
+            checked={checkStatus}
+            onCheckedChange={(allChecked) => {
+              setHighlightedItems(allChecked ? allSelectors : []);
+            }}
+          />
+        </CheckboxLabel>
+      </TabNav>
+      {result && (
+        <>
+          <TabContent value="violations">
+            {result.violations.length > 0 ? (
+              <ul>
+                {result.violations.map((p) => (
+                  <A11yResultItem
+                    result={p}
+                    type="violation"
+                    highlightedItems={highlightedItems}
+                    setHighlightedItems={setHighlightedItems}
+                    toggleItem={toggleHighlight}
+                    key={p.id}
+                  />
+                ))}
+              </ul>
+            ) : (
+              <NoItemMsg>No applicable item</NoItemMsg>
+            )}
+          </TabContent>
+          <TabContent value="passes">
+            {result.passes.length > 0 ? (
+              <ul>
+                {result.passes.map((p) => (
+                  <A11yResultItem
+                    result={p}
+                    type="pass"
+                    highlightedItems={highlightedItems}
+                    setHighlightedItems={setHighlightedItems}
+                    toggleItem={toggleHighlight}
+                    key={p.id}
+                  />
+                ))}
+              </ul>
+            ) : (
+              <NoItemMsg>No applicable item</NoItemMsg>
+            )}
+          </TabContent>
+          <TabContent value="incompletes">
+            {result.incomplete.length > 0 ? (
+              <ul>
+                {result.incomplete.map((p) => (
+                  <A11yResultItem
+                    result={p}
+                    type="incomplete"
+                    highlightedItems={highlightedItems}
+                    setHighlightedItems={setHighlightedItems}
+                    toggleItem={toggleHighlight}
+                    key={p.id}
+                  />
+                ))}
+              </ul>
+            ) : (
+              <NoItemMsg>No applicable item</NoItemMsg>
+            )}
+          </TabContent>
+        </>
+      )}
+    </Tabs.Root>
   );
 };
 
-const Root = styled('div', {
-  backgroundColor: '$gray-50',
-});
+const getDefaultTab = (result: A11yResult) => {
+  if (result.violations.length > 0) {
+    return 'violations';
+  }
+  if (result.passes.length > 0) {
+    return 'passes';
+  }
+  if (result.incomplete.length > 0) {
+    return 'incompletes';
+  }
+};
 
-const Summary = styled('div', {
-  display: 'flex',
-  justifyContent: 'flex-end',
-  alignItems: 'center',
-  gap: '$3',
-  color: '$gray-500',
-  fontSize: '$sm',
-  lineHeight: '$sm',
-});
+const colorByType: Record<string, string> = {
+  violations: '#EF4444',
+  passes: '#10B981',
+  incompletes: '#F59E0B',
+};
 
-const SummaryText = styled('div', {
+const TabTrigger = styled(Tabs.RawTrigger, {
   display: 'inline-flex',
   alignItems: 'center',
-  gap: '$1',
-  variants: {
-    loading: {
-      true: {
-        animation: `${pulse} 2s cubic-bezier(0.4, 0, 0.6, 1) infinite`,
-      },
-    },
+  px: '$2',
+  py: '$1',
+  fontSize: '$sm',
+  lineHeight: '$sm',
+  borderBottom: '2px solid transparent',
+  outlineRing: '',
+  '&[data-state="active"]': {
+    borderColor: '$primary-800',
   },
 });
 
-const SummaryTextItem = styled('span', {
+const CheckboxLabel = styled('label', {
   display: 'inline-flex',
+  alignItems: 'center',
+  gap: '$2',
+  fontSize: '$sm',
+  lineHeight: '$sm',
+  color: '$gray-700',
+  px: '$4',
+});
+
+const TabNav = styled('div', {
+  display: 'flex',
+  justifyContent: 'space-between',
   alignItems: 'center',
 });
 
-const SuccessIcon = styled(CheckCircleIcon, {
-  color: '$green-500',
-  width: 16,
-  height: 16,
+const TabContent = styled(Tabs.RawContent, {
+  backgroundColor: 'White',
 });
 
-const DangerIcon = styled(XCircleIcon, {
-  color: '$red-500',
-  width: 16,
-  height: 16,
-});
-
-const UnknownIcon = styled(QuestionMarkCircleIcon, {
-  color: '$yellow-500',
-  width: 16,
-  height: 16,
+const NoItemMsg = styled('p', {
+  px: '$2',
+  py: '$1',
+  color: '$gray-600',
+  fontSize: '$sm',
+  lineHeight: '$sm',
 });

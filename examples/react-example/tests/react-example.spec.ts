@@ -96,7 +96,7 @@ test.describe('react example', () => {
   test('props editor for complex prop', async ({ page }) => {
     await page.goto('/core/imageviewer');
 
-    await page.waitForSelector('[aria-label="Hide Props Editor"]');
+    await page.waitForSelector('h1:has-text("ImageViewer")');
 
     const firstFrame = page.mainFrame().childFrames()[0];
 

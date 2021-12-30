@@ -794,7 +794,7 @@ export const StandaloneCodeLiveEditor = ({
               >
                 {!isCommenting && isPropsEditor && (
                   <Div css={{ flex: 1 }}>
-                    <PropsEditorPanel background="white" />
+                    <PropsEditorPanel />
                   </Div>
                 )}
                 {showEditor &&
