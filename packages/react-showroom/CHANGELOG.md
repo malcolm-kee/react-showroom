@@ -1,5 +1,12 @@
 # react-showroom
 
+## 1.20.1
+
+### Patch Changes
+
+- 33f0625: Bump dependencies
+- 33f0625: Fix marker label is duplicated when example widths are specified
+
 ## 1.20.0
 
 ### Minor Changes
