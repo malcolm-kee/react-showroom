@@ -61,6 +61,11 @@ import {
   StandaloneCodeLiveEditorCopyButton,
 } from './standalone-code-live-editor-copy-button';
 import { StandaloneCodeLiveEditorPreviewList } from './standalone-code-live-editor-preview';
+import { A11yResultByFrameContextProvider } from '../lib/use-a11y-result';
+import {
+  A11yResultPanelForFrames,
+  A11yResultPanelForFramesProps,
+} from './a11y-result-panel-for-frames';
 
 const CodeAdvancedEditor = lazy(() =>
   import('./code-advanced-editor').then((m) => ({
@@ -246,668 +251,772 @@ export const StandaloneCodeLiveEditor = ({
 
   const toolbarSize = useSize(toolbarRef);
 
+  const [a11yTab, setA11yTab] = React.useState(() =>
+    frameDimensions.length > 0 ? frameDimensions[0].name : ''
+  );
+
+  const [higlightedEls, setHighlightedEls] = React.useState<
+    { frameName: string; selectors: string[]; color: string } | undefined
+  >(undefined);
+  const resetHighlights = () =>
+    setHighlightedEls(
+      (prev) =>
+        prev && {
+          ...prev,
+          selectors: [],
+          color: '',
+        }
+    );
+
   return (
     <PreviewConsoleProvider>
-      <Div css={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <Toolbar
-          style={{
-            top: 'var(--header-height, 0px)',
-          }}
-          ref={toolbarRef}
-        >
-          <Div
-            css={{
-              display: 'flex',
+      <A11yResultByFrameContextProvider>
+        <Div css={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <Toolbar
+            style={{
+              top: 'var(--header-height, 0px)',
             }}
+            ref={toolbarRef}
           >
             <Div
               css={{
                 display: 'flex',
-                alignItems: 'center',
-                gap: '$2',
-                paddingRight: '$2',
-                borderRight: '1px solid $gray-200',
               }}
             >
-              <TextTooltip label="Comment">
-                <ToggleButton
-                  pressed={isCommenting}
-                  onPressedChange={(isCommentMode) => {
-                    setIsCommenting(
-                      isCommentMode,
-                      isCommentMode ? 'true' : undefined
-                    );
-
-                    if (!isCommentMode) {
-                      clear();
-                    }
-                  }}
-                  css={
-                    isCommenting
-                      ? {
-                          backgroundColor: '$primary-700',
-                        }
-                      : undefined
-                  }
-                  data-testid="comment-toggle"
-                >
-                  {isCommenting ? <CommentOnIcon /> : <CommentIcon />}
-                </ToggleButton>
-              </TextTooltip>
-            </Div>
-            {!isCommenting && !isPropsEditor && (
-              <Div
-                css={{
-                  display: 'flex',
-                  gap: '$2',
-                  px: '$2',
-                  borderRight: '1px solid $gray-200',
-                }}
-              >
-                <TextTooltip label="Editor">
-                  <ToggleButton
-                    pressed={showEditor}
-                    onPressedChange={(show) =>
-                      setShowEditor(show, show ? undefined : 'true')
-                    }
-                    css={
-                      showEditor
-                        ? {
-                            color: '$gray-600',
-                            backgroundColor: '$gray-100',
-                          }
-                        : undefined
-                    }
-                    data-testid="editor-toggle"
-                  >
-                    <CodeIcon width={20} height={20} />
-                  </ToggleButton>
-                </TextTooltip>
-                {process.env.ENABLE_ADVANCED_EDITOR
-                  ? showEditor && (
-                      <TextTooltip label="Advanced Editor">
-                        <ToggleButton
-                          pressed={useAdvancedEditor}
-                          onPressedChange={setUseAdvancedEditor}
-                          css={{
-                            display: 'none',
-                            '@md': {
-                              display: 'flex',
-                            },
-                            ...(useAdvancedEditor
-                              ? {
-                                  color: '$gray-600',
-                                  backgroundColor: '$gray-100',
-                                }
-                              : {}),
-                          }}
-                          data-testid="advanced-editor-toggle"
-                        >
-                          <TerminalIcon width={20} height={20} />
-                        </ToggleButton>
-                      </TextTooltip>
-                    )
-                  : null}
-                <TextTooltip label="Preview">
-                  <ToggleButton
-                    pressed={showPreview}
-                    onPressedChange={(show) =>
-                      setShowPreview(show, show ? undefined : 'true')
-                    }
-                    disabled={isCommenting}
-                    css={
-                      showPreview
-                        ? {
-                            color: '$gray-600',
-                            backgroundColor: '$gray-100',
-                          }
-                        : undefined
-                    }
-                    data-testid="preview-toggle"
-                  >
-                    <EyeIcon width={20} height={20} />
-                  </ToggleButton>
-                </TextTooltip>
-              </Div>
-            )}
-            <Div
-              css={{
-                display: 'block',
-                px: '$2',
-                '@sm': {
-                  display: 'none',
-                },
-              }}
-            >
-              {showMultipleScreens && (showPreview || isCommenting) && (
-                <DropdownMenu>
-                  <DropdownMenu.Trigger asChild>
-                    <MenuButton>
-                      <ScreensIcon width={20} height={20} />
-                    </MenuButton>
-                  </DropdownMenu.Trigger>
-                  <CheckboxDropdown>
-                    {frameDimensions.map((frame) => {
-                      return (
-                        <CheckboxDropdown.Item
-                          checked={
-                            !hiddenSizes.some(
-                              ([w, h]) =>
-                                w === frame.width && h === frame.height
-                            )
-                          }
-                          onCheckedChange={(checked) => {
-                            if (checked) {
-                              setHiddenSizes(
-                                hiddenSizes.filter(
-                                  (s) =>
-                                    !(
-                                      s[0] === frame.width &&
-                                      s[1] === frame.height
-                                    ) && frameDimensions.includes(frame)
-                                )
-                              );
-                            } else {
-                              setHiddenSizes(
-                                hiddenSizes.concat([
-                                  [frame.width, frame.height],
-                                ])
-                              );
-                            }
-                          }}
-                          key={frame.name}
-                        >
-                          {frame.name}
-                        </CheckboxDropdown.Item>
-                      );
-                    })}
-                  </CheckboxDropdown>
-                </DropdownMenu>
-              )}
-            </Div>
-            {showMultipleScreens && (showPreview || isCommenting) && (
-              <Div
-                css={{
-                  display: 'none',
-                  '@sm': {
-                    display: 'flex',
-                    gap: '$1',
-                    px: '$2',
-                    borderRight: '1px solid $gray-200',
-                  },
-                }}
-              >
-                {frameDimensions.map((frame) => (
-                  <ToggleButton
-                    pressed={
-                      !hiddenSizes.some(
-                        ([w, h]) => w === frame.width && h === frame.height
-                      )
-                    }
-                    onPressedChange={(isPressed) => {
-                      if (isPressed) {
-                        setHiddenSizes(
-                          hiddenSizes.filter(
-                            (s) =>
-                              !(
-                                s[0] === frame.width && s[1] === frame.height
-                              ) && frameDimensions.includes(frame)
-                          )
-                        );
-                      } else {
-                        setHiddenSizes(
-                          hiddenSizes.concat([[frame.width, frame.height]])
-                        );
-                      }
-                    }}
-                    key={frame.name}
-                  >
-                    {frame.name}
-                  </ToggleButton>
-                ))}
-              </Div>
-            )}
-            {(showPreview || isCommenting) && (
               <Div
                 css={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '$2',
-                  px: '$2',
+                  paddingRight: '$2',
+                  borderRight: '1px solid $gray-200',
                 }}
               >
-                {!isCommenting && (
-                  <>
-                    <TextTooltip label="Measure">
-                      <ToggleButton
-                        pressed={isMeasuring}
-                        onPressedChange={setIsMeasuring}
-                        css={
-                          isMeasuring
-                            ? {
-                                backgroundColor: '$primary-700',
-                              }
-                            : undefined
-                        }
-                        data-testid="measure-toggle"
-                      >
-                        <MeasureIcon
-                          active={isMeasuring}
-                          width={20}
-                          height={20}
-                        />
-                      </ToggleButton>
-                    </TextTooltip>
-                    <TextTooltip
-                      label={
-                        process.env.SYNC_STATE_TYPE === 'state'
-                          ? 'Sync State'
-                          : 'Sync Interactions'
-                      }
-                    >
-                      <ToggleButton
-                        pressed={syncState}
-                        onPressedChange={setSyncState}
-                        css={
-                          syncState
-                            ? {
-                                backgroundColor: '$primary-700',
-                              }
-                            : undefined
-                        }
-                        data-testid="sync-state-toggle"
-                      >
-                        <SyncIcon active={syncState} width={20} height={20} />
-                      </ToggleButton>
-                    </TextTooltip>
-                  </>
-                )}
-                <TextTooltip label="Sync Scroll">
+                <TextTooltip label="Comment">
                   <ToggleButton
-                    pressed={syncScroll}
-                    onPressedChange={setSyncScroll}
+                    pressed={isCommenting}
+                    onPressedChange={(isCommentMode) => {
+                      setIsCommenting(
+                        isCommentMode,
+                        isCommentMode ? 'true' : undefined
+                      );
+
+                      if (!isCommentMode) {
+                        clear();
+                      }
+                    }}
                     css={
-                      syncScroll
+                      isCommenting
                         ? {
                             backgroundColor: '$primary-700',
                           }
                         : undefined
                     }
-                    data-testid="sync-scroll-toggle"
+                    data-testid="comment-toggle"
                   >
-                    <ScrollIcon active={syncScroll} />
+                    {isCommenting ? <CommentOnIcon /> : <CommentIcon />}
                   </ToggleButton>
                 </TextTooltip>
               </Div>
-            )}
-          </Div>
-          <Div
-            css={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '$1',
-            }}
-          >
-            {showMultipleScreens && showPreview && (
-              <>
-                <DropdownMenu>
-                  <DropdownMenu.Trigger asChild>
-                    <MenuButton>
-                      <BtnText>{zoomLevel}% </BtnText>
-                      <ZoomIcon width={20} height={20} />
-                    </MenuButton>
-                  </DropdownMenu.Trigger>
-                  <RadioDropdown
-                    value={zoomLevel}
-                    onChangeValue={(level) =>
-                      setZoomLevel(level, level === '75' ? undefined : level)
-                    }
-                    options={zoomOptions}
-                    className={zoomDropdown()}
-                  />
-                </DropdownMenu>
-                {showDeviceFrameSetting && (
-                  <TextTooltip
-                    label={
-                      showDeviceFrame
-                        ? 'Hide device frame'
-                        : 'Show device frame'
-                    }
-                  >
+              {!isCommenting && !isPropsEditor && (
+                <Div
+                  css={{
+                    display: 'flex',
+                    gap: '$2',
+                    px: '$2',
+                    borderRight: '1px solid $gray-200',
+                  }}
+                >
+                  <TextTooltip label="Editor">
                     <ToggleButton
-                      pressed={showDeviceFrame}
-                      onPressedChange={(pressed) =>
-                        setShowDeviceFrame(
-                          pressed,
-                          pressed ? undefined : 'false'
-                        )
+                      pressed={showEditor}
+                      onPressedChange={(show) =>
+                        setShowEditor(show, show ? undefined : 'true')
                       }
                       css={
-                        showDeviceFrame
+                        showEditor
                           ? {
-                              backgroundColor: '$primary-700',
+                              color: '$gray-600',
+                              backgroundColor: '$gray-100',
                             }
                           : undefined
                       }
-                      data-testid="device-toggle"
+                      data-testid="editor-toggle"
                     >
-                      <DeviceIcon active={showDeviceFrame} />
+                      <CodeIcon width={20} height={20} />
                     </ToggleButton>
                   </TextTooltip>
-                )}
-                {!isCommenting && (
-                  <TextTooltip label="Wrap">
-                    <ToggleButton
-                      pressed={wrapPreview}
-                      onPressedChange={setWrapPreview}
-                      css={
-                        wrapPreview
-                          ? {
-                              backgroundColor: '$primary-700',
-                            }
-                          : undefined
-                      }
-                      data-testid="wrap-preview-toggle"
-                    >
-                      <WrapIcon active={wrapPreview} />
-                    </ToggleButton>
-                  </TextTooltip>
-                )}
-              </>
-            )}
-            <StandaloneCodeLiveEditorCopyButton
-              getTextToCopy={() => {
-                if (window) {
-                  return window.location.href;
-                }
-                return '';
-              }}
-            />
-          </Div>
-        </Toolbar>
-        <PropsEditorProvider serializeToParam>
-          <Div
-            className={className}
-            css={{
-              display: 'flex',
-              backgroundColor: '$gray-200',
-              ...(isDockToRight
-                ? {
-                    flexDirection: 'row',
-                    width: '100%',
-                  }
-                : {
-                    flex: 1,
-                    flexDirection: 'column',
-                  }),
-            }}
-            style={
-              isDockToRight && toolbarSize
-                ? {
-                    height: `calc(100vh - var(--header-height, 64px) - var(--breadcrumb-height, 0px) - ${toolbarSize.height}px)`,
-                  }
-                : undefined
-            }
-          >
-            <Div
-              css={
-                isDockToRight
-                  ? { flex: 1, overflow: 'auto', overscrollBehavior: 'contain' }
-                  : undefined
-              }
-            >
-              {(showPreview || isCommenting) &&
-                (showMultipleScreens ? (
-                  <StandaloneCodeLiveEditorPreviewList
-                    code={debouncedCode}
-                    lang={props.lang}
-                    codeHash={props.codeHash}
-                    isCommenting={isCommenting}
-                    isMeasuring={isMeasuring}
-                    hiddenSizes={hiddenSizes}
-                    fitHeight={showDeviceFrame && (!showEditor || isCommenting)}
-                    zoom={zoomLevel}
-                    showFrame={showDeviceFrame}
-                    onClickCommentPoint={(coord) => {
-                      const previewList = previewListRef.current;
-
-                      if (previewList) {
-                        const listRect = previewList.getBoundingClientRect();
-
-                        const listX = listRect.left + window.pageXOffset;
-                        const listY = listRect.top + window.pageYOffset;
-                        const elementRelative = {
-                          x: coord.x - listX + previewList.scrollLeft,
-                          y: coord.y - listY + previewList.scrollTop,
-                        };
-
-                        setTargetCoord(elementRelative);
-                      }
-                    }}
-                    ref={previewListRef}
-                    syncState={syncState}
-                    syncScroll={syncScroll}
-                    wrapContent={!isCommenting && wrapPreview}
-                  >
-                    {isCommenting && targetCoord ? (
-                      <StandaloneCodeLiveEditorCommentPopover
-                        open
-                        onOpenChange={(shouldOpen) => {
-                          if (!shouldOpen) {
-                            setTargetCoord(undefined);
-                          }
-                        }}
-                        onAdd={(newComment) => {
-                          add({
-                            text: newComment,
-                            zoomLevel,
-                            hiddenSizes: hiddenSizes,
-                            left: targetCoord.x,
-                            top: targetCoord.y,
-                            showFrame: showDeviceFrame,
-                          });
-                          setTargetCoord(undefined);
-                        }}
-                      >
-                        <Marker
-                          css={{
-                            position: 'absolute',
-                            top: targetCoord.y,
-                            left: targetCoord.x,
-                          }}
-                        />
-                      </StandaloneCodeLiveEditorCommentPopover>
-                    ) : null}
-                    {isCommenting &&
-                      displayedComments.map((comment) => {
-                        const isActive = comment.id === activeComment;
-                        return (
-                          <Div
+                  {process.env.ENABLE_ADVANCED_EDITOR
+                    ? showEditor && (
+                        <TextTooltip label="Advanced Editor">
+                          <ToggleButton
+                            pressed={useAdvancedEditor}
+                            onPressedChange={setUseAdvancedEditor}
                             css={{
-                              position: 'absolute',
-                              top: comment.top,
-                              left: comment.left,
-                              pointerEvents: 'auto',
-                              cursor: 'pointer',
-                              width: 20,
-                              height: 20,
-                              zIndex: 5,
+                              display: 'none',
+                              '@md': {
+                                display: 'flex',
+                              },
+                              ...(useAdvancedEditor
+                                ? {
+                                    color: '$gray-600',
+                                    backgroundColor: '$gray-100',
+                                  }
+                                : {}),
                             }}
-                            key={comment.id}
+                            data-testid="advanced-editor-toggle"
                           >
-                            <MarkerButton
-                              onClick={(ev) => {
-                                ev.stopPropagation();
-                                setActiveComment(comment.id);
-                              }}
-                              type="button"
-                            >
-                              <Marker
-                                iconClass={iconClass({
-                                  active: isActive,
-                                })}
-                                data-active-comment={isActive ? true : null}
-                              />
-                            </MarkerButton>
-                          </Div>
-                        );
-                      })}
-                    {isCommenting && (
-                      <Div
-                        onClick={(ev) => ev.stopPropagation()}
-                        css={{
-                          position: 'absolute',
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          height: 12,
-                          pointerEvents: 'auto',
-                        }}
-                      />
-                    )}
-                  </StandaloneCodeLiveEditorPreviewList>
-                ) : (
-                  <CodePreviewIframe
-                    code={debouncedCode}
-                    lang={props.lang}
-                    codeHash={props.codeHash}
-                  />
-                ))}
-              <ConsolePanel />
-            </Div>
-            {(isCommenting || isPropsEditor || showEditor) && (
+                            <TerminalIcon width={20} height={20} />
+                          </ToggleButton>
+                        </TextTooltip>
+                      )
+                    : null}
+                  <TextTooltip label="Preview">
+                    <ToggleButton
+                      pressed={showPreview}
+                      onPressedChange={(show) =>
+                        setShowPreview(show, show ? undefined : 'true')
+                      }
+                      disabled={isCommenting}
+                      css={
+                        showPreview
+                          ? {
+                              color: '$gray-600',
+                              backgroundColor: '$gray-100',
+                            }
+                          : undefined
+                      }
+                      data-testid="preview-toggle"
+                    >
+                      <EyeIcon width={20} height={20} />
+                    </ToggleButton>
+                  </TextTooltip>
+                </Div>
+              )}
               <Div
                 css={{
-                  display: 'flex',
-                  background: 'White',
-                  ...(isDockToRight
-                    ? isCommenting
-                      ? {
-                          minWidth: '23.5rem',
-                        }
-                      : {
-                          width: '30rem',
-                          borderLeft: '1px solid $gray-200',
-                        }
-                    : {}),
+                  display: 'block',
+                  px: '$2',
+                  '@sm': {
+                    display: 'none',
+                  },
                 }}
               >
-                {!isCommenting && isPropsEditor && (
-                  <Div css={{ flex: 1 }}>
-                    <PropsEditorPanel />
-                  </Div>
-                )}
-                {showEditor &&
-                  !isCommenting &&
-                  !isPropsEditor &&
-                  (useAdvancedEditor ? (
-                    isCodeParsed && (
-                      <Div
-                        css={{
-                          flex: 1,
-                          overflow: 'hidden',
-                          height: isDockToRight
-                            ? '100%'
-                            : `${code.split(/\r\n|\r|\n/).length + 3}rem`,
-                        }}
-                      >
-                        <AdvancedEditor
-                          value={code}
-                          onChange={setCode}
-                          language={props.lang as Language}
-                          initialResult={initialCompilation.data}
-                        />
-                      </Div>
-                    )
-                  ) : (
-                    <Div css={{ flex: 1 }}>
-                      <CodeEditor
-                        code={code}
-                        onChange={setCode}
-                        language={props.lang as Language}
-                        theme={theme}
-                        className={editor()}
-                        wrapperClass={editorWrapper()}
-                      />
-                    </Div>
-                  ))}
-                {isCommenting && (
-                  <Div
-                    css={{
-                      height: isDockToRight ? '100%' : 200,
-                      width: '100%',
-                      backgroundColor: '$gray-100',
-                    }}
-                  >
-                    {commentState.items.length > 0 && (
-                      <CommentList>
-                        {commentState.items.map((comment) => (
-                          <CommentList.Item
-                            active={comment.id === activeComment}
-                            onClick={() => {
-                              setHiddenSizes(comment.hiddenSizes);
-                              setZoomLevel(
-                                comment.zoomLevel,
-                                comment.zoomLevel === '100'
-                                  ? undefined
-                                  : comment.zoomLevel
-                              );
-                              if (showDeviceFrameSetting) {
-                                setShowDeviceFrame(
-                                  comment.showFrame,
-                                  comment.showFrame ? undefined : 'false'
+                {showMultipleScreens && (showPreview || isCommenting) && (
+                  <DropdownMenu>
+                    <DropdownMenu.Trigger asChild>
+                      <MenuButton>
+                        <ScreensIcon width={20} height={20} />
+                      </MenuButton>
+                    </DropdownMenu.Trigger>
+                    <CheckboxDropdown>
+                      {frameDimensions.map((frame) => {
+                        return (
+                          <CheckboxDropdown.Item
+                            checked={
+                              !hiddenSizes.some(
+                                ([w, h]) =>
+                                  w === frame.width && h === frame.height
+                              )
+                            }
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setHiddenSizes(
+                                  hiddenSizes.filter(
+                                    (s) =>
+                                      !(
+                                        s[0] === frame.width &&
+                                        s[1] === frame.height
+                                      ) && frameDimensions.includes(frame)
+                                  )
+                                );
+                              } else {
+                                setHiddenSizes(
+                                  hiddenSizes.concat([
+                                    [frame.width, frame.height],
+                                  ])
                                 );
                               }
-                              setActiveComment(comment.id);
                             }}
-                            onDismiss={() => remove(comment.id)}
-                            key={comment.id}
+                            key={frame.name}
                           >
-                            {comment.text}
-                          </CommentList.Item>
-                        ))}
-                      </CommentList>
-                    )}
-                  </Div>
+                            {frame.name}
+                          </CheckboxDropdown.Item>
+                        );
+                      })}
+                    </CheckboxDropdown>
+                  </DropdownMenu>
                 )}
+              </Div>
+              {showMultipleScreens && (showPreview || isCommenting) && (
                 <Div
                   css={{
                     display: 'none',
                     '@sm': {
                       display: 'flex',
-                      flexFlow: 'column',
-                      padding: '$2',
-                      borderLeft: '1px solid $gray-200',
+                      gap: '$1',
+                      px: '$2',
+                      borderRight: '1px solid $gray-200',
                     },
                   }}
                 >
-                  <TextTooltip
-                    label={isDockToRight ? 'Dock to right' : 'Dock to bottom'}
-                  >
-                    <IconButton
-                      data-testid="editor-position-button"
-                      onClick={() =>
-                        setEditorPosition(
-                          editorPosition === 'bottom' ? 'right' : 'bottom'
+                  {frameDimensions.map((frame) => (
+                    <ToggleButton
+                      pressed={
+                        !hiddenSizes.some(
+                          ([w, h]) => w === frame.width && h === frame.height
                         )
                       }
+                      onPressedChange={(isPressed) => {
+                        if (isPressed) {
+                          setHiddenSizes(
+                            hiddenSizes.filter(
+                              (s) =>
+                                !(
+                                  s[0] === frame.width && s[1] === frame.height
+                                ) && frameDimensions.includes(frame)
+                            )
+                          );
+                        } else {
+                          setHiddenSizes(
+                            hiddenSizes.concat([[frame.width, frame.height]])
+                          );
+                        }
+                      }}
+                      key={frame.name}
                     >
-                      {isDockToRight ? (
-                        <EditorRightIcon />
-                      ) : (
-                        <EditorBottomIcon />
-                      )}
-                    </IconButton>
+                      {frame.name}
+                    </ToggleButton>
+                  ))}
+                </Div>
+              )}
+              {(showPreview || isCommenting) && (
+                <Div
+                  css={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '$2',
+                    px: '$2',
+                  }}
+                >
+                  {!isCommenting && (
+                    <>
+                      <TextTooltip label="Measure">
+                        <ToggleButton
+                          pressed={isMeasuring}
+                          onPressedChange={setIsMeasuring}
+                          css={
+                            isMeasuring
+                              ? {
+                                  backgroundColor: '$primary-700',
+                                }
+                              : undefined
+                          }
+                          data-testid="measure-toggle"
+                        >
+                          <MeasureIcon
+                            active={isMeasuring}
+                            width={20}
+                            height={20}
+                          />
+                        </ToggleButton>
+                      </TextTooltip>
+                      <TextTooltip
+                        label={
+                          process.env.SYNC_STATE_TYPE === 'state'
+                            ? 'Sync State'
+                            : 'Sync Interactions'
+                        }
+                      >
+                        <ToggleButton
+                          pressed={syncState}
+                          onPressedChange={setSyncState}
+                          css={
+                            syncState
+                              ? {
+                                  backgroundColor: '$primary-700',
+                                }
+                              : undefined
+                          }
+                          data-testid="sync-state-toggle"
+                        >
+                          <SyncIcon active={syncState} width={20} height={20} />
+                        </ToggleButton>
+                      </TextTooltip>
+                    </>
+                  )}
+                  <TextTooltip label="Sync Scroll">
+                    <ToggleButton
+                      pressed={syncScroll}
+                      onPressedChange={setSyncScroll}
+                      css={
+                        syncScroll
+                          ? {
+                              backgroundColor: '$primary-700',
+                            }
+                          : undefined
+                      }
+                      data-testid="sync-scroll-toggle"
+                    >
+                      <ScrollIcon active={syncScroll} />
+                    </ToggleButton>
                   </TextTooltip>
                 </Div>
+              )}
+            </Div>
+            <Div
+              css={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '$1',
+              }}
+            >
+              {showMultipleScreens && showPreview && (
+                <>
+                  <DropdownMenu>
+                    <DropdownMenu.Trigger asChild>
+                      <MenuButton>
+                        <BtnText>{zoomLevel}% </BtnText>
+                        <ZoomIcon width={20} height={20} />
+                      </MenuButton>
+                    </DropdownMenu.Trigger>
+                    <RadioDropdown
+                      value={zoomLevel}
+                      onChangeValue={(level) =>
+                        setZoomLevel(level, level === '75' ? undefined : level)
+                      }
+                      options={zoomOptions}
+                      className={zoomDropdown()}
+                    />
+                  </DropdownMenu>
+                  {showDeviceFrameSetting && (
+                    <TextTooltip
+                      label={
+                        showDeviceFrame
+                          ? 'Hide device frame'
+                          : 'Show device frame'
+                      }
+                    >
+                      <ToggleButton
+                        pressed={showDeviceFrame}
+                        onPressedChange={(pressed) =>
+                          setShowDeviceFrame(
+                            pressed,
+                            pressed ? undefined : 'false'
+                          )
+                        }
+                        css={
+                          showDeviceFrame
+                            ? {
+                                backgroundColor: '$primary-700',
+                              }
+                            : undefined
+                        }
+                        data-testid="device-toggle"
+                      >
+                        <DeviceIcon active={showDeviceFrame} />
+                      </ToggleButton>
+                    </TextTooltip>
+                  )}
+                  {!isCommenting && (
+                    <TextTooltip label="Wrap">
+                      <ToggleButton
+                        pressed={wrapPreview}
+                        onPressedChange={setWrapPreview}
+                        css={
+                          wrapPreview
+                            ? {
+                                backgroundColor: '$primary-700',
+                              }
+                            : undefined
+                        }
+                        data-testid="wrap-preview-toggle"
+                      >
+                        <WrapIcon active={wrapPreview} />
+                      </ToggleButton>
+                    </TextTooltip>
+                  )}
+                </>
+              )}
+              <StandaloneCodeLiveEditorCopyButton
+                getTextToCopy={() => {
+                  if (window) {
+                    return window.location.href;
+                  }
+                  return '';
+                }}
+              />
+            </Div>
+          </Toolbar>
+          <PropsEditorProvider serializeToParam>
+            <Div
+              className={className}
+              css={{
+                display: 'flex',
+                backgroundColor: '$gray-200',
+                ...(isDockToRight
+                  ? {
+                      flexDirection: 'row',
+                      width: '100%',
+                    }
+                  : {
+                      flex: 1,
+                      flexDirection: 'column',
+                    }),
+              }}
+              style={
+                isDockToRight && toolbarSize
+                  ? {
+                      height: `calc(100vh - var(--header-height, 64px) - var(--breadcrumb-height, 0px) - ${toolbarSize.height}px)`,
+                    }
+                  : undefined
+              }
+            >
+              <Div
+                css={
+                  isDockToRight
+                    ? {
+                        flex: 1,
+                        overflow: 'auto',
+                        overscrollBehavior: 'contain',
+                      }
+                    : undefined
+                }
+              >
+                {(showPreview || isCommenting) &&
+                  (showMultipleScreens ? (
+                    <StandaloneCodeLiveEditorPreviewList
+                      code={debouncedCode}
+                      lang={props.lang}
+                      codeHash={props.codeHash}
+                      isCommenting={isCommenting}
+                      isMeasuring={isMeasuring}
+                      hiddenSizes={hiddenSizes}
+                      fitHeight={
+                        showDeviceFrame && (!showEditor || isCommenting)
+                      }
+                      zoom={zoomLevel}
+                      showFrame={showDeviceFrame}
+                      onClickCommentPoint={(coord) => {
+                        const previewList = previewListRef.current;
+
+                        if (previewList) {
+                          const listRect = previewList.getBoundingClientRect();
+
+                          const listX = listRect.left + window.pageXOffset;
+                          const listY = listRect.top + window.pageYOffset;
+                          const elementRelative = {
+                            x: coord.x - listX + previewList.scrollLeft,
+                            y: coord.y - listY + previewList.scrollTop,
+                          };
+
+                          setTargetCoord(elementRelative);
+                        }
+                      }}
+                      ref={previewListRef}
+                      syncState={syncState}
+                      syncScroll={syncScroll}
+                      onA11ySummaryClick={setA11yTab}
+                      a11yHighlightData={higlightedEls}
+                      wrapContent={!isCommenting && wrapPreview}
+                    >
+                      {isCommenting && targetCoord ? (
+                        <StandaloneCodeLiveEditorCommentPopover
+                          open
+                          onOpenChange={(shouldOpen) => {
+                            if (!shouldOpen) {
+                              setTargetCoord(undefined);
+                            }
+                          }}
+                          onAdd={(newComment) => {
+                            add({
+                              text: newComment,
+                              zoomLevel,
+                              hiddenSizes: hiddenSizes,
+                              left: targetCoord.x,
+                              top: targetCoord.y,
+                              showFrame: showDeviceFrame,
+                            });
+                            setTargetCoord(undefined);
+                          }}
+                        >
+                          <Marker
+                            css={{
+                              position: 'absolute',
+                              top: targetCoord.y,
+                              left: targetCoord.x,
+                            }}
+                          />
+                        </StandaloneCodeLiveEditorCommentPopover>
+                      ) : null}
+                      {isCommenting &&
+                        displayedComments.map((comment) => {
+                          const isActive = comment.id === activeComment;
+                          return (
+                            <Div
+                              css={{
+                                position: 'absolute',
+                                top: comment.top,
+                                left: comment.left,
+                                pointerEvents: 'auto',
+                                cursor: 'pointer',
+                                width: 20,
+                                height: 20,
+                                zIndex: 5,
+                              }}
+                              key={comment.id}
+                            >
+                              <MarkerButton
+                                onClick={(ev) => {
+                                  ev.stopPropagation();
+                                  setActiveComment(comment.id);
+                                }}
+                                type="button"
+                              >
+                                <Marker
+                                  iconClass={iconClass({
+                                    active: isActive,
+                                  })}
+                                  data-active-comment={isActive ? true : null}
+                                />
+                              </MarkerButton>
+                            </Div>
+                          );
+                        })}
+                      {isCommenting && (
+                        <Div
+                          onClick={(ev) => ev.stopPropagation()}
+                          css={{
+                            position: 'absolute',
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            height: 12,
+                            pointerEvents: 'auto',
+                          }}
+                        />
+                      )}
+                    </StandaloneCodeLiveEditorPreviewList>
+                  ) : (
+                    <CodePreviewIframe
+                      code={debouncedCode}
+                      lang={props.lang}
+                      codeHash={props.codeHash}
+                    />
+                  ))}
+                <ConsolePanel />
               </Div>
-            )}
-          </Div>
-        </PropsEditorProvider>
-      </Div>
+              {(isCommenting || isPropsEditor || showEditor) && (
+                <Div
+                  css={{
+                    display: 'flex',
+                    background: 'White',
+                    ...(isDockToRight
+                      ? isCommenting
+                        ? {
+                            minWidth: '23.5rem',
+                          }
+                        : {
+                            width: '30rem',
+                            borderLeft: '1px solid $gray-200',
+                          }
+                      : {}),
+                  }}
+                >
+                  {!isCommenting && isPropsEditor && (
+                    <Div css={{ flex: 1 }}>
+                      <PropsEditorPanel />
+                      <A11yPanel
+                        activeTab={a11yTab}
+                        setActiveTab={setA11yTab}
+                        onHighlightItems={setHighlightedEls}
+                        resetHiglights={resetHighlights}
+                        scrollToFrameWhenSelect={isDockToRight}
+                      />
+                    </Div>
+                  )}
+                  {showEditor &&
+                    !isCommenting &&
+                    !isPropsEditor &&
+                    (useAdvancedEditor ? (
+                      isCodeParsed && (
+                        <Div
+                          css={{
+                            flex: 1,
+                            ...(isDockToRight
+                              ? {
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                }
+                              : {}),
+                          }}
+                        >
+                          <Div
+                            css={{
+                              flex: 1,
+                              overflow: 'hidden',
+                              height: isDockToRight
+                                ? '100%'
+                                : `${code.split(/\r\n|\r|\n/).length + 3}rem`,
+                            }}
+                          >
+                            <AdvancedEditor
+                              value={code}
+                              onChange={setCode}
+                              language={props.lang as Language}
+                              initialResult={initialCompilation.data}
+                              key={isDockToRight ? 0 : 1}
+                            />
+                          </Div>
+                          <A11yPanel
+                            activeTab={a11yTab}
+                            setActiveTab={setA11yTab}
+                            onHighlightItems={setHighlightedEls}
+                            resetHiglights={resetHighlights}
+                            scrollToFrameWhenSelect={isDockToRight}
+                          />
+                        </Div>
+                      )
+                    ) : (
+                      <Div
+                        css={{
+                          flex: 1,
+                          display: 'flex',
+                          flexDirection: 'column',
+                        }}
+                      >
+                        <CodeEditor
+                          code={code}
+                          onChange={setCode}
+                          language={props.lang as Language}
+                          theme={theme}
+                          className={editor()}
+                          wrapperClass={editorWrapper()}
+                        />
+                        <A11yPanel
+                          activeTab={a11yTab}
+                          setActiveTab={setA11yTab}
+                          onHighlightItems={setHighlightedEls}
+                          resetHiglights={resetHighlights}
+                          scrollToFrameWhenSelect={isDockToRight}
+                        />
+                      </Div>
+                    ))}
+                  {isCommenting && (
+                    <Div
+                      css={{
+                        height: isDockToRight ? '100%' : 200,
+                        width: '100%',
+                        backgroundColor: '$gray-100',
+                      }}
+                    >
+                      {commentState.items.length > 0 ? (
+                        <CommentList>
+                          {commentState.items.map((comment) => (
+                            <CommentList.Item
+                              active={comment.id === activeComment}
+                              onClick={() => {
+                                setHiddenSizes(comment.hiddenSizes);
+                                setZoomLevel(
+                                  comment.zoomLevel,
+                                  comment.zoomLevel === '100'
+                                    ? undefined
+                                    : comment.zoomLevel
+                                );
+                                if (showDeviceFrameSetting) {
+                                  setShowDeviceFrame(
+                                    comment.showFrame,
+                                    comment.showFrame ? undefined : 'false'
+                                  );
+                                }
+                                setActiveComment(comment.id);
+                              }}
+                              onDismiss={() => remove(comment.id)}
+                              key={comment.id}
+                            >
+                              {comment.text}
+                            </CommentList.Item>
+                          ))}
+                        </CommentList>
+                      ) : (
+                        <NoCommentMsg>
+                          No comment added.
+                          <br />
+                          Click on any point of the preview
+                          <br /> to start adding comment.
+                        </NoCommentMsg>
+                      )}
+                    </Div>
+                  )}
+                  <Div
+                    css={{
+                      display: 'none',
+                      '@sm': {
+                        display: 'flex',
+                        flexFlow: 'column',
+                        padding: '$2',
+                        borderLeft: '1px solid $gray-200',
+                      },
+                    }}
+                  >
+                    <TextTooltip
+                      label={isDockToRight ? 'Dock to right' : 'Dock to bottom'}
+                    >
+                      <IconButton
+                        data-testid="editor-position-button"
+                        onClick={() =>
+                          setEditorPosition(
+                            editorPosition === 'bottom' ? 'right' : 'bottom'
+                          )
+                        }
+                      >
+                        {isDockToRight ? (
+                          <EditorRightIcon />
+                        ) : (
+                          <EditorBottomIcon />
+                        )}
+                      </IconButton>
+                    </TextTooltip>
+                  </Div>
+                </Div>
+              )}
+            </Div>
+          </PropsEditorProvider>
+        </Div>
+      </A11yResultByFrameContextProvider>
     </PreviewConsoleProvider>
   );
 };
+
+const NoCommentMsg = styled('p', {
+  margin: '$1',
+  padding: '$2',
+  color: '$gray-500',
+  textAlign: 'center',
+});
+
+const A11yPanel = (props: A11yResultPanelForFramesProps) => (
+  <A11yPanelRoot>
+    <A11yPanelTitle>Accessibility</A11yPanelTitle>
+    <A11yResultPanelForFrames {...props} />
+  </A11yPanelRoot>
+);
+
+const A11yPanelRoot = styled('section', {
+  px: '$2',
+  paddingBottom: '$3',
+  minHeight: 200,
+});
+
+const A11yPanelTitle = styled('div', {
+  fontSize: '$lg',
+  lineHeight: '$lg',
+  fontWeight: '500',
+  px: '$2',
+  paddingBottom: '$1',
+  paddingTop: '$2',
+  borderTop: '1px solid $gray-200',
+});
 
 interface AdvancedEditorProps {
   value: string;
@@ -1119,7 +1228,7 @@ const MenuButton = styled('button', {
 });
 
 const editorWrapper = css({
-  height: '100%',
+  flex: 1,
   overflow: 'hidden',
 });
 

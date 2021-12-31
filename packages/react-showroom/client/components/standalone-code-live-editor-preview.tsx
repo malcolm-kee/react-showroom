@@ -4,12 +4,18 @@ import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
 import { useCodeFrameContext } from '../lib/code-frame-context';
 import { safeCompress, safeDecompress } from '../lib/compress';
+import { getFrameId } from '../lib/get-frame-id';
+import {
+  A11yResultContextProvider,
+  useA11yResultByFrame,
+} from '../lib/use-a11y-result';
+import { useSize } from '../lib/use-size';
+import { A11ySummary } from './a11y-summary';
 import {
   CodePreviewIframe,
   CodePreviewIframeImperative,
 } from './code-preview-iframe';
 import { DeviceFrame } from './device-frame';
-import { useSize } from '../lib/use-size';
 
 export interface StandaloneCodeLiveEditorPreviewListProps {
   code: string;
@@ -22,6 +28,14 @@ export interface StandaloneCodeLiveEditorPreviewListProps {
   fitHeight: boolean;
   zoom: string;
   showFrame: boolean;
+  onA11ySummaryClick: (frameName: string) => void;
+  a11yHighlightData:
+    | {
+        frameName: string;
+        selectors: string[];
+        color: string;
+      }
+    | undefined;
   children?: React.ReactNode;
   syncState?: boolean;
   syncScroll?: boolean;
@@ -100,6 +114,24 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
     });
   }, [props.isMeasuring]);
 
+  React.useEffect(() => {
+    if (props.a11yHighlightData) {
+      const frame = frameMap.get(props.a11yHighlightData.frameName);
+
+      if (frame) {
+        frame.sendToChild({
+          type: 'highlightElements',
+          selectors: props.a11yHighlightData.selectors,
+          color: props.a11yHighlightData.color,
+        });
+
+        if (props.a11yHighlightData.selectors.length > 0) {
+          frame.scrollIntoView();
+        }
+      }
+    }
+  }, [props.a11yHighlightData]);
+
   const codeFrameSetttings = useCodeFrameContext();
 
   const visibleFrames = codeFrameSetttings.frameDimensions.filter(
@@ -125,106 +157,121 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
 
   const screenListSize = useSize(screenListRef);
 
+  const { setResult } = useA11yResultByFrame();
+
   const content = visibleFrames.map((dimension) => {
     return (
-      <ScreenWrapper isCommenting={props.isCommenting} key={dimension.name}>
-        <DeviceFrame dimension={dimension} showFrame={props.showFrame}>
-          <Screen
-            css={
-              props.showFrame
-                ? {
-                    width: '100%',
-                    height: '100%',
+      <A11yResultContextProvider
+        onResultChange={(result) => setResult(dimension.name, result)}
+        key={dimension.name}
+      >
+        <ScreenWrapper isCommenting={props.isCommenting}>
+          <DeviceFrame dimension={dimension} showFrame={props.showFrame}>
+            <Screen
+              css={
+                props.showFrame
+                  ? {
+                      width: '100%',
+                      height: '100%',
+                    }
+                  : {
+                      width: `${dimension.width}px`,
+                      height: '100%',
+                    }
+              }
+            >
+              <CodePreviewIframe
+                code={props.code}
+                lang={props.lang}
+                codeHash={props.codeHash}
+                css={{
+                  width: `${dimension.width}px`,
+                  height: '100%',
+                }}
+                imperativeRef={(ref) => {
+                  if (ref) {
+                    frameMap.set(dimension.name, ref);
+                  } else {
+                    frameMap.delete(dimension.name);
                   }
-                : {
-                    width: `${dimension.width}px`,
-                    height: '100%',
+                }}
+                onStateChange={(change) => {
+                  if (process.env.SYNC_STATE_TYPE === 'state') {
+                    if (props.syncState) {
+                      frameMap.forEach((frame, frameName) => {
+                        if (frameName !== dimension.name) {
+                          frame.sendToChild({
+                            type: 'syncState',
+                            stateId: change.stateId,
+                            stateValue: change.stateValue,
+                          });
+                        }
+                        storeState(
+                          frameName,
+                          change.stateId,
+                          change.stateValue
+                        );
+                      });
+                    } else {
+                      storeState(
+                        dimension.name,
+                        change.stateId,
+                        change.stateValue
+                      );
+                    }
+
+                    setQueryParams({
+                      [PARAM_KEY]: serializeStateMaps(stateMaps) || undefined,
+                    });
                   }
-            }
-          >
-            <CodePreviewIframe
-              code={props.code}
-              lang={props.lang}
-              codeHash={props.codeHash}
-              css={{
-                width: `${dimension.width}px`,
-                height: '100%',
-              }}
-              imperativeRef={(ref) => {
-                if (ref) {
-                  frameMap.set(dimension.name, ref);
-                } else {
-                  frameMap.delete(dimension.name);
-                }
-              }}
-              onStateChange={(change) => {
-                if (process.env.SYNC_STATE_TYPE === 'state') {
+                }}
+                onScrollChange={(xy) => {
+                  if (props.syncScroll) {
+                    frameMap.forEach((frame, frameName) => {
+                      if (frameName !== dimension.name) {
+                        frame.sendToChild({
+                          type: 'scroll',
+                          scrollPercentageXY: xy,
+                        });
+                      }
+                    });
+                  }
+                }}
+                onDomEvent={(ev) => {
                   if (props.syncState) {
                     frameMap.forEach((frame, frameName) => {
                       if (frameName !== dimension.name) {
                         frame.sendToChild({
-                          type: 'syncState',
-                          stateId: change.stateId,
-                          stateValue: change.stateValue,
+                          type: 'domEvent',
+                          data: ev,
                         });
                       }
-                      storeState(frameName, change.stateId, change.stateValue);
                     });
-                  } else {
-                    storeState(
-                      dimension.name,
-                      change.stateId,
-                      change.stateValue
-                    );
                   }
-
-                  setQueryParams({
-                    [PARAM_KEY]: serializeStateMaps(stateMaps) || undefined,
-                  });
-                }
-              }}
-              onScrollChange={(xy) => {
-                if (props.syncScroll) {
-                  frameMap.forEach((frame, frameName) => {
-                    if (frameName !== dimension.name) {
-                      frame.sendToChild({
-                        type: 'scroll',
-                        scrollPercentageXY: xy,
-                      });
+                }}
+                data-frame-id={getFrameId(dimension)}
+              />
+            </Screen>
+          </DeviceFrame>
+          <ScreenSize>
+            <ScreenSizeText
+              css={
+                shouldAdjustZoom
+                  ? {
+                      transform: `scale(${100 / zoomValue})`,
+                      transformOrigin: 'top left',
                     }
-                  });
-                }
-              }}
-              onDomEvent={(ev) => {
-                if (props.syncState) {
-                  frameMap.forEach((frame, frameName) => {
-                    if (frameName !== dimension.name) {
-                      frame.sendToChild({
-                        type: 'domEvent',
-                        data: ev,
-                      });
-                    }
-                  });
-                }
-              }}
-            />
-          </Screen>
-        </DeviceFrame>
-        <ScreenSize>
-          <ScreenSizeText
-            css={
-              shouldAdjustZoom
-                ? {
-                    transform: `scale(${100 / zoomValue})`,
-                    transformOrigin: 'top left',
-                  }
-                : undefined
-            }
-          >
-            {dimension.name}
-          </ScreenSizeText>
-        </ScreenSize>
-      </ScreenWrapper>
+                  : undefined
+              }
+            >
+              {dimension.name}
+              <A11ySummary
+                onClick={() => props.onA11ySummaryClick(dimension.name)}
+              />
+            </ScreenSizeText>
+          </ScreenSize>
+        </ScreenWrapper>
+      </A11yResultContextProvider>
     );
   });
 
@@ -356,12 +403,15 @@ const resizeStyle = css({
 });
 
 const ScreenSize = styled('div', {
+  gap: '$1',
   px: '$2',
   py: '$1',
 });
 
 const ScreenSizeText = styled('span', {
-  display: 'inline-block', // required for transform to work
+  display: 'inline-flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
   fontSize: '$sm',
   lineHeight: '$sm',
   color: '$gray-500',

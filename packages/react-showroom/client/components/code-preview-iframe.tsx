@@ -11,7 +11,9 @@ import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
 import { useComponentMeta } from '../lib/component-props-context';
 import { DomEvent, Message, useParentWindow } from '../lib/frame-message';
+import { getFrameId } from '../lib/get-frame-id';
 import { getPreviewUrl } from '../lib/preview-url';
+import { getScrollFn } from '../lib/scroll-into-view';
 import { useA11yResult } from '../lib/use-a11y-result';
 import { useConsole } from '../lib/use-preview-console';
 import { PropsEditorContext } from '../lib/use-props-editor';
@@ -19,6 +21,7 @@ import { useActiveWidth, WidthMarkers } from './width-markers';
 
 export interface CodePreviewIframeImperative {
   sendToChild: (msg: Message) => void;
+  scrollIntoView: () => void;
 }
 
 export interface CodePreviewIframeProps {
@@ -35,6 +38,7 @@ export interface CodePreviewIframeProps {
   onIsCompilingChange?: (isCompiling: boolean) => void;
   initialHeight?: number;
   height?: number;
+  'data-frame-id'?: string;
 }
 
 const initialHeightMap = new Map<string, number>();
@@ -53,6 +57,7 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   onIsCompilingChange,
   initialHeight = 100,
   height: providedHeight,
+  'data-frame-id': frameId,
 }: CodePreviewIframeProps) {
   const [frameHeight, setFrameHeight] = React.useState(
     () => (codeHash && initialHeightMap.get(codeHash)) || initialHeight
@@ -127,6 +132,17 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
 
   React.useImperativeHandle(imperativeRef, () => ({
     sendToChild: (msg) => sendMessage(msg),
+    scrollIntoView: () => {
+      getScrollFn().then((scroll) => {
+        if (targetRef.current) {
+          scroll(targetRef.current, {
+            block: 'center',
+            behavior: 'smooth',
+            inline: 'center',
+          });
+        }
+      });
+    },
   }));
 
   const componentMeta = useComponentMeta();
@@ -155,6 +171,7 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
       height={nonVisual ? 0 : resizable ? height : '100%'}
       animate={!isResizing}
       className={resizable ? undefined : className}
+      data-frame-id={frameId}
     />
   ) : null;
 
