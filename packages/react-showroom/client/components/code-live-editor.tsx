@@ -1,11 +1,14 @@
 import { SupportedLanguage } from '@showroomjs/core';
-import { Collapsible, css, useDebounce } from '@showroomjs/ui';
+import { Collapsible, css, Tabs, useDebounce } from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { useCodeBlocks } from '../lib/codeblocks-context';
+import { useHighlights } from '../lib/use-highlights';
 import { PreviewConsoleProvider } from '../lib/use-preview-console';
 import { useTargetAudience } from '../lib/use-target-audience';
+import { A11yResultPanel } from './a11y-result-panel';
+import { A11ySummary } from './a11y-summary';
 import { Div } from './base';
 import { CodeEditor } from './code-editor';
 import { CodePreviewFrame } from './code-preview-frame';
@@ -13,6 +16,7 @@ import {
   CodePreviewIframe,
   CodePreviewIframeImperative,
 } from './code-preview-iframe';
+import { CodePreviewShowroomFrame } from './code-preview-showroom-frame';
 import { ConsolePanel } from './console-panel';
 import { LinkToStandaloneView } from './link-to-standalone-view';
 import { MeasuringButton } from './measuring-button';
@@ -45,7 +49,9 @@ export const CodeLiveEditor = ({
 
   const debouncedCode = useDebounce(code);
 
-  const [showCode, setShowCode] = React.useState<boolean | undefined>(false);
+  const [showDetails, setShowDetails] = React.useState<boolean | undefined>(
+    false
+  );
 
   const codeBlocks = useCodeBlocks();
   const matchedCodeData = codeBlocks[props.code];
@@ -58,49 +64,71 @@ export const CodeLiveEditor = ({
 
   const frameRef = React.useRef<CodePreviewIframeImperative>(null);
   const [isMeasuring, setIsMeasuring] = React.useState(false);
+  const highlightCurrentFrameItems = useHighlights();
 
-  const content = (
-    <PreviewConsoleProvider>
-      <Div
-        css={{
-          position: 'relative',
-          roundedT: hasHeading ? '$none' : '$base',
-          ...(frame
-            ? {
-                backgroundColor: '$gray-400',
-                borderBottomRightRadius: '$base',
-                width: '100%',
+  const highlightFrameItems = React.useCallback(
+    (selectors: string[], newColor: string) => {
+      if (frame) {
+        if (frameRef.current) {
+          frameRef.current.sendToChild({
+            type: 'highlightElements',
+            selectors,
+            color: newColor,
+          });
+        }
+      } else {
+        highlightCurrentFrameItems(selectors, newColor);
+      }
+    },
+    [highlightCurrentFrameItems]
+  );
+
+  const [activeTab, setActiveTab] = React.useState('code');
+
+  const a11yPanelOnly = noEditor || !isDeveloper;
+
+  return (
+    <div className={className}>
+      <PreviewConsoleProvider>
+        <Div
+          css={{
+            position: 'relative',
+            roundedT: hasHeading ? '$none' : '$base',
+            ...(frame
+              ? {
+                  backgroundColor: '$gray-400',
+                  borderBottomRightRadius: '$base',
+                  width: '100%',
+                }
+              : {
+                  minHeight: 48,
+                  border: '1px solid',
+                  borderColor: '$gray-300',
+                }),
+          }}
+        >
+          {frame ? (
+            <CodePreviewIframe
+              code={debouncedCode}
+              lang={lang}
+              codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
+              initialHeight={
+                initialHeightValue && !isNaN(initialHeightValue)
+                  ? initialHeightValue
+                  : undefined
               }
-            : {
-                minHeight: 48,
-                border: '1px solid',
-                borderColor: '$gray-300',
-              }),
-        }}
-      >
-        {frame ? (
-          <CodePreviewIframe
-            code={debouncedCode}
-            lang={lang}
-            codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
-            initialHeight={
-              initialHeightValue && !isNaN(initialHeightValue)
-                ? initialHeightValue
-                : undefined
-            }
-            height={
-              heightValue && !isNaN(heightValue) ? heightValue : undefined
-            }
-            resizable
-            imperativeRef={frameRef}
-          />
-        ) : (
-          <CodePreviewFrame code={debouncedCode} lang={lang} />
-        )}
-      </Div>
-      <ConsolePanel />
-      {!noEditor && (
-        <Collapsible.Root open={showCode} onOpenChange={setShowCode}>
+              height={
+                heightValue && !isNaN(heightValue) ? heightValue : undefined
+              }
+              resizable
+              imperativeRef={frameRef}
+            />
+          ) : (
+            <CodePreviewShowroomFrame code={debouncedCode} lang={lang} />
+          )}
+        </Div>
+        <ConsolePanel />
+        <Collapsible.Root open={showDetails} onOpenChange={setShowDetails}>
           <Div
             css={{
               display: 'flex',
@@ -108,33 +136,37 @@ export const CodeLiveEditor = ({
               py: '$1',
             }}
           >
-            {isDeveloper ? (
-              <Collapsible.Button
-                css={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '$1',
-                  fontSize: '$sm',
-                  lineHeight: '$sm',
-                }}
-              >
-                <Collapsible.ToggleIcon
-                  hide={showCode}
-                  aria-label={showCode ? 'Hide' : 'View'}
-                  width="16"
-                  height="16"
-                />
-                Code
-              </Collapsible.Button>
-            ) : (
-              <span />
-            )}
+            <Collapsible.Button
+              css={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '$1',
+                fontSize: '$sm',
+                lineHeight: '$sm',
+              }}
+            >
+              <Collapsible.ToggleIcon
+                hide={showDetails}
+                aria-label={showDetails ? 'Hide' : 'View'}
+                width="16"
+                height="16"
+              />
+              {a11yPanelOnly ? 'Accessibility' : 'Details'}
+            </Collapsible.Button>
             <Div
               css={{
                 display: 'inline-flex',
                 gap: '$1',
               }}
             >
+              <A11ySummary
+                onClick={() => {
+                  setShowDetails(true);
+                  if (!a11yPanelOnly) {
+                    setActiveTab('a11y');
+                  }
+                }}
+              />
               {frame && (
                 <MeasuringButton
                   onClick={() => {
@@ -157,23 +189,48 @@ export const CodeLiveEditor = ({
               />
             </Div>
           </Div>
-          {isDeveloper && (
-            <Collapsible.Content animate>
-              <CodeEditor
-                code={code}
-                onChange={setCode}
-                language={lang as Language}
-                className={editorBottom()}
-                theme={theme}
-              />
-            </Collapsible.Content>
-          )}
+          <Collapsible.Content animate>
+            {a11yPanelOnly ? (
+              <Div
+                css={{
+                  backgroundColor: '$gray-200',
+                }}
+              >
+                <A11yResultPanel highlightItems={highlightFrameItems} />
+              </Div>
+            ) : (
+              <Tabs.Root
+                value={activeTab}
+                onValueChange={(tab) => {
+                  setActiveTab(tab);
+                  if (tab === 'code') {
+                    highlightFrameItems([], '');
+                  }
+                }}
+              >
+                <Tabs.List>
+                  <Tabs.Trigger value="code">Code</Tabs.Trigger>
+                  <Tabs.Trigger value="a11y">Accessibility</Tabs.Trigger>
+                </Tabs.List>
+                <Tabs.Content value="code">
+                  <CodeEditor
+                    code={code}
+                    onChange={setCode}
+                    language={lang as Language}
+                    className={editorBottom()}
+                    theme={theme}
+                  />
+                </Tabs.Content>
+                <Tabs.Content value="a11y">
+                  <A11yResultPanel highlightItems={highlightFrameItems} />
+                </Tabs.Content>
+              </Tabs.Root>
+            )}
+          </Collapsible.Content>
         </Collapsible.Root>
-      )}
-    </PreviewConsoleProvider>
+      </PreviewConsoleProvider>
+    </div>
   );
-
-  return <div className={className}>{content}</div>;
 };
 
 export const NonVisualCodeLiveEditor = (props: {

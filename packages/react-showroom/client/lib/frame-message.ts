@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useStableCallback } from './callback';
 import type { ConsoleMessage } from './use-preview-console';
 import type { PropsEditorState } from './use-props-editor';
+import type { AxeResults } from 'axe-core';
 
 interface LogMessage extends Omit<ConsoleMessage, 'count'> {
   type: 'log';
@@ -84,6 +85,15 @@ export type Message =
   | {
       type: 'toggleMeasure';
       active: boolean;
+    }
+  | {
+      type: 'a11yCheckResult';
+      result: Pick<AxeResults, 'incomplete' | 'passes' | 'violations'>;
+    }
+  | {
+      type: 'highlightElements';
+      selectors: Array<string>;
+      color: string;
     };
 
 export const usePreviewWindow = (onMessage: (data: Message) => void) => {

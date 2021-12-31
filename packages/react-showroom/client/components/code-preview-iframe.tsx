@@ -12,9 +12,10 @@ import * as React from 'react';
 import { useComponentMeta } from '../lib/component-props-context';
 import { DomEvent, Message, useParentWindow } from '../lib/frame-message';
 import { getPreviewUrl } from '../lib/preview-url';
+import { useA11yResult } from '../lib/use-a11y-result';
 import { useConsole } from '../lib/use-preview-console';
-import { useActiveWidth, WidthMarkers } from './width-markers';
 import { PropsEditorContext } from '../lib/use-props-editor';
+import { useActiveWidth, WidthMarkers } from './width-markers';
 
 export interface CodePreviewIframeImperative {
   sendToChild: (msg: Message) => void;
@@ -73,6 +74,8 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
 
   const [propsEditor, syncPropsEditor] = React.useContext(PropsEditorContext);
 
+  const { setResult } = useA11yResult();
+
   const onIsCompilingChangeCb = useStableCallback(onIsCompilingChange);
   const { targetRef, sendMessage } = useParentWindow((ev) => {
     switch (ev.type) {
@@ -114,6 +117,10 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
           type: 'init',
           initialState: ev.data,
         });
+        return;
+
+      case 'a11yCheckResult':
+        setResult(ev.result);
         return;
     }
   });

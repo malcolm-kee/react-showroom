@@ -17,6 +17,7 @@ import {
   NonVisualCodeLiveEditor,
 } from './code-live-editor';
 import { CodePlayground } from './code-playground';
+import { A11yResultContextProvider } from '../lib/use-a11y-result';
 import { LanguageTag } from './language-tag';
 
 const IsBlockCodeContext = React.createContext(false);
@@ -137,16 +138,18 @@ export const Code = ({
           frame={frame}
         />
       ) : (
-        <VisualCodeBlock
-          code={code}
-          lang={lang}
-          id={props.id}
-          hasHeading={!!heading}
-          noEditor={noEditor}
-          frame={frame}
-          initialHeight={initialHeight}
-          height={height}
-        />
+        <A11yResultContextProvider>
+          <VisualCodeBlock
+            code={code}
+            lang={lang}
+            id={props.id}
+            hasHeading={!!heading}
+            noEditor={noEditor}
+            frame={frame}
+            initialHeight={initialHeight}
+            height={height}
+          />
+        </A11yResultContextProvider>
       )}
     </>
   );

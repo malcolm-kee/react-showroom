@@ -80,6 +80,7 @@ export const createWebpackConfig = (
           ? config.require.concat(previewEntry)
           : previewEntry,
       },
+      externals: ['crypto'],
       output: {
         path: resolveApp(outDir),
         publicPath: !isProd ? '/' : `${basePath}/`, // need to add trailing slash
@@ -612,6 +613,7 @@ const createBaseWebpackConfig = (
         ENABLE_ADVANCED_EDITOR: exampleConfig.enableAdvancedEditor,
         SYNC_STATE_TYPE: exampleConfig.syncStateType,
         SHOW_DEVICE_FRAME: exampleConfig.showDeviceFrame,
+        A11Y_CONFIG: exampleConfig.a11y.config,
         SITE_URL: url,
         AUDIENCE_TOGGLE: theme.audienceToggle,
         COMPONENTS_ENTRY_NAME: (componentsEntry && componentsEntry.name) || '',

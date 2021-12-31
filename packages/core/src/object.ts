@@ -1,3 +1,5 @@
+import { isDefined } from './type-guard';
+
 export function omit<T extends {}, KeysToOmit extends keyof T>(
   oriObject: T,
   keysToOmit: KeysToOmit[]
@@ -17,6 +19,22 @@ export function omit<T extends {}>(
       // @ts-expect-error
       delete result[key]
   );
+
+  return result;
+}
+
+export function pick<T extends {}, KeysToPick extends keyof T>(
+  oriObject: T,
+  keysToPick: KeysToPick[]
+): Pick<T, KeysToPick> {
+  const result = {} as Pick<T, KeysToPick>;
+
+  keysToPick.forEach((key) => {
+    const value = oriObject[key];
+    if (isDefined(value)) {
+      result[key] = value;
+    }
+  });
 
   return result;
 }

@@ -3,20 +3,11 @@ import * as React from 'react';
 import { usePropsEditorContext } from '../lib/use-props-editor';
 import { PropsEditor } from './props-editor';
 
-export const PropsEditorPanel = ({
-  background = 'gray',
-}: {
-  background?: 'gray' | 'white';
-}) => {
+export const PropsEditorPanel = () => {
   const editor = usePropsEditorContext();
 
   return (
-    <Panel
-      css={{
-        backgroundColor: background === 'gray' ? '$gray-200' : 'White',
-      }}
-      loading={!editor}
-    >
+    <Panel loading={!editor}>
       {editor ? (
         <PropsEditor editor={editor} />
       ) : (
@@ -49,8 +40,6 @@ export const PropsEditorPanel = ({
 };
 
 const Panel = styled('div', {
-  shadow: 'inner',
-  borderRadius: '$base',
   px: '$2',
   py: '$4',
   variants: {

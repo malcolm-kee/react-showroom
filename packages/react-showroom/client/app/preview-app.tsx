@@ -4,6 +4,7 @@ import {
   isNumber,
   SupportedLanguage,
 } from '@showroomjs/core';
+import { useMeasure } from '@showroomjs/measure';
 import { Alert, useConstant, useId } from '@showroomjs/ui';
 import * as React from 'react';
 import allImports from 'react-showroom-all-imports';
@@ -17,10 +18,11 @@ import { CodeVariablesContextProvider } from '../lib/code-variables-context';
 import { ComponentMetaContext } from '../lib/component-props-context';
 import { usePreviewWindow } from '../lib/frame-message';
 import { Route, Switch, useParams } from '../lib/routing';
+import { useA11yCheck } from '../lib/use-a11y-check';
 import { UseCustomStateContext } from '../lib/use-custom-state';
 import { useHeightChange } from '../lib/use-height-change';
+import { useHighlights } from '../lib/use-highlights';
 import { ConsoleContext, LogLevel } from '../lib/use-preview-console';
-import { useMeasure } from '@showroomjs/measure';
 import {
   PropsEditorContext,
   PropsEditorState,
@@ -154,6 +156,10 @@ const PreviewPage = () => {
     PropsEditorState | undefined
   >(undefined);
 
+  const rootRef = React.useRef<HTMLDivElement>(null);
+
+  const highlightItems = useHighlights();
+
   const { sendParent } = usePreviewWindow((ev) => {
     if (ev.type === 'code') {
       setState(ev);
@@ -209,8 +215,17 @@ const PreviewPage = () => {
       setPropsEditor(ev.data);
     } else if (ev.type === 'toggleMeasure') {
       setMeasuring(ev.active);
+    } else if (ev.type === 'highlightElements') {
+      highlightItems(ev.selectors, ev.color);
     }
   });
+
+  useA11yCheck(rootRef, (result) =>
+    sendParent({
+      type: 'a11yCheckResult',
+      result,
+    })
+  );
 
   React.useEffect(() => {
     function getHeight() {
@@ -325,6 +340,7 @@ const PreviewPage = () => {
         >
           <CodePreviewFrame
             {...state}
+            ref={rootRef}
             onIsCompilingChange={(isCompiling) =>
               sendParent({
                 type: 'compileStatus',
@@ -410,6 +426,10 @@ const PreviewPage = () => {
       </ConsoleContext.Provider>
     </UseCustomStateContext.Provider>
   );
+};
+
+const observerInit: IntersectionObserverInit = {
+  rootMargin: '20% 0px',
 };
 
 const getDomEventInfo = (ev: React.SyntheticEvent) => {

@@ -125,6 +125,9 @@ export const getConfig = (
       enableAdvancedEditor = true,
       showDeviceFrame = true,
       syncStateType = 'state',
+      a11y = {
+        config: {},
+      },
     } = {},
     html = {},
     ...providedConfig
@@ -192,6 +195,7 @@ export const getConfig = (
       enableAdvancedEditor,
       syncStateType,
       showDeviceFrame,
+      a11y,
     },
     html,
     css: {

@@ -1,16 +1,19 @@
 import { SupportedLanguage } from '@showroomjs/core';
-import { Collapsible } from '@showroomjs/ui';
+import { Collapsible, Tabs } from '@showroomjs/ui';
 import * as React from 'react';
 import { useCodeBlocks } from '../lib/codeblocks-context';
+import { useHighlights } from '../lib/use-highlights';
 import { PreviewConsoleProvider } from '../lib/use-preview-console';
 import { PropsEditorProvider } from '../lib/use-props-editor';
 import { useTargetAudience } from '../lib/use-target-audience';
+import { A11yResultPanel } from './a11y-result-panel';
+import { A11ySummary } from './a11y-summary';
 import { Div } from './base';
-import { CodePreviewFrame } from './code-preview-frame';
 import {
   CodePreviewIframe,
   CodePreviewIframeImperative,
 } from './code-preview-iframe';
+import { CodePreviewShowroomFrame } from './code-preview-showroom-frame';
 import { ConsolePanel } from './console-panel';
 import { LinkToStandaloneView } from './link-to-standalone-view';
 import { MeasuringButton } from './measuring-button';
@@ -32,9 +35,9 @@ export const CodePlayground = ({
   height,
   ...props
 }: CodePlaygroundProps) => {
-  const [showPropsEditor, setShowPropsEditor] = React.useState<
-    boolean | undefined
-  >(true);
+  const [showDetails, setShowDetails] = React.useState<boolean | undefined>(
+    !hasPropsEditor
+  );
 
   const targetAudience = useTargetAudience();
 
@@ -47,58 +50,70 @@ export const CodePlayground = ({
   const frameRef = React.useRef<CodePreviewIframeImperative>(null);
   const [isMeasuring, setIsMeasuring] = React.useState(false);
 
-  const content = (
-    <PreviewConsoleProvider>
-      <Div
-        css={{
-          position: 'relative',
-          roundedT: '$base',
-          ...(frame
-            ? {
-                backgroundColor: '$gray-400',
-                borderBottomRightRadius: '$base',
-                width: '100%',
-              }
-            : {
-                minHeight: 48,
-                border: '1px solid',
-                borderColor: '$gray-300',
-              }),
-        }}
-      >
-        {frame ? (
-          <CodePreviewIframe
-            code={props.code}
-            lang={props.lang}
-            codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
-            initialHeight={
-              initialHeightValue && !isNaN(initialHeightValue)
-                ? initialHeightValue
-                : undefined
-            }
-            height={
-              heightValue && !isNaN(heightValue) ? heightValue : undefined
-            }
-            imperativeRef={frameRef}
-            resizable
-          />
-        ) : (
-          <CodePreviewFrame code={props.code} lang={props.lang} />
-        )}
-      </Div>
-      <ConsolePanel />
-    </PreviewConsoleProvider>
+  const highlightCurrentFrameItems = useHighlights();
+
+  const highlightFrameItems = React.useCallback(
+    (selectors: string[], newColor: string) => {
+      if (frame) {
+        if (frameRef.current) {
+          frameRef.current.sendToChild({
+            type: 'highlightElements',
+            selectors,
+            color: newColor,
+          });
+        }
+      } else {
+        highlightCurrentFrameItems(selectors, newColor);
+      }
+    },
+    [highlightCurrentFrameItems]
   );
 
-  return hasPropsEditor ? (
-    content
-  ) : (
+  const [activeTab, setActiveTab] = React.useState('props');
+
+  return (
     <PropsEditorProvider>
-      {content}
-      <Collapsible.Root
-        open={showPropsEditor}
-        onOpenChange={setShowPropsEditor}
-      >
+      <PreviewConsoleProvider>
+        <Div
+          css={{
+            position: 'relative',
+            roundedT: '$base',
+            ...(frame
+              ? {
+                  backgroundColor: '$gray-400',
+                  borderBottomRightRadius: '$base',
+                  width: '100%',
+                }
+              : {
+                  minHeight: 48,
+                  border: '1px solid',
+                  borderColor: '$gray-300',
+                }),
+          }}
+        >
+          {frame ? (
+            <CodePreviewIframe
+              code={props.code}
+              lang={props.lang}
+              codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
+              initialHeight={
+                initialHeightValue && !isNaN(initialHeightValue)
+                  ? initialHeightValue
+                  : undefined
+              }
+              height={
+                heightValue && !isNaN(heightValue) ? heightValue : undefined
+              }
+              imperativeRef={frameRef}
+              resizable
+            />
+          ) : (
+            <CodePreviewShowroomFrame code={props.code} lang={props.lang} />
+          )}
+        </Div>
+        <ConsolePanel />
+      </PreviewConsoleProvider>
+      <Collapsible.Root open={showDetails} onOpenChange={setShowDetails}>
         <Div
           css={{
             display: 'flex',
@@ -116,14 +131,12 @@ export const CodePlayground = ({
             }}
           >
             <Collapsible.ToggleIcon
-              hide={showPropsEditor}
-              aria-label={
-                showPropsEditor ? 'Hide Props Editor' : 'View Props Editor'
-              }
+              hide={showDetails}
+              aria-label={showDetails ? 'Hide Details' : 'View Details'}
               width="16"
               height="16"
             />
-            Props
+            Details
           </Collapsible.Button>
           <Div
             css={{
@@ -131,21 +144,29 @@ export const CodePlayground = ({
               gap: '$1',
             }}
           >
+            <A11ySummary
+              onClick={() => {
+                setShowDetails(true);
+                setActiveTab('a11y');
+              }}
+            />
             {frame && (
-              <MeasuringButton
-                onClick={() => {
-                  if (frameRef.current) {
-                    const nextIsMeasuring = !isMeasuring;
+              <>
+                <MeasuringButton
+                  onClick={() => {
+                    if (frameRef.current) {
+                      const nextIsMeasuring = !isMeasuring;
 
-                    frameRef.current.sendToChild({
-                      type: 'toggleMeasure',
-                      active: nextIsMeasuring,
-                    });
-                    setIsMeasuring(nextIsMeasuring);
-                  }
-                }}
-                isActive={isMeasuring}
-              />
+                      frameRef.current.sendToChild({
+                        type: 'toggleMeasure',
+                        active: nextIsMeasuring,
+                      });
+                      setIsMeasuring(nextIsMeasuring);
+                    }
+                  }}
+                  isActive={isMeasuring}
+                />
+              </>
             )}
             <LinkToStandaloneView
               codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
@@ -154,7 +175,36 @@ export const CodePlayground = ({
           </Div>
         </Div>
         <Collapsible.Content animate>
-          <PropsEditorPanel />
+          {hasPropsEditor ? (
+            <Div
+              css={{
+                backgroundColor: '$gray-200',
+              }}
+            >
+              <A11yResultPanel highlightItems={highlightFrameItems} />
+            </Div>
+          ) : (
+            <Tabs.Root
+              value={activeTab}
+              onValueChange={(tab) => {
+                setActiveTab(tab);
+                if (tab === 'props') {
+                  highlightFrameItems([], '');
+                }
+              }}
+            >
+              <Tabs.List>
+                <Tabs.Trigger value="props">Props</Tabs.Trigger>
+                <Tabs.Trigger value="a11y">Accessibility</Tabs.Trigger>
+              </Tabs.List>
+              <Tabs.Content value="props">
+                <PropsEditorPanel />
+              </Tabs.Content>
+              <Tabs.Content value="a11y">
+                <A11yResultPanel highlightItems={highlightFrameItems} />
+              </Tabs.Content>
+            </Tabs.Root>
+          )}
         </Collapsible.Content>
       </Collapsible.Root>
     </PropsEditorProvider>
