@@ -196,25 +196,40 @@ const Element = (props: {
 
   return (
     <div>
-      <ElementText>
-        {props.element.target[0]}{' '}
-        <Checkbox
-          checked={props.highlighted}
-          onCheckedChange={props.toggleHighlight}
-        />
-      </ElementText>
+      <ElementTitle>
+        <ElementText>{props.element.target[0]}</ElementText>{' '}
+        <ElementCheckbox>
+          <Checkbox
+            checked={props.highlighted}
+            onCheckedChange={props.toggleHighlight}
+          />
+        </ElementCheckbox>
+      </ElementTitle>
       <Rules rules={rules} />
     </div>
   );
 };
 
-const ElementText = styled('div', {
+const ElementTitle = styled('div', {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
   fontWeight: '500',
   borderBottom: '1px solid $gray-300',
   paddingRight: '$2',
+});
+
+const ElementText = styled('p', {
+  flex: 1,
+  margin: 0,
+  padding: 0,
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+});
+
+const ElementCheckbox = styled('div', {
+  flexShrink: 0,
 });
 
 const Rules = (props: { rules: Array<CheckResult> }) => {

@@ -6,6 +6,7 @@ export const useIsInViewport = <Target extends HTMLElement>(options: {
   target: React.RefObject<Target>;
   init?: IntersectionObserverInit;
   disconnectOnLeave?: boolean;
+  disconnectOnEnter?: boolean;
 }) => {
   const [, forceUpdate] = React.useState<unknown>();
 
@@ -45,6 +46,9 @@ export const useIsInViewport = <Target extends HTMLElement>(options: {
       intersected.current = true;
       inViewportRef.current = isInViewport;
       forceUpdate(isInViewport);
+      if (options.disconnectOnEnter && observer.current) {
+        stopObserver(observer.current);
+      }
       return;
     }
 

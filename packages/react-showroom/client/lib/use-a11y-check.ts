@@ -11,6 +11,7 @@ export const useA11yCheck = <Target extends HTMLElement>(
   const { inViewport } = useIsInViewport({
     target,
     init: observerInit,
+    disconnectOnEnter: true,
   });
 
   useForceUpdateOnSubtreeChange(target);

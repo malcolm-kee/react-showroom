@@ -83,6 +83,8 @@ export const CodeLiveEditor = ({
     [highlightCurrentFrameItems]
   );
 
+  const [activeTab, setActiveTab] = React.useState('code');
+
   const a11yPanelOnly = noEditor || !isDeveloper;
 
   return (
@@ -157,7 +159,14 @@ export const CodeLiveEditor = ({
                 gap: '$1',
               }}
             >
-              <A11ySummary />
+              <A11ySummary
+                onClick={() => {
+                  setShowDetails(true);
+                  if (!a11yPanelOnly) {
+                    setActiveTab('a11y');
+                  }
+                }}
+              />
               {frame && (
                 <MeasuringButton
                   onClick={() => {
@@ -191,8 +200,9 @@ export const CodeLiveEditor = ({
               </Div>
             ) : (
               <Tabs.Root
-                defaultValue="code"
+                value={activeTab}
                 onValueChange={(tab) => {
+                  setActiveTab(tab);
                   if (tab === 'code') {
                     highlightFrameItems([], '');
                   }

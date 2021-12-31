@@ -69,6 +69,8 @@ export const CodePlayground = ({
     [highlightCurrentFrameItems]
   );
 
+  const [activeTab, setActiveTab] = React.useState('props');
+
   return (
     <PropsEditorProvider>
       <PreviewConsoleProvider>
@@ -142,7 +144,12 @@ export const CodePlayground = ({
               gap: '$1',
             }}
           >
-            <A11ySummary />
+            <A11ySummary
+              onClick={() => {
+                setShowDetails(true);
+                setActiveTab('a11y');
+              }}
+            />
             {frame && (
               <>
                 <MeasuringButton
@@ -178,8 +185,9 @@ export const CodePlayground = ({
             </Div>
           ) : (
             <Tabs.Root
-              defaultValue="props"
+              value={activeTab}
               onValueChange={(tab) => {
+                setActiveTab(tab);
                 if (tab === 'props') {
                   highlightFrameItems([], '');
                 }
