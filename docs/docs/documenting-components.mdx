@@ -77,11 +77,6 @@ Few things to take note:
 1. The component is automatically injected into the scope, so you doesn't need to import it.
 1. `React` is automatically injected into the scope as well, but it's fine if you want to import it.
 
-Handy features for collaborations:
-
-1. If you click the "Standalone" button to open the standalone view, a page with only the particular example will be displayed. This allows you to share the URL to others and they can open the specific example using the URL.
-1. If you edit the code example in standalone view, the change will be encoded in the URL as well. You can use that to tweak the example and share the changes.
-
 A few scenarios for code blocks:
 
 <AnotherMarkdownSource />
@@ -103,3 +98,28 @@ Another options is to use the `useUnionProps` custom hook (available in `react-s
 <UnionPropsSource />
 
 <UnionPropsResult />
+
+## Collaboration Tips
+
+React Showroom is developed with helping collaborations in mind, and the following are some tips to use it effectively.
+
+### Use Standalone View to Share Particular Example/Snapshot
+
+All examples will generates a standalone view (which can be opened with the "Standalone" button at bottom right).
+
+```jsx frame live initialHeight=68
+<div>
+  <h1 className="text-3xl font-extrabold">I am an example</h1>
+  <p>Click the Standalone button at bottom right.</p>
+</div>
+```
+
+1. The standalone view has its own URL that you can share with others.
+1. In the standalone view, you can update the code or update the props (for [Component Playground](/getting-started/component-playground)) and those changes will be persisted in the URL.
+1. You can also add comment on particular point of the example, and those will be persisted in the URL as well. For example, try open this <a href="/getting-started/documenting-components/_standalone/0336e30d0e28a49a31427f3cd9d8f877?commentMode=true&comments=NobwRALgpgHhYC4wBUAWBLAzgAmnbANgPZEDWOA5gE5QCGEAhGADRgBeJAtgDJQBuUAojAB2AKwswGACbSoAOwDK6NlEyJgAXVYEoAM3gIALAE4AHKwhEADogBsZgHQAGAIxi7AJjGtMqIgDuAGJUtJxQiBBUAK5QrOjSws4AzMl2UMnO0s5Qnma0prTJrkaeInrJAMbSJtJmemYiIgC0rnZGzibeJilGdi3OYAC%2BmkA" className="text-green-600 hover:underline">link</a>.
+
+### Use the Accessibility Check Result to Discuss Accessibility Issues
+
+The accessibility check result (powered by [axe-core](https://github.com/dequelabs/axe-core)) is a good starting point to discuss about accessibility issues of your components/designs.
+
+You can highlight the elements in the example by check the "Highlight" checkbox.
