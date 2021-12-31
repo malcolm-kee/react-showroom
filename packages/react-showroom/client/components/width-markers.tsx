@@ -15,6 +15,8 @@ export const WidthMarkers = (props: {
         {EXAMPLE_DIMENSIONS.map((d) => {
           const active = props.currentWidth === d.width;
 
+          const widthLabel = `${d.width}px`;
+
           return (
             <Tooltip.Root open={active || undefined} key={d.name}>
               <Tooltip.Trigger asChild>
@@ -36,7 +38,7 @@ export const WidthMarkers = (props: {
                 </Marker>
               </Tooltip.Trigger>
               <Tooltip.Content side="top">
-                {d.name} ({d.width}px)
+                {d.name} {d.name !== widthLabel ? `(${widthLabel})` : null}
               </Tooltip.Content>
             </Tooltip.Root>
           );

@@ -11,5 +11,6 @@ module.exports = defineConfig({
   },
   example: {
     showDeviceFrame: false,
+    widths: [375, 768, 1440],
   },
 });
