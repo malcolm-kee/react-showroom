@@ -831,6 +831,7 @@ export const StandaloneCodeLiveEditor = ({
                         setActiveTab={setA11yTab}
                         onHighlightItems={setHighlightedEls}
                         resetHiglights={resetHighlights}
+                        scrollToFrameWhenSelect={isDockToRight}
                       />
                     </Div>
                   )}
@@ -872,6 +873,7 @@ export const StandaloneCodeLiveEditor = ({
                             setActiveTab={setA11yTab}
                             onHighlightItems={setHighlightedEls}
                             resetHiglights={resetHighlights}
+                            scrollToFrameWhenSelect={isDockToRight}
                           />
                         </Div>
                       )
@@ -896,6 +898,7 @@ export const StandaloneCodeLiveEditor = ({
                           setActiveTab={setA11yTab}
                           onHighlightItems={setHighlightedEls}
                           resetHiglights={resetHighlights}
+                          scrollToFrameWhenSelect={isDockToRight}
                         />
                       </Div>
                     ))}

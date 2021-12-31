@@ -125,7 +125,9 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
           color: props.a11yHighlightData.color,
         });
 
-        frame.scrollIntoView();
+        if (props.a11yHighlightData.selectors.length > 0) {
+          frame.scrollIntoView();
+        }
       }
     }
   }, [props.a11yHighlightData]);

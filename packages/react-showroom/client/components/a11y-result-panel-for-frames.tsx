@@ -18,6 +18,7 @@ export interface A11yResultPanelForFramesProps {
     color: string;
   }) => void;
   resetHiglights: () => void;
+  scrollToFrameWhenSelect?: boolean;
 }
 
 export const A11yResultPanelForFrames = (
@@ -54,27 +55,29 @@ export const A11yResultPanelForFrames = (
       value={props.activeTab}
       onValueChange={callAll(
         props.setActiveTab,
-        (frameName) => {
-          const frame = frameDimensions.find((f) => f.name === frameName);
+        props.scrollToFrameWhenSelect
+          ? (frameName) => {
+              const frame = frameDimensions.find((f) => f.name === frameName);
 
-          if (frame) {
-            const frameId = getFrameId(frame);
+              if (frame) {
+                const frameId = getFrameId(frame);
 
-            const targetFrame = document.querySelector(
-              `[data-frame-id="${frameId}"]`
-            );
+                const targetFrame = document.querySelector(
+                  `[data-frame-id="${frameId}"]`
+                );
 
-            if (targetFrame) {
-              getScrollFn().then((scroll) =>
-                scroll(targetFrame, {
-                  block: 'center',
-                  behavior: 'smooth',
-                  inline: 'center',
-                })
-              );
+                if (targetFrame) {
+                  getScrollFn().then((scroll) =>
+                    scroll(targetFrame, {
+                      block: 'center',
+                      behavior: 'smooth',
+                      inline: 'center',
+                    })
+                  );
+                }
+              }
             }
-          }
-        },
+          : undefined,
         props.resetHiglights
       )}
     >
