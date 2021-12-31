@@ -1,5 +1,13 @@
 # react-showroom
 
+## 1.20.2
+
+### Patch Changes
+
+- 4333cb9: Support accessibility view in standalone view
+- Updated dependencies [4333cb9]
+  - @showroomjs/ui@1.12.1
+
 ## 1.20.1
 
 ### Patch Changes

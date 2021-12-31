@@ -1,5 +1,11 @@
 # @showroomjs/ui
 
+## 1.12.1
+
+### Patch Changes
+
+- 4333cb9: Support accessibility view in standalone view
+
 ## 1.12.0
 
 ### Minor Changes
