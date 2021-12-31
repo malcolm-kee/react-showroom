@@ -41,7 +41,6 @@ module.exports = defineConfig((command) => ({
     resetCss: false,
   },
   example: {
-    enableAdvancedEditor: command === 'build',
     syncStateType: 'event',
   },
   componentsEntry: {

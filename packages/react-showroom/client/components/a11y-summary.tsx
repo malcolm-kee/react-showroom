@@ -8,9 +8,9 @@ import * as React from 'react';
 import { useA11yResult } from '../lib/use-a11y-result';
 import { Span } from './base';
 
-export const A11ySummary = (
+export const A11ySummary = styled(function A11ySummary(
   props: React.ComponentPropsWithoutRef<'button'>
-) => {
+) {
   const { result, status } = useA11yResult();
 
   return (
@@ -32,7 +32,7 @@ export const A11ySummary = (
       >
         <Span
           css={{
-            px: '$1',
+            paddingRight: '$1',
           }}
         >
           <Span
@@ -72,7 +72,7 @@ export const A11ySummary = (
       </Root>
     </TextTooltip>
   );
-};
+});
 
 const Root = styled('button', {
   all: 'unset',
@@ -82,9 +82,7 @@ const Root = styled('button', {
   color: '$gray-500',
   fontSize: '$sm',
   lineHeight: '$sm',
-  px: '$2',
   border: 0,
-  borderRight: '1px solid $gray-300',
 });
 
 const SummaryText = styled('span', {

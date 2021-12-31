@@ -166,6 +166,11 @@ export const CodeLiveEditor = ({
                     setActiveTab('a11y');
                   }
                 }}
+                css={{
+                  px: '$2',
+                  borderRight:
+                    frame || !noEditor ? '1px solid $gray-300' : undefined,
+                }}
               />
               {frame && (
                 <MeasuringButton
@@ -183,10 +188,12 @@ export const CodeLiveEditor = ({
                   isActive={isMeasuring}
                 />
               )}
-              <LinkToStandaloneView
-                codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
-                isDesigner={targetAudience === 'designer'}
-              />
+              {!noEditor && (
+                <LinkToStandaloneView
+                  codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
+                  isDesigner={targetAudience === 'designer'}
+                />
+              )}
             </Div>
           </Div>
           <Collapsible.Content animate>

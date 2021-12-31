@@ -1,5 +1,5 @@
 import { noop } from '@showroomjs/core';
-import { createNameContext } from '@showroomjs/ui';
+import { createNameContext, useStableCallback } from '@showroomjs/ui';
 import type { AxeResults } from 'axe-core';
 import * as React from 'react';
 
@@ -54,31 +54,80 @@ const isDifferentResult = (result1: A11yResult, result2: A11yResult) => {
 
 export const A11yResultContextProvider = (props: {
   children: React.ReactNode;
+  result?: A11yResult;
+  onResultChange?: (result: A11yResult) => void;
 }) => {
-  const [result, setResult] = React.useState<A11yResult | undefined>(undefined);
+  const [result, setResult] = React.useState<A11yResult | undefined>(
+    props.result
+  );
   const [status, setStatus] = React.useState<A11yCheckStatus>('idle');
+  const onChange = useStableCallback(props.onResultChange);
+
+  const usedResult = props.result || result;
 
   return (
     <A11yResultContext.Provider
       value={React.useMemo(
         () => ({
-          result,
+          result: usedResult,
           setResult: function (newResult) {
             if (
               newResult &&
               (!result || isDifferentResult(result, newResult))
             ) {
               setResult(newResult);
+              onChange(newResult);
               setStatus('success');
             }
           },
           status,
           setStatus,
         }),
-        [result, status]
+        [usedResult, status]
       )}
     >
       {props.children}
     </A11yResultContext.Provider>
   );
 };
+
+export interface A11yResultByFrameContextType {
+  resultByFrameName: Record<string, A11yResult | undefined>;
+  setResult: (frameName: string, result: A11yResult) => void;
+}
+
+const A11yResultByFrameContext =
+  createNameContext<A11yResultByFrameContextType>('A11yResultByFrameContext', {
+    resultByFrameName: {},
+    setResult: noop,
+  });
+
+export const A11yResultByFrameContextProvider = (props: {
+  children: React.ReactNode;
+}) => {
+  const [resultByFrameName, setResultByFrameName] = React.useState<
+    Record<string, A11yResult | undefined>
+  >({});
+
+  return (
+    <A11yResultByFrameContext.Provider
+      value={React.useMemo(
+        () => ({
+          resultByFrameName,
+          setResult(frameName, result) {
+            setResultByFrameName((prev) => ({
+              ...prev,
+              [frameName]: result,
+            }));
+          },
+        }),
+        [resultByFrameName]
+      )}
+    >
+      {props.children}
+    </A11yResultByFrameContext.Provider>
+  );
+};
+
+export const useA11yResultByFrame = () =>
+  React.useContext(A11yResultByFrameContext);

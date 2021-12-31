@@ -82,13 +82,13 @@ export const A11yResultPanel = (props: {
       <TabNav>
         <Tabs.RawList>
           <TabTrigger value="violations">
-            Violations ({result ? result.violations.length : '?'})
+            Violations <Count>{result ? result.violations.length : '?'}</Count>
           </TabTrigger>
           <TabTrigger value="passes">
-            Passes ({result ? result.passes.length : '?'})
+            Passes <Count>{result ? result.passes.length : '?'}</Count>
           </TabTrigger>
           <TabTrigger value="incompletes">
-            Incomplete ({result ? result.incomplete.length : '?'})
+            Incomplete <Count>{result ? result.incomplete.length : '?'}</Count>
           </TabTrigger>
         </Tabs.RawList>
         <CheckboxLabel>
@@ -169,6 +169,19 @@ const ResultItemList = styled('ul', {
   padding: 0,
 });
 
+const Count = styled('span', {
+  display: 'inline-flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: '$full',
+  fontSize: '$xs',
+  lineHeight: 1,
+  width: 14,
+  height: 14,
+  backgroundColor: '$gray-500',
+  color: 'White',
+});
+
 const getDefaultTab = (result: A11yResult) => {
   if (result.violations.length > 0) {
     return 'violations';
@@ -194,6 +207,7 @@ const TabTrigger = styled(Tabs.RawTrigger, {
   py: '$1',
   fontSize: '$sm',
   lineHeight: '$sm',
+  gap: '$1',
   border: 0,
   cursor: 'pointer',
   borderBottom: '2px solid transparent',

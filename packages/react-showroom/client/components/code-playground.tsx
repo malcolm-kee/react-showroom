@@ -149,6 +149,10 @@ export const CodePlayground = ({
                 setShowDetails(true);
                 setActiveTab('a11y');
               }}
+              css={{
+                px: '$2',
+                borderRight: '1px solid $gray-300',
+              }}
             />
             {frame && (
               <>

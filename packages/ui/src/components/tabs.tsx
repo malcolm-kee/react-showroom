@@ -5,6 +5,7 @@ export const Tabs = Object.assign({}, TabsPrimitive, {
   List: styled(TabsPrimitive.List, {
     position: 'relative',
     top: 1,
+    overflowX: 'auto',
   }),
   Trigger: styled(TabsPrimitive.Trigger, {
     all: 'unset',
