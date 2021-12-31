@@ -1,5 +1,18 @@
 # react-showroom
 
+## 1.20.0
+
+### Minor Changes
+
+- a0aed0a: Show accessibility check result for all examples
+
+### Patch Changes
+
+- Updated dependencies [a0aed0a]
+  - @showroomjs/bundles@1.9.0
+  - @showroomjs/core@1.14.0
+  - @showroomjs/ui@1.12.0
+
 ## 1.19.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 1.14.0
+
+### Minor Changes
+
+- a0aed0a: Show accessibility check result for all examples
+
 ## 1.13.1
 
 ### Patch Changes
