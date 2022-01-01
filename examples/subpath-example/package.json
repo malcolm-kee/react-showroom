@@ -22,6 +22,9 @@
     "react-showroom": "workspace:*"
   },
   "devDependencies": {
+    "@testing-library/dom": "^8.11.1",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/user-event": "^13.5.0",
     "autoprefixer": "^10.4.1",
     "postcss": "^8.4.5",
     "postcss-loader": "^6.2.1",

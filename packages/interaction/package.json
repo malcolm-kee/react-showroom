@@ -1,0 +1,36 @@
+{
+  "name": "@showroomjs/interaction",
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "dist/interaction.js",
+  "types": "dist/interaction.d.ts",
+  "module": "dist/esm/interaction.js",
+  "dependencies": {
+    "@showroomjs/core": "workspace:*",
+    "@showroomjs/ui": "workspace:*"
+  },
+  "peerDependencies": {
+    "@testing-library/dom": "^8.x",
+    "@testing-library/react": "^12.x",
+    "@testing-library/user-event": "^13.x",
+    "react": "^17.x",
+    "react-dom": "^17.x"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "pnpm run build -- --watch"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^8.11.1",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/user-event": "^13.5.0",
+    "tsup": "5.11.9",
+    "typescript": "^4.5.4"
+  },
+  "files": [
+    "dist"
+  ]
+}

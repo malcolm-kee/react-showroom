@@ -246,6 +246,9 @@ importers:
     specifiers:
       '@babel/runtime': ^7.16.7
       '@tailwindcss/forms': ^0.3.4
+      '@testing-library/dom': ^8.11.1
+      '@testing-library/react': ^12.1.2
+      '@testing-library/user-event': ^13.5.0
       autoprefixer: ^10.4.1
       classnames: ^2.3.1
       msw: ^0.36.3
@@ -266,6 +269,9 @@ importers:
       react-dom: 17.0.2_react@17.0.2
       react-showroom: link:../../packages/react-showroom
     devDependencies:
+      '@testing-library/dom': 8.11.1
+      '@testing-library/react': 12.1.2_react-dom@17.0.2+react@17.0.2
+      '@testing-library/user-event': 13.5.0_@testing-library+dom@8.11.1
       autoprefixer: 10.4.1_postcss@8.4.5
       postcss: 8.4.5
       postcss-loader: 6.2.1_postcss@8.4.5
@@ -325,6 +331,25 @@ importers:
       tsup: 5.11.9_typescript@4.5.4
       typescript: 4.5.4
 
+  packages/interaction:
+    specifiers:
+      '@showroomjs/core': workspace:*
+      '@showroomjs/ui': workspace:*
+      '@testing-library/dom': ^8.11.1
+      '@testing-library/react': ^12.1.2
+      '@testing-library/user-event': ^13.5.0
+      tsup: 5.11.9
+      typescript: ^4.5.4
+    dependencies:
+      '@showroomjs/core': link:../core
+      '@showroomjs/ui': link:../ui
+    devDependencies:
+      '@testing-library/dom': 8.11.1
+      '@testing-library/react': 12.1.2_react-dom@17.0.2+react@17.0.2
+      '@testing-library/user-event': 13.5.0_@testing-library+dom@8.11.1
+      tsup: 5.11.9_typescript@4.5.4
+      typescript: 4.5.4
+
   packages/measure:
     specifiers:
       tsup: 5.11.9
@@ -348,6 +373,7 @@ importers:
       '@showroomjs/bundles': workspace:*
       '@showroomjs/core': workspace:*
       '@showroomjs/device-frames': workspace:*
+      '@showroomjs/interaction': workspace:*
       '@showroomjs/measure': workspace:*
       '@showroomjs/ui': workspace:*
       '@testing-library/dom': ^8.11.1
@@ -435,6 +461,7 @@ importers:
       '@showroomjs/bundles': link:../bundles
       '@showroomjs/core': link:../core
       '@showroomjs/device-frames': link:../device-frames
+      '@showroomjs/interaction': link:../interaction
       '@showroomjs/measure': link:../measure
       '@showroomjs/ui': link:../ui
       '@testing-library/dom': 8.11.1
