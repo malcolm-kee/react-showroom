@@ -1,3 +1,6 @@
+import { InteractionProvider } from 'react-showroom/client';
+import { buttonScenarios } from './button.interactions';
+
 ```jsx
 import { usePropsEditor } from 'react-showroom/client';
 
@@ -29,6 +32,22 @@ Following is a static example.
 ```jsx static
 <Button>Static</Button>
 ```
+
+## `useState` Example
+
+<InteractionProvider scenarios={buttonScenarios}>
+
+```tsx
+const Demo = () => {
+  const [on, setOn] = React.useState(false);
+
+  return <Button onClick={() => setOn(!on)}>{on ? 'On' : 'Off'}</Button>;
+};
+
+<Demo />;
+```
+
+</InteractionProvider>
 
 ## Example that fetch data
 

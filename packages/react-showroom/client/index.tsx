@@ -9,6 +9,7 @@ export type {
   ReactShowroomComponentContent,
   ReactShowroomSection,
 } from '@showroomjs/core/react';
+export { InteractionProvider } from '@showroomjs/interaction';
 export {
   Breadcrumbs,
   Checkbox,
