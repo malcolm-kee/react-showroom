@@ -38,7 +38,7 @@ export const A11yResultItem = (props: {
   );
 
   return (
-    <Item>
+    <Root>
       <Collapsible.Root open={showDetails} onOpenChange={setShowDetails}>
         <ResultTitle>
           <Collapsible.Button
@@ -108,7 +108,7 @@ export const A11yResultItem = (props: {
           </ItemDetails>
         </Collapsible.Content>
       </Collapsible.Root>
-    </Item>
+    </Root>
   );
 };
 
@@ -123,7 +123,7 @@ const ResultTitle = styled('div', {
   paddingRight: '$4',
 });
 
-const Item = styled('li', {
+export const Root = styled('li', {
   py: '$1',
   borderBottom: '1px solid $gray-200',
   '&:last-child': {

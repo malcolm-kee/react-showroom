@@ -39,5 +39,5 @@ export const useA11yCheck = <Target extends HTMLElement>(
 };
 
 const observerInit: IntersectionObserverInit = {
-  rootMargin: `20% 0px`,
+  rootMargin: `20% 20%`,
 };

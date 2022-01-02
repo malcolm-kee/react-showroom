@@ -1,8 +1,8 @@
 import { dedupeArray, flattenArray, isDefined } from '@showroomjs/core';
-import { Checkbox, styled, Tabs } from '@showroomjs/ui';
+import { Checkbox, Collapsible, pulse, styled, Tabs } from '@showroomjs/ui';
 import * as React from 'react';
 import { A11yResult, useA11yResult } from '../lib/use-a11y-result';
-import { A11yResultItem } from './a11y-result-item';
+import { A11yResultItem, Root as ItemRoot } from './a11y-result-item';
 
 export const A11yResultPanel = (props: {
   highlightItems: (selectors: Array<string>, color: string) => void;
@@ -98,10 +98,11 @@ export const A11yResultPanel = (props: {
             onCheckedChange={(allChecked) => {
               setHighlightedItems(allChecked ? allSelectors : []);
             }}
+            disabled={allSelectors.length === 0}
           />
         </CheckboxLabel>
       </TabNav>
-      {result && (
+      {result ? (
         <>
           <TabContent value="violations">
             {result.violations.length > 0 ? (
@@ -158,16 +159,63 @@ export const A11yResultPanel = (props: {
             )}
           </TabContent>
         </>
+      ) : (
+        <LoadingPlaceholderList />
       )}
     </Tabs.Root>
   );
 };
+
+const LoadingPlaceholderList = () => (
+  <ResultItemList
+    css={{
+      backgroundColor: 'White',
+      animation: `${pulse} 2s cubic-bezier(0.4, 0, 0.6, 1) infinite`,
+    }}
+  >
+    <PlaceholderItem width="60%" />
+    <PlaceholderItem width="70%" />
+    <PlaceholderItem width="50%" />
+  </ResultItemList>
+);
 
 const ResultItemList = styled('ul', {
   listStyle: 'none',
   margin: 0,
   padding: 0,
 });
+
+const LoadingLabel = styled('div', {
+  backgroundColor: '$gray-300',
+  height: '1.25rem',
+});
+
+const PlaceholderItemInner = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
+  paddingRight: '$4',
+  paddingLeft: '$1',
+});
+
+const PlaceholderItem = ({ width }: { width: string }) => (
+  <ItemRoot>
+    <PlaceholderItemInner>
+      <Collapsible.ToggleIcon
+        direction="right"
+        width={16}
+        height={16}
+        css={{
+          marginRight: '$1',
+        }}
+      />
+      <LoadingLabel
+        css={{
+          width,
+        }}
+      />
+    </PlaceholderItemInner>
+  </ItemRoot>
+);
 
 const Count = styled('span', {
   display: 'inline-flex',

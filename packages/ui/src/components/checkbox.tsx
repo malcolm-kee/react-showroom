@@ -17,6 +17,9 @@ const StyledRoot = styled(CheckboxPrimitive.Root, {
     outline: '1px solid $primary-300',
     outlineOffset: 2,
   },
+  '&:disabled': {
+    backgroundColor: '$gray-200',
+  },
 });
 
 const Indicator = styled(CheckboxPrimitive.Indicator, {
