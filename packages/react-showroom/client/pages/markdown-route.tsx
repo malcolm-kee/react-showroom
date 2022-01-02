@@ -3,24 +3,15 @@ import {
   ReactShowroomMarkdownContent,
   ReactShowroomMarkdownSection,
 } from '@showroomjs/core/react';
-import { Breadcrumbs } from '@showroomjs/ui';
 import * as React from 'react';
 import { DetailsPageContainer } from '../components/details-page-container';
 import { MarkdownArticle } from '../components/markdown-article';
 import { MarkdownDataProvider } from '../components/markdown-data-provider';
+import { MarkdownDocStandaloneEditor } from '../components/markdown-doc-standalone-editor';
 import { Seo } from '../components/seo';
 import { StandalonePageContainer } from '../components/standalone-page-container';
-import { ExampleRootContextProvider } from '../lib/example-root-context';
-import { lazy } from '../lib/lazy';
-import { CodeFrameContextProvider } from '../lib/code-frame-context';
 import { EXAMPLE_DIMENSIONS, showDeviceFrame } from '../lib/config';
-
-const StandaloneEditor = lazy(
-  () =>
-    import(
-      /* webpackChunkName: "standaloneEditor" */ '../components/standalone-editor-lazy'
-    )
-);
+import { ExampleRootContextProvider } from '../lib/example-root-context';
 
 export const MarkdownRoute = ({
   section,
@@ -43,28 +34,11 @@ export const MarkdownRoute = ({
                 title={title}
                 description={section.frontmatter.description}
               />
-              <Breadcrumbs
-                items={[
-                  {
-                    label: title,
-                    url,
-                  },
-                  {
-                    label: 'Example',
-                  },
-                ]}
+              <MarkdownDocStandaloneEditor
+                showDeviceFrame={showDeviceFrame}
+                codeFrameDimensions={EXAMPLE_DIMENSIONS}
+                rootTitle={title}
               />
-              <CodeFrameContextProvider
-                value={React.useMemo(
-                  () => ({
-                    showDeviceFrame,
-                    frameDimensions: EXAMPLE_DIMENSIONS,
-                  }),
-                  []
-                )}
-              >
-                <StandaloneEditor />
-              </CodeFrameContextProvider>
             </StandalonePageContainer>
           </Route>
           <Route path={url}>

@@ -61,7 +61,8 @@ test.describe('react example', () => {
     await expect(page.locator('data-testid=comment-toggle')).toBeVisible();
 
     await page.click('data-testid=comment-toggle');
-    await page.click('data-testid=sync-state-toggle');
+    await page.click('data-testid=setting-menu');
+    await page.click('text=Sync Interactions');
 
     const frames = page.frames();
 

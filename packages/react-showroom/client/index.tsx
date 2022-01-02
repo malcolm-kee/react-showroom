@@ -1,6 +1,5 @@
 import type { ComponentDoc } from 'react-docgen-typescript';
 import allCompMetadata from 'react-showroom-comp-metadata?showroomAllComp';
-import { lazy } from './lib/lazy';
 export { useQueryClient } from '@showroomjs/bundles/query';
 export { deviceDimensionsByName, getCompilationKey } from '@showroomjs/core';
 export type { CodeBlocks, FrameDimension } from '@showroomjs/core';
@@ -31,7 +30,9 @@ export { DocPlaceholder } from './components/doc-placeholder';
 export type { DocPlaceholderProps } from './components/doc-placeholder';
 export { MarkdownArticle } from './components/markdown-article';
 export { MarkdownDataProvider } from './components/markdown-data-provider';
+export { MarkdownDocStandaloneEditor } from './components/markdown-doc-standalone-editor';
 export { mdxComponents } from './components/mdx-components';
+export { PageFallback } from './components/page-fallback';
 export {
   ColorControl,
   ObjectValueEditor,
@@ -47,9 +48,6 @@ export { Link, MemoryRouter, Route, Switch, useLocation } from './lib/routing';
 export { useMenu } from './lib/use-menu';
 export { usePropsEditor } from './lib/use-props-editor';
 export { useUnionProps } from './lib/use-union-props';
-export const StandaloneEditor = lazy(
-  () => import('./components/standalone-editor-lazy')
-);
 export const allComponentsMetadata: Record<
   string,
   ComponentDoc & { id: string }

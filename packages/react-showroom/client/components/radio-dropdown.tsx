@@ -1,8 +1,9 @@
 import { CheckIcon } from '@heroicons/react/outline';
-import { DropdownMenu } from '@showroomjs/ui';
+import { DropdownMenu, DropdownMenuContentProps } from '@showroomjs/ui';
 import * as React from 'react';
 
-export interface RadioDropdownProps<Value extends string> {
+export interface RadioDropdownProps<Value extends string>
+  extends DropdownMenuContentProps {
   value: Value;
   onChangeValue: (value: Value) => void;
   options: Array<{
@@ -12,16 +13,19 @@ export interface RadioDropdownProps<Value extends string> {
   className?: string;
 }
 
-export const RadioDropdown = <Value extends string>(
-  props: RadioDropdownProps<Value>
-) => {
+export const RadioDropdown = <Value extends string>({
+  value,
+  onChangeValue,
+  options,
+  ...props
+}: RadioDropdownProps<Value>) => {
   return (
-    <DropdownMenu.Content className={props.className}>
+    <DropdownMenu.Content {...props}>
       <DropdownMenu.RadioGroup
-        value={props.value}
-        onValueChange={props.onChangeValue as any}
+        value={value}
+        onValueChange={onChangeValue as any}
       >
-        {props.options.map((option, i) => (
+        {options.map((option, i) => (
           <DropdownMenu.RadioItem
             value={option.value}
             css={{

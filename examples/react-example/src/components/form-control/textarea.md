@@ -1,4 +1,4 @@
-```tsx frame
+```tsx frame initialHeight=56
 const Demo = () => {
   const [value, setValue] = React.useState('textarea');
 
