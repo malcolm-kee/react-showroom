@@ -98,7 +98,8 @@ const Trigger = styled(DropdownMenuPrimitive.Trigger, {
   ...buttonBase,
 });
 
-// Exports
+export type { DropdownMenuContentProps } from '@radix-ui/react-dropdown-menu';
+
 export const DropdownMenu = Object.assign(DropdownMenuPrimitive.Root, {
   Trigger,
   Content: StyledContent,

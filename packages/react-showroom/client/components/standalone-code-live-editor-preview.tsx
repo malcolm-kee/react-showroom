@@ -1,4 +1,4 @@
-import { isNumber, SupportedLanguage } from '@showroomjs/core';
+import { isNumber, SupportedLanguage, isFunction } from '@showroomjs/core';
 import { css, styled, useConstant, useQueryParams } from '@showroomjs/ui';
 import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
@@ -331,6 +331,17 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
           ? screenListSize && screenListSize.height + 36
           : adjustedEffectiveHeight) || undefined
       }
+      ref={(resizableRef) => {
+        if (resizableRef) {
+          resizableRef.ref = (innerRef) => {
+            if (isFunction(forwardedRef)) {
+              forwardedRef(innerRef as HTMLDivElement);
+            } else if (forwardedRef) {
+              forwardedRef.current = innerRef as HTMLDivElement;
+            }
+          };
+        }
+      }}
       {...rootProps}
     >
       <ScreenList

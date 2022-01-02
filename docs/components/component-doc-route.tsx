@@ -5,6 +5,7 @@ import {
   ComponentDocStandaloneEditor,
   deviceDimensionsByName,
   MemoryRouter,
+  PageFallback,
   QueryParamProvider,
   Route,
   Suspense,
@@ -26,7 +27,7 @@ export const ComponentDocRoute = (
     <QueryParamProvider>
       <BrowserWindowInRouter className="mb-4">
         <ComponentDataProvider {...props}>
-          <Suspense fallback={null}>
+          <Suspense fallback={<PageFallback />}>
             <Switch>
               <Route path="/_standalone/:codeHash">
                 <div
