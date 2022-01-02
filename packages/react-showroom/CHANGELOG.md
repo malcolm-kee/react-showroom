@@ -1,5 +1,13 @@
 # react-showroom
 
+## 1.21.1
+
+### Patch Changes
+
+- 8c50a0f: Bugfix: logic for standalone control menu
+- Updated dependencies [8c50a0f]
+  - @showroomjs/ui@1.12.3
+
 ## 1.21.0
 
 ### Minor Changes

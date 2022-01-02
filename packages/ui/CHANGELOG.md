@@ -1,5 +1,11 @@
 # @showroomjs/ui
 
+## 1.12.3
+
+### Patch Changes
+
+- 8c50a0f: Bugfix: logic for standalone control menu
+
 ## 1.12.2
 
 ### Patch Changes
