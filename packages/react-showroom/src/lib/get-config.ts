@@ -123,7 +123,7 @@ export const getConfig = (
         : deviceDevices,
       placeholder,
       enableAdvancedEditor = true,
-      showDeviceFrame = true,
+      showDeviceFrame = !widths,
       syncStateType = 'state',
       a11y = {
         config: {},

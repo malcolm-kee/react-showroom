@@ -10,7 +10,6 @@ module.exports = defineConfig({
     prerender: false,
   },
   example: {
-    showDeviceFrame: false,
     widths: [375, 768, 1440],
   },
 });

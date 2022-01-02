@@ -370,7 +370,9 @@ export const StandaloneCodeLiveEditor = ({
                             Wrap Screens
                           </CheckboxDropdown.Item>
                         )}
-                        <DropdownMenu.Separator />
+                        {(showDeviceFrameSetting || !isCommenting) && (
+                          <DropdownMenu.Separator />
+                        )}
                         {!isCommenting && (
                           <CheckboxDropdown.Item
                             checked={syncState}
