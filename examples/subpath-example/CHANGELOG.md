@@ -1,5 +1,13 @@
 # subpath-example
 
+## 1.1.21
+
+### Patch Changes
+
+- Updated dependencies [681bca6]
+- Updated dependencies [681bca6]
+  - react-showroom@1.21.0
+
 ## 1.1.20
 
 ### Patch Changes

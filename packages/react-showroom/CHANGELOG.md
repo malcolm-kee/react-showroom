@@ -1,5 +1,18 @@
 # react-showroom
 
+## 1.21.0
+
+### Minor Changes
+
+- 681bca6: Simplify standalone view controls
+
+### Patch Changes
+
+- 681bca6: Bump dependencies
+- Updated dependencies [681bca6]
+  - @showroomjs/core@1.14.1
+  - @showroomjs/ui@1.12.2
+
 ## 1.20.2
 
 ### Patch Changes
