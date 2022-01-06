@@ -38,12 +38,24 @@ export const Tooltip = Object.assign({}, TooltipPrimitive, {
   Arrow: StyledArrow,
 });
 
-export const TextTooltip = (props: {
+export interface TextTooltipProps
+  extends Pick<
+    TooltipPrimitive.PopperContentProps,
+    'side' | 'align' | 'className'
+  > {
   children: React.ReactNode;
   label: string;
-}) => (
-  <Tooltip.Root>
-    <Tooltip.Trigger asChild>{props.children}</Tooltip.Trigger>
-    <Tooltip.Content>{props.label}</Tooltip.Content>
+  open?: boolean;
+}
+
+export const TextTooltip = ({
+  children,
+  label,
+  open,
+  ...props
+}: TextTooltipProps) => (
+  <Tooltip.Root open={open}>
+    <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
+    <Tooltip.Content {...props}>{label}</Tooltip.Content>
   </Tooltip.Root>
 );

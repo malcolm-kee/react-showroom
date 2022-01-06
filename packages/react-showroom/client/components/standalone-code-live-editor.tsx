@@ -513,6 +513,8 @@ export const StandaloneCodeLiveEditor = ({
                         };
 
                         setTargetCoord(elementRelative);
+
+                        setActiveComment('');
                       }
                     }}
                     ref={previewListRef}
@@ -568,20 +570,27 @@ export const StandaloneCodeLiveEditor = ({
                             }}
                             key={comment.id}
                           >
-                            <MarkerButton
-                              onClick={(ev) => {
-                                ev.stopPropagation();
-                                setActiveComment(comment.id);
-                              }}
-                              type="button"
+                            <TextTooltip
+                              open={isActive}
+                              label={comment.text}
+                              side="top"
+                              className={commentPopover()}
                             >
-                              <Marker
-                                iconClass={iconClass({
-                                  active: isActive,
-                                })}
-                                data-active-comment={isActive ? true : null}
-                              />
-                            </MarkerButton>
+                              <MarkerButton
+                                onClick={(ev) => {
+                                  ev.stopPropagation();
+                                  setActiveComment(isActive ? '' : comment.id);
+                                }}
+                                type="button"
+                              >
+                                <Marker
+                                  iconClass={iconClass({
+                                    active: isActive,
+                                  })}
+                                  data-active-comment={isActive ? true : null}
+                                />
+                              </MarkerButton>
+                            </TextTooltip>
                           </Div>
                         );
                       })}
@@ -849,6 +858,8 @@ const A11yPanelRoot = styled('section', {
   px: '$2',
   paddingBottom: '$3',
   minHeight: 200,
+  maxHeight: '40vh',
+  overflowY: 'auto',
 });
 
 const A11yPanelTitle = styled('div', {
@@ -958,6 +969,8 @@ const MarkerButton = styled('button', {
   margin: '-10px',
   width: 40,
   height: 40,
+  outlineRing: '',
+  borderRadius: '$lg',
 });
 
 const Toolbar = styled('div', {
@@ -1024,13 +1037,15 @@ const MenuButton = styled('button', {
 
 const editorWrapper = css({
   flex: 1,
-  overflow: 'hidden',
+  overflow: 'auto',
 });
 
 const editor = css({
   borderRadius: '$base',
-  height: '100%',
-  overflowY: 'auto',
+});
+
+const commentPopover = css({
+  whiteSpace: 'pre-wrap',
 });
 
 const iconClass = css({

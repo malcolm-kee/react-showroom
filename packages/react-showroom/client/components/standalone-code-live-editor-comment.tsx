@@ -44,6 +44,7 @@ const CommentItem = styled(CommentItemImpl, {
   fontSize: '$sm',
   lineHeight: '$sm',
   position: 'relative',
+  whiteSpace: 'pre-wrap',
   variants: {
     active: {
       true: {
