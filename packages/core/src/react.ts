@@ -412,7 +412,6 @@ export interface ReactShowroomComponentContent {
 
 export interface ComponentDocItem {
   load: () => Promise<ReactShowroomComponentContent>;
-  preloadUrl: string;
 }
 
 export interface ReactShowroomComponentSection {
@@ -453,7 +452,6 @@ export interface ReactShowroomMarkdownSection {
   fallbackTitle: string;
   slug: string;
   frontmatter: ReactShowroomMarkdownFrontmatter;
-  preloadUrl: string;
   load: () => Promise<ReactShowroomMarkdownContent>;
   formatLabel: (oriTitle: string) => string;
   hideFromSidebar?: boolean;

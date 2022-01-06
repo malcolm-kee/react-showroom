@@ -114,7 +114,6 @@ function compileComponentSection(
     }`;
 
   return `{
-      preloadUrl: ${docPath ? `'${path.relative(rootDir, docPath)}'` : 'null'},
       load: ${load},
     }`;
 }
@@ -229,10 +228,6 @@ export const generateSectionsAndImports = (
                   : ''
               }
               formatLabel: ${section.formatLabel.toString()},
-              preloadUrl: '${path.relative(
-                options.rootDir,
-                section.sourcePath
-              )}',
               load: async () => {
                 const loadComponent = import(/* webpackChunkName: "${chunkName}" */'${
             section.sourcePath
@@ -408,3 +403,5 @@ export const generateDocPlaceHolder = (placeholder: string | undefined) => {
   )}';
   export default DocPlaceholder`;
 };
+
+export const generateIndex = () => {};
