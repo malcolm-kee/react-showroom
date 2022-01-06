@@ -11,9 +11,6 @@ export interface StandaloneCodeLiveEditorCommentPopoverProps
   children: React.ReactNode;
 }
 
-/**
- * @todo Fix the textarea not being auto-focused when open. Not sure why.
- */
 export const StandaloneCodeLiveEditorCommentPopover = React.forwardRef<
   HTMLTextAreaElement,
   StandaloneCodeLiveEditorCommentPopoverProps
