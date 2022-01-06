@@ -1,5 +1,12 @@
 # react-showroom-docs
 
+## 1.1.23
+
+### Patch Changes
+
+- Updated dependencies [2d13a2f]
+  - react-showroom@1.21.2
+
 ## 1.1.22
 
 ### Patch Changes

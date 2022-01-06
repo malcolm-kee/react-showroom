@@ -1,5 +1,13 @@
 # react-showroom
 
+## 1.21.2
+
+### Patch Changes
+
+- 2d13a2f: Fix standalone view styling
+- Updated dependencies [2d13a2f]
+  - @showroomjs/ui@1.12.4
+
 ## 1.21.1
 
 ### Patch Changes

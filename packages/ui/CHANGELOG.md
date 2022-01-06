@@ -1,5 +1,11 @@
 # @showroomjs/ui
 
+## 1.12.4
+
+### Patch Changes
+
+- 2d13a2f: Fix standalone view styling
+
 ## 1.12.3
 
 ### Patch Changes
