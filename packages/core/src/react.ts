@@ -482,3 +482,37 @@ export type ReactShowroomSection =
   | ReactShowroomMarkdownSection
   | ReactShowroomLinkSection
   | ReactShowroomGroupSection;
+
+export interface SearchIndexHeading {
+  text: string;
+  slug: string;
+}
+
+export interface SearchIndexComponentItem {
+  type: 'component';
+  slug: string;
+  metadata: DocgenComponentDoc & { id: string };
+  title: string;
+  description: string;
+  id: string;
+  headings?: Array<SearchIndexHeading>;
+}
+
+export interface SearchIndexMarkdownItem {
+  type: 'markdown';
+  slug: string;
+  frontmatter: ReactShowroomMarkdownFrontmatter;
+  fallbackTitle: string;
+  headings: Array<SearchIndexHeading>;
+  formatLabel: (oriTitle: string) => string;
+}
+
+export interface SearchIndexGroupItem {
+  type: 'group';
+  items: Array<SearchIndexItem>;
+}
+
+export type SearchIndexItem =
+  | SearchIndexComponentItem
+  | SearchIndexMarkdownItem
+  | SearchIndexGroupItem;

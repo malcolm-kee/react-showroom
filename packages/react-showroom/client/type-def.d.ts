@@ -68,6 +68,14 @@ declare module 'react-showroom-comp-metadata?showroomCompProp' {
   export default allComponentProps;
 }
 
+declare module 'react-showroom-index' {
+  import { SearchIndexItem } from '@showroomjs/core/react';
+
+  declare const index: Array<SearchIndexItem>;
+
+  export default index;
+}
+
 declare namespace NodeJS {
   import type { FrameDimension } from '@showroomjs/core';
   import type { ThemeConfiguration } from '@showroomjs/core/react';

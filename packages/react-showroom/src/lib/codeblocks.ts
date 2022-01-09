@@ -75,7 +75,7 @@ export const codeblocks = <
   return result;
 };
 
-const parser = unified().use(remarkParse as any);
+const parser = unified().use(remarkParse);
 
 export const mdToCodeBlocks = async (
   mdSource: string,

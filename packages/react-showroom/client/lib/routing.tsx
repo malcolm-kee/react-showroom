@@ -47,7 +47,10 @@ export const useNavigate = () => {
   const history = useHistory();
 
   return {
-    navigate: (to: string, options: { replace?: boolean } = {}) => {
+    navigate: (
+      to: string,
+      options: { replace?: boolean; state?: unknown } = {}
+    ) => {
       setIsPending(true);
       setLocalIsPending(true);
       const urlWhenClick = history.location.pathname;
@@ -57,7 +60,7 @@ export const useNavigate = () => {
         // avoid race condition where user click another route before the Promise resolves
         if (urlWhenClick === history.location.pathname) {
           const method = options.replace ? history.replace : history.push;
-          method(to);
+          method(to, options.state);
         }
         if (isMountedRef.current) {
           setLocalIsPending(false);

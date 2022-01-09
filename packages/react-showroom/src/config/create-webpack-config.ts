@@ -20,6 +20,7 @@ import {
   generateWrapper,
   generateAllComponentsPaths,
   generateDocPlaceHolder,
+  generateIndex,
 } from '../lib/generate-showroom-data';
 import { logToStdout } from '../lib/log-to-stdout';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
@@ -249,7 +250,6 @@ const createBaseWebpackConfig = (
   );
 
   const generated = generateSectionsAndImports(sections, {
-    rootDir: paths.showroomPath,
     skipEmptyComponent: config.skipEmptyComponent,
     enableAdvancedEditor: exampleConfig.enableAdvancedEditor,
   });
@@ -272,6 +272,8 @@ const createBaseWebpackConfig = (
       generateAllComponentsPaths(sections),
     [resolveShowroom('node_modules/react-showroom-doc-placeholder.js')]:
       generateDocPlaceHolder(exampleConfig.placeholder),
+    [resolveShowroom('node_modules/react-showroom-index.js')]:
+      generateIndex(sections),
   });
 
   const babelPreset = createBabelPreset(mode);
@@ -389,6 +391,14 @@ const createBaseWebpackConfig = (
               use: [
                 {
                   loader: 'showroom-frontmatter-loader',
+                },
+              ],
+            },
+            {
+              resourceQuery: /headings/,
+              use: [
+                {
+                  loader: 'showroom-remark-headings-loader',
                 },
               ],
             },

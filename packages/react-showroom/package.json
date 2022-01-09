@@ -47,6 +47,7 @@
     "estree-util-value-to-estree": "^1.3.0",
     "front-matter": "^4.0.2",
     "fs-extra": "^10.0.0",
+    "github-slugger": "^1.4.0",
     "glob": "^7.2.0",
     "hast-util-heading": "1.0.5",
     "hast-util-heading-rank": "1.0.1",
@@ -55,6 +56,7 @@
     "html-webpack-tags-plugin": "^3.0.2",
     "lodash": "^4.17.21",
     "lz-string": "^1.4.4",
+    "mdast-util-to-string": "2",
     "mini-css-extract-plugin": "^2.4.6",
     "monaco-themes": "^0.4.0",
     "nanocolors": "^0.2.13",
@@ -119,7 +121,6 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.178",
-    "@types/webpack-dev-server": "^4.7.2",
     "typescript": "^4.5.4"
   }
 }
