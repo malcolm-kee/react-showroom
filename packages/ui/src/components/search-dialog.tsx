@@ -139,7 +139,7 @@ const SearchDialogInternal = function SearchDialog<T extends unknown>(
             const highlighted = i === highlightedIndex;
 
             return (
-              <li key={i}>
+              <Item key={i}>
                 <OptionItem
                   {...getItemProps({
                     item: option,
@@ -171,7 +171,7 @@ const SearchDialogInternal = function SearchDialog<T extends unknown>(
                     )}
                   </OptionText>
                 </OptionItem>
-              </li>
+              </Item>
             );
           })}
       </Menu>
@@ -192,6 +192,12 @@ const Menu = styled('ul', {
   listStyle: 'none',
   maxHeight: '70vh',
   overflowY: 'auto',
+});
+
+const Item = styled('li', {
+  margin: 0,
+  padding: 0,
+  width: '100%',
 });
 
 type Dismiss = () => void;
@@ -316,10 +322,12 @@ const SearchIcon = styled(PlainSearchIcon, {
 
 const OptionIcon = styled('div', {
   flexShrink: 0,
+  color: '$gray-400',
 });
 
 const OptionText = styled('div', {
   flex: 1,
+  minWidth: 0,
 });
 
 const Kbd = styled('kbd', {
@@ -349,6 +357,9 @@ const OptionItem = styled('div', {
         backgroundColor: '$primary-700',
         color: 'White',
         [`& ${Description}`]: {
+          color: '$gray-200',
+        },
+        [`& ${OptionIcon}`]: {
           color: '$gray-200',
         },
       },
