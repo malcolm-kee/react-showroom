@@ -138,10 +138,13 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
     (f) => !props.hiddenSizes.some(([w, h]) => w === f.width && h === f.height)
   );
 
-  const maxFrameHeight = Math.max.apply(
-    null,
-    visibleFrames.map((f) => (isNumber(f.height) ? f.height : 0))
-  );
+  const maxFrameHeight =
+    visibleFrames.length > 0
+      ? Math.max.apply(
+          null,
+          visibleFrames.map((f) => (isNumber(f.height) ? f.height : 0))
+        )
+      : 0;
 
   const maxEffectiveHeight =
     maxFrameHeight &&

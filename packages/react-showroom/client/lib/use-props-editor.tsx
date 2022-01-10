@@ -15,6 +15,7 @@ import {
   useId,
   useQueryParams,
 } from '@showroomjs/ui';
+import { useQuery, useQueryClient } from '@showroomjs/bundles/query';
 import * as React from 'react';
 import { ComponentDoc } from 'react-docgen-typescript';
 import { findBestMatch } from 'string-similarity';
@@ -602,8 +603,8 @@ const propsEditorProviderReducer = (
   }
 };
 
-const usePropsEditorProviderState = () =>
-  React.useReducer(propsEditorProviderReducer, undefined);
+const usePropsEditorProviderState = (initialState?: PropsEditorState) =>
+  React.useReducer(propsEditorProviderReducer, initialState);
 
 export type PropsEditorContextType = ReturnType<
   typeof usePropsEditorProviderState
@@ -617,12 +618,20 @@ export const PropsEditorContext = createNameContext<PropsEditorContextType>(
 export const PropsEditorProvider = (props: {
   children: React.ReactNode;
   serializeToParam?: boolean;
+  codeHash?: string;
 }) => {
-  const reducerReturn = usePropsEditorProviderState();
+  const queryClient = useQueryClient();
+
+  const propsEditorCache = useQuery<PropsEditorState>({
+    enabled: false,
+    queryKey: props.codeHash && getQueryKey(props.codeHash),
+  });
+
+  const [editorState, dispatch] = usePropsEditorProviderState(
+    propsEditorCache.data
+  );
 
   const [params, setParams, isReady] = useQueryParams();
-
-  const [editorState, dispatch] = reducerReturn;
 
   React.useEffect(() => {
     if (isReady && props.serializeToParam) {
@@ -654,12 +663,28 @@ export const PropsEditorProvider = (props: {
     }
   }, [editorState, props.serializeToParam]);
 
+  const dispatchCb = React.useCallback(
+    (event: PropsEditorProviderEvent) => {
+      dispatch(event);
+
+      if (event.type === 'init' && props.codeHash) {
+        queryClient.setQueryData(
+          getQueryKey(props.codeHash),
+          event.initialState
+        );
+      }
+    },
+    [props.codeHash]
+  );
+
   return (
-    <PropsEditorContext.Provider value={reducerReturn}>
+    <PropsEditorContext.Provider value={[editorState, dispatchCb]}>
       {props.children}
     </PropsEditorContext.Provider>
   );
 };
+
+const getQueryKey = (codeHash: string) => [`propsEditor`, codeHash];
 
 export const usePropsEditorContext = () => {
   const [state, dispatch] = React.useContext(PropsEditorContext);

@@ -453,7 +453,7 @@ export const StandaloneCodeLiveEditor = ({
               />
             </Div>
           </Toolbar>
-          <PropsEditorProvider serializeToParam>
+          <PropsEditorProvider codeHash={props.codeHash} serializeToParam>
             <Div
               className={className}
               css={{

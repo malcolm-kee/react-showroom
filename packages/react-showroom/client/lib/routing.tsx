@@ -51,6 +51,11 @@ export const useNavigate = () => {
       to: string,
       options: { replace?: boolean; state?: unknown } = {}
     ) => {
+      if (to.indexOf('/') !== 0) {
+        openInNewTab(to);
+        return;
+      }
+
       setIsPending(true);
       setLocalIsPending(true);
       const urlWhenClick = history.location.pathname;
@@ -80,6 +85,17 @@ export const BrowserRouter = (props: BrowserRouterProps) => {
     </RouteIsLoadingContext.Provider>
   );
 };
+
+function openInNewTab(url: string) {
+  try {
+    const a = document.createElement('a');
+    a.href = url;
+    a.setAttribute('target', '_BLANK');
+    a.click();
+  } catch (err) {
+    window.location.href = url;
+  }
+}
 
 export interface LinkProps extends Omit<OriLinkProps, 'to'> {
   to: string;

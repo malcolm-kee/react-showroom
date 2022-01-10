@@ -9,7 +9,6 @@ import {
 } from '@showroomjs/core';
 import {
   FrameWithMaybeName,
-  ImportConfig,
   ItemConfiguration,
   NormalizedReactShowroomConfiguration,
   ReactShowroomComponentSectionConfig,
@@ -173,7 +172,7 @@ export const getConfig = (
 
   const { outDir = 'showroom', prerender = true } = providedBuildConfig;
 
-  const imports: Array<ImportConfig> = providedImports
+  const imports = providedImports
     ? providedImports.some((imp) => imp === 'react')
       ? providedImports
       : providedImports.concat('react')

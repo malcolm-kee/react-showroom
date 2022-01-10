@@ -7,6 +7,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
+    <meta name="theme-color" content="<%- backgroundColor %>" />
     <% if (favicon) { %>
     <link rel="shortcut icon" href="<%- favicon %>" />
     <% } %> <% if (resetCss) { %>
@@ -126,6 +127,16 @@
       }
     </style>
     <% } %>
+    <style>
+      html {
+        height: 100%;
+        background-color: <%- backgroundColor %>;
+      }
+      body {
+        background-color: #f9fafb;
+        min-height: 100%;
+      }
+    </style>
     <!--SSR-helmet-->
     <!--SSR-style-->
   </head>

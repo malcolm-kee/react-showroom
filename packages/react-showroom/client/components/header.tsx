@@ -76,7 +76,7 @@ export const Header = React.forwardRef<HTMLElement, HeaderProps>(
                 placeholder="Search docs"
                 onSelect={(result) => {
                   if (result) {
-                    navigate(`/${result}`, {
+                    navigate(result, {
                       state: {
                         searchNavigated: true,
                       },
