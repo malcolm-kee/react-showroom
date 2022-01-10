@@ -1,5 +1,17 @@
 # react-showroom
 
+## 1.22.1
+
+### Patch Changes
+
+- 27b7371: Fix search dialog style
+- 27b7371: Cache props editor state to improve subsequent load
+- Updated dependencies [27b7371]
+- Updated dependencies [27b7371]
+- Updated dependencies [27b7371]
+  - @showroomjs/ui@1.13.1
+  - @showroomjs/core@1.15.1
+
 ## 1.22.0
 
 ### Minor Changes

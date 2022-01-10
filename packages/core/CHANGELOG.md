@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 1.15.1
+
+### Patch Changes
+
+- 27b7371: Allow passing name and path for imports
+
 ## 1.15.0
 
 ### Minor Changes
