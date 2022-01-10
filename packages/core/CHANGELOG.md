@@ -1,5 +1,15 @@
 # @showroomjs/core
 
+## 1.15.0
+
+### Minor Changes
+
+- 6233493: Index sections for search result
+
+### Patch Changes
+
+- 6233493: Remove unused data
+
 ## 1.14.1
 
 ### Patch Changes

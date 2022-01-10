@@ -1,5 +1,17 @@
 # @showroomjs/ui
 
+## 1.13.0
+
+### Minor Changes
+
+- 6233493: Index sections for search result
+
+### Patch Changes
+
+- Updated dependencies [6233493]
+- Updated dependencies [6233493]
+  - @showroomjs/core@1.15.0
+
 ## 1.12.4
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @showroomjs/device-frames
 
+## 0.3.0
+
+### Minor Changes
+
+- 6233493: Index sections for search result
+
 ## 0.2.3
 
 ### Patch Changes
