@@ -1,5 +1,4 @@
 import { ArrowLeftIcon } from '@heroicons/react/outline';
-import { SearchIndexItem } from '@showroomjs/core/react';
 import { Option, SearchDialog, styled } from '@showroomjs/ui';
 import * as React from 'react';
 import { Link, useLocation, useNavigate } from '../lib/routing';
@@ -9,69 +8,6 @@ import { GenericLink } from './generic-link';
 
 let cachedOptions: Array<Option<string>> | undefined = undefined;
 
-function collectOptions(indexItems: SearchIndexItem[]) {
-  const result: Array<Option<string>> = [];
-
-  function innerCollect(items: SearchIndexItem[]) {
-    items.forEach((item) => {
-      switch (item.type) {
-        case 'component':
-          result.push({
-            label: item.title,
-            value: item.slug,
-            description: item.description,
-          });
-
-          if (item.headings) {
-            item.headings.forEach((heading) => {
-              if (heading.slug) {
-                result.push({
-                  label: heading.text,
-                  value: `${item.slug}#${heading.slug}`,
-                  description: item.title,
-                });
-              }
-            });
-          }
-          break;
-
-        case 'markdown':
-          const title = item.formatLabel(
-            item.frontmatter.title || item.fallbackTitle
-          );
-          if (item.slug && title) {
-            result.push({
-              label: title,
-              value: item.slug,
-              description: item.frontmatter.description,
-            });
-            item.headings.forEach((heading) => {
-              if (heading.slug) {
-                result.push({
-                  label: heading.text,
-                  value: `${item.slug}#${heading.slug}`,
-                  description: title,
-                });
-              }
-            });
-          }
-          break;
-
-        case 'group':
-          innerCollect(item.items);
-          break;
-
-        default:
-          break;
-      }
-    });
-  }
-
-  innerCollect(indexItems);
-
-  return result;
-}
-
 function getOptions(): Promise<Array<Option<string>>> {
   if (cachedOptions) {
     return Promise.resolve(cachedOptions);
@@ -79,9 +15,9 @@ function getOptions(): Promise<Array<Option<string>>> {
 
   return import(
     /* webpackChunkName: "searchIndex" */
-    'react-showroom-index'
+    './search-options'
   ).then((m) => {
-    const result = collectOptions(m.default);
+    const result = m.options;
     cachedOptions = result;
     return result;
   });
