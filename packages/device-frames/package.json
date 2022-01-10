@@ -17,6 +17,7 @@
     "dev": "pnpm run build -- --watch"
   },
   "devDependencies": {
+    "postcss": "^8.4.5",
     "tsup": "5.11.9",
     "typescript": "^4.5.4"
   },

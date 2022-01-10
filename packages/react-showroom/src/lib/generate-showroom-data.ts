@@ -64,11 +64,9 @@ export const generateCodeblocksData = (
 function compileComponentSection(
   component: ReactShowroomComponentSectionConfig,
   {
-    rootDir,
     metadataIdentifier,
     enableAdvancedEditor,
   }: {
-    rootDir: string;
     metadataIdentifier: string;
     enableAdvancedEditor: boolean;
   }
@@ -114,7 +112,6 @@ function compileComponentSection(
     }`;
 
   return `{
-      preloadUrl: ${docPath ? `'${path.relative(rootDir, docPath)}'` : 'null'},
       load: ${load},
     }`;
 }
@@ -128,7 +125,6 @@ interface ImportDefinition {
 export const generateSectionsAndImports = (
   sections: Array<ReactShowroomSectionConfig>,
   options: {
-    rootDir: string;
     enableAdvancedEditor: boolean;
     skipEmptyComponent?: boolean;
   }
@@ -174,7 +170,6 @@ export const generateSectionsAndImports = (
           return `${name} ? {
               type: 'component',
               data: ${compileComponentSection(section, {
-                rootDir: options.rootDir,
                 enableAdvancedEditor: options.enableAdvancedEditor,
                 metadataIdentifier: name,
               })},
@@ -229,10 +224,6 @@ export const generateSectionsAndImports = (
                   : ''
               }
               formatLabel: ${section.formatLabel.toString()},
-              preloadUrl: '${path.relative(
-                options.rootDir,
-                section.sourcePath
-              )}',
               load: async () => {
                 const loadComponent = import(/* webpackChunkName: "${chunkName}" */'${
             section.sourcePath
@@ -407,4 +398,103 @@ export const generateDocPlaceHolder = (placeholder: string | undefined) => {
     'client-dist/components/doc-placeholder.js'
   )}';
   export default DocPlaceholder`;
+};
+
+export const generateIndex = (sections: Array<ReactShowroomSectionConfig>) => {
+  const compVar: Array<{
+    identifier: string;
+    sourcePath: string;
+  }> = [];
+
+  const imports: Array<ImportDefinition> = [];
+
+  function collect(sectionList: Array<ReactShowroomSectionConfig>): string {
+    return `[${sectionList
+      .map((section) => {
+        if (section.hideFromSidebar) {
+          return 'undefined';
+        }
+
+        if (section.type === 'group') {
+          return `{ type: 'group', items: ${collect(section.items)} }`;
+        }
+
+        if (section.type === 'component') {
+          const name = getName('component');
+
+          compVar.push({
+            identifier: name,
+            sourcePath: section.sourcePath,
+          });
+
+          if (section.docPath) {
+            imports.push({
+              type: 'default',
+              name: `${name}_doc`,
+              path: `${section.docPath}?headings`,
+            });
+          }
+
+          return `${name} && {
+          type: 'component',
+          metadata: ${name},
+          title: ${name}.displayName,
+          description: ${name}.description,
+          slug: [${
+            section.parentSlugs.length > 0
+              ? `'${section.parentSlugs.join('/')}',`
+              : ''
+          } slugify(${name}.displayName, { lower: true })].join('/'),
+          id: '${section.id}',
+          ${section.docPath ? `headings: ${name}_doc,` : ''}
+        }`;
+        }
+
+        if (section.type === 'markdown') {
+          const name = getName('markdown');
+
+          imports.push(
+            {
+              type: 'default',
+              name: name,
+              path: `${section.sourcePath}?headings`,
+            },
+            {
+              type: 'default',
+              name: `${name}_frontmatter`,
+              path: `${section.sourcePath}?showroomFrontmatter`,
+            }
+          );
+
+          return `{
+            type: 'markdown',
+            slug: '${section.slug}',
+            frontmatter: ${name}_frontmatter || {},
+            fallbackTitle: '${section.title || ''}',
+            headings: ${name},
+            formatLabel: ${section.formatLabel.toString()},
+          }`;
+        }
+      })
+      .join(', ')}].filter(Boolean)`;
+  }
+
+  const result = collect(sections);
+
+  return `import slugify from 'slugify';
+import allCompMetadata from 'react-showroom-comp-metadata?showroomAllComp';
+${imports
+  .map((imp) =>
+    imp.type === 'default'
+      ? `import ${imp.name} from '${imp.path}';`
+      : `import * as ${imp.name} from '${imp.path}';`
+  )
+  .join('\n')}
+${compVar
+  .map(
+    (varDef) =>
+      `const ${varDef.identifier} = allCompMetadata['${varDef.sourcePath}'];`
+  )
+  .join('\n')}
+export default ${result};`;
 };

@@ -412,7 +412,6 @@ export interface ReactShowroomComponentContent {
 
 export interface ComponentDocItem {
   load: () => Promise<ReactShowroomComponentContent>;
-  preloadUrl: string;
 }
 
 export interface ReactShowroomComponentSection {
@@ -453,7 +452,6 @@ export interface ReactShowroomMarkdownSection {
   fallbackTitle: string;
   slug: string;
   frontmatter: ReactShowroomMarkdownFrontmatter;
-  preloadUrl: string;
   load: () => Promise<ReactShowroomMarkdownContent>;
   formatLabel: (oriTitle: string) => string;
   hideFromSidebar?: boolean;
@@ -484,3 +482,37 @@ export type ReactShowroomSection =
   | ReactShowroomMarkdownSection
   | ReactShowroomLinkSection
   | ReactShowroomGroupSection;
+
+export interface SearchIndexHeading {
+  text: string;
+  slug: string;
+}
+
+export interface SearchIndexComponentItem {
+  type: 'component';
+  slug: string;
+  metadata: DocgenComponentDoc & { id: string };
+  title: string;
+  description: string;
+  id: string;
+  headings?: Array<SearchIndexHeading>;
+}
+
+export interface SearchIndexMarkdownItem {
+  type: 'markdown';
+  slug: string;
+  frontmatter: ReactShowroomMarkdownFrontmatter;
+  fallbackTitle: string;
+  headings: Array<SearchIndexHeading>;
+  formatLabel: (oriTitle: string) => string;
+}
+
+export interface SearchIndexGroupItem {
+  type: 'group';
+  items: Array<SearchIndexItem>;
+}
+
+export type SearchIndexItem =
+  | SearchIndexComponentItem
+  | SearchIndexMarkdownItem
+  | SearchIndexGroupItem;

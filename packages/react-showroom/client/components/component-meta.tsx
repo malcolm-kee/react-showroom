@@ -1,14 +1,10 @@
+import { isDefined } from '@showroomjs/core';
 import { Collapsible, styled, Table } from '@showroomjs/ui';
 import * as React from 'react';
 import type { ComponentDoc, Props } from 'react-docgen-typescript';
 import snarkdown from 'snarkdown';
 import { useTargetAudience } from '../lib/use-target-audience';
 import { Div, H1, NavLink } from './base';
-
-const hasOwnProperty = Object.prototype.hasOwnProperty;
-
-const hasTag = (tags: Record<string, unknown>, tag: string) =>
-  hasOwnProperty.call(tags, tag);
 
 export interface ComponentMetaProps {
   componentData: ComponentDoc;
@@ -112,6 +108,7 @@ const ComponentPropsTable = (props: {
             <Table.Tr>
               <Table.Th>NAME</Table.Th>
               <Table.Th>TYPE</Table.Th>
+              <Table.Th>DEFAULT</Table.Th>
               <Table.Th>DESCRIPTION</Table.Th>
             </Table.Tr>
           </thead>
@@ -130,7 +127,22 @@ const ComponentPropsTable = (props: {
                 <Table.Tr key={prop}>
                   <Table.Td css={style}>{propData.name}</Table.Td>
                   <Table.Td css={style}>{propData.type.raw}</Table.Td>
-                  <Table.Td css={style}>{propData.description}</Table.Td>
+                  <Table.Td css={style}>
+                    {propData.required ? (
+                      <RequiredSpan>Required</RequiredSpan>
+                    ) : propData.defaultValue &&
+                      isDefined(propData.defaultValue.value) ? (
+                      String(propData.defaultValue.value)
+                    ) : (
+                      '-'
+                    )}
+                  </Table.Td>
+                  <Table.Td
+                    css={style}
+                    dangerouslySetInnerHTML={{
+                      __html: snarkdown(propData.description),
+                    }}
+                  />
                 </Table.Tr>
               );
             })}
@@ -156,6 +168,10 @@ const ComponentMetaTags = ({ tags }: { tags: Record<string, unknown> }) => {
   );
 };
 
+const RequiredSpan = styled('span', {
+  color: '$gray-600',
+});
+
 const TagKey = styled('b', {
   variants: {
     capitalize: {
@@ -165,3 +181,8 @@ const TagKey = styled('b', {
     },
   },
 });
+
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+
+const hasTag = (tags: Record<string, unknown>, tag: string) =>
+  hasOwnProperty.call(tags, tag);

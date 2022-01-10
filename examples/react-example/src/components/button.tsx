@@ -6,7 +6,7 @@ export interface ButtonProps
   /**
    * variant of the button
    */
-  variant?: 'primary' | 'outline';
+  variant: 'primary' | 'outline';
   /**
    * Size of the button
    *
@@ -14,6 +14,9 @@ export interface ButtonProps
    */
   size?: 'small' | 'large';
   fullWidth?: boolean;
+  /**
+   * A `React` element.
+   */
   leftIcon?: React.ReactNode;
   children: React.ReactNode;
 }

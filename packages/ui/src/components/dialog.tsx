@@ -73,8 +73,11 @@ export interface DialogContentProps extends DialogPrimitive.DialogContentProps {
   fullWidth?: boolean;
 }
 
-const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(
-  function DialogContent({ children, showCloseBtn = true, ...props }, ref) {
+const DialogContent = styled(
+  React.forwardRef<HTMLDivElement, DialogContentProps>(function DialogContent(
+    { children, showCloseBtn = true, ...props },
+    ref
+  ) {
     return (
       <Content {...props} ref={ref}>
         {children}
@@ -85,7 +88,7 @@ const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(
         )}
       </Content>
     );
-  }
+  })
 );
 
 export const Dialog = Object.assign(DialogImpl, {

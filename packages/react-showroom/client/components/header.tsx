@@ -1,57 +1,27 @@
 import { ArrowLeftIcon } from '@heroicons/react/outline';
-import { ReactShowroomSection } from '@showroomjs/core/react';
 import { Option, SearchDialog, styled } from '@showroomjs/ui';
 import * as React from 'react';
-import sections from 'react-showroom-sections';
-import { Link, useHistory, useLocation } from '../lib/routing';
+import { Link, useLocation, useNavigate } from '../lib/routing';
+import { loadCodeAtPath } from '../route-mapping';
 import { colorTheme, THEME } from '../theme';
 import { GenericLink } from './generic-link';
 
-const options = (function (allItems: Array<ReactShowroomSection>) {
-  const result: Array<Option<string>> = [];
+let cachedOptions: Array<Option<string>> | undefined = undefined;
 
-  function collectOption(items: Array<ReactShowroomSection>) {
-    items.forEach((item) => {
-      switch (item.type) {
-        case 'component':
-          if (item.hideFromSidebar) {
-            return;
-          }
-          result.push({
-            label: item.title,
-            value: item.slug,
-            description: item.description,
-          });
-          return;
-
-        case 'group':
-          collectOption(item.items);
-          return;
-
-        case 'markdown': {
-          if (item.hideFromSidebar) {
-            return;
-          }
-
-          const title = item.formatLabel(
-            item.frontmatter.title || item.fallbackTitle
-          );
-          if (item.slug && title) {
-            result.push({
-              label: title,
-              value: item.slug,
-              description: item.frontmatter.description,
-            });
-          }
-        }
-      }
-    });
+function getOptions(): Promise<Array<Option<string>>> {
+  if (cachedOptions) {
+    return Promise.resolve(cachedOptions);
   }
 
-  collectOption(allItems);
-
-  return result;
-})(sections);
+  return import(
+    /* webpackChunkName: "searchIndex" */
+    './search-options'
+  ).then((m) => {
+    const result = m.options;
+    cachedOptions = result;
+    return result;
+  });
+}
 
 const navbarOptions = THEME.navbar;
 
@@ -61,8 +31,11 @@ export interface HeaderProps {
 
 export const Header = React.forwardRef<HTMLElement, HeaderProps>(
   function Header(props, forwardedRef) {
-    const history = useHistory();
     const location = useLocation<{ searchNavigated?: boolean }>();
+
+    const [options, setOptions] = React.useState(cachedOptions || []);
+
+    const { navigate } = useNavigate();
 
     return (
       <HeaderRoot ref={forwardedRef}>
@@ -88,7 +61,11 @@ export const Header = React.forwardRef<HTMLElement, HeaderProps>(
                   {item.label}
                 </HeaderLink>
               ))}
-            <SearchDialog.Root>
+            <SearchDialog.Root
+              onOpenChange={(open) =>
+                open && getOptions().then((result) => setOptions(result))
+              }
+            >
               <SearchDialog.Trigger
                 autoFocus={!!(location.state && location.state.searchNavigated)}
               >
@@ -99,9 +76,14 @@ export const Header = React.forwardRef<HTMLElement, HeaderProps>(
                 placeholder="Search docs"
                 onSelect={(result) => {
                   if (result) {
-                    history.push(`/${result}`, { searchNavigated: true });
+                    navigate(`/${result}`, {
+                      state: {
+                        searchNavigated: true,
+                      },
+                    });
                   }
                 }}
+                onHighlightedItemChange={(item) => loadCodeAtPath(`/${item}`)}
                 className={colorTheme}
               />
             </SearchDialog.Root>

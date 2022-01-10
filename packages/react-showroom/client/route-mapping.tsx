@@ -136,9 +136,12 @@ const loadPromiseMap = new Map<string, Promise<void>>();
 function noop() {}
 
 export const loadCodeAtPath = (
-  path: string,
+  fullPath: string,
   onLoad: () => void = noop
 ): void => {
+  const hashIndex = fullPath.indexOf('#');
+  const path = hashIndex > 0 ? fullPath.slice(0, hashIndex) : fullPath;
+
   if (loaded.has(path)) {
     onLoad();
     return;
