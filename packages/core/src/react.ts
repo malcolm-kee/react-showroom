@@ -249,7 +249,7 @@ export interface ReactShowroomConfiguration {
   /**
    * packages to be available in examples via `import`.
    */
-  imports?: Array<string>;
+  imports?: Array<ImportConfig>;
   /**
    * Modules that are required for your style guide. Useful for third-party styles or polyfills.
    */
@@ -507,6 +507,12 @@ export interface SearchIndexMarkdownItem {
   formatLabel: (oriTitle: string) => string;
 }
 
+export interface SearchIndexLinkItem {
+  type: 'link';
+  href: string;
+  title: string;
+}
+
 export interface SearchIndexGroupItem {
   type: 'group';
   items: Array<SearchIndexItem>;
@@ -515,4 +521,5 @@ export interface SearchIndexGroupItem {
 export type SearchIndexItem =
   | SearchIndexComponentItem
   | SearchIndexMarkdownItem
+  | SearchIndexLinkItem
   | SearchIndexGroupItem;

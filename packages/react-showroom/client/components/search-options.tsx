@@ -1,4 +1,8 @@
-import { DocumentIcon, PuzzleIcon } from '@heroicons/react/outline';
+import {
+  DocumentIcon,
+  ExternalLinkIcon,
+  PuzzleIcon,
+} from '@heroicons/react/outline';
 import { HashtagIcon } from '@heroicons/react/solid';
 import type { SearchIndexItem } from '@showroomjs/core/react';
 import type { Option } from '@showroomjs/ui';
@@ -16,7 +20,7 @@ function collectOptions(indexItems: SearchIndexItem[]) {
         case 'component':
           mainOptions.push({
             label: item.title,
-            value: item.slug,
+            value: `/${item.slug}`,
             description: item.description,
             icon: <Puzzle width={20} height={20} />,
           });
@@ -26,7 +30,7 @@ function collectOptions(indexItems: SearchIndexItem[]) {
               if (heading.slug) {
                 headingOptions.push({
                   label: heading.text,
-                  value: `${item.slug}#${heading.slug}`,
+                  value: `/${item.slug}#${heading.slug}`,
                   description: item.title,
                   icon: <Hashtag width={20} height={20} />,
                 });
@@ -42,7 +46,7 @@ function collectOptions(indexItems: SearchIndexItem[]) {
           if (item.slug && title) {
             mainOptions.push({
               label: title,
-              value: item.slug,
+              value: `/${item.slug}`,
               description: item.frontmatter.description,
               icon: <Document width={20} height={20} />,
             });
@@ -50,7 +54,7 @@ function collectOptions(indexItems: SearchIndexItem[]) {
               if (heading.slug) {
                 headingOptions.push({
                   label: heading.text,
-                  value: `${item.slug}#${heading.slug}`,
+                  value: `/${item.slug}#${heading.slug}`,
                   description: title,
                   icon: <Hashtag width={20} height={20} />,
                 });
@@ -61,6 +65,14 @@ function collectOptions(indexItems: SearchIndexItem[]) {
 
         case 'group':
           innerCollect(item.items);
+          break;
+
+        case 'link':
+          mainOptions.push({
+            label: item.title,
+            value: item.href,
+            icon: <External width={20} height={20} />,
+          });
           break;
 
         default:
@@ -87,6 +99,12 @@ const Hashtag = styled(HashtagIcon, {
 });
 
 const Puzzle = styled(PuzzleIcon, {
+  width: 20,
+  height: 20,
+  color: 'inherit',
+});
+
+const External = styled(ExternalLinkIcon, {
   width: 20,
   height: 20,
   color: 'inherit',

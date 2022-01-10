@@ -475,6 +475,10 @@ export const generateIndex = (sections: Array<ReactShowroomSectionConfig>) => {
             formatLabel: ${section.formatLabel.toString()},
           }`;
         }
+
+        if (section.type === 'link') {
+          return `{ type: 'link', href: '${section.href}', title: '${section.title}' }`;
+        }
       })
       .join(', ')}].filter(Boolean)`;
   }

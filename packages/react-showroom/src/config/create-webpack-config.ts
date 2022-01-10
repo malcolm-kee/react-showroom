@@ -96,6 +96,7 @@ export const createWebpackConfig = (
                 templateParameters: {
                   favicon: theme.favicon,
                   resetCss: theme.resetCss,
+                  backgroundColor: theme.colors['primary-800'],
                 },
                 minify: isProd && {
                   collapseWhitespace: true,

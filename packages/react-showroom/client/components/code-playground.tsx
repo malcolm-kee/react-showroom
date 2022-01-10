@@ -26,6 +26,7 @@ export interface CodePlaygroundProps {
   frame?: boolean;
   initialHeight?: string;
   height?: string;
+  id?: string;
 }
 
 export const CodePlayground = ({
@@ -33,6 +34,7 @@ export const CodePlayground = ({
   frame,
   initialHeight,
   height,
+  id,
   ...props
 }: CodePlaygroundProps) => {
   const [showDetails, setShowDetails] = React.useState<boolean | undefined>(
@@ -72,7 +74,9 @@ export const CodePlayground = ({
   const [activeTab, setActiveTab] = React.useState('props');
 
   return (
-    <PropsEditorProvider>
+    <PropsEditorProvider
+      codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
+    >
       <PreviewConsoleProvider>
         <Div
           css={{
