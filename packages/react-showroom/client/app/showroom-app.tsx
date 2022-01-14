@@ -2,6 +2,7 @@ import {
   IsClientContextProvider,
   NotificationProvider,
   QueryParamProvider,
+  theme,
 } from '@showroomjs/ui';
 import * as React from 'react';
 import sections from 'react-showroom-sections';
@@ -13,9 +14,9 @@ import { Sidebar } from '../components/sidebar';
 import { CodeThemeContext } from '../lib/code-theme-context';
 import { Suspense } from '../lib/lazy';
 import { matchPath, Route, Switch, useLocation } from '../lib/routing';
-import { useSize } from '../lib/use-size';
 import { getScrollFn } from '../lib/scroll-into-view';
 import { MenuContextProvider } from '../lib/use-menu';
+import { useSize } from '../lib/use-size';
 import { TargetAudienceProvider } from '../lib/use-target-audience';
 import { DefaultHomePage } from '../pages/index';
 import { routeMapping, routes } from '../route-mapping';
@@ -102,6 +103,12 @@ export const ShowroomApp = () => {
 
   return (
     <Wrapper>
+      {/* we couldn't use :target selector as it doesn't work nicely with SPA */}
+      {location.hash && (
+        <style>{`${location.hash} {
+        color: ${theme.colors['primary-800'].value};
+      }`}</style>
+      )}
       <IsClientContextProvider>
         <NotificationProvider>
           <TargetAudienceProvider>

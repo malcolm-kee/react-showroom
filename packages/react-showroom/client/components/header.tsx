@@ -1,27 +1,11 @@
 import { ArrowLeftIcon } from '@heroicons/react/outline';
+import { useQuery } from '@showroomjs/bundles/query';
 import { Option, SearchDialog, styled } from '@showroomjs/ui';
 import * as React from 'react';
 import { Link, useLocation, useNavigate } from '../lib/routing';
 import { loadCodeAtPath } from '../route-mapping';
 import { colorTheme, THEME } from '../theme';
 import { GenericLink } from './generic-link';
-
-let cachedOptions: Array<Option<string>> | undefined = undefined;
-
-function getOptions(): Promise<Array<Option<string>>> {
-  if (cachedOptions) {
-    return Promise.resolve(cachedOptions);
-  }
-
-  return import(
-    /* webpackChunkName: "searchIndex" */
-    './search-options'
-  ).then((m) => {
-    const result = m.options;
-    cachedOptions = result;
-    return result;
-  });
-}
 
 const navbarOptions = THEME.navbar;
 
@@ -33,9 +17,21 @@ export const Header = React.forwardRef<HTMLElement, HeaderProps>(
   function Header(props, forwardedRef) {
     const location = useLocation<{ searchNavigated?: boolean }>();
 
-    const [options, setOptions] = React.useState(cachedOptions || []);
-
     const { navigate } = useNavigate();
+
+    const [searchValue, setSearchValue] = React.useState('');
+
+    const { data: options, isLoading } = useQuery<Array<Option<string>>>(
+      ['search', searchValue],
+      () => {
+        if (!searchValue) {
+          return [];
+        }
+        return import('../lib/get-search-result').then((m) =>
+          m.getSearchResult(searchValue)
+        );
+      }
+    );
 
     return (
       <HeaderRoot ref={forwardedRef}>
@@ -61,18 +57,14 @@ export const Header = React.forwardRef<HTMLElement, HeaderProps>(
                   {item.label}
                 </HeaderLink>
               ))}
-            <SearchDialog.Root
-              onOpenChange={(open) =>
-                open && getOptions().then((result) => setOptions(result))
-              }
-            >
+            <SearchDialog.Root>
               <SearchDialog.Trigger
                 autoFocus={!!(location.state && location.state.searchNavigated)}
               >
                 <SearchText>Search</SearchText>
               </SearchDialog.Trigger>
               <SearchDialog
-                options={options}
+                options={options || []}
                 placeholder="Search docs"
                 onSelect={(result) => {
                   if (result) {
@@ -84,7 +76,9 @@ export const Header = React.forwardRef<HTMLElement, HeaderProps>(
                   }
                 }}
                 onHighlightedItemChange={(item) => loadCodeAtPath(`/${item}`)}
+                onInputChange={setSearchValue}
                 className={colorTheme}
+                isLoading={isLoading}
               />
             </SearchDialog.Root>
           </ItemWrapper>
