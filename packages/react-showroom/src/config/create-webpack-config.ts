@@ -666,5 +666,8 @@ const createBaseWebpackConfig = (
       level: debug ? 'info' : isProd ? 'info' : 'none',
     },
     stats: debug ? 'normal' : 'none',
+    experiments: {
+      backCompat: false, // may improve performance, see https://www.tines.com/blog/understanding-why-our-build-got-15x-slower-with-webpack-5
+    },
   };
 };

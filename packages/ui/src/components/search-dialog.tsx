@@ -2,8 +2,10 @@ import { SearchIcon as PlainSearchIcon } from '@heroicons/react/outline';
 import { isDefined } from '@showroomjs/core';
 import cx from 'classnames';
 import { useCombobox } from 'downshift';
-import { matchSorter } from 'match-sorter';
 import * as React from 'react';
+import { SpinIcon } from './icons';
+import { spinAnimation } from './animations';
+import { useStableCallback } from '../lib/use-stable-callback';
 import { css, styled } from '../stitches.config';
 import { Dialog } from './dialog';
 import { ShortcutKey } from './shortcut-key';
@@ -20,6 +22,8 @@ export interface SearchDialogProps<T> {
   searchHistories?: string[];
   placeholder?: string;
   className?: string;
+  onInputChange?: (value: string) => void;
+  isLoading?: boolean;
 }
 
 const SearchDialogImpl = function SearchDialog<T extends unknown>(
@@ -42,11 +46,13 @@ const SearchDialogInternal = function SearchDialog<T extends unknown>(
   const [inputValue, setInputValue] = React.useState('');
   const trimmedInput = inputValue.trim();
 
-  const options = React.useMemo(
-    () =>
-      trimmedInput ? sortOptions(props.options, trimmedInput) : props.options,
-    [props.options, trimmedInput]
-  );
+  const onInputChange = useStableCallback(props.onInputChange);
+
+  const { options } = props;
+
+  React.useEffect(() => {
+    onInputChange(trimmedInput);
+  }, [trimmedInput]);
 
   const hasSearchTerm = trimmedInput !== '';
 
@@ -111,6 +117,17 @@ const SearchDialogInternal = function SearchDialog<T extends unknown>(
             placeholder: props.placeholder,
           })}
         />
+        {props.isLoading && (
+          <LoadingWrapper>
+            <SpinIcon
+              aria-label="Updating..."
+              css={{
+                color: '$gray-500',
+                animation: `${spinAnimation} 1s linear infinite`,
+              }}
+            />
+          </LoadingWrapper>
+        )}
         <Dialog.Close asChild>
           <ShortcutKey
             css={{
@@ -204,13 +221,7 @@ type Dismiss = () => void;
 
 const DismissContext = React.createContext<Dismiss>(() => {});
 
-const SearchDialogRoot = ({
-  children,
-  onOpenChange,
-}: {
-  children: React.ReactNode;
-  onOpenChange?: (open: boolean) => void;
-}) => {
+const SearchDialogRoot = ({ children }: { children: React.ReactNode }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const dismisss = React.useCallback(() => setIsOpen(false), []);
 
@@ -232,12 +243,6 @@ const SearchDialogRoot = ({
       window.removeEventListener('keydown', onKeyDown);
     };
   }, []);
-
-  React.useEffect(() => {
-    if (onOpenChange) {
-      onOpenChange(isOpen);
-    }
-  }, [isOpen]);
 
   return (
     <DismissContext.Provider value={dismisss}>
@@ -390,13 +395,14 @@ const triggerInput = css({
   },
 });
 
-const sortOptions = <T extends unknown>(
-  options: Array<Option<T>>,
-  searchText: string
-) =>
-  matchSorter(options, searchText, {
-    keys: ['label', 'description', 'metadata'],
-  });
+const LoadingWrapper = styled('div', {
+  position: 'absolute',
+  top: 13,
+  right: '$3',
+  '@md': {
+    right: '$14',
+  },
+});
 
 const underline = css({
   textDecoration: 'underline',

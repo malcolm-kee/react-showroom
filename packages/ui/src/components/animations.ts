@@ -19,3 +19,8 @@ export const slideLeftAndFade = keyframes({
   '0%': { opacity: 0, transform: 'translateX(2px)' },
   '100%': { opacity: 1, transform: 'translateX(0)' },
 });
+
+export const spinAnimation = keyframes({
+  '0%': { transform: 'rotate(0deg)' },
+  '100%': { transform: 'rotate(360deg)' },
+});

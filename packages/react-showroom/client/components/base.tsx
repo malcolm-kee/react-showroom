@@ -21,9 +21,6 @@ const HashLink = styled('a', {
 });
 
 const Heading = styled('h2', {
-  '&:target': {
-    color: '$primary-800',
-  },
   [`&:hover ${HashLink}`]: {
     opacity: 1,
   },
