@@ -1,5 +1,11 @@
 # @showroomjs/bundles
 
+## 1.10.0
+
+### Minor Changes
+
+- 2d465aa: Optimization by delegate search to worker
+
 ## 1.9.0
 
 ### Minor Changes

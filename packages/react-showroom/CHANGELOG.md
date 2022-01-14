@@ -1,5 +1,18 @@
 # react-showroom
 
+## 1.23.0
+
+### Minor Changes
+
+- 2d465aa: Optimization by delegate search to worker
+
+### Patch Changes
+
+- Updated dependencies [2d465aa]
+  - @showroomjs/bundles@1.10.0
+  - @showroomjs/core@1.16.0
+  - @showroomjs/ui@1.14.0
+
 ## 1.22.1
 
 ### Patch Changes

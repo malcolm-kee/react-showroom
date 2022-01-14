@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 1.16.0
+
+### Minor Changes
+
+- 2d465aa: Optimization by delegate search to worker
+
 ## 1.15.1
 
 ### Patch Changes
