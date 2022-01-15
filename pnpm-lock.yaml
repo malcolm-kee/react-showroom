@@ -86,7 +86,7 @@ importers:
       css-loader: ^6.5.1
       css-minimizer-webpack-plugin: ^3.3.1
       esbuild-loader: ^2.18.0
-      mini-css-extract-plugin: ^2.5.0
+      mini-css-extract-plugin: ~2.4.7
       postcss: ^8.4.5
       postcss-loader: ^6.2.1
       react: ^17.0.2
@@ -109,7 +109,7 @@ importers:
       autoprefixer: 10.4.2_postcss@8.4.5
       css-loader: 6.5.1
       css-minimizer-webpack-plugin: 3.3.1
-      mini-css-extract-plugin: 2.5.0
+      mini-css-extract-plugin: 2.4.7
       postcss: 8.4.5
       postcss-loader: 6.2.1_postcss@8.4.5
       style-loader: 3.3.1
@@ -195,7 +195,7 @@ importers:
       css-loader: ^6.5.1
       css-minimizer-webpack-plugin: ^3.3.1
       jest: ^27.4.7
-      mini-css-extract-plugin: ^2.5.0
+      mini-css-extract-plugin: ~2.4.7
       msw: ^0.36.4
       postcss: ^8.4.5
       postcss-loader: ^6.2.1
@@ -215,7 +215,7 @@ importers:
       '@tailwindcss/forms': 0.3.4_tailwindcss@2.2.19
       classnames: 2.3.1
       css-minimizer-webpack-plugin: 3.3.1_webpack@5.66.0
-      mini-css-extract-plugin: 2.5.0_webpack@5.66.0
+      mini-css-extract-plugin: 2.4.7_webpack@5.66.0
       msw: 0.36.4
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
@@ -323,7 +323,7 @@ importers:
       tsup: 5.11.11
       typescript: ^4.5.4
     dependencies:
-      '@heroicons/react': 1.0.5
+      '@heroicons/react': 1.0.5_react@17.0.2
     devDependencies:
       postcss: 8.4.5
       tsup: 5.11.11_typescript@4.5.4
@@ -380,7 +380,7 @@ importers:
       lz-string: ^1.4.4
       match-sorter: ^6.3.1
       mdast-util-to-string: '2'
-      mini-css-extract-plugin: ^2.5.0
+      mini-css-extract-plugin: ~2.4.7
       monaco-themes: ^0.4.0
       nanocolors: ^0.2.13
       node-fetch: ^2.6.6
@@ -434,10 +434,10 @@ importers:
       '@babel/preset-react': 7.16.7_@babel+core@7.16.7
       '@babel/preset-typescript': 7.16.7_@babel+core@7.16.7
       '@babel/runtime': 7.16.7
-      '@heroicons/react': 1.0.5
-      '@monaco-editor/react': 4.3.1
-      '@pmmmwh/react-refresh-webpack-plugin': 0.5.4_135924179a99dd8fd73caca4f7be10cd
-      '@react-hook/resize-observer': 1.2.5
+      '@heroicons/react': 1.0.5_react@17.0.2
+      '@monaco-editor/react': 4.3.1_38e345af476e5e7cfa5440c4ff004a8f
+      '@pmmmwh/react-refresh-webpack-plugin': 0.5.4_efc445666a71879206dd802aab511344
+      '@react-hook/resize-observer': 1.2.5_react@17.0.2
       '@showroomjs/bundles': link:../bundles
       '@showroomjs/core': link:../core
       '@showroomjs/device-frames': link:../device-frames
@@ -468,7 +468,7 @@ importers:
       lz-string: 1.4.4
       match-sorter: 6.3.1
       mdast-util-to-string: 2.0.0
-      mini-css-extract-plugin: 2.5.0_webpack@5.66.0
+      mini-css-extract-plugin: 2.4.7_webpack@5.66.0
       monaco-themes: 0.4.0
       nanocolors: 0.2.13
       node-fetch: 2.6.6
@@ -476,13 +476,13 @@ importers:
       parse-numeric-range: 1.3.0
       postcss: 8.4.5
       postcss-loader: 6.2.1_postcss@8.4.5+webpack@5.66.0
-      prism-react-renderer: 1.2.1
+      prism-react-renderer: 1.2.1_react@17.0.2
       qs-lite: 0.0.3
-      re-resizable: 6.9.1
-      react-colorful: 5.5.1
+      re-resizable: 6.9.1_react-dom@17.0.2+react@17.0.2
+      react-colorful: 5.5.1_react-dom@17.0.2+react@17.0.2
       react-docgen-typescript: 2.1.1_typescript@4.5.4
-      react-error-boundary: 3.1.4
-      react-helmet: 6.1.0
+      react-error-boundary: 3.1.4_react@17.0.2
+      react-helmet: 6.1.0_react@17.0.2
       react-lazy-with-preload: 2.0.1
       react-refresh: 0.11.0
       rehype-mdx-title: 1.0.0
@@ -2521,12 +2521,6 @@ packages:
       - supports-color
     dev: false
 
-  /@heroicons/react/1.0.5:
-    resolution: {integrity: sha512-UDMyLM2KavIu2vlWfMspapw9yii7aoLwzI2Hudx4fyoPwfKfxU8r3cL8dEBXOjcLG0/oOONZzbT14M1HoNtEcg==}
-    peerDependencies:
-      react: '>= 16'
-    dev: false
-
   /@heroicons/react/1.0.5_react@17.0.2:
     resolution: {integrity: sha512-UDMyLM2KavIu2vlWfMspapw9yii7aoLwzI2Hudx4fyoPwfKfxU8r3cL8dEBXOjcLG0/oOONZzbT14M1HoNtEcg==}
     peerDependencies:
@@ -2813,23 +2807,27 @@ packages:
       read-yaml-file: 1.1.0
     dev: true
 
-  /@monaco-editor/loader/1.2.0:
+  /@monaco-editor/loader/1.2.0_monaco-editor@0.30.1:
     resolution: {integrity: sha512-cJVCG/T/KxXgzYnjKqyAgsKDbH9mGLjcXxN6AmwumBwa2rVFkwvGcUj1RJtD0ko4XqLqJxwqsN/Z/KURB5f1OQ==}
     peerDependencies:
       monaco-editor: '>= 0.21.0 < 1'
     dependencies:
+      monaco-editor: 0.30.1
       state-local: 1.0.7
     dev: false
 
-  /@monaco-editor/react/4.3.1:
+  /@monaco-editor/react/4.3.1_38e345af476e5e7cfa5440c4ff004a8f:
     resolution: {integrity: sha512-f+0BK1PP/W5I50hHHmwf11+Ea92E5H1VZXs+wvKplWUWOfyMa1VVwqkJrXjRvbcqHL+XdIGYWhWNdi4McEvnZg==}
     peerDependencies:
       monaco-editor: '>= 0.25.0 < 1'
       react: ^16.8.0 || ^17.0.0
       react-dom: ^16.8.0 || ^17.0.0
     dependencies:
-      '@monaco-editor/loader': 1.2.0
+      '@monaco-editor/loader': 1.2.0_monaco-editor@0.30.1
+      monaco-editor: 0.30.1
       prop-types: 15.7.2
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
     dev: false
 
   /@mswjs/cookies/0.1.6:
@@ -2919,46 +2917,6 @@ packages:
       - supports-color
       - utf-8-validate
     dev: true
-
-  /@pmmmwh/react-refresh-webpack-plugin/0.5.4_135924179a99dd8fd73caca4f7be10cd:
-    resolution: {integrity: sha512-zZbZeHQDnoTlt2AF+diQT0wsSXpvWiaIOZwBRdltNFhG1+I3ozyaw7U/nBiUwyJ0D+zwdXp0E3bWOl38Ag2BMw==}
-    engines: {node: '>= 10.13'}
-    peerDependencies:
-      '@types/webpack': 4.x || 5.x
-      react-refresh: '>=0.10.0 <1.0.0'
-      sockjs-client: ^1.4.0
-      type-fest: '>=0.17.0 <3.0.0'
-      webpack: '>=4.43.0 <6.0.0'
-      webpack-dev-server: 3.x || 4.x
-      webpack-hot-middleware: 2.x
-      webpack-plugin-serve: 0.x || 1.x
-    peerDependenciesMeta:
-      '@types/webpack':
-        optional: true
-      sockjs-client:
-        optional: true
-      type-fest:
-        optional: true
-      webpack-dev-server:
-        optional: true
-      webpack-hot-middleware:
-        optional: true
-      webpack-plugin-serve:
-        optional: true
-    dependencies:
-      ansi-html-community: 0.0.8
-      common-path-prefix: 3.0.0
-      core-js-pure: 3.19.2
-      error-stack-parser: 2.0.6
-      find-up: 5.0.0
-      html-entities: 2.3.2
-      loader-utils: 2.0.2
-      react-refresh: 0.11.0
-      schema-utils: 3.1.1
-      source-map: 0.7.3
-      webpack: 5.66.0_esbuild@0.14.11
-      webpack-dev-server: 4.7.3_webpack@5.66.0
-    dev: false
 
   /@pmmmwh/react-refresh-webpack-plugin/0.5.4_efc445666a71879206dd802aab511344:
     resolution: {integrity: sha512-zZbZeHQDnoTlt2AF+diQT0wsSXpvWiaIOZwBRdltNFhG1+I3ozyaw7U/nBiUwyJ0D+zwdXp0E3bWOl38Ag2BMw==}
@@ -3516,28 +3474,33 @@ packages:
       '@babel/runtime': 7.16.7
     dev: false
 
-  /@react-hook/latest/1.0.3:
+  /@react-hook/latest/1.0.3_react@17.0.2:
     resolution: {integrity: sha512-dy6duzl+JnAZcDbNTfmaP3xHiKtbXYOaz3G51MGVljh548Y8MWzTr+PHLOfvpypEVW9zwvl+VyKjbWKEVbV1Rg==}
     peerDependencies:
       react: '>=16.8'
+    dependencies:
+      react: 17.0.2
     dev: false
 
-  /@react-hook/passive-layout-effect/1.2.1:
+  /@react-hook/passive-layout-effect/1.2.1_react@17.0.2:
     resolution: {integrity: sha512-IwEphTD75liO8g+6taS+4oqz+nnroocNfWVHWz7j+N+ZO2vYrc6PV1q7GQhuahL0IOR7JccFTsFKQ/mb6iZWAg==}
     peerDependencies:
       react: '>=16.8'
+    dependencies:
+      react: 17.0.2
     dev: false
 
-  /@react-hook/resize-observer/1.2.5:
+  /@react-hook/resize-observer/1.2.5_react@17.0.2:
     resolution: {integrity: sha512-qa0pPvRxq5VbdI8mMK2apPFsZOckhQ6D3Jc9yLuyHMNhui8yEih4qyFCZBDzzK3ymZS6LAltVSVg3l1Dg9vA0w==}
     peerDependencies:
       react: '>=16.8'
     dependencies:
       '@juggle/resize-observer': 3.3.1
-      '@react-hook/latest': 1.0.3
-      '@react-hook/passive-layout-effect': 1.2.1
+      '@react-hook/latest': 1.0.3_react@17.0.2
+      '@react-hook/passive-layout-effect': 1.2.1_react@17.0.2
       '@types/raf-schd': 4.0.1
       raf-schd: 4.0.3
+      react: 17.0.2
     dev: false
 
   /@rollup/plugin-babel/5.3.0_@babel+core@7.16.7+rollup@2.64.0:
@@ -9484,7 +9447,7 @@ packages:
     dependencies:
       universalify: 2.0.0
     optionalDependencies:
-      graceful-fs: 4.2.8
+      graceful-fs: 4.2.9
 
   /jsonpointer/5.0.0:
     resolution: {integrity: sha512-PNYZIdMjVIvVgDSYKTT63Y+KZ6IZvGRNNWcxwD+GNnUz1MKPfv30J8ueCjdwcN0nDx2SlshgyB7Oy0epAzVRRg==}
@@ -10390,14 +10353,24 @@ packages:
       tiny-warning: 1.0.3
     dev: true
 
-  /mini-css-extract-plugin/2.5.0:
-    resolution: {integrity: sha512-hWAswjzsausaaIjk4GiUtoiNnsMc8tLAA2TZ0vbMDZcxKYS/b3UBGNElBjgQ4QYztYR+nsKp5h2Lo1NL3zz2bg==}
+  /mini-css-extract-plugin/2.4.7:
+    resolution: {integrity: sha512-euWmddf0sk9Nv1O0gfeeUAvAkoSlWncNLF77C0TP2+WoPvy8mAHKOzMajcCz2dzvyt3CNgxb1obIEVFIRxaipg==}
     engines: {node: '>= 12.13.0'}
     peerDependencies:
       webpack: ^5.0.0
     dependencies:
       schema-utils: 4.0.0
     dev: true
+
+  /mini-css-extract-plugin/2.4.7_webpack@5.66.0:
+    resolution: {integrity: sha512-euWmddf0sk9Nv1O0gfeeUAvAkoSlWncNLF77C0TP2+WoPvy8mAHKOzMajcCz2dzvyt3CNgxb1obIEVFIRxaipg==}
+    engines: {node: '>= 12.13.0'}
+    peerDependencies:
+      webpack: ^5.0.0
+    dependencies:
+      schema-utils: 4.0.0
+      webpack: 5.66.0_esbuild@0.14.11
+    dev: false
 
   /mini-css-extract-plugin/2.5.0_webpack@5.66.0:
     resolution: {integrity: sha512-hWAswjzsausaaIjk4GiUtoiNnsMc8tLAA2TZ0vbMDZcxKYS/b3UBGNElBjgQ4QYztYR+nsKp5h2Lo1NL3zz2bg==}
@@ -10406,7 +10379,7 @@ packages:
       webpack: ^5.0.0
     dependencies:
       schema-utils: 4.0.0
-      webpack: 5.66.0_esbuild@0.14.11
+      webpack: 5.66.0
     dev: false
 
   /mini-svg-data-uri/1.3.3:
@@ -11943,12 +11916,6 @@ packages:
     engines: {node: '>= 0.8'}
     dev: true
 
-  /prism-react-renderer/1.2.1:
-    resolution: {integrity: sha512-w23ch4f75V1Tnz8DajsYKvY5lF7H1+WvzvLUcF0paFxkTHSp42RS0H5CttdN2Q8RR3DRGZ9v5xD/h3n8C8kGmg==}
-    peerDependencies:
-      react: '>=0.14.9'
-    dev: false
-
   /prism-react-renderer/1.2.1_react@17.0.2:
     resolution: {integrity: sha512-w23ch4f75V1Tnz8DajsYKvY5lF7H1+WvzvLUcF0paFxkTHSp42RS0H5CttdN2Q8RR3DRGZ9v5xD/h3n8C8kGmg==}
     peerDependencies:
@@ -12097,13 +12064,15 @@ packages:
       unpipe: 1.0.0
     dev: false
 
-  /re-resizable/6.9.1:
+  /re-resizable/6.9.1_react-dom@17.0.2+react@17.0.2:
     resolution: {integrity: sha512-KRYAgr9/j1PJ3K+t+MBhlQ+qkkoLDJ1rs0z1heIWvYbCW/9Vq4djDU+QumJ3hQbwwtzXF6OInla6rOx6hhgRhQ==}
     peerDependencies:
       react: ^16.13.1 || ^17.0.0
       react-dom: ^16.13.1 || ^17.0.0
     dependencies:
       fast-memoize: 2.5.2
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
     dev: false
 
   /react-app-polyfill/3.0.0:
@@ -12118,11 +12087,14 @@ packages:
       whatwg-fetch: 3.6.2
     dev: false
 
-  /react-colorful/5.5.1:
+  /react-colorful/5.5.1_react-dom@17.0.2+react@17.0.2:
     resolution: {integrity: sha512-M1TJH2X3RXEt12sWkpa6hLc/bbYS0H6F4rIqjQZ+RxNBstpY67d9TrFXtqdZwhpmBXcCwEi7stKqFue3ZRkiOg==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
+    dependencies:
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
     dev: false
 
   /react-dev-utils/12.0.0_c845137f562fc26a3934862f8eb47c66:
@@ -12178,13 +12150,14 @@ packages:
       react: 17.0.2
       scheduler: 0.20.2
 
-  /react-error-boundary/3.1.4:
+  /react-error-boundary/3.1.4_react@17.0.2:
     resolution: {integrity: sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==}
     engines: {node: '>=10', npm: '>=6'}
     peerDependencies:
       react: '>=16.13.1'
     dependencies:
       '@babel/runtime': 7.16.7
+      react: 17.0.2
     dev: false
 
   /react-error-overlay/6.0.10:
@@ -12195,15 +12168,16 @@ packages:
     resolution: {integrity: sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==}
     dev: false
 
-  /react-helmet/6.1.0:
+  /react-helmet/6.1.0_react@17.0.2:
     resolution: {integrity: sha512-4uMzEY9nlDlgxr61NL3XbKRy1hEkXmKNXhjbAIOVw5vcFrsdYbH2FEwcNyWvWinl103nXgzYNlns9ca+8kFiWw==}
     peerDependencies:
       react: '>=16.3.0'
     dependencies:
       object-assign: 4.1.1
       prop-types: 15.7.2
+      react: 17.0.2
       react-fast-compare: 3.2.0
-      react-side-effect: 2.1.1
+      react-side-effect: 2.1.1_react@17.0.2
     dev: false
 
   /react-highlight-words/0.17.0_react@17.0.2:
@@ -12421,10 +12395,12 @@ packages:
       - webpack-plugin-serve
     dev: false
 
-  /react-side-effect/2.1.1:
+  /react-side-effect/2.1.1_react@17.0.2:
     resolution: {integrity: sha512-2FoTQzRNTncBVtnzxFOk2mCpcfxQpenBMbk5kSVBg5UcPqV9fRbgY2zhb7GTWWOlpFmAxhClBDlIq8Rsubz1yQ==}
     peerDependencies:
       react: ^16.3.0 || ^17.0.0
+    dependencies:
+      react: 17.0.2
     dev: false
 
   /react-simple-code-editor/0.11.0_react-dom@17.0.2+react@17.0.2:
