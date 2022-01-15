@@ -2,7 +2,6 @@ import {
   IsClientContextProvider,
   NotificationProvider,
   QueryParamProvider,
-  theme,
 } from '@showroomjs/ui';
 import * as React from 'react';
 import sections from 'react-showroom-sections';
@@ -26,6 +25,30 @@ export const ShowroomApp = () => {
   const location = useLocation();
 
   const lastPathName = React.useRef(location.pathname);
+
+  React.useEffect(() => {
+    if (lastPathName.current !== location.pathname) {
+      const currentLinks = document.querySelectorAll('[aria-current="page"]');
+
+      if (currentLinks.length === 1) {
+        const link = currentLinks[0];
+
+        let isCurrent = true;
+
+        getScrollFn().then((scroll) => {
+          if (isCurrent) {
+            scroll(link, {
+              scrollMode: 'if-needed',
+            });
+          }
+        });
+
+        return () => {
+          isCurrent = false;
+        };
+      }
+    }
+  }, [location]);
 
   React.useEffect(() => {
     const hashMatch = location.hash;
@@ -104,9 +127,10 @@ export const ShowroomApp = () => {
   return (
     <Wrapper>
       {/* we couldn't use :target selector as it doesn't work nicely with SPA */}
+      {/* don't use id selector (#) due to possibility that the id may starts with number */}
       {location.hash && (
-        <style>{`${location.hash} {
-        color: ${theme.colors['primary-800'].value};
+        <style>{`[id='${location.hash.replace(/^#/, '')}'] {
+        color: ${THEME.colors['primary-800']};
       }`}</style>
       )}
       <IsClientContextProvider>

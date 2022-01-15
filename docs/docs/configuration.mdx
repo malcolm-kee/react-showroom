@@ -64,29 +64,6 @@ A glob pattern string to search for all your components.
 
 If you want to organize your components in a nested structure, use `items`.
 
-### `imports`
-
-- Type: `Array<{ name: string; path: string; } | string>`
-
-Modules to be available in examples via `import`.
-
-Pass `name` (how it is imported) and `path` (relative path from project root).
-
-For example, if all your components should be imported with `'@/components'`, which is a file at `src/components/index.ts` in your project, then add the following configuration:
-
-```js fileName="react-showroom.config.js"
-const { defineConfig } = require('react-showroom');
-
-module.exports = defineConfig({
-  imports: [
-    {
-      name: '@/components',
-      path: './src/components',
-    },
-  ],
-});
-```
-
 ### `build.outDir`
 
 - Type: `string`
@@ -126,6 +103,48 @@ Title to be displayed for the site.
 Port for the React Showroom Dev Server.
 
 ## Advanced Config Options
+
+### `componentsEntry`
+
+- Type: `{ name: string; path: string; }`
+
+The entry points for all components that will be used to generate typescript definitions for examples.
+
+For example, if all your components are exported from `src/components/index.tsx` file and you've configured absolute import so they can be imported with `'components'` path, add the following configuration:
+
+```js fileName="react-showroom.config.js"
+const { defineConfig } = require('react-showroom');
+
+module.exports = defineConfig({
+  componentsEntry: {
+    name: 'components',
+    path: './src/components/index.tsx',
+  },
+});
+```
+
+### `imports`
+
+- Type: `Array<{ name: string; path: string; } | string>`
+
+Modules to be available in examples via `import`.
+
+Pass `name` (how it is imported) and `path` (relative path from project root).
+
+For example, if all your components should be imported with `'@/components'`, which is a file at `src/components/index.ts` in your project, then add the following configuration:
+
+```js fileName="react-showroom.config.js"
+const { defineConfig } = require('react-showroom');
+
+module.exports = defineConfig({
+  imports: [
+    {
+      name: '@/components',
+      path: './src/components',
+    },
+  ],
+});
+```
 
 ### `items`
 

@@ -21,7 +21,7 @@ export const Header = React.forwardRef<HTMLElement, HeaderProps>(
 
     const [searchValue, setSearchValue] = React.useState('');
 
-    const { data: options, isLoading } = useQuery<Array<Option<string>>>(
+    const { data: options, isFetching } = useQuery<Array<Option<string>>>(
       ['search', searchValue],
       () => {
         if (!searchValue) {
@@ -30,6 +30,9 @@ export const Header = React.forwardRef<HTMLElement, HeaderProps>(
         return import('../lib/get-search-result').then((m) =>
           m.getSearchResult(searchValue)
         );
+      },
+      {
+        keepPreviousData: !!searchValue,
       }
     );
 
@@ -78,7 +81,7 @@ export const Header = React.forwardRef<HTMLElement, HeaderProps>(
                 onHighlightedItemChange={(item) => loadCodeAtPath(`/${item}`)}
                 onInputChange={setSearchValue}
                 className={colorTheme}
-                isLoading={isLoading}
+                isLoading={isFetching}
               />
             </SearchDialog.Root>
           </ItemWrapper>
