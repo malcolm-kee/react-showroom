@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 1.17.0
+
+### Minor Changes
+
+- c448e42: Disable indexing heading in development to reduce recompilation overhead
+
 ## 1.16.0
 
 ### Minor Changes

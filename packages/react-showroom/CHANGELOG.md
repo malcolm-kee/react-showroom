@@ -1,5 +1,21 @@
 # react-showroom
 
+## 1.24.0
+
+### Minor Changes
+
+- c448e42: Disable indexing heading in development to reduce recompilation overhead
+
+### Patch Changes
+
+- 8eb08ca: Bump dependencies
+- Updated dependencies [8eb08ca]
+- Updated dependencies [c448e42]
+  - @showroomjs/device-frames@0.3.1
+  - @showroomjs/measure@0.1.1
+  - @showroomjs/core@1.17.0
+  - @showroomjs/ui@1.14.1
+
 ## 1.23.0
 
 ### Minor Changes
