@@ -400,7 +400,10 @@ export const generateDocPlaceHolder = (placeholder: string | undefined) => {
   export default DocPlaceholder`;
 };
 
-export const generateIndex = (sections: Array<ReactShowroomSectionConfig>) => {
+export const generateSearchIndex = (
+  sections: Array<ReactShowroomSectionConfig>,
+  includeHeadingsInIndex: boolean
+) => {
   const compVar: Array<{
     identifier: string;
     sourcePath: string;
@@ -427,7 +430,9 @@ export const generateIndex = (sections: Array<ReactShowroomSectionConfig>) => {
             sourcePath: section.sourcePath,
           });
 
-          if (section.docPath) {
+          const shouldIndexDoc = includeHeadingsInIndex && !!section.docPath;
+
+          if (shouldIndexDoc) {
             imports.push({
               type: 'default',
               name: `${name}_doc`,
@@ -446,32 +451,38 @@ export const generateIndex = (sections: Array<ReactShowroomSectionConfig>) => {
               : ''
           } slugify(${name}.displayName, { lower: true })].join('/'),
           id: '${section.id}',
-          ${section.docPath ? `headings: ${name}_doc,` : ''}
+          ${shouldIndexDoc ? `headings: ${name}_doc,` : ''}
         }`;
         }
 
         if (section.type === 'markdown') {
           const name = getName('markdown');
 
-          imports.push(
-            {
-              type: 'default',
-              name: name,
-              path: `${section.sourcePath}?headings`,
-            },
-            {
-              type: 'default',
-              name: `${name}_frontmatter`,
-              path: `${section.sourcePath}?showroomFrontmatter`,
-            }
-          );
+          const mainData: ImportDefinition = {
+            type: 'default',
+            name: `${name}_frontmatter`,
+            path: `${section.sourcePath}?showroomFrontmatter`,
+          };
+
+          if (includeHeadingsInIndex) {
+            imports.push(
+              {
+                type: 'default',
+                name: name,
+                path: `${section.sourcePath}?headings`,
+              },
+              mainData
+            );
+          } else {
+            imports.push(mainData);
+          }
 
           return `{
             type: 'markdown',
             slug: '${section.slug}',
             frontmatter: ${name}_frontmatter || {},
             fallbackTitle: '${section.title || ''}',
-            headings: ${name},
+            ${includeHeadingsInIndex ? `headings: ${name},` : ''}
             formatLabel: ${section.formatLabel.toString()},
           }`;
         }

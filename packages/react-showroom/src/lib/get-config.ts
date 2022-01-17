@@ -129,6 +129,9 @@ export const getConfig = (
       },
     } = {},
     html = {},
+    search: {
+      includeHeadings: searchIncludeHeadings = env === 'production',
+    } = {},
     ...providedConfig
   } = userConfig || getUserConfig(env, configFile);
 
@@ -221,6 +224,9 @@ export const getConfig = (
       ...providedThemeConfig,
     },
     imports: componentsEntry ? imports.concat(componentsEntry) : imports,
+    search: {
+      includeHeadings: searchIncludeHeadings,
+    },
     compilerOptions: (config && config.compilerOptions) || {},
   };
 

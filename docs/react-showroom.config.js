@@ -165,4 +165,7 @@ module.exports = defineConfig({
     port: 8989,
   },
   assetDir: 'assets',
+  search: {
+    includeHeadings: true,
+  },
 });

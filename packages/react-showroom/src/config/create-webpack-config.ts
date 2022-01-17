@@ -20,7 +20,7 @@ import {
   generateWrapper,
   generateAllComponentsPaths,
   generateDocPlaceHolder,
-  generateIndex,
+  generateSearchIndex,
 } from '../lib/generate-showroom-data';
 import { logToStdout } from '../lib/log-to-stdout';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
@@ -232,6 +232,7 @@ const createBaseWebpackConfig = (
     cacheDir,
     example: exampleConfig,
     componentsEntry,
+    search,
     compilerOptions,
   } = config;
 
@@ -274,7 +275,7 @@ const createBaseWebpackConfig = (
     [resolveShowroom('node_modules/react-showroom-doc-placeholder.js')]:
       generateDocPlaceHolder(exampleConfig.placeholder),
     [resolveShowroom('node_modules/react-showroom-index.js')]:
-      generateIndex(sections),
+      generateSearchIndex(sections, search.includeHeadings),
   });
 
   const babelPreset = createBabelPreset(mode);

@@ -209,6 +209,10 @@ export interface ShowroomHtmlConfiguration {
   preview?: HtmlOptions;
 }
 
+export interface ShowroomSearchConfiguration {
+  includeHeadings: boolean;
+}
+
 export interface ReactShowroomConfiguration {
   /**
    * URL for the site.
@@ -308,6 +312,7 @@ export interface ReactShowroomConfiguration {
      */
     basePath?: string;
   };
+  search?: Partial<ShowroomSearchConfiguration>;
   /**
    * Set cache directory for the build.
    *
@@ -395,6 +400,7 @@ export interface NormalizedReactShowroomConfiguration
   };
   html: ShowroomHtmlConfiguration;
   example: ExampleConfiguration;
+  search: ShowroomSearchConfiguration;
   /**
    * typescript compiler options to be used in advanced code editor
    */
@@ -503,7 +509,7 @@ export interface SearchIndexMarkdownItem {
   slug: string;
   frontmatter: ReactShowroomMarkdownFrontmatter;
   fallbackTitle: string;
-  headings: Array<SearchIndexHeading>;
+  headings?: Array<SearchIndexHeading>;
   formatLabel: (oriTitle: string) => string;
 }
 

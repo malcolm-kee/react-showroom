@@ -319,6 +319,15 @@ Path to a module/file that export default a React component as placeholder when 
 
 The component will receives `componentFilePath` prop (`string`).
 
+### `search.includeHeadings`
+
+- Type: `boolean`
+- Default: `true` for `build`, `false` for `dev`
+
+Whether the search results should include headings of markdowns.
+
+By default we disable this for `dev` command to reduce recompilation overhead, but you can force it to be always `true`.
+
 ### `theme.audienceToggle`
 
 - Type: `'design' | 'code' | false`

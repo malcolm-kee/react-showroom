@@ -42,16 +42,18 @@ function collectOptions(indexItems: SearchIndexItem[]) {
               description: item.frontmatter.description,
               icon: 'markdown',
             });
-            item.headings.forEach((heading) => {
-              if (heading.slug) {
-                headingOptions.push({
-                  label: heading.text,
-                  value: `/${item.slug}#${heading.slug}`,
-                  description: title,
-                  icon: 'section',
-                });
-              }
-            });
+            if (item.headings) {
+              item.headings.forEach((heading) => {
+                if (heading.slug) {
+                  headingOptions.push({
+                    label: heading.text,
+                    value: `/${item.slug}#${heading.slug}`,
+                    description: title,
+                    icon: 'section',
+                  });
+                }
+              });
+            }
           }
           break;
 
