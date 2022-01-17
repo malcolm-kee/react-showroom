@@ -380,7 +380,7 @@ importers:
       lz-string: ^1.4.4
       match-sorter: ^6.3.1
       mdast-util-to-string: '2'
-      mini-css-extract-plugin: ^2.4.7
+      mini-css-extract-plugin: ~2.4.7
       monaco-themes: ^0.4.0
       nanocolors: ^0.2.13
       node-fetch: ^2.6.6
@@ -9422,7 +9422,7 @@ packages:
     dependencies:
       universalify: 2.0.0
     optionalDependencies:
-      graceful-fs: 4.2.8
+      graceful-fs: 4.2.9
 
   /jsonpointer/5.0.0:
     resolution: {integrity: sha512-PNYZIdMjVIvVgDSYKTT63Y+KZ6IZvGRNNWcxwD+GNnUz1MKPfv30J8ueCjdwcN0nDx2SlshgyB7Oy0epAzVRRg==}
