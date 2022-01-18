@@ -160,6 +160,10 @@ module.exports = defineConfig({
     },
     favicon: '/icon.png',
     audienceToggle: 'code',
+    manifest: {
+      baseIconPath: './assets/react-showroom.png',
+      description: 'Documentations for React Showroom',
+    },
   },
   devServer: {
     port: 8989,

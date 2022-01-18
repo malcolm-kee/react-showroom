@@ -10,7 +10,7 @@
     "esbuild-loader": "^2.18.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-hook-form": "^7.24.0",
+    "react-hook-form": "^7.24.1",
     "react-showroom": "workspace:*"
   },
   "scripts": {
@@ -21,8 +21,8 @@
     "@tailwindcss/forms": "^0.3.4",
     "autoprefixer": "^10.4.2",
     "css-loader": "^6.5.1",
-    "css-minimizer-webpack-plugin": "^3.3.1",
-    "mini-css-extract-plugin": "^2.5.1",
+    "css-minimizer-webpack-plugin": "^3.4.1",
+    "mini-css-extract-plugin": "^2.5.2",
     "postcss": "^8.4.5",
     "postcss-loader": "^6.2.1",
     "style-loader": "^3.3.1",

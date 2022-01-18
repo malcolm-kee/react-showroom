@@ -28,6 +28,7 @@ import type { defineConfig } from '../index';
 import { createHash } from './create-hash';
 import { logToStdout } from './log-to-stdout';
 import { paths, resolveApp } from './paths';
+import * as mimeTypes from 'mime-types';
 
 const DEFAULT_COMPONENTS_GLOB = 'src/components/**/*.tsx';
 const DEFAULT_IGNORES = [
@@ -58,7 +59,7 @@ const docgenOptions: ParserOptions = {
   shouldIncludePropTagMap: true,
 };
 
-const defaultThemeConfiguration: ThemeConfiguration = {
+const defaultThemeConfiguration: Omit<ThemeConfiguration, 'manifest'> = {
   title: 'React Showroom',
   codeTheme: nightOwlTheme,
   resetCss: true,
@@ -100,7 +101,10 @@ export const getConfig = (
     components: providedComponentGlob,
     items,
     docgen: providedDocgenConfig = {},
-    theme: providedThemeConfig = {},
+    theme: {
+      manifest: providedManifestConfig = {},
+      ...providedThemeConfig
+    } = {},
     imports: providedImports,
     ignores = DEFAULT_IGNORES,
     cacheDir = '.showroom_cache',
@@ -187,6 +191,18 @@ export const getConfig = (
     fs.readFileSync(path, 'utf8')
   );
 
+  const theme = {
+    ...defaultThemeConfiguration,
+    ...providedThemeConfig,
+  };
+
+  const basePath = providedBuildConfig.basePath
+    ? removeTrailingSlash(providedBuildConfig.basePath)
+    : defaultConfig.basePath;
+
+  const assetDir =
+    providedConfig.assetDir && resolveApp(providedConfig.assetDir);
+
   _normalizedConfig = {
     ...defaultConfig,
     ...providedConfig,
@@ -206,10 +222,8 @@ export const getConfig = (
     },
     ignores,
     sections,
-    basePath: providedBuildConfig.basePath
-      ? removeTrailingSlash(providedBuildConfig.basePath)
-      : defaultConfig.basePath,
-    assetDir: providedConfig.assetDir && resolveApp(providedConfig.assetDir),
+    basePath,
+    assetDir,
     wrapper: providedConfig.wrapper && resolveApp(providedConfig.wrapper),
     cacheDir: resolveApp(cacheDir),
     outDir,
@@ -220,8 +234,37 @@ export const getConfig = (
       options: docgenOptions,
     },
     theme: {
-      ...defaultThemeConfiguration,
-      ...providedThemeConfig,
+      ...theme,
+      manifest: providedManifestConfig && {
+        name: theme.title,
+        short_name: theme.title,
+        background_color: '#ffffff',
+        theme_color: theme.colors['primary-500'],
+        start_url: `${basePath}/`,
+        display: 'standalone',
+        ...providedManifestConfig,
+        icons:
+          providedManifestConfig.icons ||
+          (function getIcons() {
+            const favIconPath =
+              providedManifestConfig.baseIconPath &&
+              resolveApp(providedManifestConfig.baseIconPath);
+
+            if (favIconPath && fs.existsSync(favIconPath)) {
+              const iconMime = mimeTypes.lookup(favIconPath);
+              if (iconMime) {
+                return [
+                  {
+                    src: `${basePath}/_icons/${path.parse(favIconPath).base}`,
+                    type: iconMime,
+                    sizes: 'any',
+                  },
+                ];
+              }
+            }
+            return [];
+          })(),
+      },
     },
     imports: componentsEntry ? imports.concat(componentsEntry) : imports,
     search: {

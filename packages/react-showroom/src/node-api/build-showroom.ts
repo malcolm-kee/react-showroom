@@ -3,12 +3,13 @@ require('source-map-support').install();
 process.env.BABEL_ENV = 'production';
 process.env.NODE_ENV = 'production';
 
-import { Ssr } from '@showroomjs/core';
+import { Ssr, omit } from '@showroomjs/core';
 import {
   NormalizedReactShowroomConfiguration,
   ReactShowroomConfiguration,
 } from '@showroomjs/core/react';
 import * as fs from 'fs-extra';
+import * as path from 'path';
 import { performance } from 'perf_hooks';
 import webpack from 'webpack';
 import { createWebpackConfig } from '../config/create-webpack-config';
@@ -47,6 +48,24 @@ async function buildStaticSite(
         });
       });
     });
+
+    const { manifest } = config.theme;
+
+    if (manifest) {
+      await fs.outputJSON(
+        resolveApp(`${config.outDir}/manifest.json`),
+        omit(manifest, ['baseIconPath'])
+      );
+
+      if (manifest.baseIconPath) {
+        await fs.copy(
+          resolveApp(manifest.baseIconPath),
+          resolveApp(
+            `${config.outDir}/_icons/${path.parse(manifest.baseIconPath).base}`
+          )
+        );
+      }
+    }
   } catch (err) {
     console.error(err);
   }

@@ -8,7 +8,9 @@
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <meta name="theme-color" content="<%- backgroundColor %>" />
-    <% if (favicon) { %>
+    <% if (linkManifest) { %>
+    <link rel="manifest" href="<%- basePath %>/manifest.json" />
+    <% } %> <% if (favicon) { %>
     <link rel="shortcut icon" href="<%- favicon %>" />
     <% } %> <% if (resetCss) { %>
     <style>

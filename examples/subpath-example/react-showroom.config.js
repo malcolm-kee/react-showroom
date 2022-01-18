@@ -24,4 +24,11 @@ module.exports = defineConfig({
     ],
     syncStateType: 'event',
   },
+  theme: {
+    title: 'React Showroom Subpath Example',
+    manifest: {
+      short_name: 'Subpath Example',
+      baseIconPath: './react-showroom.png',
+    },
+  },
 });

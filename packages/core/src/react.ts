@@ -106,6 +106,22 @@ export type ImportConfig =
       path: string;
     };
 
+export interface ThemeManifestConfiguration {
+  name: string;
+  short_name: string;
+  background_color: string;
+  theme_color: string;
+  start_url: string;
+  display: 'standalone' | 'fullscreen' | 'minimal-ui';
+  description?: string;
+  icons: Array<{
+    src: string;
+    type: string;
+    sizes: string;
+  }>;
+  baseIconPath?: string;
+}
+
 export interface ThemeConfiguration {
   /**
    * Title to be displayed for the site.
@@ -159,6 +175,7 @@ export interface ThemeConfiguration {
     }>;
   };
   favicon?: string;
+  manifest: ThemeManifestConfiguration | false;
 }
 
 export interface DocgenConfiguration {
@@ -258,7 +275,9 @@ export interface ReactShowroomConfiguration {
    * Modules that are required for your style guide. Useful for third-party styles or polyfills.
    */
   require?: Array<string>;
-  theme?: Partial<ThemeConfiguration>;
+  theme?: Partial<Omit<ThemeConfiguration, 'manifest'>> & {
+    manifest?: Partial<ThemeManifestConfiguration> | false;
+  };
   /**
    * Your application static assets folder will be accessible as / in the style guide dev server.
    *
