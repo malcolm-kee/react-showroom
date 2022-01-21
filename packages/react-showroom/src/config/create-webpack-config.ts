@@ -15,12 +15,12 @@ import { merge } from 'webpack-merge';
 import { createHash } from '../lib/create-hash';
 import {
   generateAllComponents,
-  generateCodeblocksData,
-  generateSectionsAndImports,
-  generateWrapper,
   generateAllComponentsPaths,
+  generateCodeblocksData,
   generateDocPlaceHolder,
   generateSearchIndex,
+  generateSectionsAndImports,
+  generateWrapper,
 } from '../lib/generate-showroom-data';
 import { logToStdout } from '../lib/log-to-stdout';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
@@ -43,7 +43,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const WebpackMessages = require('webpack-messages');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
-export const createWebpackConfig = (
+export const createClientWebpackConfig = (
   mode: Environment,
   config: NormalizedReactShowroomConfiguration,
   { outDir = 'showroom', profileWebpack = false } = {}
@@ -97,6 +97,8 @@ export const createWebpackConfig = (
                   favicon: theme.favicon,
                   resetCss: theme.resetCss,
                   backgroundColor: theme.colors['primary-800'],
+                  linkManifest: theme.manifest && isProd,
+                  basePath,
                 },
                 minify: isProd && {
                   collapseWhitespace: true,
@@ -159,6 +161,14 @@ export const createWebpackConfig = (
                   },
                 },
               ],
+            })
+          : undefined,
+        isProd
+          ? new (require('workbox-webpack-plugin').InjectManifest)({
+              swSrc: resolveShowroom('client/service-worker/service-worker.ts'),
+              include: [/\.wasm$/],
+              // the esbuild file is 10MB
+              maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
             })
           : undefined,
       ].filter(isDefined),

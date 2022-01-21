@@ -3,15 +3,16 @@ require('source-map-support').install();
 process.env.BABEL_ENV = 'production';
 process.env.NODE_ENV = 'production';
 
-import { Ssr } from '@showroomjs/core';
+import { Ssr, omit } from '@showroomjs/core';
 import {
   NormalizedReactShowroomConfiguration,
   ReactShowroomConfiguration,
 } from '@showroomjs/core/react';
 import * as fs from 'fs-extra';
+import * as path from 'path';
 import { performance } from 'perf_hooks';
 import webpack from 'webpack';
-import { createWebpackConfig } from '../config/create-webpack-config';
+import { createClientWebpackConfig } from '../config/create-webpack-config';
 import { createSSrBundle } from '../lib/create-ssr-bundle';
 import { generateDts } from '../lib/generate-dts';
 import { getConfig } from '../lib/get-config';
@@ -22,7 +23,7 @@ async function buildStaticSite(
   config: NormalizedReactShowroomConfiguration,
   profile = false
 ) {
-  const webpackConfig = createWebpackConfig('production', config, {
+  const webpackConfig = createClientWebpackConfig('production', config, {
     outDir: config.outDir,
     profileWebpack: profile,
   });
@@ -47,6 +48,24 @@ async function buildStaticSite(
         });
       });
     });
+
+    const { manifest } = config.theme;
+
+    if (manifest) {
+      await fs.outputJSON(
+        resolveApp(`${config.outDir}/manifest.json`),
+        omit(manifest, ['baseIconPath'])
+      );
+
+      if (manifest.baseIconPath) {
+        await fs.copy(
+          resolveApp(manifest.baseIconPath),
+          resolveApp(
+            `${config.outDir}/_icons/${path.parse(manifest.baseIconPath).base}`
+          )
+        );
+      }
+    }
   } catch (err) {
     console.error(err);
   }
@@ -81,6 +100,11 @@ async function prerenderSite(
       );
     }
   }
+
+  await fs.outputFile(
+    resolveApp(`${config.outDir}/_offline.html`),
+    await getHtml('/_offline')
+  );
 
   await fs.outputFile(htmlPath, await getHtml('/'));
 

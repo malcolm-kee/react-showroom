@@ -5,6 +5,7 @@ import { basename, isPrerender } from '../lib/config';
 import { createQueryClient } from '../lib/create-query-client';
 import { BrowserRouter as Router } from '../lib/routing';
 import { loadCodeAtPath } from '../route-mapping';
+import { register as registerSw } from '../service-worker/service-worker-registration';
 import { ShowroomApp } from './showroom-app';
 
 const queryClient = createQueryClient();
@@ -25,3 +26,5 @@ render(
   </Router>,
   document.getElementById('target')
 );
+
+registerSw();

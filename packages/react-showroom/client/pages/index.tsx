@@ -15,7 +15,6 @@ export const DefaultHomePage = () => (
     }}
   >
     <Seo />
-    <Header />
     <Div css={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
       <Sidebar sections={sections} />
       <Div
