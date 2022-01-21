@@ -18,9 +18,9 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@babel/core": "^7.16.7",
-    "@babel/plugin-transform-runtime": "^7.16.8",
-    "@babel/preset-env": "^7.16.8",
+    "@babel/core": "^7.16.10",
+    "@babel/plugin-transform-runtime": "^7.16.10",
+    "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
     "@babel/runtime": "^7.16.7",
@@ -37,13 +37,13 @@
     "axe-core": "^4.3.5",
     "babel-loader": "^8.2.3",
     "classnames": "^2.3.1",
-    "copy-webpack-plugin": "^10.2.0",
+    "copy-webpack-plugin": "^10.2.1",
     "cross-spawn": "^7.0.3",
     "css-loader": "^6.5.1",
     "css-minimizer-webpack-plugin": "^3.4.1",
     "enhanced-resolve": "^5.8.3",
-    "esbuild": "^0.14.11",
-    "esbuild-wasm": "^0.14.11",
+    "esbuild": "^0.14.12",
+    "esbuild-wasm": "^0.14.12",
     "estree-util-value-to-estree": "^1.3.0",
     "front-matter": "^4.0.2",
     "fs-extra": "^10.0.0",
@@ -62,7 +62,7 @@
     "mini-css-extract-plugin": "~2.5.2",
     "monaco-themes": "^0.4.0",
     "nanocolors": "^0.2.13",
-    "node-fetch": "^2.6.6",
+    "node-fetch": "^2.6.7",
     "open": "^8.4.0",
     "parse-numeric-range": "^1.3.0",
     "postcss": "^8.4.5",
@@ -127,6 +127,6 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.178",
-    "typescript": "^4.5.4"
+    "typescript": "^4.5.5"
   }
 }

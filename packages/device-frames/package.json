@@ -19,7 +19,7 @@
   "devDependencies": {
     "postcss": "^8.4.5",
     "tsup": "5.11.11",
-    "typescript": "^4.5.4"
+    "typescript": "^4.5.5"
   },
   "dependencies": {
     "@heroicons/react": "^1.0.5"
