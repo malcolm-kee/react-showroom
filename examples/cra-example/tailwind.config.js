@@ -1,5 +1,5 @@
 module.exports = {
-  purge: [
+  content: [
     './src/**/*.js',
     './src/**/*.jsx',
     './src/**/*.ts',
@@ -7,8 +7,4 @@ module.exports = {
     './src/**/*.md',
     './src/**/*.mdx',
   ],
-  theme: {
-    extend: {},
-  },
-  variants: {},
 };
