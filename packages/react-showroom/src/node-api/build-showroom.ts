@@ -12,7 +12,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import { performance } from 'perf_hooks';
 import webpack from 'webpack';
-import { createWebpackConfig } from '../config/create-webpack-config';
+import { createClientWebpackConfig } from '../config/create-webpack-config';
 import { createSSrBundle } from '../lib/create-ssr-bundle';
 import { generateDts } from '../lib/generate-dts';
 import { getConfig } from '../lib/get-config';
@@ -23,7 +23,7 @@ async function buildStaticSite(
   config: NormalizedReactShowroomConfiguration,
   profile = false
 ) {
-  const webpackConfig = createWebpackConfig('production', config, {
+  const webpackConfig = createClientWebpackConfig('production', config, {
     outDir: config.outDir,
     profileWebpack: profile,
   });
@@ -100,6 +100,11 @@ async function prerenderSite(
       );
     }
   }
+
+  await fs.outputFile(
+    resolveApp(`${config.outDir}/_offline.html`),
+    await getHtml('/_offline')
+  );
 
   await fs.outputFile(htmlPath, await getHtml('/'));
 

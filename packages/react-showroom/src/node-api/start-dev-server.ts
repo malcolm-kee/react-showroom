@@ -7,7 +7,7 @@ import path from 'path';
 import webpack from 'webpack';
 import webpackDevServer from 'webpack-dev-server';
 import { argv } from 'yargs';
-import { createWebpackConfig } from '../config/create-webpack-config';
+import { createClientWebpackConfig } from '../config/create-webpack-config';
 import { generateDts } from '../lib/generate-dts';
 import { getConfig } from '../lib/get-config';
 import { logToStdout } from '../lib/log-to-stdout';
@@ -44,7 +44,7 @@ export async function startDevServer(
   const HOST = '0.0.0.0';
   const PORT = Number((argv as any).port ?? process.env.PORT ?? devServerPort);
 
-  const webpackConfig = createWebpackConfig('development', config);
+  const webpackConfig = createClientWebpackConfig('development', config);
   const devServerOptions = Object.assign<DevServerConfig, DevServerConfig>(
     {
       port: PORT,

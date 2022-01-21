@@ -19,6 +19,7 @@ import { MenuContextProvider } from '../lib/use-menu';
 import { useSize } from '../lib/use-size';
 import { TargetAudienceProvider } from '../lib/use-target-audience';
 import { DefaultHomePage } from '../pages/index';
+import { OfflinePage } from '../pages/offline';
 import { routeMapping, routes } from '../route-mapping';
 import { colorTheme, THEME } from '../theme';
 
@@ -145,6 +146,9 @@ export const ShowroomApp = () => {
                                 </Route>
                               );
                             })}
+                            <Route path="/_offline" exact>
+                              <OfflinePage />
+                            </Route>
                             <Route path="/" exact>
                               <DefaultHomePage />
                             </Route>

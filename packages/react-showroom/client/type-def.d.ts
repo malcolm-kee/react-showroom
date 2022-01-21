@@ -77,12 +77,13 @@ declare module 'react-showroom-index' {
 }
 
 declare namespace NodeJS {
-  import type { FrameDimension } from '@showroomjs/core';
+  import type { FrameDimension, Environment } from '@showroomjs/core';
   import type { ThemeConfiguration } from '@showroomjs/core/react';
   import type { CompilerOptions } from 'typescript';
   import type { Spec } from 'axe-core';
 
   interface ProcessEnv {
+    readonly NODE_ENV: Environment;
     readonly REACT_SHOWROOM_THEME: ThemeConfiguration;
     readonly PRERENDER: boolean;
     readonly PRERENDER_EXAMPLE: boolean;
