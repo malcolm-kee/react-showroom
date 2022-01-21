@@ -1,7 +1,6 @@
 /// <reference lib="es2020" />
 /// <reference lib="webworker" />
 /* eslint-disable no-restricted-globals */
-import { precacheAndRoute } from 'workbox-precaching';
 import { warmStrategyCache } from 'workbox-recipes';
 import { setCatchHandler, setDefaultHandler } from 'workbox-routing';
 import { CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
@@ -10,12 +9,7 @@ import { basename } from '../lib/config';
 const FALLBACK_HTML_URL = `${basename}/_offline.html`;
 const FALLBACK_STRATEGY = new CacheFirst();
 
-warmStrategyCache({
-  urls: [FALLBACK_HTML_URL],
-  strategy: FALLBACK_STRATEGY,
-});
-
-const sw = self as unknown as ServiceWorkerGlobalScope;
+// const sw = self as unknown as ServiceWorkerGlobalScope;
 
 // eslint-disable-next-line no-restricted-globals
 const assets: Array<{
@@ -24,7 +18,10 @@ const assets: Array<{
   // @ts-expect-error
 }> = self.__WB_MANIFEST;
 
-precacheAndRoute(assets);
+warmStrategyCache({
+  urls: [FALLBACK_HTML_URL].concat(assets.map((a) => a.url)),
+  strategy: FALLBACK_STRATEGY,
+});
 
 // Use a stale-while-revalidate strategy to handle requests by default.
 setDefaultHandler(new StaleWhileRevalidate());
