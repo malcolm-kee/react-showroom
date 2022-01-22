@@ -1,5 +1,11 @@
-import { isNumber, SupportedLanguage, isFunction } from '@showroomjs/core';
-import { css, styled, useConstant, useQueryParams } from '@showroomjs/ui';
+import { isFunction, isNumber, SupportedLanguage } from '@showroomjs/core';
+import {
+  css,
+  searchParamsToObject,
+  styled,
+  useConstant,
+  useQueryParams,
+} from '@showroomjs/ui';
 import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
 import { useCodeFrameContext } from '../lib/code-frame-context';
@@ -72,18 +78,16 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
     [stateMaps]
   );
 
-  const [queryParams, setQueryParams, isReady] = useQueryParams();
+  const [queryParams, setQueryParams] = useQueryParams();
   React.useEffect(() => {
-    if (isReady) {
-      const pValue = queryParams[PARAM_KEY];
-      if (pValue && currentStateMaps.size === 0) {
-        const serializedStateMap = deserializeStateMap(pValue);
-        if (serializedStateMap) {
-          setStateMaps(serializedStateMap);
-        }
+    const pValue = queryParams.get(PARAM_KEY);
+    if (pValue && currentStateMaps.size === 0) {
+      const serializedStateMap = deserializeStateMap(pValue);
+      if (serializedStateMap) {
+        setStateMaps(serializedStateMap);
       }
     }
-  }, [isReady]);
+  }, []);
 
   React.useEffect(() => {
     if (process.env.SYNC_STATE_TYPE === 'state') {
@@ -223,9 +227,17 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
                       );
                     }
 
-                    setQueryParams({
-                      [PARAM_KEY]: serializeStateMaps(stateMaps) || undefined,
-                    });
+                    const nextParams = searchParamsToObject(queryParams, [
+                      PARAM_KEY,
+                    ]);
+
+                    const nextValue = serializeStateMaps(stateMaps);
+
+                    if (nextValue) {
+                      nextParams[PARAM_KEY] = nextValue;
+                    }
+
+                    setQueryParams(nextParams);
                   }
                 }}
                 onScrollChange={(xy) => {

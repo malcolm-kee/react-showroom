@@ -1,6 +1,7 @@
-import { styled, Collapsible, Dialog } from '@showroomjs/ui';
-import * as React from 'react';
 import { MenuIcon } from '@heroicons/react/outline';
+import { Collapsible, Dialog, styled } from '@showroomjs/ui';
+import * as React from 'react';
+import { ErrorBound } from './error-fallback';
 
 export interface BrowserWindowProps {
   children: React.ReactNode;
@@ -50,9 +51,13 @@ export const BrowserWindow = ({
               <BrowserMenu width={20} height={20} />
             </div>
           </BrowserWindowHeader>
-          <Collapsible.Content>{children}</Collapsible.Content>
+          <Collapsible.Content>
+            <ErrorBound>{children}</ErrorBound>
+          </Collapsible.Content>
         </Collapsible.Root>
-        <Dialog.Content fullWidth>{children}</Dialog.Content>
+        <Dialog.Content fullWidth>
+          <ErrorBound>{children}</ErrorBound>
+        </Dialog.Content>
       </Dialog>
     </BrowserWindowWrapper>
   );

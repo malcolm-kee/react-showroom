@@ -6,10 +6,9 @@ import {
   deviceDimensionsByName,
   MemoryRouter,
   PageFallback,
-  QueryParamProvider,
   Route,
+  Routes,
   Suspense,
-  Switch,
 } from 'react-showroom/client';
 import { BrowserWindowInRouter } from './browser-window-in-router';
 import { cssVariables } from './css-variables';
@@ -24,12 +23,13 @@ export const ComponentDocRoute = (
   }
 ) => (
   <MemoryRouter>
-    <QueryParamProvider>
-      <BrowserWindowInRouter className="mb-4">
-        <ComponentDataProvider {...props}>
-          <Suspense fallback={<PageFallback />}>
-            <Switch>
-              <Route path="/_standalone/:codeHash">
+    <BrowserWindowInRouter className="mb-4">
+      <ComponentDataProvider {...props}>
+        <Suspense fallback={<PageFallback />}>
+          <Routes>
+            <Route
+              path="_standalone/:codeHash"
+              element={
                 <div
                   className="flex flex-col min-h-[500px]"
                   style={cssVariables}
@@ -43,8 +43,11 @@ export const ComponentDocRoute = (
                     showDeviceFrame
                   />
                 </div>
-              </Route>
-              <Route>
+              }
+            />
+            <Route
+              path="*"
+              element={
                 <div className="px-6 pb-6" style={cssVariables}>
                   <ComponentDocArticle
                     slug={props.slug}
@@ -52,11 +55,11 @@ export const ComponentDocRoute = (
                     metadata={props.metadata}
                   />
                 </div>
-              </Route>
-            </Switch>
-          </Suspense>
-        </ComponentDataProvider>
-      </BrowserWindowInRouter>
-    </QueryParamProvider>
+              }
+            />
+          </Routes>
+        </Suspense>
+      </ComponentDataProvider>
+    </BrowserWindowInRouter>
   </MemoryRouter>
 );

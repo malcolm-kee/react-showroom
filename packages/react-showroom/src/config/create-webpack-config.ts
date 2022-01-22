@@ -111,6 +111,7 @@ export const createClientWebpackConfig = (
                   useShortDoctype: true,
                 },
                 chunks: ['showroom'],
+                inject: false,
               }),
               html.showroom
                 ? new HtmlWebpackTagsPlugin({
@@ -136,6 +137,7 @@ export const createClientWebpackConfig = (
                   removeStyleLinkTypeAttributes: true,
                   useShortDoctype: true,
                 },
+                inject: false,
                 chunks: ['preview'],
               }),
               html.preview
@@ -163,12 +165,12 @@ export const createClientWebpackConfig = (
               ],
             })
           : undefined,
-        isProd
+        theme.serviceWorker && isProd
           ? new (require('workbox-webpack-plugin').InjectManifest)({
-              swSrc: resolveShowroom('client/service-worker/service-worker.ts'),
-              include: [/\.wasm$/],
-              // the esbuild file is 10MB
-              maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
+              swSrc: resolveShowroom(
+                'client/service-worker/_showroom-service-worker.ts'
+              ),
+              exclude: [/.wasm$/, /.map$/, /.html$/],
             })
           : undefined,
       ].filter(isDefined),
@@ -640,6 +642,7 @@ const createBaseWebpackConfig = (
         AUDIENCE_TOGGLE: theme.audienceToggle,
         COMPONENTS_ENTRY_NAME: (componentsEntry && componentsEntry.name) || '',
         COMPILER_OPTIONS: compilerOptions,
+        USE_SW: theme.serviceWorker,
       }),
       virtualModules,
       isDev

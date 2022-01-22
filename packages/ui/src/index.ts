@@ -41,7 +41,7 @@ export { useIsInViewport } from './lib/use-is-in-viewport';
 export { useNotification } from './lib/use-notification';
 export { useForceUpdateOnSubtreeChange } from './lib/use-on-subtree-change';
 export { usePersistedState } from './lib/use-persisted-state';
-export { QueryParamProvider, useQueryParams } from './lib/use-query-params';
+export { searchParamsToObject, useQueryParams } from './lib/use-query-params';
 export { useStableCallback } from './lib/use-stable-callback';
 export { useTransientState } from './lib/use-transient-state';
 export * from './stitches.config';

@@ -39,6 +39,7 @@ module.exports = defineConfig((command) => ({
   theme: {
     title: 'React Showroom Example',
     resetCss: false,
+    serviceWorker: false,
   },
   example: {
     syncStateType: 'event',

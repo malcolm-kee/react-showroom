@@ -8,6 +8,7 @@
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <meta name="theme-color" content="<%- backgroundColor %>" />
+    <!--SSR-helmet-->
     <% if (linkManifest) { %>
     <link rel="manifest" href="<%- basePath %>/manifest.json" />
     <% } %> <% if (favicon) { %>
@@ -139,10 +140,11 @@
         min-height: 100%;
       }
     </style>
-    <!--SSR-helmet-->
+    <%= htmlWebpackPlugin.tags.headTags %>
     <!--SSR-style-->
   </head>
   <body>
     <div id="target"><!--SSR-target--></div>
+    <%= htmlWebpackPlugin.tags.bodyTags %>
   </body>
 </html>

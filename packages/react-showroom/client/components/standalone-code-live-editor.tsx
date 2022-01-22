@@ -27,6 +27,7 @@ import {
   useDebounce,
   usePersistedState,
   useQueryParams,
+  searchParamsToObject,
 } from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
@@ -83,7 +84,7 @@ export const StandaloneCodeLiveEditor = ({
 }: StandaloneCodeLiveEditorProps) => {
   const theme = useCodeTheme();
 
-  const [queryParams, setQueryParams, isReady] = useQueryParams();
+  const [queryParams, setQueryParams] = useQueryParams();
 
   const [isCodeParsed, setIsCodeParsed] = React.useState(false);
 
@@ -128,12 +129,14 @@ export const StandaloneCodeLiveEditor = ({
   );
   const setHiddenSizes = (sizes: Array<Dimension>) => {
     _setHiddenSizes(sizes);
-    setQueryParams({
-      hiddenSizes:
-        sizes.length === 0
-          ? undefined
-          : sizes.map((s) => `${s[0]}x${s[1]}`).join('_'),
-    });
+
+    const nextQuery = searchParamsToObject(queryParams, ['hiddenSizes']);
+
+    if (sizes.length > 0) {
+      nextQuery.hiddenSizes = sizes.map((s) => `${s[0]}x${s[1]}`).join('_');
+    }
+
+    setQueryParams(nextQuery);
   };
 
   const { frameDimensions, showDeviceFrame: showDeviceFrameSetting } =
@@ -147,37 +150,41 @@ export const StandaloneCodeLiveEditor = ({
   );
 
   React.useEffect(() => {
-    if (isReady) {
-      if (queryParams.code) {
-        setCode(safeDecompress(queryParams.code as string, props.code));
-      }
-      if (queryParams.hiddenSizes) {
-        const serializedHiddenSizes = queryParams.hiddenSizes
-          .split('_')
-          .map((xAndY) => xAndY.split('x').map(Number))
-          .filter(
-            (v) =>
-              v.length === 2 &&
-              v.every((n) => !isNaN(n)) &&
-              frameDimensions.some((d) => d.width === v[0] && d.height === v[1])
-          );
+    const codeValue = queryParams.get('code');
+    const hiddenSizesValue = queryParams.get('hiddenSizes');
 
-        if (serializedHiddenSizes.length > 0) {
-          _setHiddenSizes(serializedHiddenSizes as any as Array<Dimension>);
-        }
-      }
-
-      setIsCodeParsed(true);
+    if (codeValue) {
+      setCode(safeDecompress(codeValue, props.code));
     }
-  }, [isReady]);
+    if (hiddenSizesValue) {
+      const serializedHiddenSizes = hiddenSizesValue
+        .split('_')
+        .map((xAndY) => xAndY.split('x').map(Number))
+        .filter(
+          (v) =>
+            v.length === 2 &&
+            v.every((n) => !isNaN(n)) &&
+            frameDimensions.some((d) => d.width === v[0] && d.height === v[1])
+        );
+
+      if (serializedHiddenSizes.length > 0) {
+        _setHiddenSizes(serializedHiddenSizes as any as Array<Dimension>);
+      }
+    }
+
+    setIsCodeParsed(true);
+  }, []);
 
   const debouncedCode = useDebounce(code);
 
   React.useEffect(() => {
-    setQueryParams({
-      code:
-        debouncedCode === props.code ? undefined : safeCompress(debouncedCode),
-    });
+    const nextParams = searchParamsToObject(queryParams, ['code']);
+
+    if (debouncedCode !== props.code) {
+      nextParams.code = safeCompress(debouncedCode);
+    }
+
+    setQueryParams(nextParams);
   }, [debouncedCode]);
 
   const [isCommenting, _setIsCommenting] = useStateWithParams(

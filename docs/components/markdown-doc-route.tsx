@@ -6,10 +6,9 @@ import {
   MarkdownDocStandaloneEditor,
   MemoryRouter,
   PageFallback,
-  QueryParamProvider,
   Route,
+  Routes,
   Suspense,
-  Switch,
 } from 'react-showroom/client';
 import { BrowserWindowInRouter } from './browser-window-in-router';
 import { cssVariables } from './css-variables';
@@ -19,13 +18,14 @@ export const MarkdownDocRoute = (props: {
   title: string;
 }) => (
   <MemoryRouter>
-    <QueryParamProvider>
-      <BrowserWindowInRouter className="mb-4">
-        <MarkdownDataProvider data={props.data}>
-          <div style={cssVariables}>
-            <Suspense fallback={<PageFallback title={props.title} />}>
-              <Switch>
-                <Route path="/_standalone/:codeHash">
+    <BrowserWindowInRouter className="mb-4">
+      <MarkdownDataProvider data={props.data}>
+        <div style={cssVariables}>
+          <Suspense fallback={<PageFallback title={props.title} />}>
+            <Routes>
+              <Route
+                path="_standalone/:codeHash"
+                element={
                   <MarkdownDocStandaloneEditor
                     codeFrameDimensions={[
                       deviceDimensionsByName['iPhone 6/7/8'],
@@ -35,17 +35,20 @@ export const MarkdownDocRoute = (props: {
                     rootTitle={props.title}
                     showDeviceFrame
                   />
-                </Route>
-                <Route>
+                }
+              />
+              <Route
+                path="*"
+                element={
                   <div className="px-6 pb-6">
                     <MarkdownArticle slug="/docs" content={props.data} />
                   </div>
-                </Route>
-              </Switch>
-            </Suspense>
-          </div>
-        </MarkdownDataProvider>
-      </BrowserWindowInRouter>
-    </QueryParamProvider>
+                }
+              />
+            </Routes>
+          </Suspense>
+        </div>
+      </MarkdownDataProvider>
+    </BrowserWindowInRouter>
   </MemoryRouter>
 );

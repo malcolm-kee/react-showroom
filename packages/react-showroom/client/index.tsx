@@ -13,7 +13,6 @@ export {
   Checkbox,
   FileInput,
   NumberInput,
-  QueryParamProvider,
   Select,
   styled,
   TextInput,
@@ -28,6 +27,7 @@ export type { ComponentMetaProps } from './components/component-meta';
 export { DeviceFrame } from './components/device-frame';
 export { DocPlaceholder } from './components/doc-placeholder';
 export type { DocPlaceholderProps } from './components/doc-placeholder';
+export { ErrorBound } from './components/error-fallback';
 export { MarkdownArticle } from './components/markdown-article';
 export { MarkdownDataProvider } from './components/markdown-data-provider';
 export { MarkdownDocStandaloneEditor } from './components/markdown-doc-standalone-editor';
@@ -44,7 +44,7 @@ export { Head } from './components/seo';
 export { useComponentList } from './lib/component-list-context';
 export type { ComponentItem } from './lib/component-list-context';
 export { Suspense } from './lib/lazy';
-export { Link, MemoryRouter, Route, Switch, useLocation } from './lib/routing';
+export { Link, MemoryRouter, Route, Routes, useLocation } from './lib/routing';
 export { useMenu } from './lib/use-menu';
 export { usePropsEditor } from './lib/use-props-editor';
 export { useUnionProps } from './lib/use-union-props';

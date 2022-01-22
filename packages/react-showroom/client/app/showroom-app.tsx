@@ -1,9 +1,4 @@
-import {
-  IsClientContextProvider,
-  NotificationProvider,
-  QueryParamProvider,
-  theme,
-} from '@showroomjs/ui';
+import { IsClientContextProvider, NotificationProvider } from '@showroomjs/ui';
 import * as React from 'react';
 import sections from 'react-showroom-sections';
 import Wrapper from 'react-showroom-wrapper';
@@ -13,14 +8,14 @@ import { PageFallback } from '../components/page-fallback';
 import { Sidebar } from '../components/sidebar';
 import { CodeThemeContext } from '../lib/code-theme-context';
 import { Suspense } from '../lib/lazy';
-import { matchPath, Route, Switch, useLocation } from '../lib/routing';
+import { matchPath, Route, Routes, useLocation } from '../lib/routing';
 import { getScrollFn } from '../lib/scroll-into-view';
 import { MenuContextProvider } from '../lib/use-menu';
 import { useSize } from '../lib/use-size';
 import { TargetAudienceProvider } from '../lib/use-target-audience';
 import { DefaultHomePage } from '../pages/index';
 import { OfflinePage } from '../pages/offline';
-import { routeMapping, routes } from '../route-mapping';
+import { hasCustomHomePage, routeMapping, routes } from '../route-mapping';
 import { colorTheme, THEME } from '../theme';
 
 export const ShowroomApp = () => {
@@ -59,10 +54,7 @@ export const ShowroomApp = () => {
 
   const matchedSection = React.useMemo(() => {
     for (const mapping of routeMapping) {
-      const match = matchPath(location.pathname, {
-        path: mapping.path,
-        exact: true,
-      });
+      const match = matchPath(mapping.path, location.pathname);
 
       if (match) {
         return mapping.section;
@@ -107,58 +99,58 @@ export const ShowroomApp = () => {
       {/* we couldn't use :target selector as it doesn't work nicely with SPA */}
       {location.hash && (
         <style>{`${location.hash} {
-        color: ${theme.colors['primary-800'].value};
+        color: ${THEME.colors['primary-800']};
       }`}</style>
       )}
       <IsClientContextProvider>
         <NotificationProvider>
           <TargetAudienceProvider>
             <Div className={colorTheme}>
-              <QueryParamProvider>
-                <CodeThemeContext.Provider value={THEME.codeTheme}>
-                  <MenuContextProvider sections={sections}>
-                    <Div style={cssVariables}>
-                      {!shouldHideHeader && <Header ref={headerRef} />}
-                      <Div css={{ display: 'flex' }}>
-                        {!shouldHideSidebar && <Sidebar sections={sections} />}
-                        <Suspense
-                          fallback={<PageFallback title={matchedTitle} />}
-                        >
-                          <Switch>
-                            {routes.map(function dataToRoute(route) {
-                              if (!route) {
-                                return null;
-                              }
-
-                              const Ui = route.ui;
-
+              <CodeThemeContext.Provider value={THEME.codeTheme}>
+                <MenuContextProvider sections={sections}>
+                  <Div style={cssVariables}>
+                    {!shouldHideHeader && <Header ref={headerRef} />}
+                    <Div css={{ display: 'flex' }}>
+                      {!shouldHideSidebar && <Sidebar sections={sections} />}
+                      <Suspense
+                        fallback={<PageFallback title={matchedTitle} />}
+                      >
+                        <Routes>
+                          {routes.map(function dataToRoute(route, i) {
+                            if (!route) {
                               return (
-                                <Route
-                                  path={route.path}
-                                  exact={route.exact}
-                                  key={route.path}
-                                >
-                                  {Array.isArray(Ui) ? (
-                                    Ui.map(dataToRoute)
-                                  ) : (
-                                    <Ui />
-                                  )}
-                                </Route>
+                                <React.Fragment key={i}>{null}</React.Fragment>
                               );
-                            })}
-                            <Route path="/_offline" exact>
-                              <OfflinePage />
-                            </Route>
-                            <Route path="/" exact>
-                              <DefaultHomePage />
-                            </Route>
-                          </Switch>
-                        </Suspense>
-                      </Div>
+                            }
+
+                            const Ui = route.ui;
+
+                            if (Array.isArray(Ui)) {
+                              return (
+                                <React.Fragment key={route.path}>
+                                  {Ui.map(dataToRoute)}
+                                </React.Fragment>
+                              );
+                            }
+
+                            return (
+                              <Route
+                                path={route.path}
+                                element={<Ui />}
+                                key={route.path}
+                              />
+                            );
+                          })}
+                          <Route path="/_offline" element={<OfflinePage />} />
+                          {!hasCustomHomePage && (
+                            <Route path="/" element={<DefaultHomePage />} />
+                          )}
+                        </Routes>
+                      </Suspense>
                     </Div>
-                  </MenuContextProvider>
-                </CodeThemeContext.Provider>
-              </QueryParamProvider>
+                  </Div>
+                </MenuContextProvider>
+              </CodeThemeContext.Provider>
             </Div>
           </TargetAudienceProvider>
         </NotificationProvider>

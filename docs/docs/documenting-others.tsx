@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { mdxComponents } from 'react-showroom/client';
+import { mdxComponents, ErrorBound } from 'react-showroom/client';
 import { MarkdownDocRoute } from '../components/markdown-doc-route';
 import * as markdownCodeExampleResult from './documenting-others/markdown-code-example.mdx';
 import markdownCodeExampleSource from './documenting-others/markdown-code-example.mdx?raw';
@@ -26,15 +26,17 @@ export const MarkdownExampleSource = () => {
 };
 
 export const MarkdownExampleResult = () => (
-  <MarkdownDocRoute
-    data={{
-      Component: markdownExampleResult.default,
-      headings: markdownExampleResult.headings,
-      codeblocks: markdownExampleCodeblocks,
-      imports: markdownExampleImports.imports,
-    }}
-    title="Title"
-  />
+  <ErrorBound>
+    <MarkdownDocRoute
+      data={{
+        Component: markdownExampleResult.default,
+        headings: markdownExampleResult.headings,
+        codeblocks: markdownExampleCodeblocks,
+        imports: markdownExampleImports.imports,
+      }}
+      title="Title"
+    />
+  </ErrorBound>
 );
 
 export const MarkdownCodeExampleSource = () => {
@@ -50,13 +52,15 @@ export const MarkdownCodeExampleSource = () => {
 };
 
 export const MarkdownCodeExampleResult = () => (
-  <MarkdownDocRoute
-    data={{
-      Component: markdownCodeExampleResult.default,
-      headings: markdownCodeExampleResult.headings,
-      codeblocks: markdownCodeExampleCodeblocks,
-      imports: markdownCodeExampleImports.imports,
-    }}
-    title="Code Blocks in Markdown"
-  />
+  <ErrorBound>
+    <MarkdownDocRoute
+      data={{
+        Component: markdownCodeExampleResult.default,
+        headings: markdownCodeExampleResult.headings,
+        codeblocks: markdownCodeExampleCodeblocks,
+        imports: markdownCodeExampleImports.imports,
+      }}
+      title="Code Blocks in Markdown"
+    />
+  </ErrorBound>
 );

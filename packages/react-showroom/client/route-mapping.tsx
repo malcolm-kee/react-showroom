@@ -1,4 +1,4 @@
-import { matchPath } from '@showroomjs/bundles/routing';
+import { matchPath, PathMatch } from '@showroomjs/bundles/routing';
 import type { ReactShowroomSection } from '@showroomjs/core/react';
 import * as React from 'react';
 import sections from 'react-showroom-sections';
@@ -9,8 +9,10 @@ const mapping: Array<{
   section: ReactShowroomSection;
 }> = [];
 
-(function collectMapping(sections: Array<ReactShowroomSection>) {
-  sections.forEach((section) => {
+export let hasCustomHomePage = false;
+
+(function collectMapping(sectionItems: Array<ReactShowroomSection>) {
+  sectionItems.forEach((section) => {
     switch (section.type) {
       case 'group':
         collectMapping(section.items);
@@ -18,6 +20,10 @@ const mapping: Array<{
 
       case 'component':
       case 'markdown':
+        if (!section.slug) {
+          hasCustomHomePage = true;
+        }
+
         mapping.push({
           path: `/${section.slug}`,
           section,
@@ -34,7 +40,6 @@ export const routeMapping = mapping;
 
 export interface RouteData {
   path: string;
-  exact: boolean;
   ui: Array<RouteData | null> | React.ComponentType<any>;
   load?: () => Promise<unknown>;
 }
@@ -48,8 +53,7 @@ export const routes = sections.map(function mapSectionToRoute(
 
   if (section.type === 'group') {
     return {
-      path: `/${section.slug}`,
-      exact: section.slug === '',
+      path: section.slug ? `/${section.slug}/*` : '*',
       ui: section.items.map(mapSectionToRoute),
     };
   }
@@ -81,8 +85,7 @@ export const routes = sections.map(function mapSectionToRoute(
     const ui = lazy(load);
 
     return {
-      path: `/${section.slug}`,
-      exact: false,
+      path: `/${section.slug}/*`,
       ui,
       load: 'preload' in ui ? ui.preload : load,
     };
@@ -120,8 +123,7 @@ export const routes = sections.map(function mapSectionToRoute(
     const ui = lazy(load);
 
     return {
-      path: `/${section.slug}`,
-      exact: section.slug === '',
+      path: section.slug ? `/${section.slug}/*` : '*',
       ui,
       load: 'preload' in ui ? ui.preload : load,
     };
@@ -156,12 +158,17 @@ export const loadCodeAtPath = (
 
   let pathname = path;
 
-  if (pathname[pathname.length - 1] === '/') {
+  if (pathname !== '/' && pathname[pathname.length - 1] === '/') {
     pathname = pathname.substring(0, pathname.length - 1);
   }
 
-  const matchSection = (function () {
-    const routeItems = routes.slice().reverse();
+  const matchedSection = (function (): RouteData | undefined {
+    const matches: Array<{
+      match: PathMatch;
+      mapping: RouteData;
+    }> = [];
+
+    const routeItems = routes.slice();
 
     for (const mapping of routeItems) {
       if (!mapping) {
@@ -173,26 +180,52 @@ export const loadCodeAtPath = (
         continue;
       }
 
-      const match = matchPath(pathname, {
-        path: mapping.path,
-        exact: true,
-      });
+      const match = matchPath(mapping.path, pathname);
 
       if (match) {
-        return mapping;
+        matches.push({
+          match,
+          mapping,
+        });
       }
+    }
+
+    if (matches.length > 1) {
+      // when more than one match, need to guess the matched route
+      // here just assume '*' is lowest priority, then the longer the pattern the more specific it is
+      const selectedMatch = matches.reduce((prevItem, item) => {
+        const prevMatch = prevItem.match.pattern;
+        const currentMatch = item.match.pattern;
+
+        if (prevMatch.path === '*') {
+          return item;
+        }
+
+        if (currentMatch.path === '*') {
+          return prevItem;
+        }
+
+        return prevMatch.path.length > currentMatch.path.length
+          ? prevItem
+          : item;
+      });
+
+      return selectedMatch.mapping;
+    } else {
+      return matches[0] && matches[0].mapping;
     }
   })();
 
-  const result =
-    matchSection && matchSection.load
-      ? matchSection.load().then(() => {
-          loaded.add(path);
-          loadPromiseMap.delete(path);
-        })
-      : Promise.resolve();
+  if (!matchedSection || !matchedSection.load) {
+    loaded.add(path);
+    onLoad();
+  } else {
+    const loadResult = matchedSection.load().then(() => {
+      loaded.add(path);
+      loadPromiseMap.delete(path);
+      onLoad();
+    });
 
-  loadPromiseMap.set(path, result);
-
-  result.then(onLoad);
+    loadPromiseMap.set(path, loadResult);
+  }
 };

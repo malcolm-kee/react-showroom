@@ -77,6 +77,7 @@ const defaultThemeConfiguration: Omit<ThemeConfiguration, 'manifest'> = {
     'primary-800': '#9D174D',
     'primary-900': '#831843',
   },
+  serviceWorker: true,
 };
 
 const deviceDevices: Array<DeviceName> = [

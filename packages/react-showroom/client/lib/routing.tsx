@@ -1,22 +1,22 @@
 export {
   HashRouter,
   matchPath,
-  MemoryRouter,
   Route,
-  StaticRouter,
-  Switch,
-  useHistory,
+  Routes,
   useLocation,
+  useNavigate as useRouterNavigate,
   useParams,
-  useRouteMatch,
 } from '@showroomjs/bundles/routing';
 import {
   BrowserRouter as OriBrowserRouter,
   BrowserRouterProps,
   LinkProps as OriLinkProps,
-  matchPath,
-  useHistory,
   useLocation,
+  useMatch,
+  useNavigate as useRouterNavigate,
+  useResolvedPath,
+  MemoryRouter as OriMemoryRouter,
+  UNSAFE_LocationContext,
 } from '@showroomjs/bundles/routing';
 import { callAll, noop } from '@showroomjs/core';
 import { createNameContext } from '@showroomjs/ui';
@@ -24,6 +24,15 @@ import cx from 'classnames';
 import * as React from 'react';
 import { loadCodeAtPath } from '../route-mapping';
 import { basename } from './config';
+
+/**
+ * Hack based on https://github.com/remix-run/react-router/issues/7375#issuecomment-975431736
+ */
+export const MemoryRouter = (props: { children: React.ReactNode }) => (
+  <UNSAFE_LocationContext.Provider value={null as any}>
+    <OriMemoryRouter>{props.children}</OriMemoryRouter>
+  </UNSAFE_LocationContext.Provider>
+);
 
 const RouteIsLoadingContext = createNameContext<
   [boolean, React.Dispatch<React.SetStateAction<boolean>>]
@@ -44,28 +53,29 @@ export const useNavigate = () => {
     };
   }, []);
 
-  const history = useHistory();
+  const navigate = useRouterNavigate();
+
+  const location = useLocation();
 
   return {
     navigate: (
       to: string,
       options: { replace?: boolean; state?: unknown } = {}
     ) => {
-      if (to.indexOf('/') !== 0) {
+      if (/https?:\/\//.test(to)) {
         openInNewTab(to);
         return;
       }
 
       setIsPending(true);
       setLocalIsPending(true);
-      const urlWhenClick = history.location.pathname;
+      const urlWhenClick = location.pathname;
       Promise.race([loadCode(to), wait(1500)]).then(() => {
         setIsPending(false);
 
         // avoid race condition where user click another route before the Promise resolves
-        if (urlWhenClick === history.location.pathname) {
-          const method = options.replace ? history.replace : history.push;
-          method(to, options.state);
+        if (urlWhenClick === location.pathname) {
+          navigate(to, options);
         }
         if (isMountedRef.current) {
           setLocalIsPending(false);
@@ -133,15 +143,11 @@ export const NavLink = React.forwardRef<
   HTMLAnchorElement,
   LinkProps & { exact?: boolean }
 >(function NavLink({ exact, ...props }, ref) {
-  const location = useLocation();
-
-  const match = matchPath(location.pathname, {
-    path: props.to,
-    exact,
-  });
+  const resolved = useResolvedPath(props.to);
+  const match = useMatch({ path: resolved.pathname, end: exact });
 
   return (
-    <Link {...props} aria-current={!!match ? 'page' : undefined} ref={ref} />
+    <Link {...props} {...(match ? { 'aria-current': 'page' } : {})} ref={ref} />
   );
 });
 

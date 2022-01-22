@@ -631,11 +631,11 @@ export const PropsEditorProvider = (props: {
     propsEditorCache.data
   );
 
-  const [params, setParams, isReady] = useQueryParams();
+  const [params, setParams] = useQueryParams();
 
   React.useEffect(() => {
-    if (isReady && props.serializeToParam) {
-      const serializedProps = params.props;
+    if (props.serializeToParam) {
+      const serializedProps = params.get('props');
 
       if (serializedProps) {
         const result = safeDecompress(serializedProps, '');
@@ -649,16 +649,24 @@ export const PropsEditorProvider = (props: {
         }
       }
     }
-  }, [isReady, props.serializeToParam]);
+  }, [props.serializeToParam]);
 
   React.useEffect(() => {
     if (props.serializeToParam && editorState) {
       const serialized = stringifySafely(editorState);
 
       if (serialized) {
-        setParams({
-          props: safeCompress(serialized),
+        const nextParams: Record<string, string> = {};
+
+        params.forEach((value, key) => {
+          if (key !== 'props') {
+            nextParams[key] = value;
+          }
         });
+
+        nextParams.props = safeCompress(serialized);
+
+        setParams(nextParams);
       }
     }
   }, [editorState, props.serializeToParam]);

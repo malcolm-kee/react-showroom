@@ -17,7 +17,7 @@ import { CodeImportsContextProvider } from '../lib/code-imports-context';
 import { CodeVariablesContextProvider } from '../lib/code-variables-context';
 import { ComponentMetaContext } from '../lib/component-props-context';
 import { usePreviewWindow } from '../lib/frame-message';
-import { Route, Switch, useParams } from '../lib/routing';
+import { Route, Routes, useParams } from '../lib/routing';
 import { useA11yCheck } from '../lib/use-a11y-check';
 import { UseCustomStateContext } from '../lib/use-custom-state';
 import { useHeightChange } from '../lib/use-height-change';
@@ -35,17 +35,14 @@ export const PreviewApp = () => {
   return (
     <Wrapper>
       <CodeImportsContextProvider value={allImports}>
-        <Switch>
-          <Route path="/:codeHash/:componentId">
-            <ComponentPreviewPage />
-          </Route>
-          <Route path="/:codeHash">
-            <GenericPreviewPage />
-          </Route>
-          <Route>
-            <ErrorPage />
-          </Route>
-        </Switch>
+        <Routes>
+          <Route
+            path="/:codeHash/:componentId"
+            element={<ComponentPreviewPage />}
+          />
+          <Route path="/:codeHash" element={<GenericPreviewPage />} />
+          <Route path="*" element={<ErrorPage />} />
+        </Routes>
       </CodeImportsContextProvider>
     </Wrapper>
   );

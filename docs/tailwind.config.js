@@ -1,5 +1,5 @@
 module.exports = {
-  purge: [
+  content: [
     './README.md',
     './docs/**/*.md',
     './docs/**/*.mdx',
@@ -7,8 +7,6 @@ module.exports = {
     './components/**/*.jsx',
     './components/**/*.tsx',
   ],
-  mode: 'jit',
-  darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
       colors: {
@@ -16,6 +14,5 @@ module.exports = {
       },
     },
   },
-  variants: {},
   plugins: [require('@tailwindcss/forms')],
 };
