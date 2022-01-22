@@ -111,6 +111,7 @@ export const createClientWebpackConfig = (
                   useShortDoctype: true,
                 },
                 chunks: ['showroom'],
+                inject: false,
               }),
               html.showroom
                 ? new HtmlWebpackTagsPlugin({
@@ -136,6 +137,7 @@ export const createClientWebpackConfig = (
                   removeStyleLinkTypeAttributes: true,
                   useShortDoctype: true,
                 },
+                inject: false,
                 chunks: ['preview'],
               }),
               html.preview

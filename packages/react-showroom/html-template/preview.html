@@ -8,6 +8,7 @@
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <title>Preview <% if (title) { %>- <%- title %><% } %></title>
+    <!--SSR-helmet-->
     <% if (resetCss) { %>
     <style>
       *,
@@ -130,7 +131,7 @@
         overscroll-behavior: contain;
       }
     </style>
-    <!--SSR-helmet-->
+    <%= htmlWebpackPlugin.tags.headTags %>
     <!--SSR-style-->
     <script>
       // attaching React DevTools
@@ -139,5 +140,6 @@
   </head>
   <body>
     <div id="preview"><!--SSR-target--></div>
+    <%= htmlWebpackPlugin.tags.bodyTags %>
   </body>
 </html>

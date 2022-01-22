@@ -1,8 +1,7 @@
-import { styled, Collapsible, Dialog } from '@showroomjs/ui';
-import * as React from 'react';
 import { MenuIcon } from '@heroicons/react/outline';
-import { ErrorBoundary } from 'react-error-boundary';
-import { ErrorFallback } from './error-fallback';
+import { Collapsible, Dialog, styled } from '@showroomjs/ui';
+import * as React from 'react';
+import { ErrorBound } from './error-fallback';
 
 export interface BrowserWindowProps {
   children: React.ReactNode;
@@ -53,15 +52,11 @@ export const BrowserWindow = ({
             </div>
           </BrowserWindowHeader>
           <Collapsible.Content>
-            <ErrorBoundary FallbackComponent={ErrorFallback}>
-              {children}
-            </ErrorBoundary>
+            <ErrorBound>{children}</ErrorBound>
           </Collapsible.Content>
         </Collapsible.Root>
         <Dialog.Content fullWidth>
-          <ErrorBoundary FallbackComponent={ErrorFallback}>
-            {children}
-          </ErrorBoundary>
+          <ErrorBound>{children}</ErrorBound>
         </Dialog.Content>
       </Dialog>
     </BrowserWindowWrapper>
