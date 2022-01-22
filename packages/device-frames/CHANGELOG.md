@@ -1,5 +1,11 @@
 # @showroomjs/device-frames
 
+## 0.3.2
+
+### Patch Changes
+
+- e5b2ccd: Bump deps
+
 ## 0.3.1
 
 ### Patch Changes

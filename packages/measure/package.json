@@ -1,6 +1,6 @@
 {
   "name": "@showroomjs/measure",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "MIT",
   "main": "dist/measure.js",
   "types": "dist/measure.d.ts",

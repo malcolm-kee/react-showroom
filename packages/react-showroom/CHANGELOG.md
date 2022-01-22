@@ -1,5 +1,23 @@
 # react-showroom
 
+## 1.25.0
+
+### Minor Changes
+
+- 0c0eeaa: Generate manifest.json file unless disabled
+- e5b2ccd: Generate a service worker to provide offline fallback
+
+### Patch Changes
+
+- e5b2ccd: Bump deps
+- Updated dependencies [e5b2ccd]
+- Updated dependencies [0c0eeaa]
+- Updated dependencies [e5b2ccd]
+  - @showroomjs/core@1.18.0
+  - @showroomjs/device-frames@0.3.2
+  - @showroomjs/measure@0.1.2
+  - @showroomjs/ui@1.14.2
+
 ## 1.24.0
 
 ### Minor Changes

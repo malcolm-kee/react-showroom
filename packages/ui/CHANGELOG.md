@@ -1,5 +1,15 @@
 # @showroomjs/ui
 
+## 1.14.2
+
+### Patch Changes
+
+- e5b2ccd: Bump deps
+- Updated dependencies [e5b2ccd]
+- Updated dependencies [0c0eeaa]
+- Updated dependencies [e5b2ccd]
+  - @showroomjs/core@1.18.0
+
 ## 1.14.1
 
 ### Patch Changes

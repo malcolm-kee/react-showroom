@@ -1,5 +1,16 @@
 # @showroomjs/core
 
+## 1.18.0
+
+### Minor Changes
+
+- 0c0eeaa: Generate manifest.json file unless disabled
+- e5b2ccd: Generate a service worker to provide offline fallback
+
+### Patch Changes
+
+- e5b2ccd: Bump deps
+
 ## 1.17.0
 
 ### Minor Changes
