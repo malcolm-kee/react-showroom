@@ -167,10 +167,10 @@ export const createClientWebpackConfig = (
           : undefined,
         isProd
           ? new (require('workbox-webpack-plugin').InjectManifest)({
-              swSrc: resolveShowroom('client/service-worker/service-worker.ts'),
-              include: [/\.wasm$/],
-              // the esbuild file is 10MB
-              maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
+              swSrc: resolveShowroom(
+                'client/service-worker/_showroom-service-worker.ts'
+              ),
+              exclude: [/.wasm$/, /.map$/, /.html$/],
             })
           : undefined,
       ].filter(isDefined),

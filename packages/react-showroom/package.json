@@ -103,6 +103,7 @@
     "webpack-merge": "^5.8.0",
     "webpack-messages": "^2.0.4",
     "webpack-virtual-modules": "^0.4.3",
+    "workbox-expiration": "^6.4.2",
     "workbox-recipes": "^6.4.2",
     "workbox-routing": "^6.4.2",
     "workbox-strategies": "^6.4.2",
