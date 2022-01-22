@@ -15,7 +15,7 @@ export interface HeaderProps {
 
 export const Header = React.forwardRef<HTMLElement, HeaderProps>(
   function Header(props, forwardedRef) {
-    const location = useLocation<{ searchNavigated?: boolean }>();
+    const location = useLocation();
 
     const { navigate } = useNavigate();
 
@@ -59,7 +59,13 @@ export const Header = React.forwardRef<HTMLElement, HeaderProps>(
               ))}
             <SearchDialog.Root>
               <SearchDialog.Trigger
-                autoFocus={!!(location.state && location.state.searchNavigated)}
+                autoFocus={
+                  !!(
+                    location.state &&
+                    (location.state as { searchNavigated: boolean })
+                      .searchNavigated
+                  )
+                }
               >
                 <SearchText>Search</SearchText>
               </SearchDialog.Trigger>

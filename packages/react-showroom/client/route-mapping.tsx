@@ -9,6 +9,8 @@ const mapping: Array<{
   section: ReactShowroomSection;
 }> = [];
 
+export let hasCustomHomePage = false;
+
 (function collectMapping(sections: Array<ReactShowroomSection>) {
   sections.forEach((section) => {
     switch (section.type) {
@@ -18,6 +20,10 @@ const mapping: Array<{
 
       case 'component':
       case 'markdown':
+        if (!section.slug) {
+          hasCustomHomePage = true;
+        }
+
         mapping.push({
           path: `/${section.slug}`,
           section,
@@ -34,7 +40,6 @@ export const routeMapping = mapping;
 
 export interface RouteData {
   path: string;
-  exact: boolean;
   ui: Array<RouteData | null> | React.ComponentType<any>;
   load?: () => Promise<unknown>;
 }
@@ -48,8 +53,7 @@ export const routes = sections.map(function mapSectionToRoute(
 
   if (section.type === 'group') {
     return {
-      path: `/${section.slug}`,
-      exact: section.slug === '',
+      path: section.slug ? `/${section.slug}/*` : '*',
       ui: section.items.map(mapSectionToRoute),
     };
   }
@@ -81,8 +85,7 @@ export const routes = sections.map(function mapSectionToRoute(
     const ui = lazy(load);
 
     return {
-      path: `/${section.slug}`,
-      exact: false,
+      path: `/${section.slug}/*`,
       ui,
       load: 'preload' in ui ? ui.preload : load,
     };
@@ -120,8 +123,7 @@ export const routes = sections.map(function mapSectionToRoute(
     const ui = lazy(load);
 
     return {
-      path: `/${section.slug}`,
-      exact: section.slug === '',
+      path: section.slug ? `/${section.slug}/*` : '*',
       ui,
       load: 'preload' in ui ? ui.preload : load,
     };
@@ -173,10 +175,7 @@ export const loadCodeAtPath = (
         continue;
       }
 
-      const match = matchPath(pathname, {
-        path: mapping.path,
-        exact: true,
-      });
+      const match = matchPath(mapping.path, pathname);
 
       if (match) {
         return mapping;

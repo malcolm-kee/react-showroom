@@ -9,9 +9,8 @@ import { ComponentDocStandaloneEditor } from '../components/component-doc-standa
 import { DetailsPageContainer } from '../components/details-page-container';
 import { Seo } from '../components/seo';
 import { StandalonePageContainer } from '../components/standalone-page-container';
-import { ExampleRootContextProvider } from '../lib/example-root-context';
-import { Route, Switch, useRouteMatch } from '../lib/routing';
-import { showDeviceFrame, EXAMPLE_DIMENSIONS } from '../lib/config';
+import { EXAMPLE_DIMENSIONS, showDeviceFrame } from '../lib/config';
+import { Route, Routes } from '../lib/routing';
 
 export const ComponentDocRoute = ({
   section,
@@ -20,15 +19,14 @@ export const ComponentDocRoute = ({
   section: ReactShowroomComponentSection;
   content: ReactShowroomComponentContent;
 }) => {
-  const { url } = useRouteMatch();
-
   const metadata = section.metadata;
 
   return (
     <ComponentDataProvider content={content} metadata={metadata}>
-      <ExampleRootContextProvider value={url}>
-        <Switch>
-          <Route path={`${url}/_standalone/:codeHash`}>
+      <Routes>
+        <Route
+          path="_standalone/:codeHash"
+          element={
             <StandalonePageContainer>
               <Seo
                 title={metadata.displayName}
@@ -39,8 +37,11 @@ export const ComponentDocRoute = ({
                 codeFrameDimensions={EXAMPLE_DIMENSIONS}
               />
             </StandalonePageContainer>
-          </Route>
-          <Route path={url}>
+          }
+        />
+        <Route
+          path="/"
+          element={
             <DetailsPageContainer
               title={metadata.displayName}
               description={metadata.description}
@@ -51,9 +52,9 @@ export const ComponentDocRoute = ({
                 content={content}
               />
             </DetailsPageContainer>
-          </Route>
-        </Switch>
-      </ExampleRootContextProvider>
+          }
+        />
+      </Routes>
     </ComponentDataProvider>
   );
 };

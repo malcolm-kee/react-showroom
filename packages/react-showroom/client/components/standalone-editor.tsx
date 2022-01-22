@@ -1,8 +1,7 @@
-import { useHistory } from '@showroomjs/bundles/routing';
+import { useNavigate } from '@showroomjs/bundles/routing';
 import { useNotification } from '@showroomjs/ui';
 import * as React from 'react';
 import { useCodeBlocks } from '../lib/codeblocks-context';
-import { useExampleRoot } from '../lib/example-root-context';
 import { useParams } from '../lib/routing';
 import { StandaloneCodeLiveEditor } from './standalone-code-live-editor';
 
@@ -21,19 +20,18 @@ export const StandaloneEditor = () => {
   }, [codeHash, codeblocks]);
 
   const showMessage = useNotification();
-  const history = useHistory();
-  const exampleRoot = useExampleRoot();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     if (!codeData || !codeData[1]) {
       showMessage('Invalid example url.');
-      history.replace(exampleRoot);
+      navigate('..');
     }
   }, [codeData]);
 
   return (
     <>
-      {codeData && codeData[1] ? (
+      {codeData && codeData[1] && codeHash ? (
         <StandaloneCodeLiveEditor
           code={codeData[0]}
           lang={codeData[1].lang}

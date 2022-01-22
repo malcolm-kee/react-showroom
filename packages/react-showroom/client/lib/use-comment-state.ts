@@ -1,4 +1,4 @@
-import { useId, useQueryParams } from '@showroomjs/ui';
+import { useId, useQueryParams, searchParamsToObject } from '@showroomjs/ui';
 import lzString from 'lz-string';
 import * as React from 'react';
 
@@ -90,27 +90,31 @@ export const useCommentState = (idPrefix?: string) => {
 
   const [state, dispatch] = React.useReducer(commentReducer, defaultState);
 
-  const [qParams, setQParams, isReady] = useQueryParams();
+  const [qParams, setQParams] = useQueryParams();
 
   React.useEffect(() => {
-    if (isReady) {
-      if (qParams.comments) {
-        const stored = deCompress(qParams.comments);
+    const commentQuery = qParams.get('comments');
 
-        if (stored) {
-          dispatch({
-            type: 'set',
-            items: stored,
-          });
-        }
+    if (commentQuery) {
+      const stored = deCompress(commentQuery);
+
+      if (stored) {
+        dispatch({
+          type: 'set',
+          items: stored,
+        });
       }
     }
-  }, [isReady]);
+  }, []);
 
   React.useEffect(() => {
-    setQParams({
-      comments: state.items.length > 0 ? compress(state.items) : undefined,
-    });
+    const nextSearchParams = searchParamsToObject(qParams, ['comments']);
+
+    if (state.items.length > 0) {
+      nextSearchParams.comments = compress(state.items);
+    }
+
+    setQParams(nextSearchParams);
   }, [state.items]);
 
   return {

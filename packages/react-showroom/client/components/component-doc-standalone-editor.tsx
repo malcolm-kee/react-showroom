@@ -3,7 +3,6 @@ import { Breadcrumbs } from '@showroomjs/ui';
 import * as React from 'react';
 import { CodeFrameContextProvider } from '../lib/code-frame-context';
 import { useComponentMeta } from '../lib/component-props-context';
-import { useExampleRoot } from '../lib/example-root-context';
 import { lazy } from '../lib/lazy';
 import { useSize } from '../lib/use-size';
 import { Div } from './base';
@@ -14,7 +13,6 @@ export const ComponentDocStandaloneEditor = (props: {
   showDeviceFrame: boolean;
   codeFrameDimensions: Array<FrameDimension>;
 }) => {
-  const exampleRoot = useExampleRoot();
   const componentMetadata = useComponentMeta();
 
   const breadcrumbRef = React.useRef<HTMLElement>(null);
@@ -33,7 +31,7 @@ export const ComponentDocStandaloneEditor = (props: {
         items={[
           {
             label: componentMetadata ? componentMetadata.displayName : '??',
-            url: exampleRoot,
+            url: '..',
           },
           {
             label: 'Example',

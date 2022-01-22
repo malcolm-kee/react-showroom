@@ -1,4 +1,4 @@
-import { Route, Switch, useRouteMatch } from '@showroomjs/bundles/routing';
+import { Route, Routes } from '@showroomjs/bundles/routing';
 import {
   ReactShowroomMarkdownContent,
   ReactShowroomMarkdownSection,
@@ -11,7 +11,6 @@ import { MarkdownDocStandaloneEditor } from '../components/markdown-doc-standalo
 import { Seo } from '../components/seo';
 import { StandalonePageContainer } from '../components/standalone-page-container';
 import { EXAMPLE_DIMENSIONS, showDeviceFrame } from '../lib/config';
-import { ExampleRootContextProvider } from '../lib/example-root-context';
 
 export const MarkdownRoute = ({
   section,
@@ -22,13 +21,12 @@ export const MarkdownRoute = ({
   section: ReactShowroomMarkdownSection;
   content: ReactShowroomMarkdownContent;
 }) => {
-  const { url } = useRouteMatch();
-
   return (
     <MarkdownDataProvider data={content}>
-      <ExampleRootContextProvider value={url}>
-        <Switch>
-          <Route path={`${url}/_standalone/:codeHash`}>
+      <Routes>
+        <Route
+          path="_standalone/:codeHash"
+          element={
             <StandalonePageContainer>
               <Seo
                 title={title}
@@ -40,8 +38,11 @@ export const MarkdownRoute = ({
                 rootTitle={title}
               />
             </StandalonePageContainer>
-          </Route>
-          <Route path={url}>
+          }
+        />
+        <Route
+          path="/"
+          element={
             <DetailsPageContainer
               title={title}
               description={section.frontmatter.description}
@@ -52,9 +53,9 @@ export const MarkdownRoute = ({
                 content={content}
               />
             </DetailsPageContainer>
-          </Route>
-        </Switch>
-      </ExampleRootContextProvider>
+          }
+        />
+      </Routes>
     </MarkdownDataProvider>
   );
 };

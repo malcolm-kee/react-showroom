@@ -1,6 +1,6 @@
 import { Alert } from '@showroomjs/ui';
 import * as React from 'react';
-import { FallbackProps } from 'react-error-boundary';
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 
 export const ErrorFallback = (props: FallbackProps) => {
   return (
@@ -11,3 +11,9 @@ export const ErrorFallback = (props: FallbackProps) => {
     </Alert>
   );
 };
+
+export const ErrorBound = (props: { children: React.ReactNode }) => (
+  <ErrorBoundary FallbackComponent={ErrorFallback}>
+    {props.children}
+  </ErrorBoundary>
+);

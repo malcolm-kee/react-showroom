@@ -10,23 +10,32 @@ export const useStateWithParams = <T extends unknown>(
 
   const [value, setValue] = React.useState(initialState);
 
-  const [queryParams, setQueryParams, isReady] = useQueryParams();
+  const [queryParams, setQueryParams] = useQueryParams();
 
   React.useEffect(() => {
-    if (isReady) {
-      const val = queryParams[paramKey];
-      if (val) {
-        setValue(transformFn(val));
-      }
+    const val = queryParams.get(paramKey);
+    if (val) {
+      setValue(transformFn(val));
     }
-  }, [isReady]);
+  }, []);
 
   const setFn = React.useCallback(
     (newValue: T, paramValue: string | undefined) => {
       setValue(newValue);
-      setQueryParams({
-        [paramKey]: paramValue,
+
+      const nextParams: Record<string, string> = {};
+
+      queryParams.forEach((value, key) => {
+        if (key !== paramKey) {
+          nextParams[key] = value;
+        }
       });
+
+      if (paramValue) {
+        nextParams[paramKey] = paramValue;
+      }
+
+      setQueryParams(nextParams);
     },
     [paramKey, setQueryParams]
   );
