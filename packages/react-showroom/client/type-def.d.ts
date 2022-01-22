@@ -98,5 +98,6 @@ declare namespace NodeJS {
     readonly A11Y_CONFIG: Spec;
     readonly COMPONENTS_ENTRY_NAME: string | undefined;
     readonly COMPILER_OPTIONS: Partial<CompilerOptions>;
+    readonly USE_SW: boolean;
   }
 }

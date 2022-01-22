@@ -176,6 +176,10 @@ export interface ThemeConfiguration {
   };
   favicon?: string;
   manifest: ThemeManifestConfiguration | false;
+  /**
+   * Service worker to provides offline fallback
+   */
+  serviceWorker: boolean;
 }
 
 export interface DocgenConfiguration {

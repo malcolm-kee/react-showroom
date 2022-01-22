@@ -337,6 +337,15 @@ Default value for the audience toggle.
 
 Set to `false` if you do not want to show the toggle, which means it will always be 'code'.
 
+### `theme.serviceWorker`
+
+- Type: `boolean`
+- Default: `true`
+
+Include a service worker to provide offline fallback.
+
+Disable it if it interferes with other service worker you need, e.g. [`msw`](https://mswjs.io/).
+
 ### `theme.favicon`
 
 - Type: `string | undefined`

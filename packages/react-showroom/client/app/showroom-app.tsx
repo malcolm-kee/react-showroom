@@ -1,8 +1,4 @@
-import {
-  IsClientContextProvider,
-  NotificationProvider,
-  theme,
-} from '@showroomjs/ui';
+import { IsClientContextProvider, NotificationProvider } from '@showroomjs/ui';
 import * as React from 'react';
 import sections from 'react-showroom-sections';
 import Wrapper from 'react-showroom-wrapper';
@@ -103,7 +99,7 @@ export const ShowroomApp = () => {
       {/* we couldn't use :target selector as it doesn't work nicely with SPA */}
       {location.hash && (
         <style>{`${location.hash} {
-        color: ${theme.colors['primary-800'].value};
+        color: ${THEME.colors['primary-800']};
       }`}</style>
       )}
       <IsClientContextProvider>
