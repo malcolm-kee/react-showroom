@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 1.18.1
+
+### Patch Changes
+
+- 0eb6610: Bump dependencies
+
 ## 1.18.0
 
 ### Minor Changes

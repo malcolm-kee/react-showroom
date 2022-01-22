@@ -1,5 +1,15 @@
 # react-showroom
 
+## 1.25.1
+
+### Patch Changes
+
+- 0eb6610: Bump dependencies
+- Updated dependencies [0eb6610]
+  - @showroomjs/core@1.18.1
+  - @showroomjs/bundles@1.10.1
+  - @showroomjs/ui@1.14.3
+
 ## 1.25.0
 
 ### Minor Changes

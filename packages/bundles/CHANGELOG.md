@@ -1,5 +1,11 @@
 # @showroomjs/bundles
 
+## 1.10.1
+
+### Patch Changes
+
+- 0eb6610: Bump dependencies
+
 ## 1.10.0
 
 ### Minor Changes
