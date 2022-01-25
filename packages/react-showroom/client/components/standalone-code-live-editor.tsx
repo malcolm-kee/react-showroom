@@ -27,7 +27,6 @@ import {
   useDebounce,
   usePersistedState,
   useQueryParams,
-  searchParamsToObject,
 } from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
@@ -130,13 +129,17 @@ export const StandaloneCodeLiveEditor = ({
   const setHiddenSizes = (sizes: Array<Dimension>) => {
     _setHiddenSizes(sizes);
 
-    const nextQuery = searchParamsToObject(queryParams, ['hiddenSizes']);
-
-    if (sizes.length > 0) {
-      nextQuery.hiddenSizes = sizes.map((s) => `${s[0]}x${s[1]}`).join('_');
-    }
-
-    setQueryParams(nextQuery);
+    setQueryParams(
+      {
+        hiddenSizes:
+          sizes.length > 0
+            ? sizes.map((s) => `${s[0]}x${s[1]}`).join('_')
+            : undefined,
+      },
+      {
+        merge: true,
+      }
+    );
   };
 
   const { frameDimensions, showDeviceFrame: showDeviceFrameSetting } =
@@ -178,13 +181,15 @@ export const StandaloneCodeLiveEditor = ({
   const debouncedCode = useDebounce(code);
 
   React.useEffect(() => {
-    const nextParams = searchParamsToObject(queryParams, ['code']);
-
-    if (debouncedCode !== props.code) {
-      nextParams.code = safeCompress(debouncedCode);
-    }
-
-    setQueryParams(nextParams);
+    setQueryParams(
+      {
+        code:
+          debouncedCode !== props.code
+            ? safeCompress(debouncedCode)
+            : undefined,
+      },
+      { merge: true }
+    );
   }, [debouncedCode]);
 
   const [isCommenting, _setIsCommenting] = useStateWithParams(

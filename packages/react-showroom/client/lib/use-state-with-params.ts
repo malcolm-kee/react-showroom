@@ -23,19 +23,14 @@ export const useStateWithParams = <T extends unknown>(
     (newValue: T, paramValue: string | undefined) => {
       setValue(newValue);
 
-      const nextParams: Record<string, string> = {};
-
-      queryParams.forEach((value, key) => {
-        if (key !== paramKey) {
-          nextParams[key] = value;
+      setQueryParams(
+        {
+          [paramKey]: paramValue || undefined,
+        },
+        {
+          merge: true,
         }
-      });
-
-      if (paramValue) {
-        nextParams[paramKey] = paramValue;
-      }
-
-      setQueryParams(nextParams);
+      );
     },
     [paramKey, setQueryParams]
   );
