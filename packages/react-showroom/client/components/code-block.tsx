@@ -43,6 +43,7 @@ export interface CodeProps extends React.ComponentPropsWithoutRef<'code'> {
   noEditor?: boolean;
   frame?: boolean;
   initialHeight?: string;
+  initialWidth?: string;
   height?: string;
   highlights?: string;
 }
@@ -54,6 +55,7 @@ export const Code = ({
   noEditor,
   frame,
   initialHeight,
+  initialWidth,
   height,
   highlights,
   ...props
@@ -147,6 +149,7 @@ export const Code = ({
             noEditor={noEditor}
             frame={frame}
             initialHeight={initialHeight}
+            initialWidth={initialWidth}
             height={height}
           />
         </A11yResultContextProvider>

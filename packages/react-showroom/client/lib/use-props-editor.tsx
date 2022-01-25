@@ -656,17 +656,14 @@ export const PropsEditorProvider = (props: {
       const serialized = stringifySafely(editorState);
 
       if (serialized) {
-        const nextParams: Record<string, string> = {};
-
-        params.forEach((value, key) => {
-          if (key !== 'props') {
-            nextParams[key] = value;
+        setParams(
+          {
+            props: safeCompress(serialized),
+          },
+          {
+            merge: true,
           }
-        });
-
-        nextParams.props = safeCompress(serialized);
-
-        setParams(nextParams);
+        );
       }
     }
   }, [editorState, props.serializeToParam]);

@@ -38,6 +38,7 @@ export interface CodePreviewIframeProps {
   onIsCompilingChange?: (isCompiling: boolean) => void;
   initialHeight?: number;
   height?: number;
+  initialWidth?: number;
   'data-frame-id'?: string;
 }
 
@@ -57,6 +58,7 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   onIsCompilingChange,
   initialHeight = 100,
   height: providedHeight,
+  initialWidth,
   'data-frame-id': frameId,
 }: CodePreviewIframeProps) {
   const [frameHeight, setFrameHeight] = React.useState(
@@ -163,6 +165,15 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
 
   const resizableRef = React.useRef<Resizable>(null);
 
+  // React.useEffect(() => {
+  //   if (resizableRef.current && initialWidth) {
+  //     resizableRef.current.updateSize({
+  //       width: initialWidth,
+  //       height,
+  //     });
+  //   }
+  // }, []);
+
   const content = codeHash ? (
     <Frame
       ref={targetRef}
@@ -198,6 +209,14 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
         maxHeight={height}
         minWidth={320 + handleWidth + 2}
         maxWidth={'100%'}
+        defaultSize={
+          initialWidth
+            ? {
+                width: initialWidth + handleWidth + 2,
+                height,
+              }
+            : undefined
+        }
         enable={resizeEnable}
         handleStyles={{
           right: {

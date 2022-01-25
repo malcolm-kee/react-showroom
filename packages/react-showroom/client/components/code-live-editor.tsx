@@ -30,6 +30,7 @@ export interface CodeLiveEditorProps {
   noEditor?: boolean;
   frame?: boolean;
   initialHeight?: string;
+  initialWidth?: string;
   height?: string;
 }
 
@@ -41,6 +42,7 @@ export const CodeLiveEditor = ({
   frame = lang === 'html',
   initialHeight,
   height,
+  initialWidth,
   ...props
 }: CodeLiveEditorProps) => {
   const theme = useCodeTheme();
@@ -61,6 +63,8 @@ export const CodeLiveEditor = ({
 
   const initialHeightValue = initialHeight && Number(initialHeight);
   const heightValue = height && Number(height);
+
+  const initialWidthValue = initialWidth && Number(initialWidth);
 
   const frameRef = React.useRef<CodePreviewIframeImperative>(null);
   const [isMeasuring, setIsMeasuring] = React.useState(false);
@@ -119,6 +123,11 @@ export const CodeLiveEditor = ({
               }
               height={
                 heightValue && !isNaN(heightValue) ? heightValue : undefined
+              }
+              initialWidth={
+                initialWidthValue && !isNaN(initialWidthValue)
+                  ? initialWidthValue
+                  : undefined
               }
               resizable
               imperativeRef={frameRef}

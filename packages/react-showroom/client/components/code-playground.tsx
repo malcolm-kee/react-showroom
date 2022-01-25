@@ -26,6 +26,7 @@ export interface CodePlaygroundProps {
   frame?: boolean;
   initialHeight?: string;
   height?: string;
+  initialWidth?: string;
   id?: string;
 }
 
@@ -34,6 +35,7 @@ export const CodePlayground = ({
   frame,
   initialHeight,
   height,
+  initialWidth,
   id,
   ...props
 }: CodePlaygroundProps) => {
@@ -48,6 +50,8 @@ export const CodePlayground = ({
 
   const initialHeightValue = initialHeight && Number(initialHeight);
   const heightValue = height && Number(height);
+
+  const initialWidthValue = initialWidth && Number(initialWidth);
 
   const frameRef = React.useRef<CodePreviewIframeImperative>(null);
   const [isMeasuring, setIsMeasuring] = React.useState(false);
@@ -107,6 +111,11 @@ export const CodePlayground = ({
               }
               height={
                 heightValue && !isNaN(heightValue) ? heightValue : undefined
+              }
+              initialWidth={
+                initialWidthValue && !isNaN(initialWidthValue)
+                  ? initialWidthValue
+                  : undefined
               }
               imperativeRef={frameRef}
               resizable
