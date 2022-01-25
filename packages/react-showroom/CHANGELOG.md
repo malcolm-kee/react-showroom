@@ -1,5 +1,16 @@
 # react-showroom
 
+## 1.26.0
+
+### Minor Changes
+
+- 4d409a3: Allow setting initialWidth for frame examples
+
+### Patch Changes
+
+- Updated dependencies [4d409a3]
+  - @showroomjs/ui@1.15.0
+
 ## 1.25.1
 
 ### Patch Changes

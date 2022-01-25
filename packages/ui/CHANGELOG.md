@@ -1,5 +1,11 @@
 # @showroomjs/ui
 
+## 1.15.0
+
+### Minor Changes
+
+- 4d409a3: Allow setting initialWidth for frame examples
+
 ## 1.14.3
 
 ### Patch Changes
