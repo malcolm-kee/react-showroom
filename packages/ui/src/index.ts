@@ -34,6 +34,8 @@ export { TextTooltip, Tooltip } from './components/tooltip';
 export * from './lib';
 export { copyText } from './lib/copy';
 export { createNameContext } from './lib/create-named-context';
+export { listenForConsole } from './lib/listen-for-console';
+export type { ConsoleEvent } from './lib/listen-for-console';
 export { useDebounce } from './lib/use-debounce';
 export { useDebouncedCallback } from './lib/use-debounced-callback';
 export { IsClientContextProvider, useIsClient } from './lib/use-is-client';

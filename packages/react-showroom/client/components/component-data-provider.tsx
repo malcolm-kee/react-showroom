@@ -8,6 +8,7 @@ import {
 import { CodeVariablesContextProvider } from '../lib/code-variables-context';
 import { CodeblocksContext } from '../lib/codeblocks-context';
 import { ComponentMetaContext } from '../lib/component-props-context';
+import { InteractionsContext } from '../lib/interactions';
 
 export const ComponentDataProvider = (props: {
   children: React.ReactNode;
@@ -15,7 +16,7 @@ export const ComponentDataProvider = (props: {
   metadata: ComponentDoc & { id: string };
 }) => {
   const {
-    content: { imports, codeblocks, Component, loadDts },
+    content: { imports, codeblocks, Component, loadDts, testMap },
     metadata,
   } = props;
 
@@ -34,7 +35,17 @@ export const ComponentDataProvider = (props: {
         <ComponentMetaContext.Provider value={metadata}>
           <CodeVariablesContextProvider value={codeVariables}>
             <CodeblocksContext.Provider value={codeblocks}>
-              {props.children}
+              <InteractionsContext.Provider
+                value={React.useMemo(
+                  () => ({
+                    componentId: metadata.id,
+                    testMap,
+                  }),
+                  [metadata.id, testMap]
+                )}
+              >
+                {props.children}
+              </InteractionsContext.Provider>
             </CodeblocksContext.Provider>
           </CodeVariablesContextProvider>
         </ComponentMetaContext.Provider>

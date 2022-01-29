@@ -1,8 +1,17 @@
 import { Node, Options, parse } from 'acorn';
 import * as walk from 'acorn-walk';
-import { getSafeName } from './get-safe-name';
 import type * as esbuild from 'esbuild';
+import type {
+  ExpressionStatementNode,
+  ImportDeclarationNode,
+  ImportDefaultSpecifierNode,
+  ImportNamespaceSpecifierNode,
+  ImportSpecifierNode,
+  MemberExpressionNode,
+  ProgramNode,
+} from './acorn-ast';
 import { ReactShowroomFeatureCompilation } from './compilation';
+import { getSafeName } from './get-safe-name';
 
 export interface ImportMapData {
   name: string;
@@ -135,62 +144,6 @@ const insertRenderIfEndWithJsx = (code: string): string => {
 
 const hasImports = (code: string): boolean =>
   !!code.match(/import[\S\s]+?['"]([^'"]+)['"];?/m);
-
-interface LiteralNode extends Node {
-  type: 'Literal';
-  value: string;
-  raw: string;
-}
-
-interface IdentifierNode extends Node {
-  type: 'Identifier';
-  name: string;
-}
-
-interface ImportSpecifierNode extends Node {
-  type: 'ImportSpecifier';
-  imported: IdentifierNode;
-  local: IdentifierNode;
-}
-
-interface ImportNamespaceSpecifierNode extends Node {
-  type: 'ImportNamespaceSpecifier';
-  local: IdentifierNode;
-}
-
-interface ImportDefaultSpecifierNode extends Node {
-  type: 'ImportDefaultSpecifier';
-  local: IdentifierNode;
-}
-
-interface ImportDeclarationNode extends Node {
-  type: 'ImportDeclaration';
-  source: LiteralNode;
-  specifiers: Array<
-    | ImportSpecifierNode
-    | ImportNamespaceSpecifierNode
-    | ImportDefaultSpecifierNode
-  >;
-}
-
-interface MemberExpressionNode extends Node {
-  type: 'MemberExpression';
-  object: IdentifierNode;
-  property: IdentifierNode;
-}
-
-interface ExpressionStatementNode extends Node {
-  type: 'ExpressionStatement';
-  expression: {
-    arguments: Array<Node>;
-    callee: Node;
-  };
-}
-
-interface ProgramNode extends Node {
-  type: 'Program';
-  body: Array<Node>;
-}
 
 const isExpressionNode = (node: Node): node is ExpressionStatementNode =>
   node.type === 'ExpressionStatement';

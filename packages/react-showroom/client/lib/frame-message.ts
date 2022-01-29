@@ -42,20 +42,23 @@ export type DomEvent =
   | DomEventBase<'keyUp', KeyboardEventInit>
   | DomEventBase<'keyDown', KeyboardEventInit>;
 
-export type Message =
-  | {
-      type: 'code';
-      code: string;
-      lang: SupportedLanguage;
-    }
+export type CommonMessage =
+  | LogMessage
   | {
       type: 'heightChange';
       height: number;
     }
   | {
       type: 'ready';
+    };
+
+export type Message =
+  | CommonMessage
+  | {
+      type: 'code';
+      code: string;
+      lang: SupportedLanguage;
     }
-  | LogMessage
   | {
       type: 'stateChange';
       stateId: string;
@@ -96,7 +99,7 @@ export type Message =
       color: string;
     };
 
-export const usePreviewWindow = (onMessage: (data: Message) => void) => {
+const useChildFrame = (onMessage: (data: Message) => void) => {
   useMessage(onMessage, (ev) => ev.source === parent);
 
   useEffect(() => {
@@ -132,6 +135,10 @@ export const usePreviewWindow = (onMessage: (data: Message) => void) => {
     sendParent,
   };
 };
+
+export const usePreviewWindow = useChildFrame;
+
+export const useInteractionWindow = useChildFrame;
 
 export const useParentWindow = (onMessage?: (data: Message) => void) => {
   const targetRef = useRef<HTMLIFrameElement>(null);

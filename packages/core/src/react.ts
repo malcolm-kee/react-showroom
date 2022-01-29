@@ -234,6 +234,10 @@ export interface ShowroomSearchConfiguration {
   includeHeadings: boolean;
 }
 
+export interface ShowroomExperimentsConfiguration {
+  interactions: boolean;
+}
+
 export interface ReactShowroomConfiguration {
   /**
    * URL for the site.
@@ -345,12 +349,14 @@ export interface ReactShowroomConfiguration {
    */
   cacheDir?: string;
   debug?: boolean;
+  experiments?: Partial<ShowroomExperimentsConfiguration>;
 }
 
 export interface ReactShowroomComponentSectionConfig {
   type: 'component';
   sourcePath: string;
   docPath: string | null;
+  testPath: string | null;
   parentSlugs: Array<string>;
   id: string;
   hideFromSidebar?: boolean;
@@ -428,6 +434,7 @@ export interface NormalizedReactShowroomConfiguration
    * typescript compiler options to be used in advanced code editor
    */
   compilerOptions: Partial<CompilerOptions>;
+  experiments: ShowroomExperimentsConfiguration;
 }
 
 export interface ReactShowroomComponentContent {
@@ -437,6 +444,7 @@ export interface ReactShowroomComponentContent {
   imports: Record<string, any>;
   codeblocks: CodeBlocks;
   loadDts: () => Promise<{ default: Record<string, string> }>;
+  testMap?: Record<string, string>;
 }
 
 export interface ComponentDocItem {

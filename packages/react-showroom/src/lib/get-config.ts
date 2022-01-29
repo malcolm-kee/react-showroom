@@ -18,6 +18,7 @@ import {
 } from '@showroomjs/core/react';
 import * as fs from 'fs';
 import * as glob from 'glob';
+import * as mimeTypes from 'mime-types';
 import { yellow } from 'nanocolors';
 import * as path from 'path';
 import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
@@ -28,7 +29,6 @@ import type { defineConfig } from '../index';
 import { createHash } from './create-hash';
 import { logToStdout } from './log-to-stdout';
 import { paths, resolveApp } from './paths';
-import * as mimeTypes from 'mime-types';
 
 const DEFAULT_COMPONENTS_GLOB = 'src/components/**/*.tsx';
 const DEFAULT_IGNORES = [
@@ -137,6 +137,7 @@ export const getConfig = (
     search: {
       includeHeadings: searchIncludeHeadings = env === 'production',
     } = {},
+    experiments: { interactions: interactionsExperiment = false } = {},
     ...providedConfig
   } = userConfig || getUserConfig(env, configFile);
 
@@ -150,7 +151,10 @@ export const getConfig = (
       ignore: ignores,
     });
 
-    collectComponents(componentPaths, sections, [], false);
+    collectComponents(componentPaths, sections, [], {
+      hideFromSidebar: false,
+      findTest: interactionsExperiment,
+    });
   } else if (!items) {
     const componentPaths = glob.sync(DEFAULT_COMPONENTS_GLOB, {
       cwd: paths.appPath,
@@ -158,11 +162,14 @@ export const getConfig = (
       ignore: ignores,
     });
 
-    collectComponents(componentPaths, sections, [], false);
+    collectComponents(componentPaths, sections, [], {
+      hideFromSidebar: false,
+      findTest: interactionsExperiment,
+    });
   }
 
   if (items) {
-    collectSections(items, sections, []);
+    collectSections(items, sections, [], { findTest: interactionsExperiment });
   }
 
   if (!sections.some((section) => 'slug' in section && section.slug === '')) {
@@ -272,6 +279,9 @@ export const getConfig = (
       includeHeadings: searchIncludeHeadings,
     },
     compilerOptions: (config && config.compilerOptions) || {},
+    experiments: {
+      interactions: interactionsExperiment,
+    },
   };
 
   return _normalizedConfig;
@@ -280,29 +290,24 @@ export const getConfig = (
     componentPaths: Array<string>,
     parent: Array<ReactShowroomSectionConfig>,
     parentSlugs: Array<string>,
-    hideFromSidebar: boolean | undefined
+    options: {
+      hideFromSidebar: boolean | undefined;
+      findTest: boolean;
+    }
   ) {
     componentPaths.forEach((comPath) => {
       const comPathInfo = path.parse(comPath);
 
-      let docPath: string | null = null;
-
-      for (const ext of COMPONENT_DOC_EXTENSIONS) {
-        const possibleDocPath = `${comPathInfo.dir}/${comPathInfo.name}${ext}`;
-
-        if (fs.existsSync(possibleDocPath)) {
-          docPath = possibleDocPath;
-          break;
-        }
-      }
-
       const section: ReactShowroomComponentSectionConfig = {
         type: 'component',
         sourcePath: comPath,
-        docPath,
+        docPath: getAlternativeFile(comPathInfo, COMPONENT_DOC_EXTENSIONS),
+        testPath: options.findTest
+          ? getAlternativeFile(comPathInfo, TEST_FILE_EXTENSIONS)
+          : null,
         parentSlugs,
         id: createHash(comPath),
-        hideFromSidebar,
+        hideFromSidebar: options.hideFromSidebar,
       };
 
       components.push(section);
@@ -313,7 +318,10 @@ export const getConfig = (
   function collectSections(
     sectionConfigs: Array<ItemConfiguration>,
     parent: Array<ReactShowroomSectionConfig>,
-    parentSlugs: Array<string>
+    parentSlugs: Array<string>,
+    options: {
+      findTest: boolean;
+    }
   ) {
     sectionConfigs.forEach((sectionConfig) => {
       switch (sectionConfig.type) {
@@ -327,7 +335,8 @@ export const getConfig = (
               parent,
               sectionConfig.path
                 ? parentSlugs.concat(sectionConfig.path)
-                : parentSlugs
+                : parentSlugs,
+              options
             );
             return;
           }
@@ -354,7 +363,8 @@ export const getConfig = (
           collectSections(
             sectionConfig.items,
             section.items,
-            parentSlugs.concat(slug)
+            parentSlugs.concat(slug),
+            options
           );
 
           parent.push(section);
@@ -391,7 +401,10 @@ export const getConfig = (
               sectionConfig.path
                 ? parentSlugs.concat(sectionConfig.path)
                 : parentSlugs,
-              sectionConfig.hideFromSidebar
+              {
+                hideFromSidebar: sectionConfig.hideFromSidebar,
+                findTest: options.findTest,
+              }
             );
             return;
           }
@@ -419,7 +432,10 @@ export const getConfig = (
             componentPaths,
             section.items,
             parentSlugs.concat(slug),
-            sectionConfig.hideFromSidebar
+            {
+              hideFromSidebar: sectionConfig.hideFromSidebar,
+              findTest: options.findTest,
+            }
           );
           parent.push(section);
 
@@ -576,3 +592,33 @@ const getUserConfig = (
 };
 
 const COMPONENT_DOC_EXTENSIONS = ['.mdx', '.md'] as const;
+
+const TEST_ENDING = ['.spec', '.test'] as const;
+
+const TEST_FILE_ENDING = ['.tsx', '.ts', '.jsx', '.js'] as const;
+
+const TEST_FILE_EXTENSIONS = flattenArray(
+  TEST_ENDING.map((end) =>
+    TEST_FILE_ENDING.map(
+      (
+        ext
+      ): `${typeof TEST_ENDING[number]}${typeof TEST_FILE_ENDING[number]}` =>
+        `${end}${ext}`
+    )
+  )
+);
+
+const getAlternativeFile = (
+  pathInfo: path.ParsedPath,
+  extensions: ReadonlyArray<string>
+): string | null => {
+  for (const ext of extensions) {
+    const possibleDocPath = `${pathInfo.dir}/${pathInfo.name}${ext}`;
+
+    if (fs.existsSync(possibleDocPath)) {
+      return possibleDocPath;
+    }
+  }
+
+  return null;
+};

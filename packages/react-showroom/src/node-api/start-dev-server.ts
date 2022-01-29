@@ -56,6 +56,7 @@ export async function startDevServer(
       historyApiFallback: {
         rewrites: [
           { from: /^\/_preview/, to: '/_preview.html' },
+          { from: /^\/_interaction/, to: '/_interaction.html' },
           { from: /./, to: '/index.html' },
         ],
       },

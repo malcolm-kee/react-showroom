@@ -16,6 +16,7 @@ import { createHash } from '../lib/create-hash';
 import {
   generateAllComponents,
   generateAllComponentsPaths,
+  generateAllTests,
   generateCodeblocksData,
   generateDocPlaceHolder,
   generateSearchIndex,
@@ -70,6 +71,11 @@ export const createClientWebpackConfig = (
   const previewEntry = resolveShowroom(
     'client-dist/app/preview-client-entry.js'
   );
+  const interactionEntry = resolveShowroom(
+    'client-dist/app/interaction-client-entry.js'
+  );
+
+  const enableInteraction = config.experiments.interactions;
 
   return mergeWebpackConfig(
     merge(baseConfig, {
@@ -80,6 +86,13 @@ export const createClientWebpackConfig = (
         preview: config.require
           ? config.require.concat(previewEntry)
           : previewEntry,
+        ...(enableInteraction
+          ? {
+              interaction: config.require
+                ? config.require.concat(interactionEntry)
+                : interactionEntry,
+            }
+          : {}),
       },
       externals: ['crypto'],
       output: {
@@ -146,6 +159,29 @@ export const createClientWebpackConfig = (
                     files: ['**/_preview.html'],
                   })
                 : undefined,
+              enableInteraction
+                ? new HtmlWebpackPlugin({
+                    filename: '_interaction.html',
+                    template: resolveShowroom('html-template/interaction.html'),
+                    templateParameters: {
+                      title: theme.title,
+                      resetCss: theme.resetCss,
+                      prerender: mode === 'production' && !!prerenderConfig,
+                    },
+                    minify: isProd && {
+                      collapseWhitespace: true,
+                      keepClosingSlash: true,
+                      removeComments: true,
+                      ignoreCustomComments: [/SSR-/],
+                      removeRedundantAttributes: true,
+                      removeScriptTypeAttributes: true,
+                      removeStyleLinkTypeAttributes: true,
+                      useShortDoctype: true,
+                    },
+                    inject: false,
+                    chunks: ['interaction'],
+                  })
+                : undefined,
             ]),
         new WebpackMessages({
           name: 'showroom',
@@ -203,6 +239,13 @@ export const createSsrWebpackConfig = (
         ...(config.require ? { requireConfig: config.require } : {}),
         prerender: showroomServer,
         previewPrerender: previewServer,
+        ...(config.experiments.interactions
+          ? {
+              interactionPrerender: resolveShowroom(
+                'client-dist/app/interaction-server-entry.js'
+              ),
+            }
+          : {}),
       },
       output: {
         path: resolveApp(`${outDir}/server`),
@@ -288,6 +331,8 @@ const createBaseWebpackConfig = (
       generateDocPlaceHolder(exampleConfig.placeholder),
     [resolveShowroom('node_modules/react-showroom-index.js')]:
       generateSearchIndex(sections, search.includeHeadings),
+    [resolveShowroom('node_modules/react-showroom-tests.js')]:
+      generateAllTests(sections),
   });
 
   const babelPreset = createBabelPreset(mode);
@@ -382,18 +427,38 @@ const createBaseWebpackConfig = (
         },
         {
           test: /\.(ts|tsx)$/,
-          resourceQuery: {
-            not: [/raw/],
-          },
-          use: [
+          oneOf: [
             {
-              loader: require.resolve('babel-loader'),
-              options: {
-                presets: [() => babelPreset],
-                plugins: isDev
-                  ? [require.resolve('react-refresh/babel')]
-                  : undefined,
+              resourceQuery: /showroomTestName/,
+              use: [
+                {
+                  loader: 'showroom-test-name-loader',
+                },
+              ],
+            },
+            {
+              resourceQuery: /showroomTest/,
+              use: [
+                {
+                  loader: 'showroom-test-loader',
+                },
+              ],
+            },
+            {
+              resourceQuery: {
+                not: [/raw/],
               },
+              use: [
+                {
+                  loader: require.resolve('babel-loader'),
+                  options: {
+                    presets: [() => babelPreset],
+                    plugins: isDev
+                      ? [require.resolve('react-refresh/babel')]
+                      : undefined,
+                  },
+                },
+              ],
             },
           ],
         },

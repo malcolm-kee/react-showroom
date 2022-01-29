@@ -11,7 +11,6 @@ import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
 import { useComponentMeta } from '../lib/component-props-context';
 import { DomEvent, Message, useParentWindow } from '../lib/frame-message';
-import { getFrameId } from '../lib/get-frame-id';
 import { getPreviewUrl } from '../lib/preview-url';
 import { getScrollFn } from '../lib/scroll-into-view';
 import { useA11yResult } from '../lib/use-a11y-result';
@@ -164,15 +163,6 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   const [activeWidth, setActiveWidth] = useActiveWidth();
 
   const resizableRef = React.useRef<Resizable>(null);
-
-  // React.useEffect(() => {
-  //   if (resizableRef.current && initialWidth) {
-  //     resizableRef.current.updateSize({
-  //       width: initialWidth,
-  //       height,
-  //     });
-  //   }
-  // }, []);
 
   const content = codeHash ? (
     <Frame

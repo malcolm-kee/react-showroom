@@ -28,6 +28,7 @@ export { DeviceFrame } from './components/device-frame';
 export { DocPlaceholder } from './components/doc-placeholder';
 export type { DocPlaceholderProps } from './components/doc-placeholder';
 export { ErrorBound } from './components/error-fallback';
+export { InteractionBlock } from './components/interaction-block';
 export { MarkdownArticle } from './components/markdown-article';
 export { MarkdownDataProvider } from './components/markdown-data-provider';
 export { MarkdownDocStandaloneEditor } from './components/markdown-doc-standalone-editor';
