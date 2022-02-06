@@ -141,6 +141,8 @@ export const loadCodeAtPath = (
   fullPath: string,
   onLoad: () => void = noop
 ): void => {
+  console.log({ fullPath });
+
   const hashIndex = fullPath.indexOf('#');
   const path = hashIndex > 0 ? fullPath.slice(0, hashIndex) : fullPath;
 

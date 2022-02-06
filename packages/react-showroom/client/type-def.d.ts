@@ -76,6 +76,15 @@ declare module 'react-showroom-index' {
   export default index;
 }
 
+declare module 'react-showroom-tests' {
+  declare const testMap: Record<
+    string,
+    () => Promise<Record<string, () => Promise<void>>>
+  >;
+
+  export default testMap;
+}
+
 declare namespace NodeJS {
   import type { FrameDimension, Environment } from '@showroomjs/core';
   import type { ThemeConfiguration } from '@showroomjs/core/react';
@@ -84,6 +93,7 @@ declare namespace NodeJS {
 
   interface ProcessEnv {
     readonly NODE_ENV: Environment;
+    readonly REACT_SHOWROOM_COMMAND: 'server' | 'build';
     readonly REACT_SHOWROOM_THEME: ThemeConfiguration;
     readonly PRERENDER: boolean;
     readonly PRERENDER_EXAMPLE: boolean;

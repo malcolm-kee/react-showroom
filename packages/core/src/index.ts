@@ -7,6 +7,7 @@ export {
   SUPPORTED_LANGUAGES,
 } from './compilation';
 export { compileScript, ImportMapData, Packages } from './compile-script';
+export { compileTests, compileTestsToMap } from './compile-tests';
 export { dedupeArray } from './dedupe-array';
 export {
   deviceDimensions,
@@ -18,7 +19,7 @@ export { decodeDisplayName, encodeDisplayName } from './display-name';
 export { flattenArray, NestedArray } from './flatten-array';
 export { callAll, noop } from './fn-lib';
 export type { Callback } from './fn-lib';
-export { getSafeName } from './get-safe-name';
+export { getSafeName, stringToIdentifier } from './get-safe-name';
 export { isEqualArray } from './is-equal-array';
 export { omit, pick } from './object';
 export { compileHtml } from './process-html';

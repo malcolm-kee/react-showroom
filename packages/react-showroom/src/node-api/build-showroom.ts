@@ -1,9 +1,6 @@
 require('source-map-support').install();
-// Do this as the first thing so that any code reading it knows the right env.
-process.env.BABEL_ENV = 'production';
-process.env.NODE_ENV = 'production';
 
-import { Ssr, omit } from '@showroomjs/core';
+import { isDefined, omit, Ssr } from '@showroomjs/core';
 import {
   NormalizedReactShowroomConfiguration,
   ReactShowroomConfiguration,
@@ -16,14 +13,14 @@ import { createClientWebpackConfig } from '../config/create-webpack-config';
 import { createSSrBundle } from '../lib/create-ssr-bundle';
 import { generateDts } from '../lib/generate-dts';
 import { getConfig } from '../lib/get-config';
-import { green, logToStdout } from '../lib/log-to-stdout';
+import { green, logToStdout, yellow } from '../lib/log-to-stdout';
 import { resolveApp, resolveShowroom } from '../lib/paths';
 
 async function buildStaticSite(
   config: NormalizedReactShowroomConfiguration,
   profile = false
 ) {
-  const webpackConfig = createClientWebpackConfig('production', config, {
+  const webpackConfig = createClientWebpackConfig('build', config, {
     outDir: config.outDir,
     profileWebpack: profile,
   });
@@ -178,15 +175,74 @@ async function prerenderPreview(
   return pageCount;
 }
 
+async function prerenderInteraction(
+  config: NormalizedReactShowroomConfiguration,
+  tmpDir: string
+) {
+  const prerenderCodePath = `${tmpDir}/server/interactionPrerender.js`;
+  const htmlPath = resolveApp(`${config.outDir}/_interaction.html`);
+
+  const { ssr } = require(prerenderCodePath) as { ssr: Ssr };
+
+  const template = await fs.readFile(htmlPath, 'utf-8');
+
+  const routes = await ssr.getRoutes();
+
+  let pageCount = 0;
+
+  for (const route of routes) {
+    if (route !== '') {
+      pageCount++;
+
+      await fs.outputFile(
+        resolveApp(`${config.outDir}/_interaction/${route}/index.html`),
+        await getHtml(`/${route}`)
+      );
+    }
+  }
+
+  async function getHtml(pathname: string) {
+    const prerenderResult = await ssr.render({ pathname });
+    const helmet = ssr.getHelmet();
+    const finalHtml = template
+      .replace(
+        '<!--SSR-style-->',
+        `<style id="stitches">${ssr.getCssText()}</style>`
+      )
+      .replace(
+        '<!--SSR-helmet-->',
+        `${helmet.title.toString()}${helmet.meta.toString()}${helmet.link.toString()}`
+      )
+      .replace('<!--SSR-target-->', prerenderResult.result);
+
+    prerenderResult.cleanup();
+
+    return finalHtml;
+  }
+
+  return pageCount;
+}
+
 export async function buildShowroom(
   userConfig?: ReactShowroomConfiguration,
   configFile?: string,
   profile?: boolean
 ) {
-  const config = getConfig('production', configFile, userConfig);
+  const config = getConfig('build', configFile, userConfig);
 
   if (config.example.enableAdvancedEditor) {
     await generateDts(config, false);
+  }
+
+  const enableInteractions = config.experiments.interactions;
+
+  if (enableInteractions) {
+    logToStdout(yellow(`You are enabling experimental interactions features.`));
+    logToStdout(
+      yellow(
+        `APIs for experimental features are not finalized and may be changed in minor version.`
+      )
+    );
   }
 
   const ssrDir = resolveShowroom(
@@ -203,12 +259,22 @@ export async function buildShowroom(
         createSSrBundle(config, ssrDir, profile),
       ]);
       logToStdout('Prerendering...');
-      const [sitePageCount, previewPageCount] = await Promise.all([
-        prerenderSite(config, ssrDir),
-        prerenderPreview(config, ssrDir),
-      ]);
+      const [sitePageCount, previewPageCount, interactionPageCount] =
+        await Promise.all([
+          prerenderSite(config, ssrDir),
+          prerenderPreview(config, ssrDir),
+          enableInteractions ? prerenderInteraction(config, ssrDir) : undefined,
+        ]);
       logToStdout(
-        green(`Prerendered ${sitePageCount + previewPageCount} pages.`)
+        green(
+          `Prerendered ${
+            sitePageCount + previewPageCount + (interactionPageCount || 0)
+          } pages (Site: ${sitePageCount}, Preview: ${previewPageCount}${
+            isDefined(interactionPageCount)
+              ? `, Interaction: ${interactionPageCount}`
+              : ''
+          }).`
+        )
       );
       logToStdout(`Generated showroom at`);
       logToStdout(`  -  ${green(resolveApp(config.outDir))}`);

@@ -3,6 +3,6 @@ import { Button } from './button';
 
 describe('<Button />', () => {
   it('works', () => {
-    render(<Button>Hello</Button>);
+    render(<Button variant="primary">Hello</Button>);
   });
 });

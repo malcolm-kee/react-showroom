@@ -1,7 +1,6 @@
-import { Environment } from '@showroomjs/core';
 import * as path from 'path';
 
-export const createBabelPreset = (env: Environment) => {
+export const createBabelPreset = () => {
   const runTimeVersion = (function getBabelRuntimeVersion():
     | string
     | undefined {
@@ -9,8 +8,6 @@ export const createBabelPreset = (env: Environment) => {
       return require('@babel/runtime/package.json').version;
     } catch (err) {}
   })();
-
-  const isDev = env === 'development';
 
   let absoluteRuntimePath: string | undefined = undefined;
 
@@ -37,7 +34,7 @@ export const createBabelPreset = (env: Environment) => {
         require.resolve('@babel/preset-react'),
         {
           runtime: 'automatic',
-          development: isDev,
+          development: true,
         },
       ],
       require.resolve('@babel/preset-typescript'),

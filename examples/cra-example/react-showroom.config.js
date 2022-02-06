@@ -9,4 +9,7 @@ module.exports = defineConfig({
   theme: {
     title: 'CRA 5 Example',
   },
+  experiments: {
+    interactions: true,
+  },
 });

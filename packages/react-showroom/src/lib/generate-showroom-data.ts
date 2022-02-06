@@ -71,7 +71,7 @@ function compileComponentSection(
     enableAdvancedEditor: boolean;
   }
 ): string {
-  const { docPath, sourcePath } = component;
+  const { docPath, sourcePath, testPath } = component;
 
   const { name: componentName } = path.parse(sourcePath);
 
@@ -80,6 +80,11 @@ function compileComponentSection(
   const loadDoc = import(/* webpackChunkName: "${componentName}-doc" */'${docPath}');
   const loadImports = import(/* webpackChunkName: "${componentName}-imports" */'${docPath}?showroomRemarkImports');
   const loadCodeBlocks = import(/* webpackChunkName: "${componentName}-codeblocks" */'${docPath}?showroomRemarkCodeblocks');
+  ${
+    testPath
+      ? `const loadTestMap = import(/* webpackChunkName: "${componentName}-test-map" */'${testPath}?showroomTestName')`
+      : ''
+  }
   const Component = await import(/* webpackChunkName: "${componentName}" */'${sourcePath}');
 
   const { default: doc, headings } = await loadDoc;
@@ -96,6 +101,7 @@ function compileComponentSection(
         ? `import('${docPath}?showroomRemarkImportsDts')`
         : `Promise.resolve({default: {}})`
     },
+    ${testPath ? `testMap: (await loadTestMap).default,` : ''}
   }    
 }`
     : `async () => {
@@ -376,6 +382,38 @@ export const generateAllComponentsPaths = (
   collect(sections);
 
   return JSON.stringify(result, null, 2);
+};
+
+export const generateAllTests = (
+  sections: Array<ReactShowroomSectionConfig>
+) => {
+  const compTestData: Array<{
+    id: string;
+    loadFn: string;
+  }> = [];
+
+  (function collect(items) {
+    items.forEach((item) => {
+      if (item.type === 'group') {
+        collect(item.items);
+        return;
+      }
+
+      if (item.type === 'component') {
+        if (item.testPath) {
+          compTestData.push({
+            id: item.id,
+            loadFn: `() => import('${item.testPath}?showroomTest')`,
+          });
+        }
+        return;
+      }
+    });
+  })(sections);
+
+  return `export default {${compTestData
+    .map((data) => `${data.id}: ${data.loadFn},`)
+    .join('\n')}}`;
 };
 
 export const generateWrapper = (wrapper: string | undefined) => {
