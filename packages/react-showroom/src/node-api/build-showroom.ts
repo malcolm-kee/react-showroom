@@ -1,7 +1,4 @@
 require('source-map-support').install();
-// Do this as the first thing so that any code reading it knows the right env.
-process.env.BABEL_ENV = 'production';
-process.env.NODE_ENV = 'production';
 
 import { isDefined, omit, Ssr } from '@showroomjs/core';
 import {
@@ -23,7 +20,7 @@ async function buildStaticSite(
   config: NormalizedReactShowroomConfiguration,
   profile = false
 ) {
-  const webpackConfig = createClientWebpackConfig('production', config, {
+  const webpackConfig = createClientWebpackConfig('build', config, {
     outDir: config.outDir,
     profileWebpack: profile,
   });
@@ -231,7 +228,7 @@ export async function buildShowroom(
   configFile?: string,
   profile?: boolean
 ) {
-  const config = getConfig('production', configFile, userConfig);
+  const config = getConfig('build', configFile, userConfig);
 
   if (config.example.enableAdvancedEditor) {
     await generateDts(config, false);

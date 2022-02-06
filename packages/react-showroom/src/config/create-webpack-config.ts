@@ -45,11 +45,11 @@ const WebpackMessages = require('webpack-messages');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 export const createClientWebpackConfig = (
-  mode: Environment,
+  command: 'server' | 'build',
   config: NormalizedReactShowroomConfiguration,
   { outDir = 'showroom', profileWebpack = false } = {}
 ): webpack.Configuration => {
-  const baseConfig = createBaseWebpackConfig(mode, config, {
+  const baseConfig = createBaseWebpackConfig(command, config, {
     ssr: false,
     profile: profileWebpack,
   });
@@ -63,7 +63,7 @@ export const createClientWebpackConfig = (
     html,
   } = config;
 
-  const isProd = mode === 'production';
+  const isBuild = command === 'build';
 
   const clientEntry = resolveShowroom(
     'client-dist/app/showroom-client-entry.js'
@@ -97,7 +97,7 @@ export const createClientWebpackConfig = (
       externals: ['crypto'],
       output: {
         path: resolveApp(outDir),
-        publicPath: !isProd ? '/' : `${basePath}/`, // need to add trailing slash
+        publicPath: !isBuild ? '/' : `${basePath}/`, // need to add trailing slash
       },
       plugins: [
         // workaround as html-webpack-plugin not compatible with ProfilingPlugin. See https://github.com/jantimon/html-webpack-plugin/issues/1652.
@@ -110,10 +110,10 @@ export const createClientWebpackConfig = (
                   favicon: theme.favicon,
                   resetCss: theme.resetCss,
                   backgroundColor: theme.colors['primary-800'],
-                  linkManifest: theme.manifest && isProd,
+                  linkManifest: theme.manifest && isBuild,
                   basePath,
                 },
-                minify: isProd && {
+                minify: isBuild && {
                   collapseWhitespace: true,
                   keepClosingSlash: true,
                   removeComments: true,
@@ -138,9 +138,9 @@ export const createClientWebpackConfig = (
                 templateParameters: {
                   title: theme.title,
                   resetCss: theme.resetCss,
-                  prerender: mode === 'production' && !!prerenderConfig,
+                  prerender: isBuild && !!prerenderConfig,
                 },
-                minify: isProd && {
+                minify: isBuild && {
                   collapseWhitespace: true,
                   keepClosingSlash: true,
                   removeComments: true,
@@ -166,9 +166,9 @@ export const createClientWebpackConfig = (
                     templateParameters: {
                       title: theme.title,
                       resetCss: theme.resetCss,
-                      prerender: mode === 'production' && !!prerenderConfig,
+                      prerender: isBuild && !!prerenderConfig,
                     },
-                    minify: isProd && {
+                    minify: isBuild && {
                       collapseWhitespace: true,
                       keepClosingSlash: true,
                       removeComments: true,
@@ -187,7 +187,7 @@ export const createClientWebpackConfig = (
           name: 'showroom',
           logger: logToStdout,
         }),
-        isProd && assetDir
+        isBuild && assetDir
           ? new CopyWebpackPlugin({
               patterns: [
                 {
@@ -201,18 +201,19 @@ export const createClientWebpackConfig = (
               ],
             })
           : undefined,
-        theme.serviceWorker && isProd
+        theme.serviceWorker && isBuild
           ? new (require('workbox-webpack-plugin').InjectManifest)({
               swSrc: resolveShowroom(
                 'client/service-worker/_showroom-service-worker.ts'
               ),
-              exclude: [/.wasm$/, /.map$/, /.html$/],
+              exclude: [/.wasm$/, /.map$/, /.html$/, /.js$/],
+              mode: 'production',
             })
           : undefined,
       ].filter(isDefined),
     }),
     userConfig,
-    mode
+    'development'
   );
 };
 
@@ -221,7 +222,7 @@ export const createSsrWebpackConfig = (
   config: NormalizedReactShowroomConfiguration,
   { outDir = 'showroom', profileWebpack = false } = {}
 ): webpack.Configuration => {
-  const baseConfig = createBaseWebpackConfig(mode, config, {
+  const baseConfig = createBaseWebpackConfig('build', config, {
     ssr: true,
     profile: profileWebpack,
   });
@@ -269,7 +270,7 @@ export const createSsrWebpackConfig = (
 };
 
 const createBaseWebpackConfig = (
-  mode: Environment,
+  command: 'build' | 'server',
   config: NormalizedReactShowroomConfiguration,
   options: { ssr: boolean; profile: boolean }
 ): webpack.Configuration => {
@@ -291,8 +292,8 @@ const createBaseWebpackConfig = (
     compilerOptions,
   } = config;
 
-  const isProd = mode === 'production';
-  const isDev = mode === 'development';
+  const isBuild = command === 'build';
+  const isServer = command === 'server';
 
   const docgenParser = docgen.withCustomConfig(
     docgenConfig.tsconfigPath,
@@ -335,7 +336,7 @@ const createBaseWebpackConfig = (
       generateAllTests(sections),
   });
 
-  const babelPreset = createBabelPreset(mode);
+  const babelPreset = createBabelPreset();
 
   const codeBlocksOptions: ShowroomRemarkCodeBlocksLoaderOptions = {
     filter: (code) => !isString(code.meta) || !code.meta.includes('static'),
@@ -346,17 +347,17 @@ const createBaseWebpackConfig = (
   };
 
   return {
-    mode,
+    mode: 'development',
     resolve: {
       extensions: moduleFileExtensions.map((ext) => `.${ext}`),
     },
     output: {
-      filename: isProd ? '_assets/js/[name].[contenthash:8].js' : '[name].js',
-      chunkFilename: isProd
+      filename: isBuild ? '_assets/js/[name].[contenthash:8].js' : '[name].js',
+      chunkFilename: isBuild
         ? '_assets/js/[name].[contenthash:8].js'
         : '[name].js',
       assetModuleFilename: '_assets/media/[name]-[contenthash][ext][query]',
-      clean: isProd,
+      clean: isBuild,
     },
     module: {
       rules: [
@@ -416,7 +417,7 @@ const createBaseWebpackConfig = (
               loader: require.resolve('babel-loader'),
               options: {
                 presets: [() => babelPreset],
-                plugins: isDev
+                plugins: isServer
                   ? [require.resolve('react-refresh/babel')]
                   : undefined,
                 babelrc: false,
@@ -453,7 +454,7 @@ const createBaseWebpackConfig = (
                   loader: require.resolve('babel-loader'),
                   options: {
                     presets: [() => babelPreset],
-                    plugins: isDev
+                    plugins: isServer
                       ? [require.resolve('react-refresh/babel')]
                       : undefined,
                   },
@@ -574,7 +575,7 @@ const createBaseWebpackConfig = (
                   loader: require.resolve('babel-loader'),
                   options: {
                     presets: [() => babelPreset],
-                    plugins: isProd
+                    plugins: isBuild
                       ? undefined
                       : [require.resolve('react-refresh/babel')],
                     babelrc: false,
@@ -620,7 +621,7 @@ const createBaseWebpackConfig = (
               }),
           sideEffects: true,
           use: [
-            isProd
+            isBuild
               ? {
                   loader: MiniCssExtractPlugin.loader,
                   options: {
@@ -634,7 +635,7 @@ const createBaseWebpackConfig = (
                 importLoaders: css.usePostcss ? 1 : 0,
                 modules: {
                   auto: true,
-                  localIdentName: isProd
+                  localIdentName: isBuild
                     ? '[hash:base64]'
                     : '[path][name]__[local]',
                 },
@@ -644,7 +645,7 @@ const createBaseWebpackConfig = (
               ? {
                   loader: require.resolve('postcss-loader'),
                   options: {
-                    sourceMap: isProd,
+                    sourceMap: isBuild,
                     postcssOptions: {
                       config: paths.appPostcssConfig,
                     },
@@ -658,11 +659,11 @@ const createBaseWebpackConfig = (
     resolveLoader: {
       modules: ['node_modules', path.resolve(__dirname, '../webpack-loader')],
     },
-    devtool: isProd ? 'source-map' : 'cheap-module-source-map',
+    devtool: isBuild ? 'source-map' : 'cheap-module-source-map',
     cache: cacheDir
       ? {
           type: 'filesystem',
-          name: `react-showroom-${mode}-${options.ssr ? 'ssr' : 'client'}${
+          name: `react-showroom-${command}-${options.ssr ? 'ssr' : 'client'}${
             prerenderConfig ? '-prerender' : ''
           }`,
           version: [
@@ -685,19 +686,20 @@ const createBaseWebpackConfig = (
         }
       : undefined,
     plugins: [
-      isProd
+      isBuild
         ? new MiniCssExtractPlugin({
             filename: '_assets/css/[name].[contenthash].css',
             chunkFilename: '_assets/css/[name].[contenthash].css',
           })
         : undefined,
       new webpack.EnvironmentPlugin({
-        PRERENDER: isProd,
+        PRERENDER: isBuild,
         SSR: options.ssr,
-        BASE_PATH: isProd ? basePath : '',
+        BASE_PATH: isBuild ? basePath : '',
         PRERENDER_EXAMPLE: !!prerenderConfig,
         REACT_SHOWROOM_THEME: theme,
-        NODE_ENV: mode,
+        NODE_ENV: 'development',
+        REACT_SHOWROOM_COMMAND: command,
         EXAMPLE_DIMENSIONS: exampleConfig.dimensions,
         ENABLE_ADVANCED_EDITOR: exampleConfig.enableAdvancedEditor,
         SYNC_STATE_TYPE: exampleConfig.syncStateType,
@@ -710,7 +712,7 @@ const createBaseWebpackConfig = (
         USE_SW: theme.serviceWorker,
       }),
       virtualModules,
-      isDev
+      isServer
         ? new ReactRefreshWebpackPlugin({
             overlay: false,
           })
@@ -722,16 +724,16 @@ const createBaseWebpackConfig = (
             ),
           })
         : undefined,
-      isProd
+      isBuild
         ? new webpack.optimize.MinChunkSizePlugin({
             minChunkSize: 1000,
           })
         : undefined,
     ].filter(isDefined),
     optimization: {
-      minimize: !options.ssr && isProd,
+      minimize: !options.ssr && isBuild,
       minimizer: [
-        '...', // keep existing minimizer
+        // '...', // keep existing minimizer
         new CssMinimizerPlugin(),
       ],
       splitChunks: {
@@ -742,7 +744,7 @@ const createBaseWebpackConfig = (
       hints: false,
     },
     infrastructureLogging: {
-      level: debug ? 'info' : isProd ? 'info' : 'none',
+      level: debug ? 'info' : isBuild ? 'info' : 'none',
     },
     stats: debug ? 'normal' : 'none',
     experiments: {

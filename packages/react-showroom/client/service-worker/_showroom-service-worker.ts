@@ -7,6 +7,9 @@ import { registerRoute, Route, setDefaultHandler } from 'workbox-routing';
 import { CacheFirst, NetworkOnly } from 'workbox-strategies';
 import { basename } from '../lib/config';
 
+// @ts-expect-error
+self.__WB_DISABLE_DEV_LOGS = true;
+
 const assets: Array<{
   revision: string;
   url: string;

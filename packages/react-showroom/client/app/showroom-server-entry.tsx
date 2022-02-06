@@ -21,7 +21,7 @@ export const ssr: Ssr = {
     const queryClient = createQueryClient();
 
     const result = ReactDOMServer.renderToString(
-      <StaticRouter location={{ pathname }} basename={process.env.BASE_PATH}>
+      <StaticRouter location={{ pathname }}>
         <QueryClientProvider client={queryClient}>
           <ShowroomApp />
         </QueryClientProvider>

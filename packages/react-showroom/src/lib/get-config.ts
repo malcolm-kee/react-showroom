@@ -1,7 +1,6 @@
 import {
   deviceDimensionsByName,
   DeviceName,
-  Environment,
   flattenArray,
   FrameDimension,
   isString,
@@ -88,7 +87,7 @@ const deviceDevices: Array<DeviceName> = [
 
 let _normalizedConfig: NormalizedReactShowroomConfiguration;
 export const getConfig = (
-  env: Environment,
+  command: 'build' | 'server',
   configFile?: string,
   userConfig?: ReactShowroomConfiguration
 ): NormalizedReactShowroomConfiguration => {
@@ -135,11 +134,11 @@ export const getConfig = (
     } = {},
     html = {},
     search: {
-      includeHeadings: searchIncludeHeadings = env === 'production',
+      includeHeadings: searchIncludeHeadings = command === 'build',
     } = {},
     experiments: { interactions: interactionsExperiment = false } = {},
     ...providedConfig
-  } = userConfig || getUserConfig(env, configFile);
+  } = userConfig || getUserConfig(command, configFile);
 
   const sections: Array<ReactShowroomSectionConfig> = [];
   const components: Array<ReactShowroomComponentSectionConfig> = [];
@@ -573,7 +572,7 @@ function normalizeDimensions(
 }
 
 const getUserConfig = (
-  env: Environment,
+  command: 'server' | 'build',
   configFile?: string
 ): ReactShowroomConfiguration => {
   const configFilePath = configFile
@@ -587,7 +586,7 @@ const getUserConfig = (
   const provided: ReturnType<typeof defineConfig> = require(configFilePath);
 
   return typeof provided === 'function'
-    ? provided(env === 'development' ? 'dev' : 'build')
+    ? provided(command === 'server' ? 'dev' : 'build')
     : provided;
 };
 

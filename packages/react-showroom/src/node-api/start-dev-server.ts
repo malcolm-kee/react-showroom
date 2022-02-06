@@ -33,7 +33,7 @@ export async function startDevServer(
 ) {
   logToStdout('Starting dev server...');
 
-  const config = getConfig('development', configFile, userConfig);
+  const config = getConfig('server', configFile, userConfig);
 
   const { devServerPort, assetDir, example } = config;
 
@@ -44,7 +44,7 @@ export async function startDevServer(
   const HOST = '0.0.0.0';
   const PORT = Number((argv as any).port ?? process.env.PORT ?? devServerPort);
 
-  const webpackConfig = createClientWebpackConfig('development', config);
+  const webpackConfig = createClientWebpackConfig('server', config);
   const devServerOptions = Object.assign<DevServerConfig, DevServerConfig>(
     {
       port: PORT,

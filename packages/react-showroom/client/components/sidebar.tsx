@@ -5,6 +5,7 @@ import {
   DropdownMenu,
   IconButton,
   icons,
+  useIsClient,
   keyframes,
   Portal,
   styled,
@@ -42,6 +43,8 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
     return props.sections;
   }, [props.sections]);
 
+  const isClient = useIsClient();
+
   return (
     <>
       <Div
@@ -70,7 +73,7 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
           <SidebarSection section={section} key={i} />
         ))}
       </Div>
-      <MobileSidebar sections={mobileSections} />
+      {isClient && <MobileSidebar sections={mobileSections} />}
     </>
   );
 };

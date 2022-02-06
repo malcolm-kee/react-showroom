@@ -6,7 +6,10 @@ interface Config {
 }
 
 export function register(config?: Config) {
-  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+  if (
+    process.env.REACT_SHOWROOM_COMMAND === 'build' &&
+    'serviceWorker' in navigator
+  ) {
     window.addEventListener('load', () => {
       const swUrl = `${basename}/_showroom-service-worker.js`;
 

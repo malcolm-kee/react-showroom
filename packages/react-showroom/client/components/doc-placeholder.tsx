@@ -16,7 +16,7 @@ export const DocPlaceholder = styled(
         <Alert variant="info">
           <div>
             <P>There is no documentation/example for this component.</P>
-            {process.env.NODE_ENV === 'development' && (
+            {process.env.REACT_SHOWROOM_COMMAND === 'server' && (
               <>
                 <P>
                   Create a file at the following location to start adding
