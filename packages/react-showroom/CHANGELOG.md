@@ -1,5 +1,11 @@
 # react-showroom
 
+## 1.26.1
+
+### Patch Changes
+
+- fba13b6: Fix usePropsEditor not working in doc
+
 ## 1.26.0
 
 ### Minor Changes
