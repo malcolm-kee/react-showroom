@@ -269,18 +269,113 @@ function computeConfig({
   initialProps,
   controls: controlOverrides,
 }: ComputeConfigOptions): PropsEditorState {
+  const controls: Array<PropsEditorControl> = [];
+  const values: Record<string, any> = { ...initialProps };
+  const propWithValueEncodedWithIndex: Array<string> = [];
+
   if (!componentMeta) {
+    Object.entries(controlOverrides).forEach(([key, config]) => {
+      if (isDefined(config)) {
+        addPropControl(config, {
+          name: key,
+          initialValue: initialProps[key],
+          required: true,
+        });
+      }
+    });
+
     return {
-      controls: [],
-      values: initialProps,
-      propWithValueEncodedWithIndex: [],
+      controls,
+      values,
+      propWithValueEncodedWithIndex,
     };
   }
 
   const propItems = Object.values(componentMeta.props);
-  const controls: Array<PropsEditorControl> = [];
-  const values: Record<string, any> = { ...initialProps };
-  const propWithValueEncodedWithIndex: Array<string> = [];
+
+  function addPropControl(
+    config: PropsEditorControlDef,
+    prop: {
+      name: string;
+      initialValue: any;
+      required: boolean;
+    }
+  ) {
+    if (config.type !== 'select') {
+      controls.push({
+        ...config,
+        label: prop.name,
+        key: prop.name,
+      });
+    }
+
+    if (config.type === 'text' && isString(prop.initialValue)) {
+      values[prop.name] = prop.initialValue;
+    }
+
+    if (config.type === 'number' && isNumber(prop.initialValue)) {
+      values[prop.name] = prop.initialValue;
+    }
+
+    if (config.type === 'checkbox' && isBoolean(prop.initialValue)) {
+      values[prop.name] = prop.initialValue;
+    }
+
+    if (config.type === 'select') {
+      if (config.options.length > 0) {
+        const optionsWithType = config.options.map(
+          ({ type = 'literal', value, label }) => ({
+            value,
+            label,
+            type,
+          })
+        );
+
+        const nullOptionIndex = optionsWithType.findIndex(
+          (opt) => opt.value === null
+        );
+
+        const defaultOptions: Array<SelectOption> =
+          prop.required && nullOptionIndex === -1
+            ? []
+            : [
+                {
+                  value: nullOptionIndex !== -1 ? null : undefined,
+                  label: '(none)',
+                  type: 'literal',
+                },
+              ];
+
+        const selectControlConfig: PropsEditorControl = {
+          type: 'select',
+          label: prop.name,
+          key: prop.name,
+          options: defaultOptions.concat(
+            nullOptionIndex === -1
+              ? optionsWithType
+              : optionsWithType.filter((opt) => opt.value !== null)
+          ),
+        };
+
+        controls.push(selectControlConfig);
+
+        if (
+          isDefined(prop.initialValue) &&
+          config.options.some((opt) => opt.value === prop.initialValue)
+        ) {
+          values[prop.name] = selectControlConfig.options.findIndex(
+            (opt) => opt.value === prop.initialValue
+          );
+          propWithValueEncodedWithIndex.push(prop.name);
+        }
+
+        if (prop.required && !isDefined(values[prop.name])) {
+          values[prop.name] = 0;
+          propWithValueEncodedWithIndex.push(prop.name);
+        }
+      }
+    }
+  }
 
   propItems.forEach((prop) => {
     const isDeprecated = prop.tags && hasProperty(prop.tags, 'deprecated');
@@ -300,112 +395,40 @@ function computeConfig({
 
     const override = controlOverrides[prop.name];
 
-    const addControl = (config: PropsEditorControlDef) => {
-      if (config.type !== 'select') {
-        controls.push({
-          ...config,
-          label: prop.name,
-          key: prop.name,
-        });
-      }
-
-      if (config.type === 'text' && isString(initialValue)) {
-        values[prop.name] = initialValue;
-      }
-
-      if (config.type === 'number' && isNumber(initialValue)) {
-        values[prop.name] = initialValue;
-      }
-
-      if (config.type === 'checkbox' && isBoolean(initialValue)) {
-        values[prop.name] = initialValue;
-      }
-
-      if (config.type === 'select') {
-        if (config.options.length > 0) {
-          const optionsWithType = config.options.map(
-            ({ type = 'literal', value, label }) => ({
-              value,
-              label,
-              type,
-            })
-          );
-
-          const nullOptionIndex = optionsWithType.findIndex(
-            (opt) => opt.value === null
-          );
-
-          const defaultOptions: Array<SelectOption> =
-            prop.required && nullOptionIndex === -1
-              ? []
-              : [
-                  {
-                    value: nullOptionIndex !== -1 ? null : undefined,
-                    label: '(none)',
-                    type: 'literal',
-                  },
-                ];
-
-          const selectControlConfig: PropsEditorControl = {
-            type: 'select',
-            label: prop.name,
-            key: prop.name,
-            options: defaultOptions.concat(
-              nullOptionIndex === -1
-                ? optionsWithType
-                : optionsWithType.filter((opt) => opt.value !== null)
-            ),
-          };
-
-          controls.push(selectControlConfig);
-
-          if (
-            isDefined(initialValue) &&
-            config.options.some((opt) => opt.value === initialValue)
-          ) {
-            values[prop.name] = selectControlConfig.options.findIndex(
-              (opt) => opt.value === initialValue
-            );
-            propWithValueEncodedWithIndex.push(prop.name);
-          }
-
-          if (prop.required && !isDefined(values[prop.name])) {
-            values[prop.name] = 0;
-            propWithValueEncodedWithIndex.push(prop.name);
-          }
-        }
-      }
+    const addOptions = {
+      ...prop,
+      initialValue,
     };
 
     if (override) {
       if (isValidControlConfig(override)) {
-        addControl(override);
+        addPropControl(override, addOptions);
         return;
       }
     }
 
     if (isType(prop, 'string')) {
-      addControl({ type: 'text' });
+      addPropControl({ type: 'text' }, addOptions);
       return;
     }
 
     if (isType(prop, 'number')) {
-      addControl({ type: 'number' });
+      addPropControl({ type: 'number' }, addOptions);
       return;
     }
 
     if (isType(prop, 'boolean')) {
-      addControl({ type: 'checkbox' });
+      addPropControl({ type: 'checkbox' }, addOptions);
       return;
     }
 
     if (isType(prop, 'File')) {
-      addControl({ type: 'file' });
+      addPropControl({ type: 'file' }, addOptions);
       return;
     }
 
     if (isType(prop, 'Date')) {
-      addControl({ type: 'date' });
+      addPropControl({ type: 'date' }, addOptions);
       return;
     }
 
@@ -446,10 +469,13 @@ function computeConfig({
           label: opt.type === 'literal' ? String(opt.value) : `(${opt.type})`,
         }));
 
-        addControl({
-          type: 'select',
-          options,
-        });
+        addPropControl(
+          {
+            type: 'select',
+            options,
+          },
+          addOptions
+        );
       }
       return;
     }

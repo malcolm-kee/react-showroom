@@ -43,6 +43,42 @@ import cx from 'classnames';
 console.log(cx('hahaha', true && 'lol'));
 ```
 
+[Component playground](https://react-showroom.js.org/getting-started/component-playground) example:
+
+```tsx live frame
+import { usePropsEditor } from 'react-showroom/client';
+import { Button } from 'components';
+
+const Demo = () => {
+  const editor = usePropsEditor({
+    initialProps: {
+      children: 'Bye',
+      variant: 'outline',
+    },
+    controls: {
+      children: 'text',
+      variant: {
+        type: 'select',
+        options: [
+          {
+            label: 'primary',
+            value: 'primary',
+          },
+          {
+            label: 'outline',
+            value: 'outline',
+          },
+        ],
+      },
+    },
+  });
+
+  return <Button {...editor.props} />;
+};
+
+<Demo />;
+```
+
 ## Autolink literals
 
 www.example.com, https://example.com, and contact@example.com.
