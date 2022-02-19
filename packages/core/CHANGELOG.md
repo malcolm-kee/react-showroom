@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 1.19.0
+
+### Minor Changes
+
+- d09aa3b: Bump deps
+
 ## 1.18.1
 
 ### Patch Changes

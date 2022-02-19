@@ -1,6 +1,6 @@
 {
   "name": "client-only-example",
-  "version": "1.1.31",
+  "version": "1.1.32",
   "license": "MIT",
   "private": true,
   "scripts": {

@@ -1,5 +1,11 @@
 # @showroomjs/device-frames
 
+## 0.4.0
+
+### Minor Changes
+
+- d09aa3b: Bump deps
+
 ## 0.3.2
 
 ### Patch Changes

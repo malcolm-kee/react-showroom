@@ -1,5 +1,21 @@
 # react-showroom
 
+## 1.27.0
+
+### Minor Changes
+
+- d09aa3b: Bump deps
+- d09aa3b: Simplify module resolution
+
+### Patch Changes
+
+- Updated dependencies [d09aa3b]
+  - @showroomjs/bundles@1.11.0
+  - @showroomjs/core@1.19.0
+  - @showroomjs/device-frames@0.4.0
+  - @showroomjs/measure@0.2.0
+  - @showroomjs/ui@1.15.1
+
 ## 1.26.1
 
 ### Patch Changes

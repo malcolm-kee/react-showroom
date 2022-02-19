@@ -1,5 +1,11 @@
 # @showroomjs/measure
 
+## 0.2.0
+
+### Minor Changes
+
+- d09aa3b: Bump deps
+
 ## 0.1.2
 
 ### Patch Changes
