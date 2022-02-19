@@ -1,47 +1,13 @@
 import { getSafeName } from '@showroomjs/core';
 import { ImportConfig } from '@showroomjs/core/react';
-import resolve from 'enhanced-resolve';
-import { paths, resolveApp } from './paths';
-
-type Env = 'browser' | 'node';
-
-const resolveBrowser = resolve.create.sync({
-  mainFields: ['browser', 'module', 'main'],
-  conditionNames: ['import', 'require', 'node'],
-});
-
-const resolveCommonJs = resolve.create.sync({
-  mainFields: ['module', 'main'],
-  conditionNames: ['require', 'node'],
-});
-
-function getPkgResolvedFile(path: string, env: Env): string {
-  try {
-    const resolvedResult =
-      env === 'browser'
-        ? resolveBrowser(paths.appPath, path)
-        : resolveCommonJs(paths.appPath, path);
-
-    if (resolvedResult) {
-      return resolvedResult;
-    }
-  } catch (err) {
-    console.group('error');
-    console.error(err);
-    console.groupEnd();
-  }
-
-  return require.resolve(path, {
-    paths: [paths.appPath],
-  });
-}
+import { resolveApp } from './paths';
 interface ImportMapData {
   name: string;
   varName: string;
   path: string;
 }
 
-const getClientImportMap = (imports: Array<ImportConfig>, env: Env) =>
+const getClientImportMap = (imports: Array<ImportConfig>) =>
   imports.reduce<Record<string, ImportMapData>>((result, importConfig) => {
     if (typeof importConfig === 'string') {
       return {
@@ -49,7 +15,7 @@ const getClientImportMap = (imports: Array<ImportConfig>, env: Env) =>
         [importConfig]: {
           name: importConfig,
           varName: getSafeName(importConfig),
-          path: getPkgResolvedFile(importConfig, env),
+          path: importConfig,
         },
       };
     }
@@ -62,9 +28,7 @@ const getClientImportMap = (imports: Array<ImportConfig>, env: Env) =>
       [name]: {
         name,
         varName,
-        path: isPackage(path)
-          ? getPkgResolvedFile(path, env)
-          : resolveApp(path),
+        path: isPackage(path) ? path : resolveApp(path),
       },
     };
   }, {});
@@ -72,10 +36,9 @@ const getClientImportMap = (imports: Array<ImportConfig>, env: Env) =>
 const isPackage = (pathName: string) => /^[a-z\-]+$/.test(pathName);
 
 export const getImportsAttach = (
-  importConfigs: Array<ImportConfig>,
-  environment: Env
-) => {
-  const importMap = getClientImportMap(importConfigs, environment);
+  importConfigs: Array<ImportConfig>
+): string => {
+  const importMap = getClientImportMap(importConfigs);
 
   return `export const imports = {};
 ${Object.values(importMap)
