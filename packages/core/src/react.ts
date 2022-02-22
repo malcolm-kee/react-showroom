@@ -14,7 +14,13 @@ import { CodeBlocks, Environment } from './index';
 export interface HtmlOptions
   extends Pick<
     HtmlWebpackTagsPluginOptions,
-    'scripts' | 'tags' | 'links' | 'metas'
+    | 'scripts'
+    | 'tags'
+    | 'links'
+    | 'metas'
+    | 'usePublicPath'
+    | 'addPublicPath'
+    | 'publicPath'
   > {}
 
 export interface ItemConfigBase {
@@ -295,6 +301,9 @@ export interface ReactShowroomConfiguration {
    */
   wrapper?: string;
   docgen?: Partial<Pick<DocgenConfiguration, 'tsconfigPath'>>;
+  /**
+   * options to customize the HTML files
+   */
   html?: ShowroomHtmlConfiguration;
   /**
    * Configuration to specify how css should be processed.
