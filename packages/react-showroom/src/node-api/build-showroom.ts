@@ -95,7 +95,7 @@ async function prerenderSite(
       pageCount++;
 
       await fs.outputFile(
-        resolveApp(`${config.outDir}/${route}/index.html`),
+        resolveApp(`${config.outDir}/${route}index.html`),
         await getHtml(`/${route}`)
       );
     }
@@ -150,7 +150,7 @@ async function prerenderPreview(
       pageCount++;
 
       await fs.outputFile(
-        resolveApp(`${config.outDir}/_preview/${route}/index.html`),
+        resolveApp(`${config.outDir}/_preview/${route}index.html`),
         await getHtml(`/${route}`)
       );
     }

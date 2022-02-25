@@ -328,6 +328,33 @@ Whether the search results should include headings of markdowns.
 
 By default we disable this for `dev` command to reduce recompilation overhead, but you can force it to be always `true`.
 
+### `html.showroom` and `html.preview`
+
+Options to customize the generated html using [`html-webpack-tags-plugin`](https://github.com/jharris4/html-webpack-tags-plugin).
+
+For example, if you want to include [Tailwind CSS Play CDN](https://tailwindcss.com/docs/installation/play-cdn), you can include the following configuration:
+
+```js fileName="react-showroom.config.js"
+module.exports = {
+  html: {
+    showroom: {
+      scripts: [
+        { path: 'https://cdn.tailwindcss.com', attributes: { defer: false } },
+      ],
+      publicPath: false,
+      append: false,
+    },
+    preview: {
+      scripts: [
+        { path: 'https://cdn.tailwindcss.com', attributes: { defer: false } },
+      ],
+      publicPath: false,
+      append: false,
+    },
+  },
+};
+```
+
 ### `theme.audienceToggle`
 
 - Type: `'design' | 'code' | false`

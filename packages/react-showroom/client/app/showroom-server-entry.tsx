@@ -53,7 +53,7 @@ export const ssr: Ssr = {
         result.push(
           [section.slug].concat(
             standaloneRoutes.map(
-              (route) => `${section.slug}/_standalone/${route}`
+              (route) => `${section.slug}/_standalone/${route}/`
             )
           )
         );
@@ -69,7 +69,7 @@ export const ssr: Ssr = {
         result.push(
           [section.slug].concat(
             standaloneRoutes.map(
-              (route) => `${section.slug}/_standalone/${route}`
+              (route) => `${section.slug}/_standalone/${route}/`
             )
           )
         );

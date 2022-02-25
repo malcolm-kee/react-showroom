@@ -2,6 +2,16 @@ import { rest, setupWorker } from 'msw';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
+declare const tailwind: any;
+
+if (typeof tailwind !== 'undefined') {
+  tailwind.config = {
+    corePlugins: {
+      preflight: false,
+    },
+  };
+}
+
 const queryClient = new QueryClient();
 
 export default function ShowroomProvider(props: { children: React.ReactNode }) {

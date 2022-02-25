@@ -51,6 +51,28 @@ module.exports = defineConfig((command) => ({
   docgen: {
     tsconfigPath: path.resolve(__dirname, 'tsconfig.build.json'),
   },
+  html: {
+    showroom: {
+      publicPath: false,
+      scripts: [
+        {
+          path: 'https://cdn.tailwindcss.com?plugins=forms',
+          attributes: { defer: false },
+        },
+      ],
+      append: false,
+    },
+    preview: {
+      publicPath: false,
+      scripts: [
+        {
+          path: 'https://cdn.tailwindcss.com?plugins=forms',
+          attributes: { defer: false },
+        },
+      ],
+      append: false,
+    },
+  },
   assetDir: 'public',
   wrapper: 'docs/provider.tsx',
 }));

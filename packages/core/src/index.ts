@@ -1,3 +1,4 @@
+export { addTrailingSlash } from './add-trailing-slash';
 export {
   getCompilationKey,
   NON_VISUAL_LANGUAGES,
