@@ -147,7 +147,7 @@ export const generateSectionsAndImports = (
             type: 'group',
             title: '${section.title}',
             items: ${collect(section.items)},
-            slug: '${section.slug}',
+            slug: addTrailingSlash('${section.slug}'),
             ${section.hideFromSidebar ? 'hideFromSidebar: true,' : ''}
           }`;
         }
@@ -176,11 +176,11 @@ export const generateSectionsAndImports = (
               metadata: ${name},
               title: ${name}.displayName,
               description: ${name}.description,
-              slug: [${
+              slug: addTrailingSlash([${
                 section.parentSlugs.length > 0
                   ? `'${section.parentSlugs.join('/')}',`
                   : ''
-              } slugify(${name}.displayName, { lower: true })].join('/'),
+              } slugify(${name}.displayName, { lower: true })].join('/')),
               id: '${section.id}',
               ${section.hideFromSidebar ? 'hideFromSidebar: true,' : ''}
               shouldIgnore: ${!!options.skipEmptyComponent} && (${!section.docPath} && !${name}.description && Object.keys(${name}.props).length === 0),
@@ -215,7 +215,7 @@ export const generateSectionsAndImports = (
           return `{
               type: 'markdown',
               fallbackTitle: '${section.title || ''}',
-              slug: '${section.slug}',
+              slug: addTrailingSlash('${section.slug}'),
               frontmatter: ${name}_frontmatter || {},
               ${section.hideFromSidebar ? 'hideFromSidebar: true,' : ''}
               ${
@@ -275,6 +275,7 @@ export const generateSectionsAndImports = (
   return {
     sections: `import slugify from 'slugify';
     import allCompMetadata from 'react-showroom-comp-metadata?showroomAllComp';
+    import { addTrailingSlash } from '@showroomjs/core';
     ${imports
       .map((imp) =>
         imp.type === 'default'

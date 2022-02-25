@@ -62,7 +62,7 @@ export const ssr: Ssr = {
           .filter(isDefined);
 
         if (codeHashes.length > 0) {
-          result.push(codeHashes.map((hash) => `${hash}/${section.id}`));
+          result.push(codeHashes.map((hash) => `${hash}/${section.id}/`));
         }
       }
 
@@ -92,11 +92,11 @@ export const ssr: Ssr = {
 
           result.push(
             codeHashes.map((hash) =>
-              compSection ? `${hash}/${compSection.id}` : hash
+              compSection ? `${hash}/${compSection.id}/` : hash
             )
           );
         } else {
-          result.push(codeHashes);
+          result.push(codeHashes.map((h) => `${h}/`));
         }
       }
     }

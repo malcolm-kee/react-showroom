@@ -31,7 +31,7 @@ export const ComponentDocStandaloneEditor = (props: {
         items={[
           {
             label: componentMetadata ? componentMetadata.displayName : '??',
-            url: '..',
+            url: '../',
           },
           {
             label: 'Example',

@@ -10,7 +10,7 @@ export const LinkToStandaloneView = (props: {
   return props.codeHash ? (
     <TextTooltip label="Standalone">
       <StyledLink
-        to={`_standalone/${props.codeHash}${
+        to={`_standalone/${props.codeHash}/${
           props.isDesigner ? '?commentMode=true' : ''
         }`}
         data-testid="standalone-link"

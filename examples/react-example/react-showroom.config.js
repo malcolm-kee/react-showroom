@@ -54,11 +54,23 @@ module.exports = defineConfig((command) => ({
   html: {
     showroom: {
       publicPath: false,
-      scripts: ['https://cdn.tailwindcss.com'],
+      scripts: [
+        {
+          path: 'https://cdn.tailwindcss.com?plugins=forms',
+          attributes: { defer: false },
+        },
+      ],
+      append: false,
     },
     preview: {
       publicPath: false,
-      scripts: ['https://cdn.tailwindcss.com'],
+      scripts: [
+        {
+          path: 'https://cdn.tailwindcss.com?plugins=forms',
+          attributes: { defer: false },
+        },
+      ],
+      append: false,
     },
   },
   assetDir: 'public',

@@ -14,13 +14,7 @@ import { CodeBlocks, Environment } from './index';
 export interface HtmlOptions
   extends Pick<
     HtmlWebpackTagsPluginOptions,
-    | 'scripts'
-    | 'tags'
-    | 'links'
-    | 'metas'
-    | 'usePublicPath'
-    | 'addPublicPath'
-    | 'publicPath'
+    'scripts' | 'tags' | 'links' | 'metas' | 'publicPath' | 'append'
   > {}
 
 export interface ItemConfigBase {
