@@ -1,5 +1,18 @@
 # react-showroom
 
+## 1.28.0
+
+### Minor Changes
+
+- 2eab1a4: Add trailing slash to path
+
+### Patch Changes
+
+- Updated dependencies [2eab1a4]
+- Updated dependencies [2eab1a4]
+  - @showroomjs/core@1.20.0
+  - @showroomjs/ui@1.15.2
+
 ## 1.27.0
 
 ### Minor Changes

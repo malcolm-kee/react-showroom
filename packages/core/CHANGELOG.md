@@ -1,5 +1,15 @@
 # @showroomjs/core
 
+## 1.20.0
+
+### Minor Changes
+
+- 2eab1a4: Add trailing slash to path
+
+### Patch Changes
+
+- 2eab1a4: Expose publicPath options for html
+
 ## 1.19.0
 
 ### Minor Changes
