@@ -1,5 +1,14 @@
 # @showroomjs/ui
 
+## 1.15.3
+
+### Patch Changes
+
+- c2ed97d: Bump dependencies
+- Updated dependencies [c2ed97d]
+  - @showroomjs/bundles@1.11.1
+  - @showroomjs/core@1.20.1
+
 ## 1.15.2
 
 ### Patch Changes

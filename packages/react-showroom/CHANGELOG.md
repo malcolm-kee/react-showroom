@@ -1,5 +1,22 @@
 # react-showroom
 
+## 1.29.0
+
+### Minor Changes
+
+- c2ed97d: Add measure options for dev and build command
+
+### Patch Changes
+
+- c2ed97d: Refactor component doc parsing to improve performance
+- c2ed97d: Bump dependencies
+- Updated dependencies [c2ed97d]
+  - @showroomjs/bundles@1.11.1
+  - @showroomjs/core@1.20.1
+  - @showroomjs/device-frames@0.4.1
+  - @showroomjs/measure@0.2.1
+  - @showroomjs/ui@1.15.3
+
 ## 1.28.0
 
 ### Minor Changes

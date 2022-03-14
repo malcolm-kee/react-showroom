@@ -1,5 +1,11 @@
 # @showroomjs/device-frames
 
+## 0.4.1
+
+### Patch Changes
+
+- c2ed97d: Bump dependencies
+
 ## 0.4.0
 
 ### Minor Changes
