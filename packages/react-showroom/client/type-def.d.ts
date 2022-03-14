@@ -54,7 +54,7 @@ declare module 'react-showroom-doc-placeholder' {
   export default DocPlaceholder;
 }
 
-declare module 'react-showroom-comp-metadata?showroomAllComp' {
+declare module 'react-showroom-all-components-docs' {
   import { ComponentDoc } from 'react-docgen-typescript';
 
   declare const All: Record<string, ComponentDoc & { id: string }>;

@@ -21,11 +21,13 @@ import { resolveApp, resolveShowroom } from '../lib/paths';
 
 async function buildStaticSite(
   config: NormalizedReactShowroomConfiguration,
-  profile = false
+  profile = false,
+  measure = false
 ) {
   const webpackConfig = createClientWebpackConfig('production', config, {
     outDir: config.outDir,
     profileWebpack: profile,
+    measure,
   });
 
   const compiler = webpack(webpackConfig);
@@ -181,7 +183,8 @@ async function prerenderPreview(
 export async function buildShowroom(
   userConfig?: ReactShowroomConfiguration,
   configFile?: string,
-  profile?: boolean
+  profile?: boolean,
+  measure?: boolean
 ) {
   const config = getConfig('production', configFile, userConfig);
 
@@ -195,12 +198,12 @@ export async function buildShowroom(
 
   try {
     if (profile) {
-      await buildStaticSite(config, profile);
-      await createSSrBundle(config, ssrDir, profile);
+      await buildStaticSite(config, profile, measure);
+      await createSSrBundle(config, ssrDir, profile, measure);
     } else {
       await Promise.all([
-        buildStaticSite(config, profile),
-        createSSrBundle(config, ssrDir, profile),
+        buildStaticSite(config, profile, measure),
+        createSSrBundle(config, ssrDir, profile, measure),
       ]);
       logToStdout('Prerendering...');
       const [sitePageCount, previewPageCount] = await Promise.all([

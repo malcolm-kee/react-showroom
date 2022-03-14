@@ -28,6 +28,10 @@ yargs
         describe: 'Config file name',
         default: 'react-showroom.js',
       },
+      measure: {
+        type: 'boolean',
+        describe: 'Whether to measure webpack build performance',
+      },
     },
     () => spawnScript('dev', process.argv.slice(3))
   )
@@ -38,6 +42,10 @@ yargs
       profile: {
         type: 'boolean',
         describe: 'Whether to generate profile file',
+      },
+      measure: {
+        type: 'boolean',
+        describe: 'Whether to measure webpack build performance',
       },
     },
     () => spawnScript('build', process.argv.slice(3))

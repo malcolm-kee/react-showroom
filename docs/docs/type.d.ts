@@ -32,10 +32,6 @@ declare module '*?showroomRemarkDocImports' {
   export var imports: Record<string, any>;
 }
 
-declare module '*?showroomAllComp' {
-  export default any;
-}
-
 declare module '*.mdx' {
   import {
     ReactShowroomMarkdownFrontmatter,

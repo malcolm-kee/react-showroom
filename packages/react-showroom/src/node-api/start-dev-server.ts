@@ -29,7 +29,8 @@ type DevServerConfig = webpackDevServer.Configuration;
 
 export async function startDevServer(
   userConfig?: ReactShowroomConfiguration,
-  configFile?: string
+  configFile?: string,
+  measure?: boolean
 ) {
   logToStdout('Starting dev server...');
 
@@ -44,7 +45,9 @@ export async function startDevServer(
   const HOST = '0.0.0.0';
   const PORT = Number((argv as any).port ?? process.env.PORT ?? devServerPort);
 
-  const webpackConfig = createClientWebpackConfig('development', config);
+  const webpackConfig = createClientWebpackConfig('development', config, {
+    measure,
+  });
   const devServerOptions = Object.assign<DevServerConfig, DevServerConfig>(
     {
       port: PORT,
