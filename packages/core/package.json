@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "axe-core": "^4.4.1",
-    "esbuild": "^0.14.25",
+    "esbuild": "~0.14.25",
     "html-webpack-tags-plugin": "^3.0.2",
     "typescript": "~4.5.5",
     "webpack": "^5.70.0"
