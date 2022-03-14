@@ -12,9 +12,11 @@ import remarkGfm from 'remark-gfm';
 import { remarkMdxFrontmatter } from 'remark-mdx-frontmatter';
 import * as webpack from 'webpack';
 import { merge } from 'webpack-merge';
+import { createDocParser } from '../lib/create-doc-parser';
 import { createHash } from '../lib/create-hash';
 import {
   generateAllComponents,
+  generateAllComponentsDocs,
   generateAllComponentsPaths,
   generateCodeblocksData,
   generateDocPlaceHolder,
@@ -46,11 +48,12 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 export const createClientWebpackConfig = (
   mode: Environment,
   config: NormalizedReactShowroomConfiguration,
-  { outDir = 'showroom', profileWebpack = false } = {}
+  { outDir = 'showroom', profileWebpack = false, measure = false } = {}
 ): webpack.Configuration => {
   const baseConfig = createBaseWebpackConfig(mode, config, {
     ssr: false,
     profile: profileWebpack,
+    measure,
   });
 
   const {
@@ -147,10 +150,12 @@ export const createClientWebpackConfig = (
                   })
                 : undefined,
             ]),
-        new WebpackMessages({
-          name: 'showroom',
-          logger: logToStdout,
-        }),
+        measure
+          ? undefined // don't prettify output message when measuring to avoid important info get cleared
+          : new WebpackMessages({
+              name: 'showroom',
+              logger: logToStdout,
+            }),
         isProd && assetDir
           ? new CopyWebpackPlugin({
               patterns: [
@@ -183,11 +188,12 @@ export const createClientWebpackConfig = (
 export const createSsrWebpackConfig = (
   mode: Environment,
   config: NormalizedReactShowroomConfiguration,
-  { outDir = 'showroom', profileWebpack = false } = {}
+  { outDir = 'showroom', profileWebpack = false, measure = false } = {}
 ): webpack.Configuration => {
   const baseConfig = createBaseWebpackConfig(mode, config, {
     ssr: true,
     profile: profileWebpack,
+    measure,
   });
 
   const showroomServer = resolveShowroom(
@@ -213,12 +219,14 @@ export const createSsrWebpackConfig = (
       },
       externalsPresets: { node: true },
       target: 'node14.17',
-      plugins: [
-        new WebpackMessages({
-          name: 'ssr',
-          logger: logToStdout,
-        }),
-      ],
+      plugins: measure
+        ? [] // don't prettify output message when measuring to avoid important info get cleared
+        : [
+            new WebpackMessages({
+              name: 'ssr',
+              logger: logToStdout,
+            }),
+          ],
     }),
     config.webpackConfig,
     mode
@@ -228,7 +236,7 @@ export const createSsrWebpackConfig = (
 const createBaseWebpackConfig = (
   mode: Environment,
   config: NormalizedReactShowroomConfiguration,
-  options: { ssr: boolean; profile: boolean }
+  options: { ssr: boolean; profile: boolean; measure: boolean }
 ): webpack.Configuration => {
   const {
     prerender: prerenderConfig,
@@ -251,17 +259,17 @@ const createBaseWebpackConfig = (
   const isProd = mode === 'production';
   const isDev = mode === 'development';
 
-  const docgenParser = docgen.withCustomConfig(
-    docgenConfig.tsconfigPath,
-    docgenConfig.options
-  );
-
   const componentTypeParser = docgen.withCustomConfig(
     docgenConfig.tsconfigPath,
     {
       shouldRemoveUndefinedFromOptional: true,
     }
   );
+
+  const docParser = createDocParser({
+    tsconfigPath: docgenConfig.tsconfigPath,
+    parserOptions: docgenConfig.options,
+  });
 
   const generated = generateSectionsAndImports(sections, {
     skipEmptyComponent: config.skipEmptyComponent,
@@ -282,6 +290,8 @@ const createBaseWebpackConfig = (
       generated.allImports,
     [resolveShowroom('node_modules/react-showroom-all-components.js')]:
       generateAllComponents(sections),
+    [resolveShowroom('node_modules/react-showroom-all-components-docs.js')]:
+      generateAllComponentsDocs(sections),
     [resolveShowroom('node_modules/react-showroom-comp-metadata.js')]:
       generateAllComponentsPaths(sections),
     [resolveShowroom('node_modules/react-showroom-doc-placeholder.js')]:
@@ -315,24 +325,6 @@ const createBaseWebpackConfig = (
     },
     module: {
       rules: [
-        {
-          test: /.js$/,
-          resourceQuery: /showroomAllComp/,
-          use: [
-            {
-              loader: 'showroom-all-component-loader',
-              options: {
-                parse: (sources: Array<string>) =>
-                  docgenParser.parse(sources).map((doc) =>
-                    Object.assign({}, doc, {
-                      id: createHash(doc.filePath),
-                    })
-                  ),
-                debug,
-              },
-            },
-          ],
-        },
         {
           test: /.js$/,
           resourceQuery: /showroomCompProp/,
@@ -382,8 +374,21 @@ const createBaseWebpackConfig = (
         },
         {
           test: /\.(ts|tsx)$/,
+          resourceQuery: /docgen/,
+          use: [
+            {
+              loader: 'showroom-docgen-typescript-loader',
+              options: {
+                parser: docParser,
+                debug,
+              },
+            },
+          ],
+        },
+        {
+          test: /\.(ts|tsx)$/,
           resourceQuery: {
-            not: [/raw/],
+            not: [/raw/, /docgen/],
           },
           use: [
             {
@@ -660,13 +665,18 @@ const createBaseWebpackConfig = (
             minChunkSize: 1000,
           })
         : undefined,
+      options.measure
+        ? new (require('speed-measure-webpack-plugin'))()
+        : undefined,
     ].filter(isDefined),
     optimization: {
       minimize: !options.ssr && isProd,
-      minimizer: [
-        '...', // keep existing minimizer
-        new CssMinimizerPlugin(),
-      ],
+      minimizer: options.measure
+        ? undefined
+        : [
+            '...', // keep existing minimizer
+            new CssMinimizerPlugin(),
+          ],
       splitChunks: {
         chunks: 'all',
       },

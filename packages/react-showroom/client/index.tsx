@@ -1,5 +1,5 @@
 import type { ComponentDoc } from 'react-docgen-typescript';
-import allCompMetadata from 'react-showroom-comp-metadata?showroomAllComp';
+import allCompMetadata from 'react-showroom-all-components-docs';
 export { useQueryClient } from '@showroomjs/bundles/query';
 export { deviceDimensionsByName, getCompilationKey } from '@showroomjs/core';
 export type { CodeBlocks, FrameDimension } from '@showroomjs/core';

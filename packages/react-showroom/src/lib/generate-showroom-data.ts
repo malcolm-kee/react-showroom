@@ -274,7 +274,7 @@ export const generateSectionsAndImports = (
 
   return {
     sections: `import slugify from 'slugify';
-    import allCompMetadata from 'react-showroom-comp-metadata?showroomAllComp';
+    import allCompMetadata from 'react-showroom-all-components-docs';
     import { addTrailingSlash } from '@showroomjs/core';
     ${imports
       .map((imp) =>
@@ -332,7 +332,7 @@ export const generateAllComponents = (
     return `export const AllComponents = {};`;
   }
 
-  return `import allCompMetadata from 'react-showroom-comp-metadata?showroomAllComp';
+  return `import allCompMetadata from 'react-showroom-all-components-docs';
   ${componentImports
     .map(
       (comp) => `const ${comp.name} = require('${comp.sourcePath}');
@@ -377,6 +377,41 @@ export const generateAllComponentsPaths = (
   collect(sections);
 
   return JSON.stringify(result, null, 2);
+};
+
+export const generateAllComponentsDocs = (
+  sections: Array<ReactShowroomSectionConfig>
+) => {
+  const componentPaths: Array<string> = [];
+
+  function collect(sectionList: Array<ReactShowroomSectionConfig>): void {
+    sectionList.forEach((section) => {
+      if (section.type === 'group') {
+        collect(section.items);
+      }
+      if (section.type === 'component') {
+        componentPaths.push(section.sourcePath);
+      }
+    });
+  }
+
+  collect(sections);
+
+  return `${componentPaths
+    .map((path, index) => `import component${index} from '${path}?docgen';`)
+    .join('\n')}
+
+  const allComponentDocs = {};
+
+  ${componentPaths
+    .map(
+      (_, index) => `if (component${index}) {
+    allComponentDocs[component${index}.filePath] = component${index};
+  }`
+    )
+    .join('\n')}
+  
+  export default allComponentDocs;`;
 };
 
 export const generateWrapper = (wrapper: string | undefined) => {
@@ -498,7 +533,7 @@ export const generateSearchIndex = (
   const result = collect(sections);
 
   return `import slugify from 'slugify';
-import allCompMetadata from 'react-showroom-comp-metadata?showroomAllComp';
+import allCompMetadata from 'react-showroom-all-components-docs';
 ${imports
   .map((imp) =>
     imp.type === 'default'

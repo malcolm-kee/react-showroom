@@ -17,8 +17,8 @@
     "dev": "pnpm run build -- --watch"
   },
   "devDependencies": {
-    "tsup": "5.11.13",
-    "typescript": "^4.5.5"
+    "tsup": "5.12.1",
+    "typescript": "~4.5.5"
   },
   "files": [
     "dist"

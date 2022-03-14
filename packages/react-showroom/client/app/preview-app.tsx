@@ -7,9 +7,9 @@ import {
 import { useMeasure } from '@showroomjs/measure';
 import { Alert, useConstant, useId } from '@showroomjs/ui';
 import * as React from 'react';
+import allCompMetadata from 'react-showroom-all-components-docs';
 import allImports from 'react-showroom-all-imports';
 import CodeblockData from 'react-showroom-codeblocks';
-import allCompMetadata from 'react-showroom-comp-metadata?showroomAllComp';
 import Wrapper from 'react-showroom-wrapper';
 import { AllComponents } from '../all-components';
 import { CodePreviewFrame } from '../components/code-preview-frame';
