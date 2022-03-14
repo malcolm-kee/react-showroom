@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 1.20.2
+
+### Patch Changes
+
+- 7badae4: Lock esbuild version
+
 ## 1.20.1
 
 ### Patch Changes
