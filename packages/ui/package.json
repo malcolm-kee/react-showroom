@@ -1,6 +1,6 @@
 {
   "name": "@showroomjs/ui",
-  "version": "1.15.4",
+  "version": "1.15.5",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

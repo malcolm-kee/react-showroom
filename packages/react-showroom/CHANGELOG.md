@@ -1,5 +1,14 @@
 # react-showroom
 
+## 1.29.2
+
+### Patch Changes
+
+- 52592b0: Lock esbuild version
+- Updated dependencies [52592b0]
+  - @showroomjs/core@1.20.3
+  - @showroomjs/ui@1.15.5
+
 ## 1.29.1
 
 ### Patch Changes
