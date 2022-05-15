@@ -37,6 +37,8 @@ test.describe('react example', () => {
   test('console panel should work', async ({ page }) => {
     await page.goto('/core/button');
 
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+
     const frames = page.frames();
 
     const lastFrame = frames[frames.length - 1];
@@ -83,7 +85,13 @@ test.describe('react example', () => {
   test('props editor should works', async ({ page }) => {
     await page.goto('/core/button');
 
-    const firstFrame = page.mainFrame().childFrames()[0];
+    await page.waitForFunction(
+      () => document.querySelectorAll('iframe').length >= 3
+    );
+
+    const allFrames = page.mainFrame().childFrames();
+
+    const firstFrame = allFrames[0];
 
     await expect(firstFrame.locator('button')).toHaveText('Hello');
 

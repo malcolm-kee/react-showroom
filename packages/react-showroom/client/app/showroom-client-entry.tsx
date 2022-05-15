@@ -1,6 +1,9 @@
 import { QueryClientProvider } from '@showroomjs/bundles/query';
+import {
+  hydrate as hydrateFn,
+  render as renderFn,
+} from 'react-showroom-compat';
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { basename, isPrerender } from '../lib/config';
 import { createQueryClient } from '../lib/create-query-client';
 import { BrowserRouter as Router } from '../lib/routing';
@@ -12,10 +15,10 @@ const queryClient = createQueryClient();
 const render = isPrerender
   ? function hydrate(ui: React.ReactElement, target: HTMLElement | null) {
       loadCodeAtPath(window.location.pathname, () => {
-        ReactDOM.hydrate(ui, target);
+        hydrateFn(ui, target);
       });
     }
-  : ReactDOM.render;
+  : renderFn;
 
 render(
   <Router basename={basename}>

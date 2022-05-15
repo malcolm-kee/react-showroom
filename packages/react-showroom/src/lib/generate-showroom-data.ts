@@ -3,8 +3,9 @@ import {
   ReactShowroomComponentSectionConfig,
   ReactShowroomSectionConfig,
 } from '@showroomjs/core/react';
-import { resolveShowroom } from './paths';
 import path from 'path';
+import { logToStdout, yellow } from './log-to-stdout';
+import { paths, resolveShowroom } from './paths';
 
 let _nameIndex = 0;
 const getName = (name: string) => getSafeName(name) + '_' + _nameIndex++;
@@ -548,4 +549,58 @@ ${compVar
   )
   .join('\n')}
 export default ${result};`;
+};
+
+export const generateCompact = () => {
+  const ReactDomPath = require.resolve('react-dom', {
+    paths: [paths.appPath],
+  });
+
+  const ReactDOM = require(ReactDomPath);
+
+  const reactMajorVer = Number(ReactDOM.version.split('.')[0]);
+
+  logToStdout(`Using React version ${yellow(reactMajorVer)}`);
+
+  if (reactMajorVer <= 17) {
+    return `import * as ReactDOM from 'react-dom';
+    
+    export const render = (ui, target) => {
+      ReactDOM.render(ui, target);
+
+      return function unmount() {
+        ReactDOM.unmountComponentAtNode(target);
+      }
+    };
+
+    export const hydrate = (ui, target) => {
+      ReactDOM.hydrate(ui, target);
+
+      return function unmount() {
+        ReactDOM.unmountComponentAtNode(target);
+      };
+    };
+`;
+  } else {
+    return `import { createRoot, hydrateRoot } from 'react-dom/client';
+    
+    export const render = (ui, target) => {
+      const root = createRoot(target);
+
+      root.render(ui);
+
+      return function unmount() {
+        root.unmount();
+      }
+    };
+
+    export const hydrate = (ui, target) => {
+      const root = hydrateRoot(target, ui);
+
+      return function unmount() {
+        root.unmount();
+      };
+    };
+`;
+  }
 };

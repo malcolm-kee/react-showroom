@@ -23,6 +23,7 @@ import {
   generateSearchIndex,
   generateSectionsAndImports,
   generateWrapper,
+  generateCompact,
 } from '../lib/generate-showroom-data';
 import { logToStdout } from '../lib/log-to-stdout';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
@@ -298,6 +299,8 @@ const createBaseWebpackConfig = (
       generateDocPlaceHolder(exampleConfig.placeholder),
     [resolveShowroom('node_modules/react-showroom-index.js')]:
       generateSearchIndex(sections, search.includeHeadings),
+    [resolveShowroom('node_modules/react-showroom-compat.js')]:
+      generateCompact(),
   });
 
   const babelPreset = createBabelPreset(mode);
