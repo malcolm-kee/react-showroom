@@ -6,19 +6,19 @@
   "types": "dist/measure.d.ts",
   "module": "dist/esm/measure.js",
   "peerDependencies": {
-    "react": "^17.x",
-    "react-dom": "^17.x"
+    "react": "^17.0.0-0 || ^18.0.0-0",
+    "react-dom": "^17.0.0-0 || ^18.0.0-0"
   },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "build": "tsup",
-    "dev": "pnpm run build -- --watch"
+    "dev": "pnpm run build --watch"
   },
   "devDependencies": {
-    "tsup": "5.12.1",
-    "typescript": "~4.5.5"
+    "tsup": "5.12.7",
+    "typescript": "~4.6.4"
   },
   "files": [
     "dist"

@@ -10,19 +10,20 @@
     "build:cjs": "tsc -b .",
     "build:esm": "tsc --project tsconfig.esm.json",
     "dev": "concurrently \"pnpm dev:cjs\" \"pnpm dev:esm\"",
-    "dev:cjs": "pnpm build:cjs -- --watch",
-    "dev:esm": "pnpm build:esm -- --watch",
+    "dev:cjs": "pnpm build:cjs --watch",
+    "dev:esm": "pnpm build:esm --watch",
     "clean": "rimraf dist dist-esm *.tsbuildinfo",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --watchAll=false --coverage --runInBand"
   },
   "devDependencies": {
-    "axe-core": "^4.4.1",
-    "esbuild": "0.14.25",
+    "axe-core": "^4.4.2",
+    "esbuild": "0.14.39",
     "html-webpack-tags-plugin": "^3.0.2",
-    "typescript": "~4.5.5",
-    "webpack": "^5.70.0"
+    "react-docgen-typescript": "^2.2.2",
+    "typescript": "~4.6.4",
+    "webpack": "^5.72.1"
   },
   "peerDependencies": {
     "axe-core": "*",
@@ -30,12 +31,12 @@
     "webpack": "^5.0.0"
   },
   "dependencies": {
-    "acorn": "^8.7.0",
+    "acorn": "^8.7.1",
     "acorn-walk": "^8.2.0",
     "domutils": "^2.8.0",
     "htmlparser2": "^7.2.0",
     "prism-react-renderer": "^1.3.1",
-    "tslib": "^2.3.1"
+    "tslib": "^2.4.0"
   },
   "publishConfig": {
     "access": "public"

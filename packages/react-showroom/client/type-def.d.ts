@@ -29,9 +29,11 @@ declare module 'react-showroom-sections' {
 }
 
 declare module 'react-showroom-wrapper' {
-  import type { ComponentType } from 'react';
+  import type { ComponentType, ReactNode } from 'react';
 
-  var Wrapper: ComponentType<{}>;
+  var Wrapper: ComponentType<{
+    children: ReactNode;
+  }>;
 
   export default Wrapper;
 }
@@ -74,6 +76,20 @@ declare module 'react-showroom-index' {
   declare const index: Array<SearchIndexItem>;
 
   export default index;
+}
+
+declare module 'react-showroom-compat' {
+  import type { ReactElement } from 'react';
+
+  export const render: (
+    ui: React.ReactElement,
+    target: Element | null
+  ) => () => void;
+
+  export const hydrate: (
+    ui: React.ReactElement,
+    target: Element | null
+  ) => () => void;
 }
 
 declare namespace NodeJS {

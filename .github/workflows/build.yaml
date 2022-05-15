@@ -5,7 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14, 16]
+        node-version: [16]
+        react-version: [17, 18]
 
     steps:
       - name: Branch Name
@@ -23,13 +24,21 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.pnpm-store
-          key: ${{ runner.os }}-node${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-node${{ matrix.node-version }}-react${{ matrix.react-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.0.1
         with:
-          version: 6.15.1
+          version: 7
           run_install: true
+
+      - name: Install React ${{ matrix.react-version }} at Root
+        if: matrix.react-version != 18
+        run: pnpm -w -D add react@^${{ matrix.react-version }} react-dom@^${{ matrix.react-version }}
+
+      - name: Install React ${{ matrix.react-version }} at Examples
+        if: matrix.react-version != 18
+        run: pnpm --filter="./examples/**" --filter="react-showroom-docs" add react@^${{ matrix.react-version }} react-dom@^${{ matrix.react-version }} @testing-library/react@^12 @testing-library/user-event@^13
 
       - name: Install Playwright
         run: npx playwright install --with-deps
@@ -48,7 +57,7 @@ jobs:
 
       - name: Deploy Docs to Netlify
         uses: nwtgck/actions-netlify@v1.2
-        if: matrix.node-version == 14
+        if: matrix.react-version == 18
         with:
           publish-dir: docs/showroom
           production-deploy: ${{ github.ref == 'refs/heads/main'}}
@@ -62,7 +71,7 @@ jobs:
 
       - name: Deploy SSR Example to Netlify
         uses: nwtgck/actions-netlify@v1.2
-        if: matrix.node-version == 14
+        if: matrix.react-version == 18
         with:
           publish-dir: examples/react-example/showroom
           production-deploy: ${{ github.ref == 'refs/heads/main'}}
@@ -76,7 +85,7 @@ jobs:
 
       - name: Deploy SPA Example to Netlify
         uses: nwtgck/actions-netlify@v1.2
-        if: matrix.node-version == 14
+        if: matrix.react-version == 18
         with:
           publish-dir: examples/react-example/showroom-spa
           production-deploy: ${{ github.ref == 'refs/heads/main'}}
@@ -90,7 +99,7 @@ jobs:
 
       - name: Deploy Subpath Example to Netlify
         uses: nwtgck/actions-netlify@v1.2
-        if: matrix.node-version == 14
+        if: matrix.react-version == 18
         with:
           publish-dir: examples/subpath-example/public
           production-deploy: ${{ github.ref == 'refs/heads/main'}}
@@ -104,7 +113,7 @@ jobs:
 
       - name: Deploy Client Only Example to Netlify
         uses: nwtgck/actions-netlify@v1.2
-        if: matrix.node-version == 14
+        if: matrix.react-version == 18
         with:
           publish-dir: examples/client-only-example/showroom
           production-deploy: ${{ github.ref == 'refs/heads/main'}}
@@ -118,7 +127,7 @@ jobs:
 
       - name: Deploy CRA 5 Only Example to Netlify
         uses: nwtgck/actions-netlify@v1.2
-        if: matrix.node-version == 14
+        if: matrix.react-version == 18
         with:
           publish-dir: examples/cra-example/showroom
           production-deploy: ${{ github.ref == 'refs/heads/main'}}
