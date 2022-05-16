@@ -18,7 +18,7 @@ import {
 } from '@showroomjs/core/react';
 import * as fs from 'fs';
 import * as glob from 'glob';
-import { yellow } from 'nanocolors';
+import * as mimeTypes from 'mime-types';
 import * as path from 'path';
 import nightOwlTheme from 'prism-react-renderer/themes/nightOwl';
 import type { ParserOptions } from 'react-docgen-typescript';
@@ -26,9 +26,8 @@ import slugify from 'slugify';
 import * as ts from 'typescript';
 import type { defineConfig } from '../index';
 import { createHash } from './create-hash';
-import { logToStdout } from './log-to-stdout';
+import { logToStdout, yellow } from './log-to-stdout';
 import { paths, resolveApp } from './paths';
-import * as mimeTypes from 'mime-types';
 
 const DEFAULT_COMPONENTS_GLOB = 'src/components/**/*.tsx';
 const DEFAULT_IGNORES = [

@@ -39,14 +39,15 @@
     "rollup": "^2.73.0",
     "tailwindcss": "^3.0.24",
     "ts-jest": "^28.0.2",
+    "turbo": "^1.2.9",
     "type-fest": "^2.12.2",
     "why-is-node-running": "^2.2.2"
   },
   "scripts": {
-    "prepare": "pnpm --filter=\"./packages/**\" run build",
-    "build": "pnpm --filter=\"./packages/**\" run build",
+    "prepare": "turbo run build --filter=./packages/*",
+    "build": "turbo run build",
     "test": "pnpm -r run test:ci",
-    "test:e2e": "pnpm -r run test:e2e",
+    "test:e2e": "turbo run test:e2e",
     "docs:build": "pnpm --filter=\"react-showroom-docs\" run build",
     "example:build": "pnpm --filter=\"./examples/**\" run build",
     "dev": "pnpm -r --stream --parallel run dev",

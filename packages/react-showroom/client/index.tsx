@@ -43,6 +43,7 @@ export {
 export { Head } from './components/seo';
 export { useComponentList } from './lib/component-list-context';
 export type { ComponentItem } from './lib/component-list-context';
+export * as config from './lib/config';
 export { Suspense } from './lib/lazy';
 export { Link, MemoryRouter, Route, Routes, useLocation } from './lib/routing';
 export { useMenu } from './lib/use-menu';

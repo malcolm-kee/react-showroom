@@ -11,6 +11,7 @@ module.exports = defineConfig({
     basePath: '/some-subpath',
     outDir: 'public/some-subpath',
   },
+  assetDir: 'static',
   example: {
     dimensions: [
       'iPhone 6/7/8',
@@ -28,7 +29,8 @@ module.exports = defineConfig({
     title: 'React Showroom Subpath Example',
     manifest: {
       short_name: 'Subpath Example',
-      baseIconPath: './react-showroom.png',
+      baseIconPath: './static/react-showroom.png',
     },
   },
+  wrapper: './src/docs/showroom-provider.tsx',
 });
