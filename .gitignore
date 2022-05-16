@@ -4,3 +4,4 @@ node_modules/
 .showroom_cache
 
 yarn-error.log
+.turbo

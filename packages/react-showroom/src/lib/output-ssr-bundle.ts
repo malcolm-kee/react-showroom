@@ -1,13 +1,8 @@
-/*
- * This script should be run in separate thread using child_process.fork
- * to improve performance.
- */
-
-import { NormalizedReactShowroomConfiguration } from '@showroomjs/core/react';
+import type { NormalizedReactShowroomConfiguration } from '@showroomjs/core/react';
 import webpack from 'webpack';
 import { createSsrWebpackConfig } from '../config/create-webpack-config';
 
-export async function createSSrBundle(
+export async function outputSSrBundle(
   config: NormalizedReactShowroomConfiguration,
   tmpDir: string,
   profile = false,

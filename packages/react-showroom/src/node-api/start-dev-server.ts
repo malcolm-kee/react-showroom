@@ -2,12 +2,10 @@
 process.env.BABEL_ENV = 'development';
 process.env.NODE_ENV = 'development';
 
-import { ReactShowroomConfiguration } from '@showroomjs/core/react';
+import type { ReactShowroomConfiguration } from '@showroomjs/core/react';
 import path from 'path';
-import webpack from 'webpack';
-import webpackDevServer from 'webpack-dev-server';
 import { argv } from 'yargs';
-import { createClientWebpackConfig } from '../config/create-webpack-config';
+import { createDevServer } from '../lib/create-dev-server';
 import { generateDts } from '../lib/generate-dts';
 import { getConfig } from '../lib/get-config';
 import { logToStdout } from '../lib/log-to-stdout';
@@ -25,8 +23,6 @@ export interface StartServerOptions extends ReactShowroomConfiguration {
   configFile?: string;
 }
 
-type DevServerConfig = webpackDevServer.Configuration;
-
 export async function startDevServer(
   userConfig?: ReactShowroomConfiguration,
   configFile?: string,
@@ -36,50 +32,20 @@ export async function startDevServer(
 
   const config = getConfig('development', configFile, userConfig);
 
-  const { devServerPort, assetDir, example } = config;
+  const { devServerPort, example } = config;
 
   if (example.enableAdvancedEditor) {
-    await generateDts(config, true);
+    await generateDts(config, { watch: true });
   }
 
   const HOST = '0.0.0.0';
   const PORT = Number((argv as any).port ?? process.env.PORT ?? devServerPort);
 
-  const webpackConfig = createClientWebpackConfig('development', config, {
-    measure,
-  });
-  const devServerOptions = Object.assign<DevServerConfig, DevServerConfig>(
-    {
-      port: PORT,
-      host: HOST,
-      client: {
-        logging: 'none',
-      },
-      hot: true,
-      historyApiFallback: {
-        rewrites: [
-          { from: /^\/_preview/, to: '/_preview.html' },
-          { from: /./, to: '/index.html' },
-        ],
-      },
-    },
-    assetDir
-      ? {
-          static: {
-            directory: assetDir,
-            watch: true,
-          },
-        }
-      : {}
-  );
-
-  const compiler = webpack(webpackConfig);
-
-  const server = new webpackDevServer(devServerOptions, compiler);
+  const server = createDevServer(config, { measure, host: HOST, port: PORT });
 
   await server.start();
 
-  const urls = prepareUrls('http', HOST, PORT);
+  const urls = prepareUrls('http', HOST, PORT, `${config.basePath}/`);
 
   openBrowser(urls.localUrlForBrowser);
 

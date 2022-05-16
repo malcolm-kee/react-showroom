@@ -551,7 +551,7 @@ ${compVar
 export default ${result};`;
 };
 
-export const generateCompact = () => {
+export const generateReactEntryCompat = (): string => {
   const ReactDomPath = require.resolve('react-dom', {
     paths: [paths.appPath],
   });

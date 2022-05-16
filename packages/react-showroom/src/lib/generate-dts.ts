@@ -8,7 +8,7 @@ import { paths, resolveApp } from './paths';
 
 export const generateDts = async (
   { docgen, componentsEntry, cacheDir }: NormalizedReactShowroomConfiguration,
-  watch: boolean
+  { watch = false } = {}
 ) => {
   if (
     componentsEntry &&

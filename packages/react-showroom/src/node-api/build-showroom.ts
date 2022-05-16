@@ -3,182 +3,16 @@ require('source-map-support').install();
 process.env.BABEL_ENV = 'production';
 process.env.NODE_ENV = 'production';
 
-import { Ssr, omit } from '@showroomjs/core';
-import {
-  NormalizedReactShowroomConfiguration,
-  ReactShowroomConfiguration,
-} from '@showroomjs/core/react';
+import type { ReactShowroomConfiguration } from '@showroomjs/core/react';
 import * as fs from 'fs-extra';
-import * as path from 'path';
 import { performance } from 'perf_hooks';
-import webpack from 'webpack';
-import { createClientWebpackConfig } from '../config/create-webpack-config';
-import { createSSrBundle } from '../lib/create-ssr-bundle';
 import { generateDts } from '../lib/generate-dts';
 import { getConfig } from '../lib/get-config';
 import { green, logToStdout } from '../lib/log-to-stdout';
+import { outputClientBundle } from '../lib/output-client-bundle';
+import { outputSSrBundle } from '../lib/output-ssr-bundle';
 import { resolveApp, resolveShowroom } from '../lib/paths';
-
-async function buildStaticSite(
-  config: NormalizedReactShowroomConfiguration,
-  profile = false,
-  measure = false
-) {
-  const webpackConfig = createClientWebpackConfig('production', config, {
-    outDir: config.outDir,
-    profileWebpack: profile,
-    measure,
-  });
-
-  const compiler = webpack(webpackConfig);
-
-  try {
-    await new Promise<void>((fulfill, reject) => {
-      compiler.run((err, stats) => {
-        if (err || stats?.hasErrors()) {
-          if (err) {
-            console.error(err);
-          }
-          compiler.close(() => {
-            console.error('Fix the error and try again.');
-          });
-          reject(err);
-        }
-
-        compiler.close(() => {
-          fulfill();
-        });
-      });
-    });
-
-    const { manifest } = config.theme;
-
-    if (manifest) {
-      await fs.outputJSON(
-        resolveApp(`${config.outDir}/manifest.json`),
-        omit(manifest, ['baseIconPath'])
-      );
-
-      if (manifest.baseIconPath) {
-        await fs.copy(
-          resolveApp(manifest.baseIconPath),
-          resolveApp(
-            `${config.outDir}/_icons/${path.parse(manifest.baseIconPath).base}`
-          )
-        );
-      }
-    }
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-async function prerenderSite(
-  config: NormalizedReactShowroomConfiguration,
-  tmpDir: string
-) {
-  const prerenderCodePath = `${tmpDir}/server/prerender.js`;
-  const htmlPath = resolveApp(`${config.outDir}/index.html`);
-
-  const { ssr } = require(prerenderCodePath) as { ssr: Ssr };
-
-  const template = await fs.readFile(htmlPath, 'utf-8');
-
-  const routes = await ssr.getRoutes();
-
-  if (config.basePath !== '') {
-    logToStdout(`Prerender with basePath: ${config.basePath}`);
-  }
-
-  let pageCount = 0;
-
-  for (const route of routes) {
-    if (route !== '') {
-      pageCount++;
-
-      await fs.outputFile(
-        resolveApp(`${config.outDir}/${route}index.html`),
-        await getHtml(`/${route}`)
-      );
-    }
-  }
-
-  await fs.outputFile(
-    resolveApp(`${config.outDir}/_offline.html`),
-    await getHtml('/_offline')
-  );
-
-  await fs.outputFile(htmlPath, await getHtml('/'));
-
-  async function getHtml(pathname: string) {
-    const prerenderResult = await ssr.render({ pathname });
-    const helmet = ssr.getHelmet();
-    const finalHtml = template
-      .replace(
-        '<!--SSR-style-->',
-        `<style id="stitches">${ssr.getCssText()}</style>`
-      )
-      .replace(
-        '<!--SSR-helmet-->',
-        `${helmet.title.toString()}${helmet.meta.toString()}${helmet.link.toString()}`
-      )
-      .replace('<!--SSR-target-->', prerenderResult.result);
-
-    prerenderResult.cleanup();
-
-    return finalHtml;
-  }
-
-  return pageCount + 1;
-}
-
-async function prerenderPreview(
-  config: NormalizedReactShowroomConfiguration,
-  tmpDir: string
-) {
-  const prerenderCodePath = `${tmpDir}/server/previewPrerender.js`;
-  const htmlPath = resolveApp(`${config.outDir}/_preview.html`);
-
-  const { ssr } = require(prerenderCodePath) as { ssr: Ssr };
-
-  const template = await fs.readFile(htmlPath, 'utf-8');
-
-  const routes = await ssr.getRoutes();
-
-  let pageCount = 0;
-
-  for (const route of routes) {
-    if (route !== '') {
-      pageCount++;
-
-      await fs.outputFile(
-        resolveApp(`${config.outDir}/_preview/${route}index.html`),
-        await getHtml(`/${route}`)
-      );
-    }
-  }
-
-  async function getHtml(pathname: string) {
-    const prerenderResult = await ssr.render({ pathname });
-    const helmet = ssr.getHelmet();
-    const finalHtml = template
-      .replace(
-        '<!--SSR-style-->',
-        `<style id="stitches">${ssr.getCssText()}</style>`
-      )
-      .replace(
-        '<!--SSR-helmet-->',
-        `${helmet.title.toString()}${helmet.meta.toString()}${helmet.link.toString()}`
-      )
-      .replace('<!--SSR-target-->', prerenderResult.result);
-
-    prerenderResult.cleanup();
-
-    return finalHtml;
-  }
-
-  return pageCount;
-}
+import { prerenderPreview, prerenderSite } from '../lib/prerender';
 
 export async function buildShowroom(
   userConfig?: ReactShowroomConfiguration,
@@ -189,7 +23,7 @@ export async function buildShowroom(
   const config = getConfig('production', configFile, userConfig);
 
   if (config.example.enableAdvancedEditor) {
-    await generateDts(config, false);
+    await generateDts(config);
   }
 
   const ssrDir = resolveShowroom(
@@ -198,12 +32,12 @@ export async function buildShowroom(
 
   try {
     if (profile) {
-      await buildStaticSite(config, profile, measure);
-      await createSSrBundle(config, ssrDir, profile, measure);
+      await outputClientBundle(config, profile, measure);
+      await outputSSrBundle(config, ssrDir, profile, measure);
     } else {
       await Promise.all([
-        buildStaticSite(config, profile, measure),
-        createSSrBundle(config, ssrDir, profile, measure),
+        outputClientBundle(config, profile, measure),
+        outputSSrBundle(config, ssrDir, profile, measure),
       ]);
       logToStdout('Prerendering...');
       const [sitePageCount, previewPageCount] = await Promise.all([

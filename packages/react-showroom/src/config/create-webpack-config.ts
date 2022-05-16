@@ -23,7 +23,7 @@ import {
   generateSearchIndex,
   generateSectionsAndImports,
   generateWrapper,
-  generateCompact,
+  generateReactEntryCompat,
 } from '../lib/generate-showroom-data';
 import { logToStdout } from '../lib/log-to-stdout';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';
@@ -49,12 +49,25 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 export const createClientWebpackConfig = (
   mode: Environment,
   config: NormalizedReactShowroomConfiguration,
-  { outDir = 'showroom', profileWebpack = false, measure = false } = {}
+  {
+    outDir = 'showroom',
+    profileWebpack = false,
+    measure = false,
+    operation,
+  }: {
+    outDir?: string;
+    profileWebpack?: boolean;
+    measure?: boolean;
+    operation: 'build' | 'serve';
+  } = {
+    operation: 'build',
+  }
 ): webpack.Configuration => {
   const baseConfig = createBaseWebpackConfig(mode, config, {
     ssr: false,
     profile: profileWebpack,
     measure,
+    operation,
   });
 
   const {
@@ -88,7 +101,7 @@ export const createClientWebpackConfig = (
       externals: ['crypto'],
       output: {
         path: resolveApp(outDir),
-        publicPath: !isProd ? '/' : `${basePath}/`, // need to add trailing slash
+        publicPath: `${basePath}/`, // need to add trailing slash
       },
       plugins: [
         // workaround as html-webpack-plugin not compatible with ProfilingPlugin. See https://github.com/jantimon/html-webpack-plugin/issues/1652.
@@ -157,7 +170,7 @@ export const createClientWebpackConfig = (
               name: 'showroom',
               logger: logToStdout,
             }),
-        isProd && assetDir
+        operation === 'build' && assetDir
           ? new CopyWebpackPlugin({
               patterns: [
                 {
@@ -171,7 +184,7 @@ export const createClientWebpackConfig = (
               ],
             })
           : undefined,
-        theme.serviceWorker && isProd
+        theme.serviceWorker && operation === 'build'
           ? new (require('workbox-webpack-plugin').InjectManifest)({
               swSrc: resolveShowroom(
                 'client/service-worker/_showroom-service-worker.ts'
@@ -195,6 +208,7 @@ export const createSsrWebpackConfig = (
     ssr: true,
     profile: profileWebpack,
     measure,
+    operation: 'build',
   });
 
   const showroomServer = resolveShowroom(
@@ -237,7 +251,12 @@ export const createSsrWebpackConfig = (
 const createBaseWebpackConfig = (
   mode: Environment,
   config: NormalizedReactShowroomConfiguration,
-  options: { ssr: boolean; profile: boolean; measure: boolean }
+  options: {
+    ssr: boolean;
+    profile: boolean;
+    measure: boolean;
+    operation: 'build' | 'serve';
+  }
 ): webpack.Configuration => {
   const {
     prerender: prerenderConfig,
@@ -257,8 +276,9 @@ const createBaseWebpackConfig = (
     compilerOptions,
   } = config;
 
+  const isBuild = options.operation === 'build';
+  const isServe = options.operation === 'serve';
   const isProd = mode === 'production';
-  const isDev = mode === 'development';
 
   const componentTypeParser = docgen.withCustomConfig(
     docgenConfig.tsconfigPath,
@@ -300,7 +320,7 @@ const createBaseWebpackConfig = (
     [resolveShowroom('node_modules/react-showroom-index.js')]:
       generateSearchIndex(sections, search.includeHeadings),
     [resolveShowroom('node_modules/react-showroom-compat.js')]:
-      generateCompact(),
+      generateReactEntryCompat(),
   });
 
   const babelPreset = createBabelPreset(mode);
@@ -319,12 +339,12 @@ const createBaseWebpackConfig = (
       extensions: moduleFileExtensions.map((ext) => `.${ext}`),
     },
     output: {
-      filename: isProd ? '_assets/js/[name].[contenthash:8].js' : '[name].js',
-      chunkFilename: isProd
+      filename: isBuild ? '_assets/js/[name].[contenthash:8].js' : '[name].js',
+      chunkFilename: isBuild
         ? '_assets/js/[name].[contenthash:8].js'
         : '[name].js',
       assetModuleFilename: '_assets/media/[name]-[contenthash][ext][query]',
-      clean: isProd,
+      clean: isBuild,
     },
     module: {
       rules: [
@@ -366,7 +386,7 @@ const createBaseWebpackConfig = (
               loader: require.resolve('babel-loader'),
               options: {
                 presets: [() => babelPreset],
-                plugins: isDev
+                plugins: isServe
                   ? [require.resolve('react-refresh/babel')]
                   : undefined,
                 babelrc: false,
@@ -398,7 +418,7 @@ const createBaseWebpackConfig = (
               loader: require.resolve('babel-loader'),
               options: {
                 presets: [() => babelPreset],
-                plugins: isDev
+                plugins: isServe
                   ? [require.resolve('react-refresh/babel')]
                   : undefined,
               },
@@ -515,7 +535,7 @@ const createBaseWebpackConfig = (
                   loader: require.resolve('babel-loader'),
                   options: {
                     presets: [() => babelPreset],
-                    plugins: isProd
+                    plugins: isBuild
                       ? undefined
                       : [require.resolve('react-refresh/babel')],
                     babelrc: false,
@@ -561,7 +581,7 @@ const createBaseWebpackConfig = (
               }),
           sideEffects: true,
           use: [
-            isProd
+            isBuild
               ? {
                   loader: MiniCssExtractPlugin.loader,
                   options: {
@@ -575,7 +595,7 @@ const createBaseWebpackConfig = (
                 importLoaders: css.usePostcss ? 1 : 0,
                 modules: {
                   auto: true,
-                  localIdentName: isProd
+                  localIdentName: isBuild
                     ? '[hash:base64]'
                     : '[path][name]__[local]',
                 },
@@ -585,7 +605,7 @@ const createBaseWebpackConfig = (
               ? {
                   loader: require.resolve('postcss-loader'),
                   options: {
-                    sourceMap: isProd,
+                    sourceMap: isBuild,
                     postcssOptions: {
                       config: paths.appPostcssConfig,
                     },
@@ -599,7 +619,7 @@ const createBaseWebpackConfig = (
     resolveLoader: {
       modules: ['node_modules', path.resolve(__dirname, '../webpack-loader')],
     },
-    devtool: isProd ? 'source-map' : 'cheap-module-source-map',
+    devtool: isBuild ? 'source-map' : 'cheap-module-source-map',
     cache: cacheDir
       ? {
           type: 'filesystem',
@@ -626,16 +646,16 @@ const createBaseWebpackConfig = (
         }
       : undefined,
     plugins: [
-      isProd
+      isBuild
         ? new MiniCssExtractPlugin({
             filename: '_assets/css/[name].[contenthash].css',
             chunkFilename: '_assets/css/[name].[contenthash].css',
           })
         : undefined,
       new webpack.EnvironmentPlugin({
-        PRERENDER: isProd,
+        PRERENDER: isBuild,
         SSR: options.ssr,
-        BASE_PATH: isProd ? basePath : '',
+        BASE_PATH: basePath,
         PRERENDER_EXAMPLE: !!prerenderConfig,
         REACT_SHOWROOM_THEME: theme,
         NODE_ENV: mode,
@@ -651,7 +671,7 @@ const createBaseWebpackConfig = (
         USE_SW: theme.serviceWorker,
       }),
       virtualModules,
-      isDev
+      isServe
         ? new ReactRefreshWebpackPlugin({
             overlay: false,
           })
@@ -688,7 +708,7 @@ const createBaseWebpackConfig = (
       hints: false,
     },
     infrastructureLogging: {
-      level: debug ? 'info' : isProd ? 'info' : 'none',
+      level: debug || isProd ? 'info' : 'none',
     },
     stats: debug ? 'normal' : 'none',
     experiments: {
