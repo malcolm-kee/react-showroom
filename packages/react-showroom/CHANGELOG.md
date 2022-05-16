@@ -1,5 +1,21 @@
 # react-showroom
 
+## 2.0.0
+
+### Major Changes
+
+- b212ee0: Dev server will respects basePath
+- 20f80c0: Bump dependencies and support React 18
+
+### Patch Changes
+
+- Updated dependencies [20f80c0]
+  - @showroomjs/bundles@2.0.0
+  - @showroomjs/core@2.0.0
+  - @showroomjs/device-frames@1.0.0
+  - @showroomjs/measure@1.0.0
+  - @showroomjs/ui@2.0.0
+
 ## 1.29.2
 
 ### Patch Changes

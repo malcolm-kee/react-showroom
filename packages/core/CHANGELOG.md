@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 2.0.0
+
+### Major Changes
+
+- 20f80c0: Bump dependencies and support React 18
+
 ## 1.20.3
 
 ### Patch Changes

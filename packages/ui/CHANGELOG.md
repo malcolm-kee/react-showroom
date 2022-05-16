@@ -1,5 +1,17 @@
 # @showroomjs/ui
 
+## 2.0.0
+
+### Major Changes
+
+- 20f80c0: Bump dependencies and support React 18
+
+### Patch Changes
+
+- Updated dependencies [20f80c0]
+  - @showroomjs/bundles@2.0.0
+  - @showroomjs/core@2.0.0
+
 ## 1.15.5
 
 ### Patch Changes

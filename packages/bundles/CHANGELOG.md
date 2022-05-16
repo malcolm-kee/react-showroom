@@ -1,5 +1,11 @@
 # @showroomjs/bundles
 
+## 2.0.0
+
+### Major Changes
+
+- 20f80c0: Bump dependencies and support React 18
+
 ## 1.11.1
 
 ### Patch Changes

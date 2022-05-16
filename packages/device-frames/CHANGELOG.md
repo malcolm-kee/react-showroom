@@ -1,5 +1,11 @@
 # @showroomjs/device-frames
 
+## 1.0.0
+
+### Major Changes
+
+- 20f80c0: Bump dependencies and support React 18
+
 ## 0.4.1
 
 ### Patch Changes
