@@ -19,11 +19,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && react-showroom build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "doc": "react-showroom dev",
-    "doc:build": "react-showroom build"
+    "build-showroom": "react-showroom build"
   },
   "eslintConfig": {
     "extends": [

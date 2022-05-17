@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "doc": "react-showroom dev",
-    "build": "react-showroom build"
+    "build-showroom": "react-showroom build"
   },
   "dependencies": {
     "@babel/runtime": "^7.17.9",
