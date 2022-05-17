@@ -40,13 +40,17 @@ test.describe('subpath example', () => {
       document.body.scrollTop = 500;
     });
 
-    async function clickButtonAndVerifyResult(retry = 0) {
+    async function clickButtonAndVerifyResult(retryCount = 0) {
       try {
         await page.click('button:has-text("Fetch Data")');
-        await expect(page.locator('text=Result:world')).toBeVisible();
+        await expect(page.locator('text=Result:world')).toBeVisible({
+          timeout: 3000,
+        });
       } catch (error) {
-        if (error instanceof errors.TimeoutError && retry <= 2) {
-          await clickButtonAndVerifyResult(retry + 1);
+        console.log(error);
+        if (retryCount <= 3) {
+          await new Promise((fulfill) => setTimeout(fulfill, 1000));
+          await clickButtonAndVerifyResult(retryCount + 1);
         } else {
           throw error;
         }

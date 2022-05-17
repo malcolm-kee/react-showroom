@@ -61,7 +61,9 @@ jobs:
           name: playwright-test-result ${{ matrix.node-version }} ${{ matrix.react-version }}
           path: |
             examples/subpath-example/test-results/
+            examples/subpath-example/trace.zip
             examples/react-example/test-results/
+            examples/react-example/trace.zip
           if-no-files-found: ignore
           retention-days: 2
 

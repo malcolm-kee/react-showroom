@@ -45,8 +45,8 @@
   },
   "scripts": {
     "prepare": "turbo run build --filter=./packages/*",
-    "build": "turbo run build",
-    "test": "pnpm -r run test:ci",
+    "build": "turbo run build build-showroom",
+    "test": "turbo run test:ci",
     "test:e2e": "turbo run test:e2e",
     "docs:build": "pnpm --filter=\"react-showroom-docs\" run build",
     "example:build": "pnpm --filter=\"./examples/**\" run build",
