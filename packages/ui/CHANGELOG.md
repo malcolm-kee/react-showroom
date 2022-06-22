@@ -1,5 +1,15 @@
 # @showroomjs/ui
 
+## 2.0.1
+
+### Patch Changes
+
+- b1f760e: Bump deps
+- Updated dependencies [b1f760e]
+- Updated dependencies [b1f760e]
+  - @showroomjs/bundles@2.0.1
+  - @showroomjs/core@2.1.0
+
 ## 2.0.0
 
 ### Major Changes

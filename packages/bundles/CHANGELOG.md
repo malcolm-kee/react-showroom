@@ -1,5 +1,11 @@
 # @showroomjs/bundles
 
+## 2.0.1
+
+### Patch Changes
+
+- b1f760e: Bump deps
+
 ## 2.0.0
 
 ### Major Changes

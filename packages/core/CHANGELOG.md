@@ -1,5 +1,15 @@
 # @showroomjs/core
 
+## 2.1.0
+
+### Minor Changes
+
+- b1f760e: Support sass file is sass is detected
+
+### Patch Changes
+
+- b1f760e: Bump deps
+
 ## 2.0.0
 
 ### Major Changes
