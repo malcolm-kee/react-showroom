@@ -7,6 +7,11 @@ const config: PlaywrightTestConfig = {
     reuseExistingServer: !process.env.CI,
   },
   testDir: './tests',
+  retries: 1,
+  use: {
+    video: process.env.CI ? 'retain-on-failure' : 'off',
+    trace: 'on-first-retry',
+  },
 };
 
 export default config;
