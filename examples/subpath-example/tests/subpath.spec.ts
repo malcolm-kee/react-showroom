@@ -1,4 +1,4 @@
-import { expect, test, errors } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('subpath example', () => {
   test('visit home page', async ({ page }) => {
