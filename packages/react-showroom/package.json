@@ -15,7 +15,13 @@
   "peerDependencies": {
     "react": "^17.0.0-0 || ^18.0.0-0",
     "react-dom": "^17.0.0-0 || ^18.0.0-0",
+    "sass": "*",
     "typescript": "*"
+  },
+  "peerDependenciesMeta": {
+    "sass": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@babel/core": "^7.18.5",
@@ -83,6 +89,7 @@
     "remark-parse": "9.0.0",
     "remark-stringify": "^9.0.1",
     "rimraf": "^3.0.2",
+    "sass-loader": "^13.0.0",
     "scroll-into-view-if-needed": "^2.2.29",
     "slugify": "^1.6.5",
     "snarkdown": "^2.0.0",

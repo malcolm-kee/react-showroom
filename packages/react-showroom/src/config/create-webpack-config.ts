@@ -261,6 +261,7 @@ const createBaseWebpackConfig = (
   const {
     prerender: prerenderConfig,
     css,
+    sass,
     url,
     basePath,
     theme,
@@ -614,6 +615,35 @@ const createBaseWebpackConfig = (
               : undefined,
           ].filter(isDefined),
         },
+        sass
+          ? {
+              test: /\.s[ac]ss$/i,
+              sideEffects: true,
+              use: [
+                isBuild
+                  ? {
+                      loader: MiniCssExtractPlugin.loader,
+                      options: {
+                        emit: !options.ssr,
+                      },
+                    }
+                  : require.resolve('style-loader'),
+                {
+                  loader: require.resolve('css-loader'),
+                  options: {
+                    importLoaders: 1,
+                    modules: {
+                      auto: true,
+                      localIdentName: isBuild
+                        ? '[hash:base64]'
+                        : '[path][name]__[local]',
+                    },
+                  },
+                },
+                require.resolve('sass-loader'),
+              ],
+            }
+          : undefined,
       ].filter(isDefined),
     },
     resolveLoader: {
