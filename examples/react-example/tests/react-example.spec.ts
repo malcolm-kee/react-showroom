@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test';
-import path from 'path';
 
 test.describe('react example', () => {
   test('visit home page', async ({ page }) => {
@@ -24,14 +23,6 @@ test.describe('react example', () => {
     await page.click('text=Button');
 
     await expect(page.locator('h1')).toHaveText('Button');
-  });
-
-  test('msw mock should work', async ({ page }) => {
-    await page.goto('/core/button');
-
-    await page.click('button:has-text("Fetch Data")');
-
-    await expect(page.locator('text=Result intercepted by msw!')).toBeVisible();
   });
 
   test('console panel should work', async ({ page }) => {
