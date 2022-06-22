@@ -15,20 +15,20 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@babel/runtime": "^7.17.9",
-    "@tailwindcss/forms": "^0.5.1",
+    "@babel/runtime": "^7.18.3",
+    "@tailwindcss/forms": "^0.5.2",
     "classnames": "^2.3.1",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-showroom": "workspace:*"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.7",
-    "msw": "^0.39.2",
-    "postcss": "^8.4.13",
-    "postcss-loader": "^6.2.1",
-    "tailwindcss": "^3.0.24",
-    "tsup": "5.12.7",
+    "msw": "^0.42.1",
+    "postcss": "^8.4.14",
+    "postcss-loader": "^7.0.0",
+    "tailwindcss": "^3.1.4",
+    "tsup": "6.1.2",
     "typescript": "~4.6.4"
   },
   "msw": {

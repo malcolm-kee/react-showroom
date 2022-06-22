@@ -33,7 +33,7 @@
     "downshift": "^6.1.7",
     "mitt": "^3.0.0",
     "react-highlight-words": "^0.18.0",
-    "react-textarea-autosize": "^8.3.3",
+    "react-textarea-autosize": "^8.3.4",
     "rifm": "^0.12.1",
     "tslib": "^2.4.0",
     "use-constant": "^1.1.0"

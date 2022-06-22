@@ -311,6 +311,14 @@ export interface ReactShowroomConfiguration {
         postcss?: boolean;
       }
     | false;
+  /**
+   * Specify if .scss/.sass file should be processed.
+   *
+   * Default to `true` if `sass` is installed in the project.
+   *
+   * Set to `false` if your webpack config already process scss.
+   */
+  sass?: boolean;
   devServer?: {
     port?: number;
   };
@@ -424,6 +432,7 @@ export interface NormalizedReactShowroomConfiguration
     enabled: boolean;
     usePostcss: boolean;
   };
+  sass: boolean;
   html: ShowroomHtmlConfiguration;
   example: ExampleConfiguration;
   search: ShowroomSearchConfiguration;

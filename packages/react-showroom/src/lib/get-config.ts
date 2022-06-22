@@ -109,6 +109,7 @@ export const getConfig = (
     ignores = DEFAULT_IGNORES,
     cacheDir = '.showroom_cache',
     componentsEntry,
+    sass = isSassInstalled(),
     css = {
       postcss: fs.existsSync(paths.appPostcssConfig),
     },
@@ -216,6 +217,7 @@ export const getConfig = (
       a11y,
     },
     html,
+    sass,
     css: {
       enabled: !!css,
       usePostcss: !!(css && css.postcss),
@@ -575,3 +577,14 @@ const getUserConfig = (
 };
 
 const COMPONENT_DOC_EXTENSIONS = ['.mdx', '.md'] as const;
+
+const isSassInstalled = (): boolean => {
+  try {
+    require.resolve('sass', {
+      paths: [paths.appPath],
+    });
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
