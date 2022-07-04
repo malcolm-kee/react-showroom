@@ -1,87 +1,64 @@
 #!/usr/bin/env node
 
-import * as spawn from 'cross-spawn';
-import * as yargs from 'yargs';
+import cac from 'cac';
 import * as path from 'path';
+
 const pkgJson = require(path.resolve(__dirname, '../../package.json'));
 
 process.on('unhandledRejection', (err) => {
   throw err;
 });
 
-yargs
-  .scriptName(pkgJson.name)
-  .version(pkgJson.version)
-  .usage('$0 <cmd> [args]')
-  .command('$0', false, () => yargs.showHelp('log'))
-  .command(
-    'dev',
-    'Start showroom development server',
-    {
-      port: {
-        type: 'number',
-        describe: 'Port number for the dev server',
-        default: 6969,
-      },
-      config: {
-        type: 'string',
-        describe: 'Config file name',
-        default: 'react-showroom.js',
-      },
-      measure: {
-        type: 'boolean',
-        describe: 'Whether to measure webpack build performance',
-      },
-    },
-    () => spawnScript('dev', process.argv.slice(3))
-  )
-  .command(
-    'build',
-    'Build showroom static site',
-    {
-      profile: {
-        type: 'boolean',
-        describe: 'Whether to generate profile file',
-      },
-      measure: {
-        type: 'boolean',
-        describe: 'Whether to measure webpack build performance',
-      },
-    },
-    () => spawnScript('build', process.argv.slice(3))
-  )
-  .help().argv;
+const cli = cac(pkgJson.name).version(pkgJson.version);
 
-function spawnScript(scriptName: string, argv: ReadonlyArray<string> = []) {
-  const result = spawn.sync(
-    process.execPath,
-    [require.resolve(`../scripts/${scriptName}`)].concat(argv),
-    {
-      stdio: 'inherit',
-    }
-  );
+cli
+  .command('dev', 'Start showroom development server')
+  .option('port <port>', 'Port number for the dev server', {
+    default: 6969,
+  })
+  .option('config <file>', 'Config file name', {
+    default: 'react-showroom.config.js',
+  })
+  .option('measure', 'Whether to measure webpack build performance')
+  .action((options) => {
+    process.env.BABEL_ENV = 'development';
+    process.env.NODE_ENV = 'development';
 
-  if (result.signal) {
-    handleSignal(result.signal);
-    process.exit(1);
-  }
+    return import('../node-api/start-dev-server')
+      .then(({ startDevServer }) =>
+        startDevServer(undefined, options.config, options.measure, options.port)
+      )
+      .catch(console.error);
+  });
 
-  process.exit(result.status!);
-}
+cli
+  .command('build', 'Build showroom static site')
+  .option('config <file>', 'Config file name', {
+    default: 'react-showroom.config.js',
+  })
+  .option('basePath <path>', 'Base path for the dev server')
+  .option('profile', 'Whethere to generate profile file')
+  .option('measure', 'Whether to measure webpack build performance')
+  .action((options) => {
+    process.env.BABEL_ENV = 'production';
+    process.env.NODE_ENV = 'production';
 
-function handleSignal(signal: NodeJS.Signals) {
-  if (signal === 'SIGKILL') {
-    console.log(
-      'The build failed because the process exited too early. ' +
-        'This probably means the system ran out of memory or someone called ' +
-        '`kill -9` on the process.'
-    );
-  } else if (signal === 'SIGTERM') {
-    console.log(
-      'The build failed because the process exited too early. ' +
-        'Someone might have called `kill` or `killall`, or the system could ' +
-        'be shutting down.'
-    );
-  }
-  process.exit(1);
-}
+    return import('../node-api/build-showroom')
+      .then(({ buildShowroom }) =>
+        buildShowroom(
+          undefined,
+          options.config,
+          options.profile,
+          options.measure,
+          options.basePath
+        )
+      )
+      .then(() => process.exit(0))
+      .catch(console.error);
+  });
+
+cli.help();
+
+cli.command('').action(() => cli.outputHelp());
+
+cli.parse();

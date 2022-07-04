@@ -88,12 +88,17 @@ const deviceDevices: Array<DeviceName> = [
 let _normalizedConfig: NormalizedReactShowroomConfiguration;
 export const getConfig = (
   env: Environment,
-  configFile?: string,
-  userConfig?: ReactShowroomConfiguration
+  options: {
+    configFile?: string;
+    userConfig?: ReactShowroomConfiguration;
+    basePath?: string;
+  }
 ): NormalizedReactShowroomConfiguration => {
   if (_normalizedConfig) {
     return _normalizedConfig;
   }
+
+  const { configFile, userConfig } = options;
 
   const {
     build: providedBuildConfig = {},
@@ -197,9 +202,11 @@ export const getConfig = (
     ...providedThemeConfig,
   };
 
-  const basePath = providedBuildConfig.basePath
-    ? removeTrailingSlash(providedBuildConfig.basePath)
-    : defaultConfig.basePath;
+  const basePath =
+    options.basePath ||
+    (providedBuildConfig.basePath
+      ? removeTrailingSlash(providedBuildConfig.basePath)
+      : defaultConfig.basePath);
 
   const assetDir =
     providedConfig.assetDir && resolveApp(providedConfig.assetDir);

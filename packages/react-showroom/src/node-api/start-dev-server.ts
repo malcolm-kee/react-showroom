@@ -1,10 +1,5 @@
-// Do this as the first thing so that any code reading it knows the right env.
-process.env.BABEL_ENV = 'development';
-process.env.NODE_ENV = 'development';
-
 import type { ReactShowroomConfiguration } from '@showroomjs/core/react';
 import path from 'path';
-import { argv } from 'yargs';
 import { createDevServer } from '../lib/create-dev-server';
 import { generateDts } from '../lib/generate-dts';
 import { getConfig } from '../lib/get-config';
@@ -26,11 +21,12 @@ export interface StartServerOptions extends ReactShowroomConfiguration {
 export async function startDevServer(
   userConfig?: ReactShowroomConfiguration,
   configFile?: string,
-  measure?: boolean
+  measure?: boolean,
+  port?: number
 ) {
   logToStdout('Starting dev server...');
 
-  const config = getConfig('development', configFile, userConfig);
+  const config = getConfig('development', { configFile, userConfig });
 
   const { devServerPort, example } = config;
 
@@ -39,7 +35,7 @@ export async function startDevServer(
   }
 
   const HOST = '0.0.0.0';
-  const PORT = Number((argv as any).port ?? process.env.PORT ?? devServerPort);
+  const PORT = Number(port ?? process.env.PORT ?? devServerPort);
 
   const server = createDevServer(config, { measure, host: HOST, port: PORT });
 
