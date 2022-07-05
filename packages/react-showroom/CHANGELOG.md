@@ -1,5 +1,20 @@
 # react-showroom
 
+## 2.2.0
+
+### Minor Changes
+
+- 15c6da0: Support --basePath and --outDir options for build command
+
+### Patch Changes
+
+- 15c6da0: Bump dependencies
+- Updated dependencies [15c6da0]
+  - @showroomjs/core@2.1.1
+  - @showroomjs/device-frames@1.0.2
+  - @showroomjs/measure@1.0.2
+  - @showroomjs/ui@2.0.2
+
 ## 2.1.0
 
 ### Minor Changes
