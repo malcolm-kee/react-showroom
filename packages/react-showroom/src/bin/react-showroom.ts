@@ -36,7 +36,8 @@ cli
   .option('config <file>', 'Config file name', {
     default: 'react-showroom.config.js',
   })
-  .option('basePath <path>', 'Base path for the dev server')
+  .option('basePath <path>', 'Base path for site')
+  .option('outDir <dir>', 'Output folder for the generated site')
   .option('profile', 'Whethere to generate profile file')
   .option('measure', 'Whether to measure webpack build performance')
   .action((options) => {
@@ -50,7 +51,10 @@ cli
           options.config,
           options.profile,
           options.measure,
-          options.basePath
+          {
+            outDir: options.outDir,
+            basePath: options.basePath,
+          }
         )
       )
       .then(() => process.exit(0))

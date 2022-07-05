@@ -16,9 +16,20 @@ export async function buildShowroom(
   configFile?: string,
   profile?: boolean,
   measure?: boolean,
-  basePath?: string
+  {
+    basePath,
+    outDir,
+  }: {
+    basePath?: string;
+    outDir?: string;
+  } = {}
 ) {
-  const config = getConfig('production', { configFile, userConfig, basePath });
+  const config = getConfig('production', {
+    configFile,
+    userConfig,
+    basePath,
+    outDir,
+  });
 
   if (config.example.enableAdvancedEditor) {
     await generateDts(config);

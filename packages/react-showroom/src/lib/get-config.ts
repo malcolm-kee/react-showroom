@@ -92,6 +92,7 @@ export const getConfig = (
     configFile?: string;
     userConfig?: ReactShowroomConfiguration;
     basePath?: string;
+    outDir?: string;
   }
 ): NormalizedReactShowroomConfiguration => {
   if (_normalizedConfig) {
@@ -235,7 +236,7 @@ export const getConfig = (
     assetDir,
     wrapper: providedConfig.wrapper && resolveApp(providedConfig.wrapper),
     cacheDir: resolveApp(cacheDir),
-    outDir,
+    outDir: isString(options.outDir) ? options.outDir : outDir,
     prerender,
     devServerPort: providedDevServerConfig.port || 6969,
     docgen: {

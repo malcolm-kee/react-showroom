@@ -6,9 +6,10 @@
   "private": true,
   "scripts": {
     "doc": "react-showroom dev",
-    "build-showroom": "pnpm run component:dts && pnpm run build:doc-ssr && pnpm run build:doc-spa",
+    "build-showroom": "pnpm run component:dts && pnpm run build:doc-ssr && pnpm run build:doc-spa && pnpm run build:doc-args",
     "build:doc-ssr": "react-showroom build",
     "build:doc-spa": "node react-showroom-script.js",
+    "build:doc-args": "react-showroom build --basePath=\"/arg-subpath\" --outDir=\"public/arg-subpath\"",
     "component:dts": "tsup",
     "component:dts-watch": "tsup --watch",
     "preview": "http-server ./public -p 17969",

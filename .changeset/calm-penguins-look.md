@@ -2,4 +2,4 @@
 'react-showroom': minor
 ---
 
-Support --basePath options for build command
+Support --basePath and --outDir options for build command
