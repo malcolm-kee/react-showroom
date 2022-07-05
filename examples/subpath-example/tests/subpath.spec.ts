@@ -4,15 +4,19 @@ test.describe('subpath example', () => {
   test('visit home page', async ({ page }) => {
     await page.goto('/');
     await page.click('text=Prerender');
-
     const title = page.locator('text=React Showroom Subpath Example');
     await expect(title).toBeVisible();
 
     await page.goto('/');
     await page.click('text=Without prerender');
-
     const secondTitle = page.locator('text=React Showroom Without Prerender');
     await expect(secondTitle).toBeVisible();
+
+    await page.goto('/');
+    await page.click('text=Subpath by arguments');
+    await expect(
+      page.locator('text=React Showroom Subpath Example')
+    ).toBeVisible();
   });
 
   test('static is served correctly', async ({ page }) => {
