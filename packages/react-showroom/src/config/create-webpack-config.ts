@@ -20,10 +20,10 @@ import {
   generateAllComponentsPaths,
   generateCodeblocksData,
   generateDocPlaceHolder,
+  generateReactEntryCompat,
   generateSearchIndex,
   generateSectionsAndImports,
   generateWrapper,
-  generateReactEntryCompat,
 } from '../lib/generate-showroom-data';
 import { logToStdout } from '../lib/log-to-stdout';
 import { mergeWebpackConfig } from '../lib/merge-webpack-config';

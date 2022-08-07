@@ -14,8 +14,7 @@ const IGNORE_SECTIONS_ENV: Record<Environment, string[]> = {
 
 const IGNORE_PLUGINS = [
   'CommonsChunkPlugins',
-  'MiniHtmlWebpackPlugin',
-  'HtmlWebpackPlugin',
+  'MiniCssExtractPlugin',
   'OccurrenceOrderPlugin',
   'DedupePlugin',
   'UglifyJsPlugin',

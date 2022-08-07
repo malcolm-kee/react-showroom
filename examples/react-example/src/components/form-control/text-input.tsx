@@ -1,6 +1,7 @@
 import cx from 'classnames';
 import * as React from 'react';
 import { callAll } from '../../lib/call-all';
+import { baseStyle } from './text-input.css';
 
 export interface TextInputProps
   extends React.ComponentPropsWithoutRef<'input'> {
@@ -21,7 +22,7 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
       <input
         type="text"
         className={cx(
-          'rounded-md border-gray-300',
+          baseStyle,
           inputProps.disabled && 'bg-gray-200',
           className
         )}
