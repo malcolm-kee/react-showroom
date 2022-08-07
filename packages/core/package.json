@@ -18,12 +18,12 @@
     "test:ci": "jest --watchAll=false --coverage --runInBand"
   },
   "devDependencies": {
-    "axe-core": "^4.4.2",
-    "esbuild": "0.14.48",
+    "axe-core": "^4.4.3",
+    "esbuild": "0.14.53",
     "html-webpack-tags-plugin": "^3.0.2",
     "react-docgen-typescript": "^2.2.2",
     "typescript": "~4.6.4",
-    "webpack": "^5.73.0"
+    "webpack": "^5.74.0"
   },
   "peerDependencies": {
     "axe-core": "*",
@@ -31,7 +31,7 @@
     "webpack": "^5.0.0"
   },
   "dependencies": {
-    "acorn": "^8.7.1",
+    "acorn": "^8.8.0",
     "acorn-walk": "^8.2.0",
     "domutils": "^3.0.1",
     "htmlparser2": "^8.0.1",

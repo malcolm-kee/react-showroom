@@ -1,4 +1,8 @@
-import { IsClientContextProvider, NotificationProvider } from '@showroomjs/ui';
+import {
+  IsClientContextProvider,
+  NotificationProvider,
+  Tooltip,
+} from '@showroomjs/ui';
 import * as React from 'react';
 import sections from 'react-showroom-sections';
 import Wrapper from 'react-showroom-wrapper';
@@ -102,59 +106,63 @@ export const ShowroomApp = () => {
         color: ${THEME.colors['primary-800']};
       }`}</style>
       )}
-      <IsClientContextProvider>
-        <NotificationProvider>
-          <TargetAudienceProvider>
-            <Div className={colorTheme}>
-              <CodeThemeContext.Provider value={THEME.codeTheme}>
-                <MenuContextProvider sections={sections}>
-                  <Div style={cssVariables}>
-                    {!shouldHideHeader && <Header ref={headerRef} />}
-                    <Div css={{ display: 'flex' }}>
-                      {!shouldHideSidebar && <Sidebar sections={sections} />}
-                      <Suspense
-                        fallback={<PageFallback title={matchedTitle} />}
-                      >
-                        <Routes>
-                          {routes.map(function dataToRoute(route, i) {
-                            if (!route) {
+      <Tooltip.Provider>
+        <IsClientContextProvider>
+          <NotificationProvider>
+            <TargetAudienceProvider>
+              <Div className={colorTheme}>
+                <CodeThemeContext.Provider value={THEME.codeTheme}>
+                  <MenuContextProvider sections={sections}>
+                    <Div style={cssVariables}>
+                      {!shouldHideHeader && <Header ref={headerRef} />}
+                      <Div css={{ display: 'flex' }}>
+                        {!shouldHideSidebar && <Sidebar sections={sections} />}
+                        <Suspense
+                          fallback={<PageFallback title={matchedTitle} />}
+                        >
+                          <Routes>
+                            {routes.map(function dataToRoute(route, i) {
+                              if (!route) {
+                                return (
+                                  <React.Fragment key={i}>
+                                    {null}
+                                  </React.Fragment>
+                                );
+                              }
+
+                              const Ui = route.ui;
+
+                              if (Array.isArray(Ui)) {
+                                return (
+                                  <React.Fragment key={route.path}>
+                                    {Ui.map(dataToRoute)}
+                                  </React.Fragment>
+                                );
+                              }
+
                               return (
-                                <React.Fragment key={i}>{null}</React.Fragment>
+                                <Route
+                                  path={route.path}
+                                  element={<Ui />}
+                                  key={route.path}
+                                />
                               );
-                            }
-
-                            const Ui = route.ui;
-
-                            if (Array.isArray(Ui)) {
-                              return (
-                                <React.Fragment key={route.path}>
-                                  {Ui.map(dataToRoute)}
-                                </React.Fragment>
-                              );
-                            }
-
-                            return (
-                              <Route
-                                path={route.path}
-                                element={<Ui />}
-                                key={route.path}
-                              />
-                            );
-                          })}
-                          <Route path="/_offline" element={<OfflinePage />} />
-                          {!hasCustomHomePage && (
-                            <Route path="/" element={<DefaultHomePage />} />
-                          )}
-                        </Routes>
-                      </Suspense>
+                            })}
+                            <Route path="/_offline" element={<OfflinePage />} />
+                            {!hasCustomHomePage && (
+                              <Route path="/" element={<DefaultHomePage />} />
+                            )}
+                          </Routes>
+                        </Suspense>
+                      </Div>
                     </Div>
-                  </Div>
-                </MenuContextProvider>
-              </CodeThemeContext.Provider>
-            </Div>
-          </TargetAudienceProvider>
-        </NotificationProvider>
-      </IsClientContextProvider>
+                  </MenuContextProvider>
+                </CodeThemeContext.Provider>
+              </Div>
+            </TargetAudienceProvider>
+          </NotificationProvider>
+        </IsClientContextProvider>
+      </Tooltip.Provider>
     </Wrapper>
   );
 };
