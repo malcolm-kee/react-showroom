@@ -106,63 +106,65 @@ export const ShowroomApp = () => {
         color: ${THEME.colors['primary-800']};
       }`}</style>
       )}
-      <Tooltip.Provider>
-        <IsClientContextProvider>
-          <NotificationProvider>
-            <TargetAudienceProvider>
-              <Div className={colorTheme}>
-                <CodeThemeContext.Provider value={THEME.codeTheme}>
-                  <MenuContextProvider sections={sections}>
-                    <Div style={cssVariables}>
-                      {!shouldHideHeader && <Header ref={headerRef} />}
-                      <Div css={{ display: 'flex' }}>
-                        {!shouldHideSidebar && <Sidebar sections={sections} />}
-                        <Suspense
-                          fallback={<PageFallback title={matchedTitle} />}
-                        >
-                          <Routes>
-                            {routes.map(function dataToRoute(route, i) {
-                              if (!route) {
-                                return (
-                                  <React.Fragment key={i}>
-                                    {null}
-                                  </React.Fragment>
-                                );
-                              }
+      <RootProviders>
+        <MenuContextProvider sections={sections}>
+          <Div style={cssVariables}>
+            {!shouldHideHeader && <Header ref={headerRef} />}
+            <Div css={{ display: 'flex' }}>
+              {!shouldHideSidebar && <Sidebar sections={sections} />}
+              <Suspense fallback={<PageFallback title={matchedTitle} />}>
+                <Routes>
+                  {routes.map(function dataToRoute(route, i) {
+                    if (!route) {
+                      return <React.Fragment key={i}>{null}</React.Fragment>;
+                    }
 
-                              const Ui = route.ui;
+                    const Ui = route.ui;
 
-                              if (Array.isArray(Ui)) {
-                                return (
-                                  <React.Fragment key={route.path}>
-                                    {Ui.map(dataToRoute)}
-                                  </React.Fragment>
-                                );
-                              }
+                    if (Array.isArray(Ui)) {
+                      return (
+                        <React.Fragment key={route.path}>
+                          {Ui.map(dataToRoute)}
+                        </React.Fragment>
+                      );
+                    }
 
-                              return (
-                                <Route
-                                  path={route.path}
-                                  element={<Ui />}
-                                  key={route.path}
-                                />
-                              );
-                            })}
-                            <Route path="/_offline" element={<OfflinePage />} />
-                            {!hasCustomHomePage && (
-                              <Route path="/" element={<DefaultHomePage />} />
-                            )}
-                          </Routes>
-                        </Suspense>
-                      </Div>
-                    </Div>
-                  </MenuContextProvider>
-                </CodeThemeContext.Provider>
-              </Div>
-            </TargetAudienceProvider>
-          </NotificationProvider>
-        </IsClientContextProvider>
-      </Tooltip.Provider>
+                    return (
+                      <Route
+                        path={route.path}
+                        element={<Ui />}
+                        key={route.path}
+                      />
+                    );
+                  })}
+                  <Route path="/_offline" element={<OfflinePage />} />
+                  {!hasCustomHomePage && (
+                    <Route path="/" element={<DefaultHomePage />} />
+                  )}
+                </Routes>
+              </Suspense>
+            </Div>
+          </Div>
+        </MenuContextProvider>
+      </RootProviders>
     </Wrapper>
+  );
+};
+
+const RootProviders = (props: { children: React.ReactNode }) => {
+  return (
+    <Tooltip.Provider>
+      <IsClientContextProvider>
+        <NotificationProvider>
+          <TargetAudienceProvider>
+            <Div className={colorTheme}>
+              <CodeThemeContext.Provider value={THEME.codeTheme}>
+                {props.children}
+              </CodeThemeContext.Provider>
+            </Div>
+          </TargetAudienceProvider>
+        </NotificationProvider>
+      </IsClientContextProvider>
+    </Tooltip.Provider>
   );
 };
