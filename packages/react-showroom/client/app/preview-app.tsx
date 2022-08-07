@@ -5,7 +5,7 @@ import {
   SupportedLanguage,
 } from '@showroomjs/core';
 import { useMeasure } from '@showroomjs/measure';
-import { Alert, useConstant, useId } from '@showroomjs/ui';
+import { Alert, useConstant, useId, Tooltip } from '@showroomjs/ui';
 import * as React from 'react';
 import allCompMetadata from 'react-showroom-all-components-docs';
 import allImports from 'react-showroom-all-imports';
@@ -34,16 +34,18 @@ const componentsMetas = Object.values(allCompMetadata);
 export const PreviewApp = () => {
   return (
     <Wrapper>
-      <CodeImportsContextProvider value={allImports}>
-        <Routes>
-          <Route
-            path="/:codeHash/:componentId"
-            element={<ComponentPreviewPage />}
-          />
-          <Route path="/:codeHash" element={<GenericPreviewPage />} />
-          <Route path="*" element={<ErrorPage />} />
-        </Routes>
-      </CodeImportsContextProvider>
+      <Tooltip.Provider>
+        <CodeImportsContextProvider value={allImports}>
+          <Routes>
+            <Route
+              path="/:codeHash/:componentId"
+              element={<ComponentPreviewPage />}
+            />
+            <Route path="/:codeHash" element={<GenericPreviewPage />} />
+            <Route path="*" element={<ErrorPage />} />
+          </Routes>
+        </CodeImportsContextProvider>
+      </Tooltip.Provider>
     </Wrapper>
   );
 };

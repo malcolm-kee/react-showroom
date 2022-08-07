@@ -8,7 +8,7 @@ import {
 } from './animations';
 import { buttonBase } from './base';
 
-const StyledContent = styled(DropdownMenuPrimitive.Content, {
+const contentStyles = {
   minWidth: 220,
   backgroundColor: 'white',
   borderRadius: 6,
@@ -27,6 +27,10 @@ const StyledContent = styled(DropdownMenuPrimitive.Content, {
       '&[data-side="left"]': { animationName: slideRightAndFade },
     },
   },
+};
+
+const StyledContent = styled(DropdownMenuPrimitive.Content, {
+  ...contentStyles,
 });
 
 const itemStyles = {
@@ -59,12 +63,15 @@ const StyledCheckboxItem = styled(DropdownMenuPrimitive.CheckboxItem, {
 const StyledRadioItem = styled(DropdownMenuPrimitive.RadioItem, {
   ...itemStyles,
 });
-const StyledTriggerItem = styled(DropdownMenuPrimitive.TriggerItem, {
+const StyledSubTrigger = styled(DropdownMenuPrimitive.SubTrigger, {
   '&[data-state="open"]': {
     backgroundColor: '$primary-400',
     color: '$primary-900',
   },
   ...itemStyles,
+});
+const StyledSubContent = styled(DropdownMenuPrimitive.SubContent, {
+  ...contentStyles,
 });
 
 const StyledLabel = styled(DropdownMenuPrimitive.Label, {
@@ -108,7 +115,9 @@ export const DropdownMenu = Object.assign(DropdownMenuPrimitive.Root, {
   RadioGroup: DropdownMenuPrimitive.RadioGroup,
   RadioItem: StyledRadioItem,
   ItemIndicator: StyledItemIndicator,
-  TriggerItem: StyledTriggerItem,
+  Sub: DropdownMenuPrimitive.Sub,
+  SubTrigger: StyledSubTrigger,
+  SubContent: StyledSubContent,
   Label: StyledLabel,
   Separator: StyledSeparator,
   Arrow: StyledArrow,

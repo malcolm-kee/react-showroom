@@ -1,8 +1,9 @@
 // @ts-check
 const path = require('path');
 const { defineConfig } = require('react-showroom');
+const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin');
 
-module.exports = defineConfig((command) => ({
+module.exports = defineConfig(() => ({
   require: ['tailwindcss/tailwind.css', './src/custom.css'],
   items: [
     {
@@ -75,4 +76,7 @@ module.exports = defineConfig((command) => ({
   },
   assetDir: 'public',
   wrapper: 'docs/provider.tsx',
+  webpackConfig: {
+    plugins: [new VanillaExtractPlugin()],
+  },
 }));
