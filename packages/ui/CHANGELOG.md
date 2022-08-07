@@ -1,5 +1,16 @@
 # @showroomjs/ui
 
+## 2.1.0
+
+### Minor Changes
+
+- 946f49c: Bump dependencies
+
+### Patch Changes
+
+- Updated dependencies [946f49c]
+  - @showroomjs/core@2.2.0
+
 ## 2.0.2
 
 ### Patch Changes

@@ -1,5 +1,20 @@
 # react-showroom
 
+## 2.3.0
+
+### Minor Changes
+
+- 946f49c: Bump dependencies
+
+### Patch Changes
+
+- 946f49c: Bug fix: Fix broken build if any plugins is provided by user
+- Updated dependencies [946f49c]
+  - @showroomjs/core@2.2.0
+  - @showroomjs/device-frames@1.1.0
+  - @showroomjs/measure@1.1.0
+  - @showroomjs/ui@2.1.0
+
 ## 2.2.0
 
 ### Minor Changes

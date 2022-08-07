@@ -1,5 +1,11 @@
 # @showroomjs/measure
 
+## 1.1.0
+
+### Minor Changes
+
+- 946f49c: Bump dependencies
+
 ## 1.0.2
 
 ### Patch Changes

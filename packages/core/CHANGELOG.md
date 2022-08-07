@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 2.2.0
+
+### Minor Changes
+
+- 946f49c: Bump dependencies
+
 ## 2.1.1
 
 ### Patch Changes
