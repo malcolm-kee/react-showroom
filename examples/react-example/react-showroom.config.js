@@ -76,6 +76,8 @@ module.exports = defineConfig(() => ({
   },
   assetDir: 'public',
   wrapper: 'docs/provider.tsx',
+  editUrl: ({ relativePath }) =>
+    `https://github.com/malcolm-kee/react-showroom/edit/main/examples/react-example/${relativePath}`,
   webpackConfig: {
     plugins: [new VanillaExtractPlugin()],
   },

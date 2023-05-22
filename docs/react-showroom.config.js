@@ -172,4 +172,6 @@ module.exports = defineConfig({
   search: {
     includeHeadings: true,
   },
+  editUrl: ({ relativePath }) =>
+    `https://github.com/malcolm-kee/react-showroom/edit/main/docs/${relativePath}`,
 });

@@ -18,7 +18,11 @@ import { AudienceDropdownGroup, AudienceToggle } from './audience-toggle';
 import { Div } from './base';
 import { GenericLink } from './generic-link';
 
-const toggle = audienceDefault ? <AudienceToggle /> : null;
+const toggle = audienceDefault ? (
+  <Div css={{ textAlign: 'right' }}>
+    <AudienceToggle />
+  </Div>
+) : null;
 
 const navBarItems = THEME.navbar.items;
 
@@ -49,26 +53,28 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
         css={{
           display: 'none',
           '@md': {
-            display: 'block',
+            display: 'flex',
+            flexDirection: 'column',
             position: 'sticky',
             top: 'var(--header-height, 64px)',
             left: 0,
             bottom: 0,
             height: 'calc(100vh - var(--header-height, 64px))',
           },
-          paddingBottom: '$10',
           borderRight: '1px solid',
-          borderRightColor: '$gray-300',
+          borderRightColor: '$gray-200',
           width: 240,
           background: '$gray-100',
           overflowY: 'auto',
           overscrollBehaviorBlock: 'contain',
         }}
       >
+        <Div css={{ flex: 1 }}>
+          {props.sections.map((section, i) => (
+            <SidebarSection section={section} key={i} />
+          ))}
+        </Div>
         {toggle}
-        {props.sections.map((section, i) => (
-          <SidebarSection section={section} key={i} />
-        ))}
       </Div>
       <MobileSidebar sections={mobileSections} />
     </>
@@ -196,60 +202,60 @@ const SidebarSection = ({
       return section.hideFromSidebar ? null : (
         <Div
           css={{
-            borderBottom: '1px solid $gray-200',
-            py: '$2',
-            marginBottom: '$2',
+            marginY: '$4',
           }}
         >
           <Div className={sectionClass()}>{section.title}</Div>
-          <Div
-            css={{
-              px: '$2',
-            }}
-          >
-            {section.items.map((section, i) => (
-              <SidebarSection section={section} level={level + 1} key={i} />
-            ))}
-          </Div>
+          {section.items.map((section, i) => (
+            <SidebarSection section={section} level={level + 1} key={i} />
+          ))}
         </Div>
       );
 
     case 'component':
       return section.hideFromSidebar ? null : (
-        <Link to={`/${section.slug}`} root={level === 0} exact>
-          {section.title}
-        </Link>
+        <Div css={{ px: '$2' }}>
+          <Link to={`/${section.slug}`} root={level === 0} exact>
+            {section.title}
+          </Link>
+        </Div>
       );
 
     case 'markdown':
       return section.hideFromSidebar ? null : (
-        <Link to={`/${section.slug}`} root={level === 0} exact>
-          {section.formatLabel(
-            section.frontmatter.title || section.fallbackTitle
-          )}
-        </Link>
+        <Div css={{ px: '$2' }}>
+          <Link to={`/${section.slug}`} root={level === 0} exact>
+            {section.formatLabel(
+              section.frontmatter.title || section.fallbackTitle
+            )}
+          </Link>
+        </Div>
       );
 
     case 'link':
       return (
-        <Link
-          href={section.href}
-          target="_blank"
-          rel="noopener"
-          as={GenericLink}
-          css={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            gap: '$2',
-            alignItems: 'center',
-          }}
-          root={level === 0}
-        >
-          {section.title}
-          {isExternalLink(section.href) && (
-            <ExternalLinkIcon className={icons()} width={16} height={16} />
-          )}
-        </Link>
+        <Div css={{ px: '$2' }}>
+          <Link
+            href={section.href}
+            target="_blank"
+            rel="noopener"
+            as={GenericLink}
+            css={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              gap: '$2',
+              alignItems: 'center',
+              px: '$2',
+              borderRadius: '$md',
+            }}
+            root={level === 0}
+          >
+            {section.title}
+            {isExternalLink(section.href) && (
+              <ExternalLinkIcon className={icons()} width={16} height={16} />
+            )}
+          </Link>
+        </Div>
       );
 
     default:
@@ -260,9 +266,10 @@ const SidebarSection = ({
 const sectionClass = css({
   px: '$4',
   py: '$1',
-  fontSize: '$sm',
-  fontWeight: 'bolder',
-  color: '$gray-500',
+  fontSize: '$xs',
+  fontWeight: 'bold',
+  letterSpacing: '0.05em',
+  color: '$gray-400',
   textTransform: 'uppercase',
 });
 
@@ -285,7 +292,7 @@ const Link = styled(NavLink, {
   display: 'block',
   color: '$gray-600',
   textDecoration: 'none',
-  px: '$4',
+  px: '$2',
   py: '$1',
   borderRadius: '$md',
   fontSize: '$sm',

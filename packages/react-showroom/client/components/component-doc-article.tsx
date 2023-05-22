@@ -13,14 +13,14 @@ export const ComponentDocArticle = (props: {
   content: ReactShowroomComponentContent;
   metadata: ComponentDoc;
 }) => {
-  const { doc: Doc, headings } = props.content;
+  const { doc: Doc, headings, editUrl } = props.content;
 
-  const hasHeadings = headings && headings.length > 0;
+  const hasSideContent = (headings && headings.length > 0) || editUrl;
 
   return (
     <Div
       css={
-        hasHeadings
+        hasSideContent
           ? {
               '@xl': {
                 display: 'flex',
@@ -30,10 +30,12 @@ export const ComponentDocArticle = (props: {
           : undefined
       }
     >
-      {hasHeadings && <TableOfContent headings={headings} />}
+      {hasSideContent ? (
+        <TableOfContent headings={headings} editUrl={editUrl} />
+      ) : null}
       <Article
         css={
-          hasHeadings
+          hasSideContent
             ? {
                 '@xl': {
                   width: '75%',

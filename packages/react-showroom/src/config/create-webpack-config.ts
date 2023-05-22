@@ -275,6 +275,7 @@ const createBaseWebpackConfig = (
     componentsEntry,
     search,
     compilerOptions,
+    editUrl,
   } = config;
 
   const isBuild = options.operation === 'build';
@@ -296,6 +297,7 @@ const createBaseWebpackConfig = (
   const generated = generateSectionsAndImports(sections, {
     skipEmptyComponent: config.skipEmptyComponent,
     enableAdvancedEditor: exampleConfig.enableAdvancedEditor,
+    getEditUrl: editUrl,
   });
 
   const virtualModules = new VirtualModulesPlugin({

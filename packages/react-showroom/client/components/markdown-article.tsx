@@ -13,15 +13,16 @@ export const MarkdownArticle = (props: {
 }) => {
   const {
     slug,
-    content: { Component, headings },
+    content: { Component, headings, editUrl },
   } = props;
 
-  const hasHeadings = headings && headings.length > 0 && slug !== '';
+  const hasSideContent =
+    ((headings && headings.length > 0) || editUrl) && slug !== '';
 
   return (
     <Div
       css={
-        hasHeadings
+        hasSideContent
           ? {
               '@xl': {
                 display: 'flex',
@@ -31,11 +32,13 @@ export const MarkdownArticle = (props: {
           : undefined
       }
     >
-      {hasHeadings && <TableOfContent headings={headings} />}
+      {hasSideContent ? (
+        <TableOfContent headings={headings} editUrl={editUrl} />
+      ) : null}
       <Article
         center={props.center}
         css={
-          hasHeadings
+          hasSideContent
             ? {
                 '@xl': {
                   width: '75%',

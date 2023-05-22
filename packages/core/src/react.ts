@@ -234,6 +234,10 @@ export interface ShowroomSearchConfiguration {
   includeHeadings: boolean;
 }
 
+export type GetEditUrlFunction = (info: {
+  relativePath?: string;
+}) => string | null;
+
 export interface ReactShowroomConfiguration {
   /**
    * URL for the site.
@@ -346,6 +350,12 @@ export interface ReactShowroomConfiguration {
      */
     basePath?: string;
   };
+  /**
+   * Get the URL to edit the current page.
+   *
+   * If not specified or null is returned by the function, the edit button will not be shown.
+   */
+  editUrl?: GetEditUrlFunction;
   search?: Partial<ShowroomSearchConfiguration>;
   /**
    * Set cache directory for the build.
@@ -448,6 +458,7 @@ export interface ReactShowroomComponentContent {
   headings: Array<ReactShowroomMarkdownHeading>;
   imports: Record<string, any>;
   codeblocks: CodeBlocks;
+  editUrl: string | null;
   loadDts: () => Promise<{ default: Record<string, string> }>;
 }
 
@@ -486,6 +497,7 @@ export interface ReactShowroomMarkdownContent {
   imports: Record<string, any>;
   codeblocks: CodeBlocks;
   loadDts: () => Promise<{ default: Record<string, string> }>;
+  editUrl: string | null;
 }
 
 export interface ReactShowroomMarkdownSection {
