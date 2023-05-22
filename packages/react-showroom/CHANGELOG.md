@@ -1,5 +1,17 @@
 # react-showroom
 
+## 2.4.0
+
+### Minor Changes
+
+- 25c3bd0: Support editUrl configuration
+
+### Patch Changes
+
+- Updated dependencies [25c3bd0]
+  - @showroomjs/core@2.3.0
+  - @showroomjs/ui@2.2.0
+
 ## 2.3.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @showroomjs/core
 
+## 2.3.0
+
+### Minor Changes
+
+- 25c3bd0: Support editUrl configuration
+
 ## 2.2.0
 
 ### Minor Changes
