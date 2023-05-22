@@ -125,6 +125,14 @@ Title to be displayed for the site.
 
 Port for the React Showroom Dev Server.
 
+### `editUrl`
+
+- Type: `(data: { relativePath: string }) => string | null`
+
+Get the URL to edit the current page.
+
+If not specified, or return `null`, the edit button will not be shown.
+
 ## Advanced Config Options
 
 ### `items`

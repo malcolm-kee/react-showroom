@@ -5,7 +5,7 @@ const StyledSwitch = styled(SwitchPrimitive.Root, {
   all: 'unset',
   width: 42,
   height: 25,
-  backgroundColor: '$gray-400',
+  backgroundColor: '$gray-300',
   borderRadius: '9999px',
   position: 'relative',
   boxShadow: `0 2px 10px $gray-500`,

@@ -3,12 +3,15 @@ import { H1, headerHeight, createHeadingWithAnchor } from './base';
 import { Code, Pre } from './code-block';
 import { GenericLink } from './generic-link';
 
+const contentMaxWidth = '56rem';
+
 const Li = styled('li', {
   marginY: '0.5em',
 });
 
 const Ul = styled('ul', {
   marginY: '1.25em',
+  maxWidth: contentMaxWidth,
   [`& ${Li}`]: {
     position: 'relative',
     paddingLeft: '1.75em',
@@ -27,6 +30,7 @@ const Ul = styled('ul', {
 
 const Ol = styled('ul', {
   marginY: '1.25em',
+  maxWidth: contentMaxWidth,
   counterReset: 'list-item',
   [`& ${Li}`]: {
     counterIncrement: 'list-item',
@@ -79,6 +83,7 @@ export const mdxComponents = {
   code: Code,
   p: styled('p', {
     marginY: '$3',
+    maxWidth: contentMaxWidth,
   }),
   hr: styled('hr', {
     borderColor: '$gray-200',

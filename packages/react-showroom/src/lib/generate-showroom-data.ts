@@ -2,6 +2,7 @@ import { getSafeName } from '@showroomjs/core';
 import {
   ReactShowroomComponentSectionConfig,
   ReactShowroomSectionConfig,
+  GetEditUrlFunction,
 } from '@showroomjs/core/react';
 import path from 'path';
 import { logToStdout, yellow } from './log-to-stdout';
@@ -67,14 +68,23 @@ function compileComponentSection(
   {
     metadataIdentifier,
     enableAdvancedEditor,
+    getEditUrl,
   }: {
     metadataIdentifier: string;
     enableAdvancedEditor: boolean;
+    getEditUrl?: GetEditUrlFunction;
   }
 ): string {
   const { docPath, sourcePath } = component;
 
   const { name: componentName } = path.parse(sourcePath);
+
+  const editUrl =
+    getEditUrl && docPath
+      ? getEditUrl({
+          relativePath: path.relative(paths.appPath, docPath),
+        })
+      : null;
 
   const load = docPath
     ? `async () => {
@@ -92,6 +102,7 @@ function compileComponentSection(
     Component: Component.default || Component[${metadataIdentifier}.displayName] || Component,
     imports: imports || {},
     codeblocks: (await loadCodeBlocks).default || {},
+    editUrl: ${JSON.stringify(editUrl)},
     loadDts: () => ${
       enableAdvancedEditor
         ? `import('${docPath}?showroomRemarkImportsDts')`
@@ -127,6 +138,7 @@ export const generateSectionsAndImports = (
   sections: Array<ReactShowroomSectionConfig>,
   options: {
     enableAdvancedEditor: boolean;
+    getEditUrl?: GetEditUrlFunction;
     skipEmptyComponent?: boolean;
   }
 ) => {
@@ -172,6 +184,7 @@ export const generateSectionsAndImports = (
               type: 'component',
               data: ${compileComponentSection(section, {
                 enableAdvancedEditor: options.enableAdvancedEditor,
+                getEditUrl: options.getEditUrl,
                 metadataIdentifier: name,
               })},
               metadata: ${name},
@@ -210,6 +223,16 @@ export const generateSectionsAndImports = (
                 : 'showroomRemarkDocImports'
             }`,
           });
+
+          const editUrl =
+            options.getEditUrl && section.sourcePath
+              ? options.getEditUrl({
+                  relativePath: path.relative(
+                    paths.appPath,
+                    section.sourcePath
+                  ),
+                })
+              : null;
 
           const chunkName = `${section.title || section.slug || ''}${name}`;
 
@@ -250,6 +273,7 @@ export const generateSectionsAndImports = (
                 return {
                   Component,
                   headings,
+                  editUrl: ${JSON.stringify(editUrl)},
                   imports,
                   codeblocks: (await loadCodeblocks).default || {},
                   loadDts: () => ${

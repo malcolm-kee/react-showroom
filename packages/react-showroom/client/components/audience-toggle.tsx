@@ -16,8 +16,7 @@ export const AudienceToggle = () => {
   return (
     <Div
       css={{
-        display: 'flex',
-        justifyContent: 'center',
+        display: 'inline-flex',
         alignItems: 'center',
         gap: '$3',
         px: '$3',
@@ -83,6 +82,8 @@ const Label = styled('label', {
   width: 56,
   display: 'block',
   color: '$gray-500',
+  fontSize: '$sm',
+  textTransform: 'uppercase',
 });
 
 const Icon = styled(CheckIcon, {
