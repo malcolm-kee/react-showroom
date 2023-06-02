@@ -8,6 +8,7 @@ import {
   keyframes,
   Portal,
   styled,
+  useIsClient,
 } from '@showroomjs/ui';
 import * as React from 'react';
 import { audienceDefault } from '../lib/config';
@@ -46,6 +47,8 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
     return props.sections;
   }, [props.sections]);
 
+  const isClient = useIsClient();
+
   return (
     <>
       <Div
@@ -76,7 +79,7 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
         </Div>
         {toggle}
       </Div>
-      <MobileSidebar sections={mobileSections} />
+      {isClient && <MobileSidebar sections={mobileSections} />}
     </>
   );
 };
