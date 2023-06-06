@@ -1,6 +1,12 @@
 import { QueryClientProvider } from '@showroomjs/bundles/query';
 import { StaticRouter } from '@showroomjs/bundles/routing';
-import { flattenArray, isDefined, NestedArray, Ssr } from '@showroomjs/core';
+import {
+  flattenArray,
+  isDefined,
+  NestedArray,
+  removeTrailingSlash,
+  Ssr,
+} from '@showroomjs/core';
 import { ReactShowroomSection } from '@showroomjs/core/react';
 import { getCssText } from '@showroomjs/ui';
 import * as React from 'react';
@@ -21,7 +27,7 @@ export const ssr: Ssr = {
     const queryClient = createQueryClient();
 
     const result = ReactDOMServer.renderToString(
-      <StaticRouter location={{ pathname }} basename={process.env.BASE_PATH}>
+      <StaticRouter location={{ pathname }}>
         <QueryClientProvider client={queryClient}>
           <ShowroomApp />
         </QueryClientProvider>
@@ -53,7 +59,8 @@ export const ssr: Ssr = {
         result.push(
           [section.slug].concat(
             standaloneRoutes.map(
-              (route) => `${section.slug}/_standalone/${route}/`
+              (route) =>
+                `${removeTrailingSlash(section.slug)}/_standalone/${route}/`
             )
           )
         );
@@ -69,7 +76,8 @@ export const ssr: Ssr = {
         result.push(
           [section.slug].concat(
             standaloneRoutes.map(
-              (route) => `${section.slug}/_standalone/${route}/`
+              (route) =>
+                `${removeTrailingSlash(section.slug)}/_standalone/${route}/`
             )
           )
         );

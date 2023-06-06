@@ -96,21 +96,60 @@ export type Message =
       color: string;
     };
 
-export const usePreviewWindow = (onMessage: (data: Message) => void) => {
-  useMessage(onMessage, (ev) => ev.source === parent);
+type SendMessage = (data: Message) => void;
 
-  useEffect(() => {
-    parent.postMessage(
-      {
-        type: 'ready',
-      },
-      window.origin
-    );
+export const usePreviewWindow = (onMessage: (data: Message) => void) => {
+  const messageQueue = useConstant<Array<Message>>(() => []);
+  const isReadyRef = useRef(false);
+
+  const postMessageToParent: SendMessage = useCallback((data) => {
+    parent.postMessage(data, window.origin);
   }, []);
 
-  const sendParent = useCallback(function sendMsgToParent(data: Message) {
+  useMessage(
+    (msg) => {
+      if (msg && msg.type === 'ready') {
+        isReadyRef.current = true;
+        messageQueue.forEach(postMessageToParent);
+      } else {
+        onMessage(msg);
+      }
+    },
+    (ev) => ev.source === parent
+  );
+
+  useEffect(() => {
+    let timer: number | undefined = undefined;
+
+    const sendIfNotReady = () => {
+      if (!isReadyRef.current) {
+        postMessageToParent({
+          type: 'ready',
+        });
+
+        // it is possible that the parent is not ready yet when we send
+        // for the first time, so we need to keep trying until we get a
+        // response
+        timer = window.setTimeout(sendIfNotReady, 1000);
+      }
+    };
+
+    sendIfNotReady();
+
+    return () => {
+      if (timer) {
+        window.clearTimeout(timer);
+      }
+    };
+  }, []);
+
+  const sendParent: SendMessage = useCallback(function sendMsgToParent(data) {
     try {
-      parent.postMessage(data, window.origin);
+      if (!isReadyRef.current) {
+        messageQueue.push(data);
+        return;
+      }
+      postMessageToParent(data);
     } catch (err) {
       if (data.type === 'log') {
         console.group('Fail to log data into panel');
@@ -138,16 +177,22 @@ export const useParentWindow = (onMessage?: (data: Message) => void) => {
   const messageQueue = useConstant<Array<Message>>(() => []);
   const isReadyRef = useRef(false);
 
+  const sendToFrame: SendMessage = useCallback((data) => {
+    const targetWindow = targetRef.current && targetRef.current.contentWindow;
+
+    if (targetWindow) {
+      targetWindow.postMessage(data, window.origin);
+    }
+  }, []);
+
   useMessage(
     (msg) => {
       if (msg.type === 'ready') {
         isReadyRef.current = true;
-        const targetWindow =
-          targetRef.current && targetRef.current.contentWindow;
 
-        messageQueue.forEach((msg) => {
-          targetWindow!.postMessage(msg, window.origin);
-        });
+        sendToFrame({ type: 'ready' });
+
+        messageQueue.forEach(sendToFrame);
       } else if (onMessage) {
         onMessage(msg);
       }
@@ -166,11 +211,7 @@ export const useParentWindow = (onMessage?: (data: Message) => void) => {
       return;
     }
 
-    const targetWindow = targetRef.current && targetRef.current.contentWindow;
-
-    if (targetWindow) {
-      targetWindow.postMessage(data, window.origin);
-    }
+    sendToFrame(data);
   }, []);
 
   return {

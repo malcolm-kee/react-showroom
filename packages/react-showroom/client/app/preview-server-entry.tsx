@@ -25,10 +25,7 @@ export const ssr: Ssr = {
     const queryClient = createQueryClient();
 
     const result = ReactDOMServer.renderToString(
-      <StaticRouter
-        location={{ pathname }}
-        basename={`${process.env.BASE_PATH}/_preview`}
-      >
+      <StaticRouter location={{ pathname }}>
         <QueryClientProvider client={queryClient}>
           <PreviewApp />
         </QueryClientProvider>
