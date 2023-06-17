@@ -238,7 +238,7 @@ const formatFixedPointNumber = (
   // must not to convert it to 1.24, it must stay 1.23
   const scaledTail = tail != null ? tail.slice(0, decimalPlaces) : '';
 
-  let number = Number.parseFloat(`${head}.${scaledTail}`);
+  const number = Number.parseFloat(`${head}.${scaledTail}`);
 
   if (Number.isNaN(number)) {
     return '';

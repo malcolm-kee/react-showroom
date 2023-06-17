@@ -35,27 +35,29 @@ export type CheckboxProps = Omit<
 };
 
 export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
-  (props, ref) => (
-    <StyledRoot
-      {...props}
-      css={
-        props.checked === true
-          ? {
-              backgroundColor: '$primary-600',
-              borderColor: '$primary-600',
-            }
-          : undefined
-      }
-      ref={ref}
-    >
-      <Indicator>
-        {props.checked === 'indeterminate' && (
-          <DashIcon width={16} height={16} />
-        )}
-        {props.checked === true && <CheckIcon width={16} height={16} />}
-      </Indicator>
-    </StyledRoot>
-  )
+  function Checkbox(props, ref) {
+    return (
+      <StyledRoot
+        {...props}
+        css={
+          props.checked === true
+            ? {
+                backgroundColor: '$primary-600',
+                borderColor: '$primary-600',
+              }
+            : undefined
+        }
+        ref={ref}
+      >
+        <Indicator>
+          {props.checked === 'indeterminate' && (
+            <DashIcon width={16} height={16} />
+          )}
+          {props.checked === true && <CheckIcon width={16} height={16} />}
+        </Indicator>
+      </StyledRoot>
+    );
+  }
 );
 
 const DashIcon = styled(MinusIcon, {

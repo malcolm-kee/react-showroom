@@ -131,7 +131,8 @@
     "build:client": "tsc --project tsconfig.client.json",
     "build:lib": "tsc",
     "clean": "rimraf dist client-dist *.tsbuildinfo",
-    "typecheck:client": "tsc --noEmit --project tsconfig.client.json"
+    "typecheck:client": "tsc --noEmit --project tsconfig.client.json",
+    "lint": "eslint src/**"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.182",

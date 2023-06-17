@@ -68,7 +68,7 @@ const showroomAllComponentPropLoader: LoaderDefinition<ShowroomAllComponentLoade
               const interfaceBase = `React.${reactDeclaration.name}`;
               const genericInterface = `${interfaceBase}<Element>`;
 
-              const matches = propDef.type.name.match(/\<(\w+)\>/);
+              const matches = propDef.type.name.match(/<(\w+)>/);
               const elementType = matches && matches[1];
 
               if (elementType) {
@@ -98,12 +98,12 @@ const showroomAllComponentPropLoader: LoaderDefinition<ShowroomAllComponentLoade
 
       if (extendedInterfacesArray.length > 1) {
         const htmlAttributes = extendedInterfacesArray.find((a) =>
-          /React\.HTMLAttributes\<Element\>/.test(a[0])
+          /React\.HTMLAttributes<Element>/.test(a[0])
         );
 
         if (htmlAttributes) {
           extendedInterfacesArray
-            .filter((a) => /React\.DOMAttributes\<\w+\>/.test(a[0]))
+            .filter((a) => /React\.DOMAttributes<\w+>/.test(a[0]))
             .forEach((domAttributesEntry) => {
               extendedInterfacesArray.splice(
                 extendedInterfacesArray.indexOf(domAttributesEntry),
@@ -112,7 +112,7 @@ const showroomAllComponentPropLoader: LoaderDefinition<ShowroomAllComponentLoade
 
               const [domAttributes, props] = domAttributesEntry;
               htmlAttributes[1].push(...props);
-              const matches = domAttributes.match(/\<(\w+)\>/);
+              const matches = domAttributes.match(/<(\w+)>/);
 
               if (matches && matches[1] !== 'Element') {
                 htmlAttributes[0] = htmlAttributes[0].replace(
@@ -170,7 +170,7 @@ const normalizeType = (type: string): string => {
   if (
     REACT_TYPES.indexOf(type) !== -1 ||
     REACT_EVENT_HANDLERS_PATTERN.test(type) ||
-    /^Ref\<\w+\>/.test(type)
+    /^Ref<\w+>/.test(type)
   ) {
     return `React.${type}`;
   }

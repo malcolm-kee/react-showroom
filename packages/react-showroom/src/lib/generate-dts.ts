@@ -49,13 +49,13 @@ export const generateDts = async (
 
 async function waitFileExist(path: string, timeout = 20000) {
   let totalTime = 0;
-  let checkTime = timeout / 10;
+  const checkTime = timeout / 10;
 
   return await new Promise((resolve) => {
     const timer = setInterval(function () {
       totalTime += checkTime;
 
-      let fileExists = fs.existsSync(path);
+      const fileExists = fs.existsSync(path);
 
       if (fileExists || totalTime >= timeout) {
         clearInterval(timer);

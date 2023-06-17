@@ -2,6 +2,7 @@ node_modules/
 *.tsbuildinfo
 .DS_Store
 .showroom_cache
+test-results/
 
 yarn-error.log
 .turbo

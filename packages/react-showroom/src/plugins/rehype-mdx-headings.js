@@ -1,8 +1,6 @@
-const visit = require('unist-util-visit');
 const isHeading = require('hast-util-heading');
 const getHeadingRank = require('hast-util-heading-rank');
 const toHtml = require('hast-util-to-html');
-const findNode = require('unist-util-find');
 
 import { valueToEstree } from 'estree-util-value-to-estree';
 

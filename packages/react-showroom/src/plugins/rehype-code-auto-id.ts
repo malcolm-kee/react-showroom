@@ -3,7 +3,7 @@ const visit = require('unist-util-visit');
 import type { Element, Root, Text } from 'hast';
 import { createHash } from '../lib/create-hash';
 
-var defaultPrefix = 'code';
+const defaultPrefix = 'code';
 let count = 1;
 
 /**

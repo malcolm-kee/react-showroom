@@ -23,7 +23,8 @@ const showroomRemarkCodeblocksLoader: LoaderDefinition<ShowroomRemarkCodeBlocksL
                 ...meta,
                 ...result,
               }
-            : (result as any)
+            : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (result as any)
         );
       })
       .catch((err) => callback(err));

@@ -41,7 +41,9 @@ export const getTypeDefinitionsForPkg = (
         modulePath: `node_modules/${dtsPkgName}/${file}`,
       }));
     }
-  } catch (e) {}
+  } catch (err) {
+    // ignore
+  }
 
   return [];
 };

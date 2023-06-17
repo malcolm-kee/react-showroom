@@ -16,6 +16,7 @@ const spaces = SPACE_VARIANTS.reduce<
     ...result,
     [item]: `${Math.round(item * SPACE_UNIT)}px`,
   }),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   {} as any
 );
 
@@ -209,6 +210,7 @@ type StitchResult = Stitches<
   StitchConfigType['utils']
 >;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const result: StitchResult = createStitches(StitchConfig) as any;
 
 export const {

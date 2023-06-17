@@ -3,23 +3,22 @@ import { TextInput, TextInputProps } from './text-input';
 import { styled } from '../stitches.config';
 
 export const ColorInput = styled(
-  React.forwardRef<HTMLInputElement, TextInputProps>(function ColorInput(
-    { onValue, type, ...props },
-    ref
-  ) {
-    return (
-      <TextInput
-        {...props}
-        onValue={(value) => {
-          if (validHex(value) && onValue) {
-            onValue(`#${escapeHex(value)}`);
-          }
-        }}
-        spellCheck={false}
-        ref={ref}
-      />
-    );
-  })
+  React.forwardRef<HTMLInputElement, Omit<TextInputProps, 'type'>>(
+    function ColorInput({ onValue, ...props }, ref) {
+      return (
+        <TextInput
+          {...props}
+          onValue={(value) => {
+            if (validHex(value) && onValue) {
+              onValue(`#${escapeHex(value)}`);
+            }
+          }}
+          spellCheck={false}
+          ref={ref}
+        />
+      );
+    }
+  )
 );
 
 const matcher = /^#?([0-9A-F]{3,8})$/i;
