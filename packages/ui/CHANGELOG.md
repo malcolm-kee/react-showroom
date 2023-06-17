@@ -1,5 +1,11 @@
 # @showroomjs/ui
 
+## 2.2.1
+
+### Patch Changes
+
+- 4626d93: Add eslint and fix some bad code
+
 ## 2.2.0
 
 ### Minor Changes

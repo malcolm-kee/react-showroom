@@ -1,5 +1,12 @@
 # react-example
 
+## 1.1.42
+
+### Patch Changes
+
+- Updated dependencies [4626d93]
+  - react-showroom@2.4.1
+
 ## 1.1.41
 
 ### Patch Changes

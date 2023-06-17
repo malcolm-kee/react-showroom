@@ -1,5 +1,13 @@
 # react-showroom
 
+## 2.4.1
+
+### Patch Changes
+
+- 4626d93: Add eslint and fix some bad code
+- Updated dependencies [4626d93]
+  - @showroomjs/ui@2.2.1
+
 ## 2.4.0
 
 ### Minor Changes
