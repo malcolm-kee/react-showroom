@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useStableCallback } from './use-stable-callback';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useDebouncedCallback = <Callback extends (...args: any[]) => any>(
   cb: Callback,
   delay = 3000

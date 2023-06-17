@@ -33,7 +33,7 @@ const getClientImportMap = (imports: Array<ImportConfig>) =>
     };
   }, {});
 
-const isPackage = (pathName: string) => /^[a-z\-]+$/.test(pathName);
+const isPackage = (pathName: string) => /^[a-z-]+$/.test(pathName);
 
 export const getImportsAttach = (
   importConfigs: Array<ImportConfig>

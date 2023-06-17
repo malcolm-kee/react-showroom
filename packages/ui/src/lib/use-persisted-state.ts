@@ -4,6 +4,7 @@ import mitt from 'mitt';
 type StateEvent = {
   change: {
     key: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any;
   };
 };

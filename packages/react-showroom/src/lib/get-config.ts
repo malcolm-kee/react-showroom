@@ -495,39 +495,11 @@ export const getConfig = (
               hideFromSidebar: sectionConfig.hideFromSidebar,
             };
 
-            collectDocs(section.items, slugParts, formatLabel);
+            collectDocs(section.items, slugParts, formatLabel, pagesPaths);
 
             parent.push(section);
           } else {
-            collectDocs(parent, parentSlugs, formatLabel);
-          }
-
-          function collectDocs(
-            targetItems: Array<ReactShowroomSectionConfig>,
-            pathToDoc: Array<string>,
-            formatLabel: (ori: string) => string
-          ) {
-            pagesPaths.forEach((pagePath) => {
-              const pathInfo = path.parse(pagePath);
-
-              const slug = pathInfo.name === 'index' ? '' : pathInfo.name;
-
-              if (slug.startsWith('_')) {
-                logToStdout(
-                  yellow(
-                    'Having path starts with _ may causes unexpected behavior.'
-                  )
-                );
-                logToStdout(`Path is "${slug}" for ${pagePath}`);
-              }
-
-              targetItems.push({
-                type: 'markdown',
-                sourcePath: path.resolve(paths.appPath, pagePath),
-                slug: pathToDoc.concat(slug).join('/'),
-                formatLabel,
-              });
-            });
+            collectDocs(parent, parentSlugs, formatLabel, pagesPaths);
           }
 
           return;
@@ -539,6 +511,33 @@ export const getConfig = (
     });
   }
 };
+
+function collectDocs(
+  targetItems: Array<ReactShowroomSectionConfig>,
+  pathToDoc: Array<string>,
+  formatLabel: (ori: string) => string,
+  pagePaths: Array<string>
+) {
+  pagePaths.forEach((pagePath) => {
+    const pathInfo = path.parse(pagePath);
+
+    const slug = pathInfo.name === 'index' ? '' : pathInfo.name;
+
+    if (slug.startsWith('_')) {
+      logToStdout(
+        yellow('Having path starts with _ may causes unexpected behavior.')
+      );
+      logToStdout(`Path is "${slug}" for ${pagePath}`);
+    }
+
+    targetItems.push({
+      type: 'markdown',
+      sourcePath: path.resolve(paths.appPath, pagePath),
+      slug: pathToDoc.concat(slug).join('/'),
+      formatLabel,
+    });
+  });
+}
 
 function normalizeDimensions(
   dimensions: Array<FrameWithMaybeName | DeviceName>

@@ -45,7 +45,15 @@ export function createDocParser(options: {
             ts.createDocumentRegistry()
           );
 
-          return languageService.getProgram()!;
+          const result = languageService.getProgram();
+
+          if (!result) {
+            throw new Error(
+              `Language service could not getProgram for ${filePath}`
+            );
+          }
+
+          return result;
         }
       );
 

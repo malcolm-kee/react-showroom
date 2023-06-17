@@ -27,6 +27,7 @@ const merge = mergeWithCustomize({
   customizeArray: unique(
     'plugins',
     IGNORE_PLUGINS,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (plugin: any) => plugin.constructor && plugin.constructor.name
   ),
 });

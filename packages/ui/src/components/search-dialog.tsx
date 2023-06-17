@@ -26,9 +26,7 @@ export interface SearchDialogProps<T> {
   isLoading?: boolean;
 }
 
-const SearchDialogImpl = function SearchDialog<T extends unknown>(
-  props: SearchDialogProps<T>
-) {
+const SearchDialogImpl = function SearchDialog<T>(props: SearchDialogProps<T>) {
   return (
     <Dialog.Content
       aria-label="Search"
@@ -40,7 +38,7 @@ const SearchDialogImpl = function SearchDialog<T extends unknown>(
   );
 };
 
-const SearchDialogInternal = function SearchDialog<T extends unknown>(
+const SearchDialogInternal = function SearchDialog<T>(
   props: SearchDialogProps<T>
 ) {
   const [inputValue, setInputValue] = React.useState('');
@@ -219,7 +217,9 @@ const Item = styled('li', {
 
 type Dismiss = () => void;
 
-const DismissContext = React.createContext<Dismiss>(() => {});
+const DismissContext = React.createContext<Dismiss>(() => {
+  /* noop */
+});
 
 const SearchDialogRoot = ({ children }: { children: React.ReactNode }) => {
   const [isOpen, setIsOpen] = React.useState(false);

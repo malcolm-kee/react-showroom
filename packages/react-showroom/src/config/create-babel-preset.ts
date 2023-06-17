@@ -7,7 +7,11 @@ export const createBabelPreset = (env: Environment) => {
     | undefined {
     try {
       return require('@babel/runtime/package.json').version;
-    } catch (err) {}
+    } catch (err) {
+      console.warn(err);
+
+      return undefined;
+    }
   })();
 
   const isDev = env === 'development';
@@ -18,7 +22,9 @@ export const createBabelPreset = (env: Environment) => {
     absoluteRuntimePath = path.dirname(
       require.resolve('@babel/runtime/package.json')
     );
-  } catch (err) {}
+  } catch (err) {
+    console.warn(err);
+  }
 
   return {
     presets: [

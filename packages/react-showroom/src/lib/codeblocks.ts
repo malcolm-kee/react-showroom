@@ -41,38 +41,51 @@ export const codeblocks = <
     filter = () => true,
   }: CodeBlocksOptions<Name, Lang> = {}
 ): Lang extends 'all' ? AllLangResult<Name> : SingleLangResult<Name> => {
+  if (lang === all) {
+    const result = {
+      [name]: {},
+    } as AllLangResult<Name>;
+
+    const { children } = tree;
+
+    let i = -1;
+
+    while (++i < children.length) {
+      const child = children[i];
+
+      if (child.type === 'code' && child.value && filter(child)) {
+        child.lang = child.lang || '_';
+
+        // @ts-expect-error typescript can't infer this correctly
+        result[name as Name][child.lang] = result[name][child.lang] || [];
+        result[name][child.lang].push(formatter(child.value));
+      }
+    }
+
+    return result as Lang extends 'all'
+      ? AllLangResult<Name>
+      : SingleLangResult<Name>;
+  }
+
   const { children } = tree;
-  const result =
-    lang === all
-      ? ({
-          [name]: {},
-        } as AllLangResult<Name>)
-      : ({
-          [name]: [] as Array<string>,
-        } as SingleLangResult<Name>);
+  const result = {
+    [name]: [] as Array<string>,
+  } as SingleLangResult<Name>;
   let i = -1;
 
   while (++i < children.length) {
     const child = children[i];
 
     if (child.type === 'code' && child.value && filter(child)) {
-      if (lang === all) {
-        child.lang = child.lang || '_';
-        // @ts-ignore
-        result[name][child.lang] = result[name][child.lang] || [];
-        // @ts-ignore
-        result[name][child.lang].push(formatter(child.value));
-      } else {
-        if (child.lang === lang) {
-          // @ts-ignore
-          result[name].push(formatter(child.value));
-        }
+      if (child.lang === lang) {
+        result[name].push(formatter(child.value));
       }
     }
   }
 
-  // @ts-ignore
-  return result;
+  return result as Lang extends 'all'
+    ? AllLangResult<Name>
+    : SingleLangResult<Name>;
 };
 
 const parser = unified().use(remarkParse);
