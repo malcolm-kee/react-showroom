@@ -1,4 +1,4 @@
-import { pulse, styled } from '@showroomjs/ui';
+import { tw } from '@showroomjs/ui';
 import { usePropsEditorContext } from '../lib/use-props-editor';
 import { PropsEditor } from './props-editor';
 
@@ -6,87 +6,48 @@ export const PropsEditorPanel = (props: { className?: string }) => {
   const editor = usePropsEditorContext();
 
   return (
-    <Panel loading={!editor} className={props.className}>
+    <div
+      className={tw(
+        ['px-2 py-4', !editor && 'animate-pulse'],
+        [props.className]
+      )}
+    >
       {editor ? (
         <PropsEditor editor={editor} />
       ) : (
-        <LoadingRoot aria-hidden>
-          <LoadingLabel
-            css={{
-              width: 90,
-            }}
-          />
+        <div
+          className={tw([
+            'grid items-center [grid-template-columns:max-content_1fr] gap-x-2 sm:gap-2 py-1',
+          ])}
+          aria-hidden
+        >
+          <LoadingLabel className={tw(['w-[90px]'])} />
           <Control />
-          <LoadingLabel />
-          <Control css={{ maxWidth: '10rem' }} />
-          <LoadingLabel
-            css={{
-              width: 60,
-            }}
-          />
-          <Control
-            css={{
-              height: 90,
-              maxWidth: 'none',
-            }}
-          />
-          <LoadingLabel />
+          <LoadingLabel className={tw(['w-[105px]'])} />
+          <Control className={tw(['max-w-[10rem]'])} />
+          <LoadingLabel className={tw(['w-[60px]'])} />
+          <Control className={tw(['h-[90px] max-w-none'])} />
+          <LoadingLabel className={tw(['w-[105px]'])} />
           <Control />
-        </LoadingRoot>
+        </div>
       )}
-    </Panel>
+    </div>
   );
 };
 
-const Panel = styled('div', {
-  px: '$2',
-  py: '$4',
-  variants: {
-    loading: {
-      true: {
-        animation: `${pulse} 2s cubic-bezier(0.4, 0, 0.6, 1) infinite`,
-      },
-    },
-  },
-});
+const LoadingLabel = (props: { className?: string }) => (
+  <div className={tw(['h-6 bg-zinc-300'], [props.className])} />
+);
 
-const LoadingRoot = styled('div', {
-  display: 'grid',
-  alignItems: 'center',
-  py: '$1',
-  gridTemplateColumns: 'max-content 1fr',
-  columnGap: '$2',
-  '@sm': {
-    gap: '$2',
-  },
-});
-
-const LoadingLabel = styled('div', {
-  backgroundColor: '$gray-300',
-  height: '1.5rem',
-  width: '105px',
-});
-
-const LoadingControl = styled('div', {
-  backgroundColor: '$gray-100',
-  height: '2rem',
-  width: '100%',
-  maxWidth: '36rem',
-  border: '1px solid $gray-300',
-  borderRadius: '$base',
-});
-
-const ControlWrapper = styled('div', {
-  '@sm': {
-    px: '$2',
-    py: '$1',
-  },
-});
-
-const Control = styled(function Control(props: { className?: string }) {
+function Control(props: { className?: string }) {
   return (
-    <ControlWrapper>
-      <LoadingControl {...props} />
-    </ControlWrapper>
+    <div className={tw(['sm:px-2 sm:py-1'])}>
+      <div
+        className={tw(
+          ['w-full h-8 max-w-xl border border-zinc-300 rounded bg-zinc-100'],
+          [props.className]
+        )}
+      />
+    </div>
   );
-});
+}
