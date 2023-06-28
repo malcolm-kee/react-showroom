@@ -1,4 +1,4 @@
-import { MinusIcon, PlusIcon } from '@heroicons/react/solid';
+import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { callAll, isDefined, isNumber, noop } from '@showroomjs/core';
 import { useRifm } from 'rifm';
 import { formatMoney } from '../lib/number';

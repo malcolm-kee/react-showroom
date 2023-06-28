@@ -1,5 +1,5 @@
 import { SupportedLanguage } from '@showroomjs/core';
-import { Collapsible, css, Tabs, useDebounce } from '@showroomjs/ui';
+import { Collapsible, Tabs, tw, useDebounce } from '@showroomjs/ui';
 import type { Language } from 'prism-react-renderer';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
@@ -9,7 +9,6 @@ import { PreviewConsoleProvider } from '../lib/use-preview-console';
 import { useTargetAudience } from '../lib/use-target-audience';
 import { A11yResultPanel } from './a11y-result-panel';
 import { A11ySummary } from './a11y-summary';
-import { Div } from './base';
 import { CodeEditor } from './code-editor';
 import { CodePreviewFrame } from './code-preview-frame';
 import {
@@ -94,22 +93,14 @@ export const CodeLiveEditor = ({
   return (
     <div className={className}>
       <PreviewConsoleProvider>
-        <Div
-          css={{
-            position: 'relative',
-            roundedT: hasHeading ? '$none' : '$base',
-            ...(frame
-              ? {
-                  backgroundColor: '$gray-400',
-                  borderBottomRightRadius: '$base',
-                  width: '100%',
-                }
-              : {
-                  minHeight: 48,
-                  border: '1px solid',
-                  borderColor: '$gray-300',
-                }),
-          }}
+        <div
+          className={tw([
+            'relative',
+            !hasHeading && 'rounded-t',
+            frame
+              ? 'w-full bg-zinc-400 rounded-br'
+              : 'min-h-[48px] border border-zinc-300',
+          ])}
         >
           {frame ? (
             <CodePreviewIframe
@@ -135,39 +126,20 @@ export const CodeLiveEditor = ({
           ) : (
             <CodePreviewShowroomFrame code={debouncedCode} lang={lang} />
           )}
-        </Div>
+        </div>
         <ConsolePanel />
-        <Collapsible.Root open={showDetails} onOpenChange={setShowDetails}>
-          <Div
-            css={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              py: '$1',
-            }}
-          >
+        <Collapsible open={showDetails} onOpenChange={setShowDetails}>
+          <div className={tw(['flex justify-between py-1'])}>
             <Collapsible.Button
-              css={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '$1',
-                fontSize: '$sm',
-                lineHeight: '$sm',
-              }}
+              className={tw(['flex items-center gap-1 text-sm'])}
             >
               <Collapsible.ToggleIcon
-                hide={showDetails}
+                direction={showDetails ? 'up' : 'down'}
                 aria-label={showDetails ? 'Hide' : 'View'}
-                width="16"
-                height="16"
               />
               {a11yPanelOnly ? 'Accessibility' : 'Details'}
             </Collapsible.Button>
-            <Div
-              css={{
-                display: 'inline-flex',
-                gap: '$1',
-              }}
-            >
+            <div className={tw(['inline-flex gap-1'])}>
               <A11ySummary
                 onClick={() => {
                   setShowDetails(true);
@@ -175,11 +147,10 @@ export const CodeLiveEditor = ({
                     setActiveTab('a11y');
                   }
                 }}
-                css={{
-                  px: '$2',
-                  borderRight:
-                    frame || !noEditor ? '1px solid $gray-300' : undefined,
-                }}
+                className={tw([
+                  'px-2',
+                  (frame || !noEditor) && 'border-r border-r-zinc-300',
+                ])}
               />
               {frame && (
                 <MeasuringButton
@@ -203,17 +174,13 @@ export const CodeLiveEditor = ({
                   isDesigner={targetAudience === 'designer'}
                 />
               )}
-            </Div>
-          </Div>
+            </div>
+          </div>
           <Collapsible.Content animate>
             {a11yPanelOnly ? (
-              <Div
-                css={{
-                  backgroundColor: '$gray-200',
-                }}
-              >
+              <div className={tw(['bg-zinc-200'])}>
                 <A11yResultPanel highlightItems={highlightFrameItems} />
-              </Div>
+              </div>
             ) : (
               <Tabs.Root
                 value={activeTab}
@@ -233,7 +200,7 @@ export const CodeLiveEditor = ({
                     code={code}
                     onChange={setCode}
                     language={lang as Language}
-                    className={editorBottom()}
+                    className={tw(['rounded'])}
                     theme={theme}
                   />
                 </Tabs.Content>
@@ -243,7 +210,7 @@ export const CodeLiveEditor = ({
               </Tabs.Root>
             )}
           </Collapsible.Content>
-        </Collapsible.Root>
+        </Collapsible>
       </PreviewConsoleProvider>
     </div>
   );
@@ -275,15 +242,11 @@ export const NonVisualCodeLiveEditor = (props: {
             code={code}
             onChange={setCode}
             language={props.lang as Language}
-            className={editorBottom()}
+            className={tw(['rounded'])}
             theme={theme}
           />
         )}
-        <Div
-          css={{
-            position: 'relative',
-          }}
-        >
+        <div className={tw(['relative'])}>
           {props.frame ? (
             <CodePreviewIframe
               code={debouncedCode}
@@ -300,13 +263,9 @@ export const NonVisualCodeLiveEditor = (props: {
               onIsCompilingChange={setIsCompiling}
             />
           )}
-        </Div>
+        </div>
         <ConsolePanel defaultIsOpen isCompiling={isCompiling} />
       </PreviewConsoleProvider>
     </div>
   );
 };
-
-const editorBottom = css({
-  borderRadius: '$base',
-});

@@ -1,22 +1,23 @@
 export { addTrailingSlash } from './add-trailing-slash';
+export { codeBlockOverrides } from './code-block-overrides';
 export {
-  getCompilationKey,
   NON_VISUAL_LANGUAGES,
   PropsEditorFeature,
   ReactShowroomFeatureCompilation,
-  SupportedLanguage,
   SUPPORTED_LANGUAGES,
+  SupportedLanguage,
+  getCompilationKey,
 } from './compilation';
-export { compileScript, ImportMapData, Packages } from './compile-script';
+export { ImportMapData, Packages, compileScript } from './compile-script';
 export { dedupeArray } from './dedupe-array';
 export {
+  DeviceName,
   deviceDimensions,
   deviceDimensionsByName,
-  DeviceName,
 } from './device-dimensions';
 export type { FrameDimension } from './device-dimensions';
 export { decodeDisplayName, encodeDisplayName } from './display-name';
-export { flattenArray, NestedArray } from './flatten-array';
+export { NestedArray, flattenArray } from './flatten-array';
 export { callAll, noop } from './fn-lib';
 export type { Callback } from './fn-lib';
 export { getSafeName } from './get-safe-name';

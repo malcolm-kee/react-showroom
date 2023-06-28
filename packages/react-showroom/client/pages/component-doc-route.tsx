@@ -2,7 +2,6 @@ import {
   ReactShowroomComponentContent,
   ReactShowroomComponentSection,
 } from '@showroomjs/core/react';
-import * as React from 'react';
 import { ComponentDataProvider } from '../components/component-data-provider';
 import { ComponentDocArticle } from '../components/component-doc-article';
 import { ComponentDocStandaloneEditor } from '../components/component-doc-standalone-editor';

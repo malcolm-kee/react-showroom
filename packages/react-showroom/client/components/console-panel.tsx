@@ -1,5 +1,5 @@
-import { styled, Collapsible } from '@showroomjs/ui';
 import { isPlainObject } from '@showroomjs/core';
+import { Collapsible, tw } from '@showroomjs/ui';
 import * as React from 'react';
 import { useConsoleMessage } from '../lib/use-preview-console';
 
@@ -15,42 +15,21 @@ export const ConsolePanel = ({
   const [isShown, setIsShown] = React.useState(defaultIsOpen);
 
   return msgs.length === 0 ? null : (
-    <Collapsible.Root open={isShown} onOpenChange={setIsShown}>
-      <SummaryBar>
-        <Collapsible.Button
-          css={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '$1',
-            fontSize: '$sm',
-          }}
-        >
+    <Collapsible open={isShown} onOpenChange={setIsShown}>
+      <div className={tw(['p-1 bg-zinc-100'])}>
+        <Collapsible.Button className={tw(['flex items-center gap-1 text-sm'])}>
           Console ({msgs.length}){' '}
           <Collapsible.ToggleIcon
-            hide={isShown}
+            direction={isShown ? 'up' : 'down'}
             aria-label={isShown ? 'Hide' : 'View'}
-            width="16"
-            height="16"
           />
         </Collapsible.Button>
-      </SummaryBar>
-      <Collapsible.Content
-        animate
-        css={{
-          px: 4,
-          paddingBottom: 4,
-          backgroundColor: '$gray-100',
-        }}
-      >
-        <Wrapper>
+      </div>
+      <Collapsible.Content animate className={tw(['px-1 pb-1 bg-zinc-100'])}>
+        <ul className={tw(['flex flex-col gap-1 py-1 text-white bg-zinc-800'])}>
           {msgs.map((msg, i) =>
             msg.level === 'fatal' ? (
-              <Item
-                css={{
-                  backgroundColor: '$red-800',
-                }}
-                key={i}
-              >
+              <Item className={tw(['bg-red-800'])} key={i}>
                 {msg.count > 1 && <Count>{msg.count}</Count>}
                 {msg.data.map((d, i) => (
                   <Content content={d} key={i} wrapString={false} />
@@ -58,8 +37,8 @@ export const ConsolePanel = ({
               </Item>
             ) : (
               <Item key={i}>
-                <ContentInner
-                  css={{
+                <span
+                  style={{
                     width: '7ch',
                     color:
                       msg.level === 'error'
@@ -72,7 +51,7 @@ export const ConsolePanel = ({
                   }}
                 >
                   [{msg.level}]
-                </ContentInner>
+                </span>
                 {msg.count > 1 && <Count>{msg.count}</Count>}
                 {msg.data.map((d, i) => (
                   <Content content={d} key={i} />
@@ -81,9 +60,9 @@ export const ConsolePanel = ({
             )
           )}
           {isCompiling && <Item>Compiling...</Item>}
-        </Wrapper>
+        </ul>
       </Collapsible.Content>
-    </Collapsible.Root>
+    </Collapsible>
   );
 };
 
@@ -113,58 +92,26 @@ const Content = ({
 
   switch (contentType) {
     case 'undefined':
-      return (
-        <ContentInner
-          css={{
-            opacity: '60%',
-          }}
-        >
-          undefined
-        </ContentInner>
-      );
+      return <span className={tw(['opacity-60'])}>undefined</span>;
 
     case 'boolean':
-      return (
-        <ContentInner
-          css={{
-            color: '$blue-100',
-          }}
-        >
-          {String(content)}
-        </ContentInner>
-      );
+      return <span className={tw(['text-blue-100'])}>{String(content)}</span>;
 
     case 'string':
       return (
-        <ContentInner
-          css={{
-            color: '$red-100',
-          }}
-        >
+        <span className={tw(['text-red-100'])}>
           {wrapString ? `'${content}'` : content}
-        </ContentInner>
+        </span>
       );
 
     case 'object':
       return content === null ? (
-        <ContentInner
-          css={{
-            opacity: '60%',
-          }}
-        >
-          null
-        </ContentInner>
+        <span className={tw(['opacity-60'])}>null</span>
       ) : isPlainObject(content) ? (
-        <ContentInner>{JSON.stringify(content)}</ContentInner>
+        <span>{JSON.stringify(content)}</span>
       ) : (
         <span>
-          <ContentInner
-            css={{
-              fontStyle: 'italic',
-            }}
-          >
-            {getConstructorName(content)}
-          </ContentInner>
+          <span className={tw(['italic'])}>{getConstructorName(content)}</span>
           {getObjectDetails(content)}
         </span>
       );
@@ -196,43 +143,22 @@ const getObjectDetails = (val: object) =>
 const getConstructorName = (obj: object) =>
   Object.getPrototypeOf(obj)?.constructor?.name;
 
-const Wrapper = styled('ul', {
-  shadow: 'inner',
-  backgroundColor: '$gray-800',
-  color: 'White',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '$1',
-  py: '$1',
-});
+const Item = (props: { className?: string; children: React.ReactNode }) => (
+  <li
+    {...props}
+    className={tw(
+      ['flex items-center flex-wrap gap-y-2 text-sm font-[monospace] px-2'],
+      [props.className]
+    )}
+  />
+);
 
-const Item = styled('li', {
-  display: 'flex',
-  alignItems: 'center',
-  flexWrap: 'wrap',
-  columnGap: '$2',
-  fontSize: '$sm',
-  lineHeight: '$sm',
-  fontFamily: 'monospace',
-  px: '$2',
-});
-
-const Count = styled('span', {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  borderRadius: '50%',
-  width: 16,
-  height: 16,
-  fontSize: '$xs',
-  lineHeight: '$xs',
-  backgroundColor: '$gray-500',
-  color: 'White',
-});
-
-const ContentInner = styled('span');
-
-const SummaryBar = styled('div', {
-  padding: '$1',
-  backgroundColor: '$gray-100',
-});
+const Count = ({ children }: { children: React.ReactNode }) => (
+  <span
+    className={tw([
+      'flex justify-center items-center w-4 h-4 text-xs bg-zinc-500 text-white rounded-full',
+    ])}
+  >
+    {children}
+  </span>
+);

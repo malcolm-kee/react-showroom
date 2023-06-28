@@ -1,23 +1,20 @@
 import { SupportedLanguage } from '@showroomjs/core';
 import {
-  css,
   ResizeIcon,
-  styled,
+  tw,
   useDebouncedCallback,
   useStableCallback,
 } from '@showroomjs/ui';
-import cx from 'classnames';
-import { Enable as ResizeEnable, Resizable } from 're-resizable';
+import { Resizable, Enable as ResizeEnable } from 're-resizable';
 import * as React from 'react';
 import { useComponentMeta } from '../lib/component-props-context';
 import { DomEvent, Message, useParentWindow } from '../lib/frame-message';
-import { getFrameId } from '../lib/get-frame-id';
 import { getPreviewUrl } from '../lib/preview-url';
 import { getScrollFn } from '../lib/scroll-into-view';
 import { useA11yResult } from '../lib/use-a11y-result';
 import { useConsole } from '../lib/use-preview-console';
 import { PropsEditorContext } from '../lib/use-props-editor';
-import { useActiveWidth, WidthMarkers } from './width-markers';
+import { WidthMarkers, useActiveWidth } from './width-markers';
 
 export interface CodePreviewIframeImperative {
   sendToChild: (msg: Message) => void;
@@ -40,11 +37,12 @@ export interface CodePreviewIframeProps {
   height?: number;
   initialWidth?: number;
   'data-frame-id'?: string;
+  style?: React.CSSProperties;
 }
 
 const initialHeightMap = new Map<string, number>();
 
-export const CodePreviewIframe = styled(function CodePreviewIframe({
+export function CodePreviewIframe({
   code,
   codeHash,
   lang,
@@ -59,6 +57,7 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   initialHeight = 100,
   height: providedHeight,
   initialWidth,
+  style,
   'data-frame-id': frameId,
 }: CodePreviewIframeProps) {
   const [frameHeight, setFrameHeight] = React.useState(
@@ -175,14 +174,21 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
   // }, []);
 
   const content = codeHash ? (
-    <Frame
+    <iframe
       ref={targetRef}
       src={getPreviewUrl(codeHash, componentMeta && componentMeta.id)}
       title="Preview"
       height={nonVisual ? 0 : resizable ? height : '100%'}
-      animate={!isResizing}
-      className={resizable ? undefined : className}
+      className={tw(
+        [
+          'flex-1 w-full border-0',
+          !isResizing &&
+            '[transition-property:height] duration-300 ease-in-out',
+        ],
+        [resizable ? undefined : className]
+      )}
       data-frame-id={frameId}
+      style={resizable ? undefined : style}
     />
   ) : null;
 
@@ -199,11 +205,13 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
       }}
     >
       <Resizable
-        className={cx(
-          resizableStyle({
-            animate: !isResizing,
-          }),
-          className
+        className={tw(
+          [
+            'flex overflow-hidden border-1 border-zinc-300 rounded-r bg-white',
+            !isResizing &&
+              '[transition-property:max-height] duration-300 ease-in-out',
+          ],
+          [className]
         )}
         minHeight={height}
         maxHeight={height}
@@ -235,38 +243,38 @@ export const CodePreviewIframe = styled(function CodePreviewIframe({
             setActiveWidth(width);
           }
         }}
+        style={style}
         ref={resizableRef}
       >
         {content}
-        <ResizeHandle>
-          <HandleIcon width={16} height={16} />
-        </ResizeHandle>
-        {isResizing && <SizeDisplay ref={sizeEl} />}
+        <div
+          className={tw(['flex-shrink-0 flex items-center bg-zinc-200'])}
+          style={{
+            width: handleWidth,
+          }}
+        >
+          <ResizeIcon
+            width={16}
+            height={16}
+            className={tw(['text-zinc-500'])}
+          />
+        </div>
+        {isResizing && (
+          <div
+            ref={sizeEl}
+            className={tw([
+              'absolute top-px right-4 text-xs px-3 py-1 bg-white/70',
+            ])}
+          />
+        )}
       </Resizable>
     </WidthMarkers>
   ) : (
     content
   );
-});
+}
 
 const handleWidth = 16;
-
-const resizableStyle = css({
-  overflow: 'hidden',
-  display: 'flex',
-  border: '1px solid',
-  borderColor: '$gray-300',
-  borderTopRightRadius: '$base',
-  borderBottomRightRadius: '$base',
-  backgroundColor: 'White',
-  variants: {
-    animate: {
-      true: {
-        transition: 'max-height 300ms ease-in-out',
-      },
-    },
-  },
-});
 
 const resizeEnable: ResizeEnable = {
   top: false,
@@ -278,39 +286,3 @@ const resizeEnable: ResizeEnable = {
   bottomLeft: false,
   topLeft: false,
 };
-
-const SizeDisplay = styled('div', {
-  position: 'absolute',
-  top: 1,
-  right: 16,
-  backgroundColor: 'rgba(255, 255, 255, 0.7)',
-  fontSize: '$xs',
-  lineHeight: '$xs',
-  px: '$3',
-  py: '$1',
-});
-
-const ResizeHandle = styled('div', {
-  flexShrink: 0,
-  width: handleWidth,
-  backgroundColor: '$gray-200',
-  display: 'flex',
-  alignItems: 'center',
-});
-
-const HandleIcon = styled(ResizeIcon, {
-  color: '$gray-500',
-});
-
-const Frame = styled('iframe', {
-  width: '100%',
-  flex: 1,
-  border: 0,
-  variants: {
-    animate: {
-      true: {
-        transition: 'height 300ms ease-in-out',
-      },
-    },
-  },
-});

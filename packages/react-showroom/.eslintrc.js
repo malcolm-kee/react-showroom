@@ -9,6 +9,12 @@ module.exports = {
         sourceType: 'commonjs',
       },
     },
+    {
+      files: ['**/*.tsx'],
+      rules: {
+        '@typescript-eslint/no-unnecessary-type-constraint': 'off',
+      },
+    },
   ],
   rules: {
     '@typescript-eslint/no-var-requires': 0,

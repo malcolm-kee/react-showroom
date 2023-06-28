@@ -1,0 +1,15 @@
+```tsx
+const Demo = () => {
+  const [checked, setChecked] = React.useState<'indeterminate' | boolean>(
+    'indeterminate'
+  );
+  return (
+    <label className="flex items-center gap-2">
+      <Checkbox checked={checked} onCheckedChange={setChecked} />
+      <span>{checked ? 'Checked' : 'Unchecked'}</span>
+    </label>
+  );
+};
+
+<Demo />;
+```

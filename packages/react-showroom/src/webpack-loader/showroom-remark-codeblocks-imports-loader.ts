@@ -1,4 +1,4 @@
-import { CodeBlocks, isString } from '@showroomjs/core';
+import { CodeBlocks, codeBlockOverrides, isString } from '@showroomjs/core';
 import { ImportConfig } from '@showroomjs/core/react';
 import type { LoaderDefinition } from 'webpack';
 import { getImportsAttach } from '../lib/get-client-import-map';
@@ -28,6 +28,12 @@ const showroomRemarkCodeblocksImportsLoader: LoaderDefinition<ShowroomRemarkCode
         const { importedPackages } = compiled;
 
         for (const pkgName of importedPackages) {
+          if (
+            (codeBlockOverrides.pkgs as ReadonlyArray<string>).includes(pkgName)
+          ) {
+            continue;
+          }
+
           if (
             !result.some((importConfig) =>
               isString(importConfig)

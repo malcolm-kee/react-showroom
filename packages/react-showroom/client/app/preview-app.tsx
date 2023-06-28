@@ -5,7 +5,7 @@ import {
   SupportedLanguage,
 } from '@showroomjs/core';
 import { useMeasure } from '@showroomjs/measure';
-import { Alert, useConstant, useId, Tooltip } from '@showroomjs/ui';
+import { Alert, Tooltip, useConstant, useId } from '@showroomjs/ui';
 import * as React from 'react';
 import allCompMetadata from 'react-showroom-all-components-docs';
 import allImports from 'react-showroom-all-imports';
@@ -425,10 +425,6 @@ const PreviewPage = () => {
       </ConsoleContext.Provider>
     </UseCustomStateContext.Provider>
   );
-};
-
-const observerInit: IntersectionObserverInit = {
-  rootMargin: '20% 0px',
 };
 
 const getDomEventInfo = (ev: React.SyntheticEvent) => {

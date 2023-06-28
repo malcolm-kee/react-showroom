@@ -34,7 +34,6 @@ const StyledContent = styled(DropdownMenuPrimitive.Content, {
 });
 
 const itemStyles = {
-  all: 'unset',
   fontSize: '$lg',
   lineHeight: '$lg',
   color: '$gray-700',

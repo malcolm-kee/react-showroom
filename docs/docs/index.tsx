@@ -1,9 +1,9 @@
 import {
   BookOpenIcon,
-  CloudDownloadIcon,
-  CodeIcon,
-  ExternalLinkIcon,
-} from '@heroicons/react/outline';
+  CloudArrowDownIcon as CloudDownloadIcon,
+  CodeBracketIcon as CodeIcon,
+  ArrowTopRightOnSquareIcon as ExternalLinkIcon,
+} from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { Link, styled } from 'react-showroom/client';
 
@@ -36,7 +36,7 @@ export const HomePage = () => {
           <a
             href="https://github.com/malcolm-kee/react-showroom"
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-6 py-2 rounded-2xl text-gray-700 hover:bg-gray-200"
           >
             GitHub

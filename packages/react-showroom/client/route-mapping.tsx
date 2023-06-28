@@ -135,7 +135,9 @@ export const routes = sections.map(function mapSectionToRoute(
 const loaded = new Set<string>();
 const loadPromiseMap = new Map<string, Promise<void>>();
 
-function noop() {}
+function noop() {
+  // noop
+}
 
 export const loadCodeAtPath = (
   fullPath: string,

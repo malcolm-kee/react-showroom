@@ -58,4 +58,5 @@ export const Popover = Object.assign(PopoverPrimitive.Root, {
   Arrow: StyledArrow,
   Close: StyledClose,
   RawClose: PopoverPrimitive.Close,
+  Portal: PopoverPrimitive.Portal,
 });

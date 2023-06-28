@@ -1,9 +1,7 @@
 import sections from 'react-showroom-sections';
 import { Div } from '../components/base';
-import { Header } from '../components/header';
 import { Seo } from '../components/seo';
 import { Sidebar } from '../components/sidebar';
-import * as React from 'react';
 
 export const DefaultHomePage = () => (
   <Div

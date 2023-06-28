@@ -1,34 +1,10 @@
-import { CheckIcon, MinusIcon } from '@heroicons/react/solid';
+import { CheckIcon, MinusIcon } from '@heroicons/react/20/solid';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import * as React from 'react';
-import { styled } from '../stitches.config';
-
-const StyledRoot = styled(CheckboxPrimitive.Root, {
-  all: 'unset',
-  backgroundColor: 'white',
-  width: 16,
-  height: 16,
-  borderRadius: 4,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  border: '1px solid $gray-300',
-  '&:focus': {
-    outline: '1px solid $primary-300',
-    outlineOffset: 2,
-  },
-  '&:disabled': {
-    backgroundColor: '$gray-200',
-  },
-});
-
-const Indicator = styled(CheckboxPrimitive.Indicator, {
-  color: 'white',
-  lineHeight: 0,
-});
+import { tw } from '../lib/tw';
 
 export type CheckboxProps = Omit<
-  React.ComponentPropsWithoutRef<typeof StyledRoot>,
+  CheckboxPrimitive.CheckboxProps,
   'children' | 'asChild' | 'checked'
 > & {
   checked: CheckboxPrimitive.CheckedState;
@@ -37,29 +13,33 @@ export type CheckboxProps = Omit<
 export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
   function Checkbox(props, ref) {
     return (
-      <StyledRoot
+      <CheckboxPrimitive.Root
         {...props}
-        css={
-          props.checked === true
-            ? {
-                backgroundColor: '$primary-600',
-                borderColor: '$primary-600',
-              }
-            : undefined
-        }
+        className={tw(
+          [
+            'flex justify-center items-center w-4 h-4',
+            'rounded border focus:outline-primary-300 focus:outline-offset-2',
+            props.checked === true
+              ? 'bg-primary-600 border-primary-600'
+              : 'bg-white border-gray-300',
+          ],
+          [props.className]
+        )}
         ref={ref}
       >
-        <Indicator>
+        <CheckboxPrimitive.Indicator
+          className={tw(['text-white leading-none'])}
+        >
           {props.checked === 'indeterminate' && (
-            <DashIcon width={16} height={16} />
+            <MinusIcon
+              width={16}
+              height={16}
+              className={tw(['text-primary-500'])}
+            />
           )}
           {props.checked === true && <CheckIcon width={16} height={16} />}
-        </Indicator>
-      </StyledRoot>
+        </CheckboxPrimitive.Indicator>
+      </CheckboxPrimitive.Root>
     );
   }
 );
-
-const DashIcon = styled(MinusIcon, {
-  color: '$primary-500',
-});

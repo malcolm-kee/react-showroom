@@ -1,7 +1,6 @@
 import { ReactShowroomMarkdownHeading } from '@showroomjs/core/react';
-import { Collapsible, styled, EditIcon } from '@showroomjs/ui';
+import { Collapsible, EditIcon, tw } from '@showroomjs/ui';
 import * as React from 'react';
-import { Div, A as Link, Span } from './base';
 
 export const TableOfContent = ({
   headings,
@@ -17,254 +16,159 @@ export const TableOfContent = ({
   const hasHeadings = headings && headings.length > 0;
 
   return (
-    <Div
-      css={{
-        '@xl': {
-          paddingLeft: '$6',
-          width: '25%',
-          position: 'sticky',
-          top: 64,
-          bottom: 0,
-          maxHeight: 'calc(100vh - 58px - 2rem)',
-        },
-      }}
+    <div
+      className={tw([
+        'xl:sticky xl:w-1/4 xl:top-[64px] xl:bottom-0 xl:max-h-[calc(100vh-58px-2rem)]',
+      ])}
     >
       {hasHeadings && (
-        <Collapsible.Root
+        <Collapsible
           open={submenuIsOpen}
           onOpenChange={setSubmenuIsOpen}
-          css={{
-            py: '$3',
-            borderRadius: '$md',
-            overflow: 'hidden',
-            marginX: '-8px',
-            '@sm': {
-              marginX: 0,
-            },
-            '@xl': {
-              display: 'none',
-            },
-          }}
+          className={tw([
+            'py-3 rounded-md overflow-hidden -mx-2 sm:mx-0 xl:hidden',
+          ])}
         >
           <Collapsible.Button
-            css={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              width: '100%',
-              py: '$2',
-              px: '$4',
-              backgroundColor: '$gray-100',
-            }}
+            className={tw([
+              'flex justify-between items-center w-full py-2 px-4 bg-zinc-100',
+            ])}
           >
             In this page
             <Collapsible.ToggleIcon
-              hide={submenuIsOpen}
               aria-label={submenuIsOpen ? 'Hide' : 'View'}
-              width="16"
-              height="16"
             />
           </Collapsible.Button>
-          <Collapsible.Content
-            css={{
-              backgroundColor: '$gray-50',
-              paddingBottom: '$1',
-            }}
-          >
-            <List
-              css={{
-                maxHeight: 300,
-                '@md': {
-                  maxHeight: 500,
-                },
-                px: '$2',
-                overflowY: 'auto',
-              }}
+          <Collapsible.Content className={tw(['pb-1 bg-zinc-50'])} animate>
+            <ul
+              className={tw([
+                'list-none m-0 py-0 px-2 overflow-y-auto max-h-[300px] md:max-h-[500px]',
+              ])}
             >
               {headings.map((heading, index) => (
-                <Item
-                  css={{
+                <li
+                  style={{
                     paddingLeft: (heading.rank - 2) * 24,
                   }}
                   key={index}
                 >
                   {heading.id ? (
-                    <A
+                    <a
                       href={`#${heading.id}`}
                       dangerouslySetInnerHTML={{ __html: heading.text }}
+                      className={tw([
+                        'block p-2 text-sm no-underline text-inherit hover:text-primary-700 transition-colors',
+                      ])}
                     />
                   ) : (
                     <div dangerouslySetInnerHTML={{ __html: heading.text }} />
                   )}
-                </Item>
+                </li>
               ))}
-            </List>
+            </ul>
           </Collapsible.Content>
-        </Collapsible.Root>
+        </Collapsible>
       )}
       {editUrl ? (
-        <Div
-          css={{
-            '@xl': {
-              display: 'none',
-            },
-          }}
-        >
+        <div className={tw(['xl:hidden'])}>
           <EditLink floatRight url={editUrl} />
-        </Div>
+        </div>
       ) : null}
-      <Div
-        css={{
-          display: 'none',
-          '@xl': {
-            display: 'block',
-          },
-          position: 'sticky',
-          top: 0,
-          py: '$4',
-        }}
-      >
-        <Div css={{ position: 'relative' }}>
-          <Div
-            css={{
-              pointerEvents: 'none',
-              height: '3rem',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              zIndex: 10,
+      <div className={tw(['hidden xl:block xl:sticky xl:top-0 py-4'])}>
+        <div className={tw(['relative'])}>
+          <div
+            className={tw([
+              'h-12 absolute inset-x-0 top-0 z-10 pointer-events-none',
+            ])}
+            style={{
               backgroundImage:
                 'linear-gradient(to bottom, rgba(249,250,251,1) 0%, rgba(249,250,251,0) 100%)',
             }}
           />
-          <Div
-            css={{
-              maxHeight: '80vh',
-              overflow: 'auto',
-              py: '$6',
-              borderLeft: '1px solid $gray-300',
-              overscrollBehavior: 'contain',
-            }}
+          <div
+            className={tw([
+              'py-6 max-h-[80vh] overflow-auto border-l border-l-zinc-300 overscroll-contain',
+            ])}
           >
             {hasHeadings && (
               <>
-                <Div
-                  css={{
-                    color: '$gray-400',
-                    paddingLeft: 24,
-                    marginBottom: '$2',
-                    textTransform: 'uppercase',
-                    fontSize: '$sm',
-                    fontWeight: 'bold',
-                    letterSpacing: '0.05em',
-                  }}
+                <div
+                  className={tw([
+                    'pl-6 mb-2 text-zinc-400 uppercase text-sm font-bold tracking-wider',
+                  ])}
                 >
                   In this page
-                </Div>
-                <List>
+                </div>
+                <ul className={tw(['list-none m-0 p-0'])}>
                   {headings.map((heading, index) => (
-                    <Item
-                      css={{
+                    <li
+                      className={tw(['text-zinc-600 pr-3'])}
+                      style={{
                         paddingLeft: 16 + (heading.rank - 2) * 24,
                       }}
                       key={index}
                     >
                       {heading.id ? (
-                        <A
+                        <a
                           href={`#${heading.id}`}
                           dangerouslySetInnerHTML={{ __html: heading.text }}
+                          className={tw([
+                            'block p-2 text-sm no-underline text-inherit hover:text-primary-700 transition-colors',
+                          ])}
                         />
                       ) : (
                         <div
                           dangerouslySetInnerHTML={{ __html: heading.text }}
                         />
                       )}
-                    </Item>
+                    </li>
                   ))}
-                </List>
+                </ul>
               </>
             )}
-          </Div>
-          <Div
-            css={{
-              pointerEvents: 'none',
-              height: '3rem',
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              zIndex: 10,
+          </div>
+          <div
+            className={tw([
+              'h-12 absolute inset-x-0 bottom-0 z-10 pointer-events-none',
+            ])}
+            style={{
               backgroundImage:
                 'linear-gradient(to top, rgba(249,250,251,1) 0%, rgba(249,250,251,0) 100%)',
             }}
           />
-        </Div>
+        </div>
         {editUrl ? (
-          <Div
-            css={{
-              position: 'fixed',
-              bottom: '$6',
-              paddingLeft: '$3',
-            }}
-          >
+          <div className={tw(['fixed z-20 bottom-6 pl-3'])}>
             <EditLink url={editUrl} />
-          </Div>
+          </div>
         ) : null}
-      </Div>
-    </Div>
+      </div>
+    </div>
   );
 };
-
-const List = styled('ul', {
-  listStyle: 'none',
-  margin: 0,
-  padding: 0,
-});
-
-const Item = styled('li');
-
-const A = styled('a', {
-  display: 'inline-block',
-  px: '$2',
-  py: '$2',
-  fontSize: '$sm',
-  textDecoration: 'none',
-  color: 'inherit',
-});
 
 const EditLink = (props: {
   url: string;
   floatRight?: boolean;
   fullWidth?: boolean;
 }) => (
-  <Link
-    css={{
-      float: props.floatRight ? 'right' : undefined,
-      display: props.fullWidth ? 'flex' : 'inline-flex',
-      alignItems: 'center',
-      gap: '$2',
-      fontSize: '$xs',
-      paddingInline: '$3',
-      paddingBlock: '$1',
-      color: '$gray-400',
-      '&:hover': {
-        backgroundColor: '$gray-100',
-      },
-    }}
+  <a
+    className={tw([
+      props.floatRight && 'float-right',
+      props.fullWidth ? 'flex' : 'inline-flex',
+      'group/link text-xs items-center gap-2 px-3 py-1 text-zinc-400 hover:text-primary-600',
+    ])}
     href={props.url}
     target="_blank"
     rel="noopener noreferrer"
   >
-    <Span
-      css={{
-        color: '$gray-500',
-        fontWeight: 500,
-        letterSpacing: '0.05em',
-      }}
+    <span
+      className={tw([
+        'text-zinc-500 font-bold tracking-wider group-hover/link:text-primary-600',
+      ])}
     >
       EDIT THIS PAGE
-    </Span>
+    </span>
     <EditIcon width={16} height={16} />
-  </Link>
+  </a>
 );

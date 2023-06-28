@@ -2,28 +2,59 @@
   "name": "@showroomjs/bundles",
   "version": "2.0.1",
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "publishConfig": {
     "access": "public"
+  },
+  "exports": {
+    "./query": {
+      "import": {
+        "types": "./dist/query.d.ts",
+        "default": "./dist/query.js"
+      },
+      "require": {
+        "types": "./dist/query.d.ts",
+        "default": "./dist/query.cjs"
+      }
+    },
+    "./react-simple-code-editor": {
+      "import": {
+        "types": "./dist/react-simple-code-editor.d.ts",
+        "default": "./dist/react-simple-code-editor.js"
+      },
+      "require": {
+        "types": "./dist/react-simple-code-editor.d.ts",
+        "default": "./dist/react-simple-code-editor.cjs"
+      }
+    },
+    "./routing": {
+      "import": {
+        "types": "./dist/routing.d.ts",
+        "default": "./dist/routing.js"
+      },
+      "require": {
+        "types": "./dist/routing.d.ts",
+        "default": "./dist/routing.cjs"
+      }
+    }
   },
   "dependencies": {
     "react-router-dom": "6.3.0"
   },
   "devDependencies": {
-    "@rollup/plugin-replace": "^4.0.0",
-    "react-query": "^3.39.1",
+    "@rollup/plugin-replace": "^5.0.2",
+    "@tanstack/react-query": "^4.29.7",
     "react-simple-code-editor": "^0.11.2",
+    "rollup": "^3.25.1",
     "tslib": "^2.4.0",
     "typescript": "~4.6.4"
   },
   "peerDependencies": {
-    "react": "^17.0.0-0 || ^18.0.0-0",
-    "react-dom": "^17.0.0-0 || ^18.0.0-0"
+    "react": "^18.0.0-0",
+    "react-dom": "^18.0.0-0"
   },
   "scripts": {
     "build": "pnpm run typedef && pnpm run bundle",
-    "bundle": "rollup --config rollup.config.js",
+    "bundle": "rollup --config rollup.config.mjs",
     "typedef": "tsc --declaration --emitDeclarationOnly",
     "clean": "rimraf dist"
   }

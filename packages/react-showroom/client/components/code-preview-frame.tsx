@@ -1,11 +1,10 @@
-import { TerminalIcon } from '@heroicons/react/outline';
+import { CommandLineIcon } from '@heroicons/react/20/solid';
 import { SupportedLanguage } from '@showroomjs/core';
-import { Alert, icons } from '@showroomjs/ui';
+import { Alert, iconClass, tw } from '@showroomjs/ui';
 import * as React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useStableCallback } from '../lib/callback';
 import { useCodeCompilation } from '../lib/use-code-compilation';
-import { Div, Span } from './base';
 import { CodePreview } from './code-preview';
 import { ErrorFallback } from './error-fallback';
 
@@ -40,14 +39,12 @@ export const CodePreviewFrame = React.forwardRef<
   }, [code]);
 
   return (
-    <Div
-      css={{
-        position: 'relative',
-        padding: nonVisual ? 0 : '$1',
-        minHeight: nonVisual ? 0 : 30,
-        backgroundColor: 'White',
-      }}
+    <div
       {...divProps}
+      className={tw(
+        ['relative bg-white', nonVisual ? 'p-0 min-h-0' : 'p-1 min-h-[30px]'],
+        [divProps.className]
+      )}
       ref={forwardedRef}
     >
       {isError ? (
@@ -71,32 +68,17 @@ export const CodePreviewFrame = React.forwardRef<
         ))
       )}
       {isCompiling && !nonVisual && (
-        <Div
-          css={{
-            position: 'absolute',
-            right: 0,
-            top: 0,
-            bottom: 0,
-            px: '$4',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(229, 231, 235, 0.1)',
-            gap: '$2',
-          }}
+        <div
+          className={tw([
+            'flex items-center justify-center gap-2 absolute inset-y-0 right-0 px-4 bg-zinc-300/10',
+          ])}
         >
-          <TerminalIcon width="20" height="20" className={icons()} />
-          <Span
-            css={{
-              color: '$gray-500',
-            }}
-          >
-            Compiling...
-          </Span>
-        </Div>
+          <CommandLineIcon width="20" height="20" className={iconClass} />
+          <span className={tw(['text-zinc-500'])}>Compiling...</span>
+        </div>
       )}
-    </Div>
+    </div>
   );
 });
 
-const formatError = (error: string) => error.replace(/<stdin>:|\"\\x0A\"/g, '');
+const formatError = (error: string) => error.replace(/<stdin>:|"\\x0A"/g, '');

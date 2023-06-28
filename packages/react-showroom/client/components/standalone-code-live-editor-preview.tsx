@@ -1,5 +1,5 @@
 import { isFunction, isNumber, SupportedLanguage } from '@showroomjs/core';
-import { css, styled, useConstant, useQueryParams } from '@showroomjs/ui';
+import { css, styled, tw, useConstant, useQueryParams } from '@showroomjs/ui';
 import { Enable as ResizeEnable, Resizable } from 're-resizable';
 import * as React from 'react';
 import { useCodeFrameContext } from '../lib/code-frame-context';
@@ -130,9 +130,9 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
     }
   }, [props.a11yHighlightData]);
 
-  const codeFrameSetttings = useCodeFrameContext();
+  const codeFrameSettings = useCodeFrameContext();
 
-  const visibleFrames = codeFrameSetttings.frameDimensions.filter(
+  const visibleFrames = codeFrameSettings.frameDimensions.filter(
     (f) => !props.hiddenSizes.some(([w, h]) => w === f.width && h === f.height)
   );
 
@@ -185,9 +185,9 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
                 code={props.code}
                 lang={props.lang}
                 codeHash={props.codeHash}
-                css={{
+                className={tw(['h-full'])}
+                style={{
                   width: `${dimension.width}px`,
-                  height: '100%',
                 }}
                 imperativeRef={(ref) => {
                   if (ref) {
@@ -479,9 +479,9 @@ const serializeStateMaps = (stateMaps: StateMaps): string => {
 
 const deserializeStateMap = (string: string): StateMaps | null => {
   try {
-    const decomp = safeDecompress(string, '');
-    if (decomp) {
-      const mapObj = JSON.parse(decomp) as Record<string, string>;
+    const stateString = safeDecompress(string, '');
+    if (stateString) {
+      const mapObj = JSON.parse(stateString) as Record<string, string>;
 
       const result: StateMaps = new Map();
 
@@ -491,6 +491,8 @@ const deserializeStateMap = (string: string): StateMaps | null => {
 
       return result;
     }
-  } catch (err) {}
+  } catch (err) {
+    return null;
+  }
   return null;
 };

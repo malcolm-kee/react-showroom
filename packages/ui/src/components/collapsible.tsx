@@ -1,63 +1,91 @@
-import { ChevronDownIcon } from '@heroicons/react/outline';
-import * as Collapsible from '@radix-ui/react-collapsible';
-import { keyframes, styled } from '../stitches.config';
-import { buttonBase } from './base';
+import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
+import * as React from 'react';
+import { tw } from '../lib/tw';
 
-export const Button = styled(Collapsible.Trigger, {
-  ...buttonBase,
-  color: '$gray-500',
-  position: 'relative',
-  fontWeight: '600',
-  px: '$1',
-  outlineRing: '',
+const CollapsibleButton = React.forwardRef<
+  HTMLButtonElement,
+  CollapsiblePrimitive.CollapsibleTriggerProps
+>(function CollapsibleButton(props, forwardedRef) {
+  return (
+    <CollapsiblePrimitive.Trigger
+      ref={forwardedRef}
+      {...props}
+      className={tw(
+        [
+          'text-zinc-500 relative font-semibold px-1 border-0 bg-transparent cursor-pointer disabled:cursor-default',
+        ],
+        [props.className]
+      )}
+    />
+  );
 });
 
-const open = keyframes({
-  from: { height: 0 },
-  to: { height: 'var(--radix-collapsible-content-height)' },
+interface CollapsibleContentProps
+  extends React.ComponentPropsWithoutRef<'div'> {
+  animate?: boolean;
+}
+
+const Content = ({ animate, className, ...props }: CollapsibleContentProps) => (
+  <CollapsiblePrimitive.Content
+    {...props}
+    className={tw(
+      [
+        'overflow-hidden',
+        animate &&
+          'data-[state=open]:animate-collapsible-open data-[state=closed]:animate-collapsible-closed',
+      ],
+      [className]
+    )}
+  />
+);
+
+const ToggleIcon = React.forwardRef<
+  SVGSVGElement,
+  React.ComponentPropsWithoutRef<'svg'> & {
+    direction?: 'down' | 'up' | 'right' | 'left';
+  }
+>(function ToggleIcon({ direction, ...props }, forwardedRef) {
+  return (
+    <ChevronDownIcon
+      ref={forwardedRef}
+      width={16}
+      height={16}
+      {...props}
+      className={tw(
+        [
+          'text-zinc-500 transition',
+          direction
+            ? {
+                down: 'rotate-0',
+                up: '-rotate-180',
+                right: '-rotate-90',
+                left: 'rotate-90',
+              }[direction]
+            : 'rotate-0 group-data-[state=open]/collapsible:-rotate-180',
+        ],
+        [props.className]
+      )}
+    />
+  );
 });
 
-const close = keyframes({
-  from: { height: 'var(--radix-collapsible-content-height)' },
-  to: { height: 0 },
+const Root = React.forwardRef<
+  HTMLDivElement,
+  CollapsiblePrimitive.CollapsibleProps
+>(function CollapsibleRoot(props, forwardedRef) {
+  return (
+    <CollapsiblePrimitive.Root
+      ref={forwardedRef}
+      {...props}
+      className={tw(['group/collapsible'], [props.className])}
+    />
+  );
 });
 
-export const Content = styled(Collapsible.Content, {
-  overflow: 'hidden',
-  transition: 'height 300ms ease-out',
-  variants: {
-    animate: {
-      true: {
-        '&[data-state="open"]': { animation: `${open} 300ms ease-out` },
-        '&[data-state="closed"]': { animation: `${close} 300ms ease-out` },
-      },
-    },
-  },
-});
-
-export const Root = styled(Collapsible.Root);
-
-export const ToggleIcon = styled(ChevronDownIcon, {
-  color: '$gray-500',
-  transition: 'transform 300ms ease-in-out',
-  transform: 'rotate(0deg)',
-  variants: {
-    hide: {
-      true: {
-        transform: 'rotate(-180deg)',
-      },
-    },
-    direction: {
-      down: {},
-      up: {
-        transform: 'rotate(-180deg)',
-      },
-      right: {
-        transform: 'rotate(-90deg)',
-      },
-      left: {
-        transform: 'rotate(90deg)',
-      },
-    },
-  },
+export const Collapsible = Object.assign(Root, {
+  Button: CollapsibleButton,
+  Content,
+  ToggleIcon,
+  Trigger: CollapsiblePrimitive.Trigger,
 });

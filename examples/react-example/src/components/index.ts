@@ -1,4 +1,4 @@
-export { WifiIcon } from '@heroicons/react/outline';
+export { WifiIcon } from '@heroicons/react/24/outline';
 export { Button } from './button';
 export { TextInput } from './form-control/text-input';
 export { Textarea } from './form-control/textarea';

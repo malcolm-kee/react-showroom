@@ -1,5 +1,5 @@
 import Highlighter, { HighlighterProps } from 'react-highlight-words';
-import { css } from '../stitches.config';
+import { tw } from '../lib/tw';
 
 export type TextHighlightProps = HighlighterProps;
 
@@ -7,7 +7,7 @@ export type TextHighlightProps = HighlighterProps;
  * Wrapper of `react-highlight-words` with change of default.
  */
 export const TextHighlight = ({
-  highlightClassName = cls().className,
+  highlightClassName = defaultHighlightClass,
   ...props
 }: TextHighlightProps) => {
   return (
@@ -19,6 +19,4 @@ export const TextHighlight = ({
   );
 };
 
-const cls = css({
-  backgroundColor: '$primary-200',
-});
+const defaultHighlightClass = tw(['bg-primary-200']);

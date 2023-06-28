@@ -1,4 +1,4 @@
-import { css, styled } from '@showroomjs/ui';
+import { css, styled, tw } from '@showroomjs/ui';
 import React from 'react';
 import { Link } from '../lib/routing';
 
@@ -41,18 +41,22 @@ export const createHeadingWithAnchor =
     );
   };
 
-export const H1 = styled('h1', {
-  fontSize: '$4xl',
-  lineHeight: '$4xl',
-  '@sm': {
-    fontSize: '$6xl',
-    lineHeight: '$6xl',
-  },
-  marginTop: '$0',
-  marginBottom: '$6',
-  fontWeight: 700,
-  color: '$gray-500',
-  scrollMarginTop: headerHeight,
+export const H1 = React.forwardRef<
+  HTMLHeadingElement,
+  React.ComponentPropsWithoutRef<'h1'>
+>(function H1(props, forwardedRef) {
+  return (
+    <h1
+      {...props}
+      className={tw(
+        [
+          'text-4xl sm:text-6xl mt-0 mb-6 font-bold sm:font-semibold text-zinc-500 scroll-mt-[62px]',
+        ],
+        [props.className]
+      )}
+      ref={forwardedRef}
+    />
+  );
 });
 
 export const NavLink = styled(Link, {

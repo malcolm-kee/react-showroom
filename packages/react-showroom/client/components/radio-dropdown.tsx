@@ -1,6 +1,5 @@
-import { CheckIcon } from '@heroicons/react/outline';
+import { CheckIcon } from '@heroicons/react/20/solid';
 import { DropdownMenu, DropdownMenuContentProps } from '@showroomjs/ui';
-import * as React from 'react';
 
 export interface RadioDropdownProps<Value extends string>
   extends DropdownMenuContentProps {

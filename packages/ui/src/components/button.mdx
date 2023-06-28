@@ -1,0 +1,21 @@
+```tsx
+import { usePropsEditor } from 'react-showroom/client';
+
+const Demo = () => {
+  const propsEditor = usePropsEditor({
+    initialProps: {
+      variant: 'primary',
+      children: 'Button',
+    },
+    controls: {
+      children: {
+        type: 'text',
+      },
+    },
+  });
+
+  return <Button {...propsEditor.props} />;
+};
+
+<Demo />;
+```

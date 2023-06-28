@@ -1,23 +1,12 @@
 import type { Language } from 'prism-react-renderer';
-import { Div } from './base';
-import * as React from 'react';
+import { tw } from '@showroomjs/ui';
 
 export const LanguageTag = (props: { language: Language }) => (
-  <Div
-    css={{
-      position: 'absolute',
-      right: '$2',
-      top: '$0',
-      backgroundColor: '$primary-700',
-      color: 'White',
-      px: '$2',
-      textTransform: 'uppercase',
-      fontSize: '$sm',
-      lineHeight: '$sm',
-      roundedB: '$base',
-      fontFamily: 'monospace',
-    }}
+  <div
+    className={tw([
+      'absolute right-2 top-0 px-2 text-sm font-[monospace] uppercase bg-primary-700 text-white rounded-b',
+    ])}
   >
     {props.language}
-  </Div>
+  </div>
 );

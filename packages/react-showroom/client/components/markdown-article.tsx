@@ -1,7 +1,7 @@
-import { ReactShowroomMarkdownContent } from '@showroomjs/core/react';
+import type { ReactShowroomMarkdownContent } from '@showroomjs/core/react';
+import { tw } from '@showroomjs/ui';
 import * as React from 'react';
 import { Article } from './article';
-import { Div } from './base';
 import { mdxComponents } from './mdx-components';
 import { TableOfContent } from './table-of-content';
 
@@ -20,36 +20,22 @@ export const MarkdownArticle = (props: {
     ((headings && headings.length > 0) || editUrl) && slug !== '';
 
   return (
-    <Div
-      css={
-        hasSideContent
-          ? {
-              '@xl': {
-                display: 'flex',
-                flexDirection: 'row-reverse',
-              },
-            }
-          : undefined
-      }
+    <div
+      className={tw([
+        'px-6',
+        hasSideContent && 'xl:flex xl:flex-row-reverse xl:gap-6 xl:pr-0',
+      ])}
     >
       {hasSideContent ? (
         <TableOfContent headings={headings} editUrl={editUrl} />
       ) : null}
       <Article
         center={props.center}
-        css={
-          hasSideContent
-            ? {
-                '@xl': {
-                  width: '75%',
-                },
-              }
-            : undefined
-        }
+        className={hasSideContent ? tw(['xl:w-3/4']) : undefined}
       >
         <Component components={components} />
       </Article>
-    </Div>
+    </div>
   );
 };
 

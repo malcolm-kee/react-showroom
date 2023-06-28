@@ -156,7 +156,10 @@ export const getConfig = (
       ignore: ignores,
     });
 
-    collectComponents(componentPaths, sections, [], false);
+    collectComponents(componentPaths, sections, [], {
+      hideFromSearch: false,
+      hideFromSidebar: false,
+    });
   } else if (!items) {
     const componentPaths = glob.sync(DEFAULT_COMPONENTS_GLOB, {
       cwd: paths.appPath,
@@ -164,7 +167,10 @@ export const getConfig = (
       ignore: ignores,
     });
 
-    collectComponents(componentPaths, sections, [], false);
+    collectComponents(componentPaths, sections, [], {
+      hideFromSearch: false,
+      hideFromSidebar: false,
+    });
   }
 
   if (items) {
@@ -289,7 +295,7 @@ export const getConfig = (
     componentPaths: Array<string>,
     parent: Array<ReactShowroomSectionConfig>,
     parentSlugs: Array<string>,
-    hideFromSidebar: boolean | undefined
+    options: { hideFromSearch: boolean; hideFromSidebar: boolean }
   ) {
     componentPaths.forEach((comPath) => {
       const comPathInfo = path.parse(comPath);
@@ -311,7 +317,8 @@ export const getConfig = (
         docPath,
         parentSlugs,
         id: createHash(comPath),
-        hideFromSidebar,
+        hideFromSidebar: options.hideFromSidebar,
+        hideFromSearch: options.hideFromSearch,
       };
 
       components.push(section);
@@ -357,7 +364,9 @@ export const getConfig = (
             title,
             slug: parentSlugs.concat(slug).join('/'),
             hideFromSidebar: sectionConfig.hideFromSidebar,
+            hideFromSearch: sectionConfig.hideFromSearch,
             items: [],
+            collapsible: sectionConfig.collapsible || false,
           };
 
           collectSections(
@@ -400,7 +409,10 @@ export const getConfig = (
               sectionConfig.path
                 ? parentSlugs.concat(sectionConfig.path)
                 : parentSlugs,
-              sectionConfig.hideFromSidebar
+              {
+                hideFromSearch: sectionConfig.hideFromSearch || false,
+                hideFromSidebar: sectionConfig.hideFromSidebar || false,
+              }
             );
             return;
           }
@@ -422,13 +434,18 @@ export const getConfig = (
             slug: parentSlugs.concat(slug).join('/'),
             items: [],
             hideFromSidebar: sectionConfig.hideFromSidebar,
+            hideFromSearch: sectionConfig.hideFromSearch,
+            collapsible: sectionConfig.collapsible || false,
           };
 
           collectComponents(
             componentPaths,
             section.items,
             parentSlugs.concat(slug),
-            sectionConfig.hideFromSidebar
+            {
+              hideFromSearch: sectionConfig.hideFromSearch || false,
+              hideFromSidebar: sectionConfig.hideFromSidebar || false,
+            }
           );
           parent.push(section);
 
@@ -461,7 +478,8 @@ export const getConfig = (
             title: sectionConfig.title,
             sourcePath: docPath,
             slug: parentSlugs.concat(slug).join('/'),
-            hideFromSidebar: sectionConfig.hideFromSidebar,
+            hideFromSidebar: sectionConfig.hideFromSidebar || false,
+            hideFromSearch: sectionConfig.hideFromSearch || false,
             formatLabel: (x) => x,
             _associatedComponentName: sectionConfig._associatedComponentName,
           });
@@ -492,14 +510,22 @@ export const getConfig = (
               title: docGroupTitle,
               slug: slugParts.join('/'),
               items: [],
-              hideFromSidebar: sectionConfig.hideFromSidebar,
+              hideFromSidebar: sectionConfig.hideFromSidebar || false,
+              hideFromSearch: sectionConfig.hideFromSearch || false,
+              collapsible: false,
             };
 
-            collectDocs(section.items, slugParts, formatLabel, pagesPaths);
+            collectDocs(section.items, slugParts, formatLabel, pagesPaths, {
+              hideFromSearch: sectionConfig.hideFromSearch || false,
+              hideFromSidebar: sectionConfig.hideFromSidebar || false,
+            });
 
             parent.push(section);
           } else {
-            collectDocs(parent, parentSlugs, formatLabel, pagesPaths);
+            collectDocs(parent, parentSlugs, formatLabel, pagesPaths, {
+              hideFromSearch: sectionConfig.hideFromSearch || false,
+              hideFromSidebar: sectionConfig.hideFromSidebar || false,
+            });
           }
 
           return;
@@ -516,7 +542,8 @@ function collectDocs(
   targetItems: Array<ReactShowroomSectionConfig>,
   pathToDoc: Array<string>,
   formatLabel: (ori: string) => string,
-  pagePaths: Array<string>
+  pagePaths: Array<string>,
+  options: { hideFromSearch: boolean; hideFromSidebar: boolean }
 ) {
   pagePaths.forEach((pagePath) => {
     const pathInfo = path.parse(pagePath);
@@ -535,6 +562,8 @@ function collectDocs(
       sourcePath: path.resolve(paths.appPath, pagePath),
       slug: pathToDoc.concat(slug).join('/'),
       formatLabel,
+      hideFromSidebar: options.hideFromSidebar,
+      hideFromSearch: options.hideFromSearch,
     });
   });
 }

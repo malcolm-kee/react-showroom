@@ -1,27 +1,27 @@
-import { ExternalLinkIcon, MenuIcon } from '@heroicons/react/outline';
+import { ArrowTopRightOnSquareIcon as ExternalLinkIcon } from '@heroicons/react/20/solid';
+import { Bars3Icon as MenuIcon } from '@heroicons/react/24/outline';
 import type { ReactShowroomSection } from '@showroomjs/core/react';
 import {
-  css,
+  Collapsible,
   DropdownMenu,
   IconButton,
-  icons,
-  keyframes,
   Portal,
-  styled,
+  iconClass,
+  tw,
+  useIsClient,
 } from '@showroomjs/ui';
 import * as React from 'react';
 import { audienceDefault } from '../lib/config';
 import { isExternalLink } from '../lib/is-external-link';
 import { NavLink, useNavigate } from '../lib/routing';
-import { colorTheme, THEME } from '../theme';
+import { THEME, colorTheme } from '../theme';
 import { AudienceDropdownGroup, AudienceToggle } from './audience-toggle';
 import { Div } from './base';
-import { GenericLink } from './generic-link';
 
 const toggle = audienceDefault ? (
-  <Div css={{ textAlign: 'right' }}>
+  <div className={tw(['text-right'])}>
     <AudienceToggle />
-  </Div>
+  </div>
 ) : null;
 
 const navBarItems = THEME.navbar.items;
@@ -46,6 +46,8 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
     return props.sections;
   }, [props.sections]);
 
+  const isClient = useIsClient();
+
   return (
     <>
       <Div
@@ -65,18 +67,18 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
           borderRightColor: '$gray-200',
           width: 240,
           background: '$gray-100',
-          overflowY: 'auto',
+          overflowY: 'scroll',
           overscrollBehaviorBlock: 'contain',
         }}
       >
-        <Div css={{ flex: 1 }}>
+        <div className={tw(['flex-1'])}>
           {props.sections.map((section, i) => (
             <SidebarSection section={section} key={i} />
           ))}
-        </Div>
+        </div>
         {toggle}
       </Div>
-      <MobileSidebar sections={mobileSections} />
+      {isClient && <MobileSidebar sections={mobileSections} />}
     </>
   );
 };
@@ -161,12 +163,15 @@ const DropdownSection = (props: {
     case 'link':
       return (
         <DropdownMenu.Item asChild>
-          <DropdownLink href={section.href} css={{ gap: '$2' }}>
+          <a
+            href={section.href}
+            className={tw(['flex justify-between items-center gap-2'])}
+          >
             {section.title}
             {isExternalLink(section.href) && (
-              <ExternalLinkIcon className={icons()} width={20} height={20} />
+              <ExternalLinkIcon className={iconClass} width={20} height={20} />
             )}
-          </DropdownLink>
+          </a>
         </DropdownMenu.Item>
       );
 
@@ -199,63 +204,85 @@ const SidebarSection = ({
 
   switch (section.type) {
     case 'group':
-      return section.hideFromSidebar ? null : (
-        <Div
-          css={{
-            marginY: '$4',
-          }}
-        >
-          <Div className={sectionClass()}>{section.title}</Div>
+      if (section.hideFromSidebar) {
+        return null;
+      }
+
+      if (section.collapsible) {
+        return (
+          <Collapsible
+            className={tw(['my-4 first:mt-1'])}
+            defaultOpen={section.collapsible === 'expand-by-default'}
+          >
+            <Collapsible.Trigger
+              className={tw([
+                'flex justify-between items-center w-full px-4 py-1 text-left hover:bg-zinc-200',
+              ])}
+            >
+              <span
+                className={tw([
+                  'text-xs leading-5 font-bold tracking-wider uppercase text-zinc-400',
+                ])}
+              >
+                {section.title}
+              </span>
+              <Collapsible.ToggleIcon />
+            </Collapsible.Trigger>
+            <Collapsible.Content animate>
+              {section.items.map((section, i) => (
+                <SidebarSection section={section} level={level + 1} key={i} />
+              ))}
+            </Collapsible.Content>
+          </Collapsible>
+        );
+      }
+
+      return (
+        <div className={tw(['my-4 first:mt-1'])}>
+          <div
+            className={tw([
+              'px-4 py-1 text-xs font-bold tracking-wider uppercase text-zinc-400',
+            ])}
+          >
+            {section.title}
+          </div>
           {section.items.map((section, i) => (
             <SidebarSection section={section} level={level + 1} key={i} />
           ))}
-        </Div>
+        </div>
       );
 
     case 'component':
       return section.hideFromSidebar ? null : (
-        <Div css={{ px: '$2' }}>
-          <Link to={`/${section.slug}`} root={level === 0} exact>
-            {section.title}
-          </Link>
-        </Div>
+        <SidebarLink to={`/${section.slug}`} root={level === 0} exact>
+          {section.title}
+        </SidebarLink>
       );
 
     case 'markdown':
       return section.hideFromSidebar ? null : (
-        <Div css={{ px: '$2' }}>
-          <Link to={`/${section.slug}`} root={level === 0} exact>
-            {section.formatLabel(
-              section.frontmatter.title || section.fallbackTitle
-            )}
-          </Link>
-        </Div>
+        <SidebarLink to={`/${section.slug}`} root={level === 0} exact>
+          {section.formatLabel(
+            section.frontmatter.title || section.fallbackTitle
+          )}
+        </SidebarLink>
       );
 
     case 'link':
       return (
-        <Div css={{ px: '$2' }}>
-          <Link
-            href={section.href}
-            target="_blank"
-            rel="noopener"
-            as={GenericLink}
-            css={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              gap: '$2',
-              alignItems: 'center',
-              px: '$2',
-              borderRadius: '$md',
-            }}
-            root={level === 0}
-          >
+        <SidebarLink
+          to={section.href}
+          target="_blank"
+          rel="noopener"
+          root={false}
+        >
+          <div className={tw(['flex justify-between items-center gap-2'])}>
             {section.title}
             {isExternalLink(section.href) && (
-              <ExternalLinkIcon className={icons()} width={16} height={16} />
+              <ExternalLinkIcon className={iconClass} width={16} height={16} />
             )}
-          </Link>
-        </Div>
+          </div>
+        </SidebarLink>
       );
 
     default:
@@ -263,62 +290,26 @@ const SidebarSection = ({
   }
 };
 
-const sectionClass = css({
-  px: '$4',
-  py: '$1',
-  fontSize: '$xs',
-  fontWeight: 'bold',
-  letterSpacing: '0.05em',
-  color: '$gray-400',
-  textTransform: 'uppercase',
-});
+const SidebarLink = React.forwardRef<
+  HTMLAnchorElement,
+  React.ComponentPropsWithoutRef<typeof NavLink> & { root?: boolean }
+>(function SidebarLink({ root, to, ...props }, forwardedRef) {
+  const className = tw(
+    [
+      'block py-1 text-sm text-zinc-500 no-underline border-r-4 border-transparent',
+      'hover:bg-zinc-200 focus:outline-none focus-visible:ring focus-visible:ring-primary-300',
+      root ? 'pl-6 pr-5' : 'pl-4 pr-3',
+      'aria-[current=page]:text-primary-800 aria-[current=page]:bg-white aria-[current=page]:border-primary-700',
+      'aria-[busy]:animate-pulse',
+    ],
+    [props.className]
+  );
 
-const DropdownLink = styled(GenericLink, {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-});
+  if (props.target === '_blank') {
+    return <a {...props} href={to} className={className} ref={forwardedRef} />;
+  }
 
-const fadeInOut = keyframes({
-  '0%': {
-    opacity: 1,
-  },
-  '100%': {
-    opacity: 0.6,
-  },
-});
-
-const Link = styled(NavLink, {
-  display: 'block',
-  color: '$gray-600',
-  textDecoration: 'none',
-  px: '$2',
-  py: '$1',
-  borderRadius: '$md',
-  fontSize: '$sm',
-  lineHeight: '$sm',
-  '&:hover': {
-    backgroundColor: '$gray-200',
-  },
-  '&:focus': {
-    outline: 'none',
-  },
-  '&:focus-visible': {
-    outline: '1px solid $primary-300',
-  },
-  variants: {
-    root: {
-      true: {
-        px: '$4',
-        borderRadius: '$none',
-      },
-    },
-  },
-  '&[aria-current="page"]': {
-    color: '$primary-900',
-    backgroundColor: 'White',
-  },
-  '&[aria-busy]': {
-    animation: `${fadeInOut} 500ms infinite alternate`,
-  },
+  return (
+    <NavLink {...props} to={to} className={className} ref={forwardedRef} />
+  );
 });

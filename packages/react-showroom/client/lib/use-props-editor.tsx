@@ -648,13 +648,17 @@ export const PropsEditorProvider = (props: {
 }) => {
   const queryClient = useQueryClient();
 
-  const propsEditorCache = useQuery<PropsEditorState>({
+  const propsEditorCache = useQuery({
+    queryFn: () =>
+      new Promise<PropsEditorState>((_, reject) =>
+        reject(new Error('propsEditorCache should never be called'))
+      ),
+    queryKey: props.codeHash ? getQueryKey(props.codeHash) : [],
     enabled: false,
-    queryKey: props.codeHash && getQueryKey(props.codeHash),
   });
 
   const [editorState, dispatch] = usePropsEditorProviderState(
-    propsEditorCache.data
+    props.codeHash ? propsEditorCache.data : undefined
   );
 
   const [params, setParams] = useQueryParams();

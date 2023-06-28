@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { styled } from '../stitches.config';
+import { tw } from '../lib/tw';
 
 export const ResizeIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => (
   <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" {...props}>
@@ -56,30 +56,20 @@ export const EditIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => (
   </svg>
 );
 
-export const SpinIcon = styled(function SpinIcon(
-  props: React.ComponentPropsWithoutRef<'svg'>
-) {
-  return (
-    <svg fill="none" viewBox="0 0 24 24" width={24} height={24} {...props}>
-      <SpinCircle
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      ></SpinCircle>
-      <SpinPath
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-      ></SpinPath>
-    </svg>
-  );
-});
-
-const SpinCircle = styled('circle', {
-  opacity: '25%',
-});
-
-const SpinPath = styled('path', {
-  opacity: '75%',
-});
+export const SpinIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => (
+  <svg fill="none" viewBox="0 0 24 24" width={24} height={24} {...props}>
+    <circle
+      cx="12"
+      cy="12"
+      r="10"
+      stroke="currentColor"
+      strokeWidth="4"
+      className={tw(['opacity-25'])}
+    ></circle>
+    <path
+      fill="currentColor"
+      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      className={tw(['opacity-75'])}
+    ></path>
+  </svg>
+);

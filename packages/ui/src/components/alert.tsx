@@ -1,11 +1,11 @@
 import {
   CheckCircleIcon,
-  ExclamationIcon,
+  ExclamationTriangleIcon,
   InformationCircleIcon,
   XCircleIcon,
-} from '@heroicons/react/solid';
+} from '@heroicons/react/20/solid';
 import * as Announce from '@radix-ui/react-announce';
-import { css, styled, text } from '../stitches.config';
+import { tw } from '../lib/tw';
 
 export interface AlertProps {
   variant: 'error' | 'success' | 'info' | 'warning';
@@ -15,71 +15,31 @@ export interface AlertProps {
 export function Alert(props: AlertProps) {
   const Icon = iconMap[props.variant];
   return (
-    <Root role="alert" variant={props.variant}>
-      <IconWrapper>
-        <Icon className={iconClass({ variant: props.variant })} />
-      </IconWrapper>
-      <ContentWrapper className={text({ variant: 'sm' })}>
+    <Announce.Root
+      role="alert"
+      className={tw([
+        'flex gap-3 p-4 rounded-md',
+        {
+          success: 'bg-green-50 text-green-700',
+          error: 'bg-red-50 text-red-700',
+          info: 'bg-blue-50 text-blue-700',
+          warning: 'bg-yellow-50 text-yellow-700',
+        }[props.variant],
+      ])}
+    >
+      <div className={tw(['flex-shrink-0'])}>
+        <Icon className={tw(['w-5 h-5 text-current opacity-70'])} />
+      </div>
+      <div className={tw(['text-sm whitespace-pre-wrap'])}>
         {props.children}
-      </ContentWrapper>
-    </Root>
+      </div>
+    </Announce.Root>
   );
 }
-
-const IconWrapper = styled('div', { flexShrink: '0' });
-const ContentWrapper = styled('div', { whiteSpace: 'pre-wrap' });
 
 const iconMap = {
   error: XCircleIcon,
   success: CheckCircleIcon,
   info: InformationCircleIcon,
-  warning: ExclamationIcon,
+  warning: ExclamationTriangleIcon,
 };
-
-const iconClass = css({
-  width: '1.25rem',
-  height: '1.25rem',
-  variants: {
-    variant: {
-      error: {
-        color: '$red-400',
-      },
-      success: {
-        color: '$green-400',
-      },
-      info: {
-        color: '$blue-400',
-      },
-      warning: {
-        color: '$yellow-400',
-      },
-    },
-  },
-});
-
-const Root = styled(Announce.Root, {
-  borderRadius: '$md',
-  padding: '$4',
-  display: 'flex',
-  gap: '$3',
-  variants: {
-    variant: {
-      success: {
-        backgroundColor: '$green-50',
-        color: '$green-800',
-      },
-      error: {
-        backgroundColor: '$red-50',
-        color: '$red-800',
-      },
-      info: {
-        backgroundColor: '$blue-50',
-        color: '$blue-800',
-      },
-      warning: {
-        backgroundColor: '$yellow-60',
-        color: '$yellow-800',
-      },
-    },
-  },
-});

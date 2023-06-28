@@ -1,20 +1,21 @@
+import 'tailwindcss/tailwind.css';
+
 import useConstantImpl from 'use-constant';
 
 export const useConstant = useConstantImpl;
 export { useId } from '@radix-ui/react-id';
 export { Root as Portal } from '@radix-ui/react-portal';
 export * from './components/alert';
-export { BareButton } from './components/bare-button';
 export { Breadcrumbs } from './components/breadcrumbs';
 export { Button } from './components/button';
 export { Checkbox } from './components/checkbox';
-export * as Collapsible from './components/collapsible';
+export { Collapsible } from './components/collapsible';
 export { ColorInput } from './components/color-input';
 export { CopyButton } from './components/copy-button';
 export * from './components/dialog';
 export {
   DropdownMenu,
-  DropdownMenuContentProps,
+  type DropdownMenuContentProps,
 } from './components/dropdown-menu';
 export { FileInput } from './components/file-input';
 export * from './components/icon-button';
@@ -34,6 +35,7 @@ export { TextTooltip, Tooltip } from './components/tooltip';
 export * from './lib';
 export { copyText } from './lib/copy';
 export { createNameContext } from './lib/create-named-context';
+export { tw } from './lib/tw';
 export { useDebounce } from './lib/use-debounce';
 export { useDebouncedCallback } from './lib/use-debounced-callback';
 export { IsClientContextProvider, useIsClient } from './lib/use-is-client';
@@ -44,4 +46,5 @@ export { usePersistedState } from './lib/use-persisted-state';
 export { searchParamsToObject, useQueryParams } from './lib/use-query-params';
 export { useStableCallback } from './lib/use-stable-callback';
 export { useTransientState } from './lib/use-transient-state';
+export { iconClass } from './shared-styles';
 export * from './stitches.config';

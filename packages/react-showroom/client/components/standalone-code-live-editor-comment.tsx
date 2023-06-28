@@ -1,6 +1,6 @@
 import { styled } from '@showroomjs/ui';
 import * as React from 'react';
-import { XIcon } from '@heroicons/react/outline';
+import { XMarkIcon } from '@heroicons/react/20/solid';
 
 const CommentListImpl = styled('ul', {
   display: 'grid',
@@ -24,7 +24,7 @@ function CommentItemImpl({ children, onDismiss, ...props }: CommentItemProps) {
   );
 }
 
-const DismissIcon = styled(XIcon, {
+const DismissIcon = styled(XMarkIcon, {
   width: 20,
   height: 20,
   color: '$gray-400',

@@ -15,7 +15,7 @@ export const GenericLink = React.forwardRef<
     <a
       href={href}
       target={isExternal ? '_blank' : undefined}
-      rel={isExternal ? 'noopenner' : undefined}
+      rel={isExternal ? 'noopenner noreferrer' : undefined}
       {...props}
       ref={ref}
     />

@@ -1,11 +1,10 @@
 import { FrameDimension } from '@showroomjs/core';
-import { Breadcrumbs } from '@showroomjs/ui';
+import { Breadcrumbs, tw } from '@showroomjs/ui';
 import * as React from 'react';
 import { CodeFrameContextProvider } from '../lib/code-frame-context';
 import { useComponentMeta } from '../lib/component-props-context';
 import { lazy } from '../lib/lazy';
 import { useSize } from '../lib/use-size';
-import { Div } from './base';
 
 const StandaloneEditor = lazy(() => import('./standalone-editor-lazy'));
 
@@ -39,7 +38,7 @@ export const ComponentDocStandaloneEditor = (props: {
         ]}
         ref={breadcrumbRef}
       />
-      <Div css={{ flex: 1 }} style={variables}>
+      <div className={tw(['flex-1'])} style={variables}>
         <CodeFrameContextProvider
           value={React.useMemo(
             () => ({
@@ -51,7 +50,7 @@ export const ComponentDocStandaloneEditor = (props: {
         >
           <StandaloneEditor />
         </CodeFrameContextProvider>
-      </Div>
+      </div>
     </>
   );
 };

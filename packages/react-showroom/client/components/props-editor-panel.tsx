@@ -1,13 +1,12 @@
-import { styled, pulse } from '@showroomjs/ui';
-import * as React from 'react';
+import { pulse, styled } from '@showroomjs/ui';
 import { usePropsEditorContext } from '../lib/use-props-editor';
 import { PropsEditor } from './props-editor';
 
-export const PropsEditorPanel = () => {
+export const PropsEditorPanel = (props: { className?: string }) => {
   const editor = usePropsEditorContext();
 
   return (
-    <Panel loading={!editor}>
+    <Panel loading={!editor} className={props.className}>
       {editor ? (
         <PropsEditor editor={editor} />
       ) : (

@@ -21,6 +21,8 @@ export interface CodePreviewProps {
 }
 
 export const CodePreview = (props: CodePreviewProps) => {
+  // variables that is injected magically for convenience.
+  // currently it is the component for the component docs.
   const codeVariables = useCodeVariables();
   const imports = useCodeImports();
   const previewConsole = useConsole();

@@ -2,17 +2,17 @@ import {
   IsClientContextProvider,
   NotificationProvider,
   Tooltip,
+  tw,
 } from '@showroomjs/ui';
 import * as React from 'react';
 import sections from 'react-showroom-sections';
 import Wrapper from 'react-showroom-wrapper';
-import { Div } from '../components/base';
 import { Header } from '../components/header';
 import { PageFallback } from '../components/page-fallback';
 import { Sidebar } from '../components/sidebar';
 import { CodeThemeContext } from '../lib/code-theme-context';
 import { Suspense } from '../lib/lazy';
-import { matchPath, Route, Routes, useLocation } from '../lib/routing';
+import { Route, Routes, matchPath, useLocation } from '../lib/routing';
 import { getScrollFn } from '../lib/scroll-into-view';
 import { MenuContextProvider } from '../lib/use-menu';
 import { useSize } from '../lib/use-size';
@@ -20,7 +20,7 @@ import { TargetAudienceProvider } from '../lib/use-target-audience';
 import { DefaultHomePage } from '../pages/index';
 import { OfflinePage } from '../pages/offline';
 import { hasCustomHomePage, routeMapping, routes } from '../route-mapping';
-import { colorTheme, THEME } from '../theme';
+import { THEME, colorTheme, colorThemeCss } from '../theme';
 
 export const ShowroomApp = () => {
   const location = useLocation();
@@ -106,11 +106,12 @@ export const ShowroomApp = () => {
         color: ${THEME.colors['primary-800']};
       }`}</style>
       )}
+      <style>{colorThemeCss}</style>
       <RootProviders>
         <MenuContextProvider sections={sections}>
-          <Div style={cssVariables}>
+          <div style={cssVariables}>
             {!shouldHideHeader && <Header ref={headerRef} />}
-            <Div css={{ display: 'flex' }}>
+            <div className={tw(['flex'])}>
               {!shouldHideSidebar && <Sidebar sections={sections} />}
               <Suspense fallback={<PageFallback title={matchedTitle} />}>
                 <Routes>
@@ -143,8 +144,8 @@ export const ShowroomApp = () => {
                   )}
                 </Routes>
               </Suspense>
-            </Div>
-          </Div>
+            </div>
+          </div>
         </MenuContextProvider>
       </RootProviders>
     </Wrapper>
@@ -157,11 +158,11 @@ const RootProviders = (props: { children: React.ReactNode }) => {
       <IsClientContextProvider>
         <NotificationProvider>
           <TargetAudienceProvider>
-            <Div className={colorTheme}>
+            <div className={colorTheme}>
               <CodeThemeContext.Provider value={THEME.codeTheme}>
                 {props.children}
               </CodeThemeContext.Provider>
-            </Div>
+            </div>
           </TargetAudienceProvider>
         </NotificationProvider>
       </IsClientContextProvider>

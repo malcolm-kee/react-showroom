@@ -1,1 +1,1 @@
-export * from 'react-query';
+export * from '@tanstack/react-query';

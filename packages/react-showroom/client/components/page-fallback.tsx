@@ -1,5 +1,4 @@
 import { css, pulse, styled } from '@showroomjs/ui';
-import * as React from 'react';
 import { Article } from './article';
 import { Div as Base } from './base';
 import { DetailsPageContainer } from './details-page-container';

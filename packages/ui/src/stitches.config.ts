@@ -224,10 +224,6 @@ export const {
   config,
 } = result;
 
-export const icons = css({
-  color: '$gray-400',
-});
-
 export const text = css({
   variants: {
     variant: {

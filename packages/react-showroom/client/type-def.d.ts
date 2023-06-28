@@ -78,20 +78,6 @@ declare module 'react-showroom-index' {
   export default index;
 }
 
-declare module 'react-showroom-compat' {
-  import type { ReactElement } from 'react';
-
-  export const render: (
-    ui: React.ReactElement,
-    target: Element | null
-  ) => () => void;
-
-  export const hydrate: (
-    ui: React.ReactElement,
-    target: Element | null
-  ) => () => void;
-}
-
 declare namespace NodeJS {
   import type { FrameDimension, Environment } from '@showroomjs/core';
   import type { ThemeConfiguration } from '@showroomjs/core/react';

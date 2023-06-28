@@ -1,0 +1,28 @@
+```tsx
+import * as React from 'react';
+import { usePropsEditor } from 'react-showroom/client';
+
+const Demo = () => {
+  const propsEditor = usePropsEditor({
+    initialProps: {
+      variant: 'error',
+      children: 'Some alert message that requires attention.',
+    },
+    controls: {
+      children: {
+        type: 'text',
+      },
+    },
+  });
+
+  // prevent SSR error
+  const [isClient, setIsClient] = React.useState(false);
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  return isClient ? <Alert {...propsEditor.props} /> : null;
+};
+
+<Demo />;
+```
