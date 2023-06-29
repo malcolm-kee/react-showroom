@@ -1,19 +1,35 @@
-import { styled } from '../stitches.config';
+import * as React from 'react';
+import { tw } from '../lib/tw';
 
-export const IconButton = styled('button', {
-  cursor: 'pointer',
-  all: 'unset',
-  fontFamily: 'inherit',
-  borderRadius: '100%',
-  height: 35,
-  width: 35,
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  color: '$gray-400',
-  backgroundColor: 'white',
-  boxShadow: `0 2px 10px $gray-400`,
-  '&:hover': { backgroundColor: '$gray-100' },
-  '&:disabled': { cursor: 'default' },
-  outlineRing: '',
-});
+export type IconButtonProps = React.ComponentPropsWithoutRef<'button'> & {
+  sizeClass?: string;
+  colorClass?: string;
+  flat?: boolean;
+};
+
+export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
+  function IconButton(
+    {
+      sizeClass = tw(['w-9 h-9']),
+      colorClass = tw(['text-zinc-400 bg-white hover:bg-zinc-100']),
+      flat,
+      ...props
+    },
+    forwardedRef
+  ) {
+    return (
+      <button
+        type="button"
+        {...props}
+        className={tw(
+          [
+            'inline-flex justify-center items-center rounded-full cursor-pointer disabled:cursor-default',
+            !flat && 'shadow',
+          ],
+          [sizeClass, colorClass, props.className]
+        )}
+        ref={forwardedRef}
+      />
+    );
+  }
+);

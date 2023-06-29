@@ -16,7 +16,6 @@ import { isExternalLink } from '../lib/is-external-link';
 import { NavLink, useNavigate } from '../lib/routing';
 import { THEME, colorTheme } from '../theme';
 import { AudienceDropdownGroup, AudienceToggle } from './audience-toggle';
-import { Div } from './base';
 
 const toggle = audienceDefault ? (
   <div className={tw(['text-right'])}>
@@ -50,26 +49,12 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
 
   return (
     <>
-      <Div
-        as="nav"
-        css={{
-          display: 'none',
-          '@md': {
-            display: 'flex',
-            flexDirection: 'column',
-            position: 'sticky',
-            top: 'var(--header-height, 64px)',
-            left: 0,
-            bottom: 0,
-            height: 'calc(100vh - var(--header-height, 64px))',
-          },
-          borderRight: '1px solid',
-          borderRightColor: '$gray-200',
-          width: 240,
-          background: '$gray-100',
-          overflowY: 'scroll',
-          overscrollBehaviorBlock: 'contain',
-        }}
+      <nav
+        className={tw([
+          'hidden md:flex md:flex-col md:sticky md:left-0 md:bottom-0',
+          'md:top-[var(--header-height)] md:h-[calc(100vh-var(--header-height))]',
+          'border-r border-zinc-200 w-60 bg-zinc-100 overflow-y-scroll overscroll-contain',
+        ])}
       >
         <div className={tw(['flex-1'])}>
           {props.sections.map((section, i) => (
@@ -77,7 +62,7 @@ export const Sidebar = (props: { sections: Array<ReactShowroomSection> }) => {
           ))}
         </div>
         {toggle}
-      </Div>
+      </nav>
       {isClient && <MobileSidebar sections={mobileSections} />}
     </>
   );
@@ -97,29 +82,18 @@ const MobileSidebar = (props: { sections: Array<ReactShowroomSection> }) => (
     <DropdownMenu>
       <DropdownMenu.Trigger asChild>
         <IconButton
-          css={{
-            width: 48,
-            height: 48,
-            backgroundColor: '$primary-700',
-            color: 'White',
-            boxShadow:
-              '0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)',
-            '&:hover': {
-              backgroundColor: '$primary-900',
-            },
-            '@md': {
-              display: 'none',
-            },
-          }}
+          className={tw(['md:hidden shadow-lg'])}
+          colorClass={tw(['!bg-primary-700 !text-white hover:!bg-primary-900'])}
+          sizeClass={tw(['w-12 h-12'])}
         >
           <MenuIcon width={24} height={24} />
         </IconButton>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content
         className={colorTheme}
-        css={{
+        style={{
           maxHeight:
-            'calc(100vh - env(safe-area-inset-bottom, 24px) - env(safe-area-inset-top, 24px) - 48px - 2rem)',
+            'calc(100vh - env(safe-area-inset-bottom, 24px) - env(safe-area-inset-top, 24px) - 100px - 2rem)',
           maxWidth:
             'calc(100vw - env(safe-area-inset-right, 24px) - env(safe-area-inset-left, 24px) - 2rem)',
           overflowY: 'auto',

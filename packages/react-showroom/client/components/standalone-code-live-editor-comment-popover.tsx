@@ -1,6 +1,5 @@
-import { Button, Popover, Textarea } from '@showroomjs/ui';
+import { Button, Popover, Textarea, tw } from '@showroomjs/ui';
 import * as React from 'react';
-import { Div } from './base';
 
 export interface StandaloneCodeLiveEditorCommentPopoverProps
   extends Pick<
@@ -22,9 +21,7 @@ export const StandaloneCodeLiveEditorCommentPopover = React.forwardRef<
       <Popover.Anchor asChild>{props.children}</Popover.Anchor>
       <Popover.Content
         sideOffset={5}
-        css={{
-          pointerEvents: 'auto',
-        }}
+        className={tw(['pointer-events-auto'])}
         onClick={(ev) => ev.stopPropagation()}
       >
         <form
@@ -40,14 +37,7 @@ export const StandaloneCodeLiveEditorCommentPopover = React.forwardRef<
             required
             ref={forwardedRef}
           />
-          <Div
-            css={{
-              display: 'flex',
-              justifyContent: 'end',
-              gap: '$3',
-              paddingTop: '$2',
-            }}
-          >
+          <div className={tw(['flex justify-end gap-3 pt-2'])}>
             <Popover.RawClose asChild>
               <Button variant="outline">Cancel</Button>
             </Popover.RawClose>
@@ -58,7 +48,7 @@ export const StandaloneCodeLiveEditorCommentPopover = React.forwardRef<
             >
               Post
             </Button>
-          </Div>
+          </div>
         </form>
         <Popover.Arrow />
       </Popover.Content>

@@ -786,12 +786,8 @@ export const StandaloneCodeLiveEditor = ({
                           editorPosition === 'bottom' ? 'right' : 'bottom'
                         )
                       }
-                      css={{
-                        display: 'none',
-                        '@md': {
-                          display: 'inline-flex',
-                        },
-                      }}
+                      className={tw(['!hidden md:!inline-flex'])}
+                      flat
                     >
                       {isDockToRight ? (
                         <EditorRightIcon />
@@ -807,6 +803,7 @@ export const StandaloneCodeLiveEditor = ({
                         onPressedChange={(show) =>
                           setShowEditor(show, show ? undefined : 'true')
                         }
+                        className={tw(['rounded-full'])}
                         css={
                           showEditor
                             ? {
@@ -977,10 +974,8 @@ const Toolbar = styled('div', {
   px: '$3',
   backgroundColor: 'White',
   borderBottom: '1px solid $gray-200',
-  '@lg': {
-    position: 'sticky',
-    zIndex: 10,
-  },
+  position: 'sticky',
+  zIndex: 1,
 });
 
 const CommentIcon = styled(ChatIcon, {
