@@ -1,21 +1,47 @@
-import { styled, tw } from '@showroomjs/ui';
-import * as React from 'react';
 import { XMarkIcon } from '@heroicons/react/20/solid';
+import { tw } from '@showroomjs/ui';
+import * as React from 'react';
 
-const CommentListImpl = styled('ul', {
-  display: 'grid',
-  gap: '$3',
-  padding: '$3',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+const CommentListImpl = React.forwardRef<
+  HTMLUListElement,
+  React.ComponentPropsWithoutRef<'ul'>
+>(function CommentList(props, forwardedRef) {
+  return (
+    <ul
+      {...props}
+      ref={forwardedRef}
+      className={tw(['grid gap-3 p-3'], [props.className])}
+      style={{
+        gridTemplateColumns: 'repeat(auto-fill, minmax(300px,1fr))', // not working with tailwind
+        ...(props.style || {}),
+      }}
+    />
+  );
 });
 
 interface CommentItemProps extends React.ComponentPropsWithoutRef<'li'> {
   onDismiss: () => void;
+  active?: boolean;
 }
 
-function CommentItemImpl({ children, onDismiss, ...props }: CommentItemProps) {
+function CommentItem({
+  children,
+  onDismiss,
+  className,
+  active,
+  ...props
+}: CommentItemProps) {
   return (
-    <li {...props}>
+    <li
+      {...props}
+      className={tw(
+        [
+          'relative text-sm px-6 py-3 whitespace-pre-wrap cursor-pointer',
+          active ? 'bg-yellow-200 shadow-lg' : 'bg-white',
+        ],
+        [className]
+      )}
+    >
       <button
         onClick={onDismiss}
         type="button"
@@ -31,25 +57,6 @@ function CommentItemImpl({ children, onDismiss, ...props }: CommentItemProps) {
     </li>
   );
 }
-
-const CommentItem = styled(CommentItemImpl, {
-  px: '$6',
-  py: '$3',
-  cursor: 'pointer',
-  backgroundColor: 'White',
-  fontSize: '$sm',
-  lineHeight: '$sm',
-  position: 'relative',
-  whiteSpace: 'pre-wrap',
-  variants: {
-    active: {
-      true: {
-        backgroundColor: '$yellow-200',
-        shadow: 'lg',
-      },
-    },
-  },
-});
 
 export const CommentList = Object.assign(CommentListImpl, {
   Item: CommentItem,

@@ -16,7 +16,7 @@ export interface A11yResultPanelForFramesProps {
     selectors: Array<string>;
     color: string;
   }) => void;
-  resetHiglights: () => void;
+  resetHighlights: () => void;
   scrollToFrameWhenSelect?: boolean;
 }
 
@@ -77,7 +77,7 @@ export const A11yResultPanelForFrames = (
               }
             }
           : undefined,
-        props.resetHiglights
+        props.resetHighlights
       )}
     >
       <Tabs.List>
