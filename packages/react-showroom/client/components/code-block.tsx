@@ -1,15 +1,14 @@
 import {
   NON_VISUAL_LANGUAGES,
-  SUPPORTED_LANGUAGES,
   PropsEditorFeature,
+  SUPPORTED_LANGUAGES,
 } from '@showroomjs/core';
-import { styled } from '@showroomjs/ui';
-import cx from 'classnames';
+import { tw } from '@showroomjs/ui';
 import parseNumRange from 'parse-numeric-range';
 import * as React from 'react';
 import { useCodeTheme } from '../lib/code-theme-context';
+import { A11yResultContextProvider } from '../lib/use-a11y-result';
 import { useCodeCompilationCache } from '../lib/use-code-compilation';
-import { Div } from './base';
 import { CodeHighlight } from './code-highlight';
 import {
   CodeLiveEditor,
@@ -17,23 +16,17 @@ import {
   NonVisualCodeLiveEditor,
 } from './code-live-editor';
 import { CodePlayground } from './code-playground';
-import { A11yResultContextProvider } from '../lib/use-a11y-result';
 import { LanguageTag } from './language-tag';
 
 const IsBlockCodeContext = React.createContext(false);
 IsBlockCodeContext.displayName = 'ShowroomIsBlockCodeContext';
 
 export const Pre = (props: { children: React.ReactNode }) => (
-  <Div
-    css={{
-      marginTop: '$4',
-      marginBottom: '$8',
-    }}
-  >
+  <div className={tw(['mt-4 mb-8'])}>
     <IsBlockCodeContext.Provider value={true}>
       {props.children}
     </IsBlockCodeContext.Provider>
-  </Div>
+  </div>
 );
 
 export interface CodeProps extends React.ComponentPropsWithoutRef<'code'> {
@@ -73,48 +66,44 @@ export const Code = ({
   );
 
   if (!isBlockCode || typeof props.children !== 'string') {
-    return <InlineCode {...props} />;
+    return (
+      <code
+        {...props}
+        className={tw(
+          ['inline-block px-1 [font-family:monospace] bg-zinc-200 rounded-sm'],
+          [props.className]
+        )}
+      />
+    );
   }
 
   const lang: any = props.className && props.className.split('-').pop();
   const code = props.children.trim();
 
   const heading = fileName ? (
-    <Div
-      css={{
-        px: '$4',
-        py: '$3',
-        backgroundColor: '$gray-200',
-        roundedT: '$md',
-        fontSize: '$sm',
-        lineHeight: '$sm',
-      }}
-    >
+    <div className={tw(['px-4 py-3 text-sm bg-zinc-200 rounded-t-md'])}>
       <code>{fileName}</code>
-    </Div>
+    </div>
   ) : null;
 
   if (!SUPPORTED_LANGUAGES.includes(lang) || isStatic) {
     return (
       <>
         {heading}
-        <Div
+        <div
           style={{
             ...(typeof theme.plain === 'object' ? (theme.plain as any) : {}),
           }}
-          css={{
-            py: 10,
-            fontSize: 14,
-            roundedT: heading ? '$none' : inlineBlock ? '$xl' : '$base',
-            roundedB: inlineBlock ? '$xl' : '$base',
-            whiteSpace: 'pre',
-            fontFamily: 'monospace',
-            position: 'relative',
-            display: inlineBlock ? 'inline-block' : 'block',
-            px: inlineBlock ? '$6' : 10,
-            overflow: 'auto',
-          }}
-          className={cx('react-showroom-code', props.className)}
+          className={tw(
+            [
+              'text-sm py-[10px] [font-family:monospace] relative whitespace-pre overflow-auto',
+              !heading && (inlineBlock ? 'rounded-t-xl' : 'rounded-t'),
+              inlineBlock
+                ? 'inline-block px-6 rounded-b-xl'
+                : 'block rounded-b px-[10px]',
+            ],
+            ['react-showroom-code', props.className]
+          )}
         >
           <CodeHighlight
             code={code}
@@ -123,7 +112,7 @@ export const Code = ({
             highlights={highlightedLines}
           />
           {!inlineBlock && lang && <LanguageTag language={lang} />}
-        </Div>
+        </div>
       </>
     );
   }
@@ -199,11 +188,3 @@ const VisualCodeBlock = (props: CodeLiveEditorProps) => {
     />
   );
 };
-
-const InlineCode = styled('code', {
-  fontFamily: '$mono',
-  backgroundColor: '$gray-200',
-  display: 'inline-block',
-  px: '$1',
-  borderRadius: '$sm',
-});

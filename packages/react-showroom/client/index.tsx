@@ -11,11 +11,12 @@ export type {
 export {
   Breadcrumbs,
   Checkbox,
+  ColorInput,
   FileInput,
   NumberInput,
   Select,
-  styled,
   TextInput,
+  styled,
 } from '@showroomjs/ui';
 export { BrowserWindow } from './components/browser-window';
 export type { BrowserWindowProps } from './components/browser-window';
@@ -34,7 +35,6 @@ export { MarkdownDocStandaloneEditor } from './components/markdown-doc-standalon
 export { mdxComponents } from './components/mdx-components';
 export { PageFallback } from './components/page-fallback';
 export {
-  ColorControl,
   ObjectValueEditor,
   PropsEditor,
   SelectButton,

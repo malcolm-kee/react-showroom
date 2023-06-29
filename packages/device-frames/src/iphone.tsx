@@ -1,4 +1,8 @@
-import { ChartBarIcon, VolumeOffIcon, WifiIcon } from '@heroicons/react/solid';
+import {
+  ChartBarIcon,
+  SpeakerXMarkIcon,
+  WifiIcon,
+} from '@heroicons/react/20/solid';
 import * as React from 'react';
 
 export interface IPhoneFrameProps {
@@ -51,7 +55,7 @@ export const IPhoneX = React.forwardRef<HTMLDivElement, IPhoneFrameProps>(
               <div className="status-bar-notification">
                 <ChartBarIcon width={16} height={16} />
                 <WifiIcon width={16} height={16} />
-                <VolumeOffIcon width={16} height={16} />
+                <SpeakerXMarkIcon width={16} height={16} />
               </div>
             </div>
             <div className="screen-content">{props.children}</div>

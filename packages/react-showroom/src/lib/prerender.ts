@@ -31,10 +31,16 @@ export async function prerenderSite(
     if (route !== '') {
       pageCount++;
 
-      await fs.outputFile(
-        resolveApp(`${config.outDir}/${route}index.html`),
-        await getHtml(`/${route}`)
-      );
+      try {
+        await fs.outputFile(
+          resolveApp(`${config.outDir}/${route}index.html`),
+          await getHtml(`/${route}`)
+        );
+      } catch (error) {
+        console.group(`Error while prerendering ${route}`);
+        console.error(error);
+        console.groupEnd();
+      }
     }
   }
 
@@ -90,10 +96,16 @@ export async function prerenderPreview(
     if (route !== '') {
       pageCount++;
 
-      await fs.outputFile(
-        resolveApp(`${config.outDir}/_preview/${route}index.html`),
-        await getHtml(`/${route}`)
-      );
+      try {
+        await fs.outputFile(
+          resolveApp(`${config.outDir}/_preview/${route}index.html`),
+          await getHtml(`/${route}`)
+        );
+      } catch (error) {
+        console.group(`Error while prerendering ${route}`);
+        console.error(error);
+        console.groupEnd();
+      }
     }
   }
 

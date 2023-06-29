@@ -1,12 +1,30 @@
 import { createNameContext } from '@showroomjs/ui';
 import * as React from 'react';
+import { codeBlockImportOverrides } from './code-block-import-overrides';
 
-const CodeImportsContext = createNameContext<Record<string, any>>(
+export type CodeImports = Record<string, any>;
+
+const CodeImportsContext = createNameContext<CodeImports>(
   'CodeImportsContext',
   {}
 );
 
-export const CodeImportsContextProvider = CodeImportsContext.Provider;
+export const CodeImportsContextProvider = (props: {
+  value: CodeImports;
+  children: React.ReactNode;
+}) => (
+  <CodeImportsContext.Provider
+    value={React.useMemo(
+      () => ({
+        ...codeBlockImportOverrides,
+        ...props.value,
+      }),
+      [props.value]
+    )}
+  >
+    {props.children}
+  </CodeImportsContext.Provider>
+);
 
 export const useCodeImports = () => React.useContext(CodeImportsContext);
 

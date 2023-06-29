@@ -11,11 +11,10 @@ import type { DeviceName, FrameDimension } from './device-dimensions';
 import type { Spec } from 'axe-core';
 import { CodeBlocks, Environment } from './index';
 
-export interface HtmlOptions
-  extends Pick<
-    HtmlWebpackTagsPluginOptions,
-    'scripts' | 'tags' | 'links' | 'metas' | 'publicPath' | 'append'
-  > {}
+export type HtmlOptions = Pick<
+  HtmlWebpackTagsPluginOptions,
+  'scripts' | 'tags' | 'links' | 'metas' | 'publicPath' | 'append'
+>;
 
 export interface ItemConfigBase {
   title?: string;
@@ -24,7 +23,10 @@ export interface ItemConfigBase {
    */
   path?: string;
   hideFromSidebar?: boolean;
+  hideFromSearch?: boolean;
 }
+
+export type CollapsibleOption = 'collapse-by-default' | 'expand-by-default';
 
 export interface ComponentSectionConfiguration extends ItemConfigBase {
   type: 'components';
@@ -36,6 +38,7 @@ export interface ComponentSectionConfiguration extends ItemConfigBase {
    * glob pattern to look for the components
    */
   components: string | Array<string>;
+  collapsible?: CollapsibleOption;
 }
 
 export interface ContentItemConfiguration extends ItemConfigBase {
@@ -90,6 +93,7 @@ export interface GroupSectionConfiguration extends ItemConfigBase {
    */
   path?: string;
   items: Array<ItemConfiguration>;
+  collapsible?: CollapsibleOption;
 }
 
 export type ItemConfiguration =
@@ -375,6 +379,7 @@ export interface ReactShowroomComponentSectionConfig {
   parentSlugs: Array<string>;
   id: string;
   hideFromSidebar?: boolean;
+  hideFromSearch?: boolean;
 }
 
 interface ReactShowroomMarkdownSectionConfig {
@@ -384,6 +389,7 @@ interface ReactShowroomMarkdownSectionConfig {
   title?: string;
   formatLabel: (oriTitle: string) => string;
   hideFromSidebar?: boolean;
+  hideFromSearch?: boolean;
   /**
    * @internal
    *
@@ -397,6 +403,7 @@ interface ReactShowroomLinkSectionConfig {
   href: string;
   title: string;
   hideFromSidebar?: boolean;
+  hideFromSearch?: boolean;
 }
 
 interface ReactShowroomGroupSectionConfig {
@@ -405,6 +412,8 @@ interface ReactShowroomGroupSectionConfig {
   slug: string;
   items: Array<ReactShowroomSectionConfig>;
   hideFromSidebar?: boolean;
+  hideFromSearch?: boolean;
+  collapsible: CollapsibleOption | false;
 }
 
 /**
@@ -492,9 +501,9 @@ export interface ReactShowroomMarkdownHeading {
 }
 
 export interface ReactShowroomMarkdownContent {
-  Component: ComponentType<any>;
+  Component: ComponentType<{ components: Record<string, unknown> }>;
   headings: Array<ReactShowroomMarkdownHeading>;
-  imports: Record<string, any>;
+  imports: Record<string, unknown>;
   codeblocks: CodeBlocks;
   loadDts: () => Promise<{ default: Record<string, string> }>;
   editUrl: string | null;
@@ -528,6 +537,7 @@ export interface ReactShowroomGroupSection {
   slug: string;
   items: Array<ReactShowroomSection>;
   hideFromSidebar?: boolean;
+  collapsible: CollapsibleOption | false;
 }
 
 export type ReactShowroomSection =

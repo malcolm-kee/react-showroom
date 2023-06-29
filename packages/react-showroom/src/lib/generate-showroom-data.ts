@@ -1,11 +1,10 @@
 import { getSafeName } from '@showroomjs/core';
-import {
+import type {
+  GetEditUrlFunction,
   ReactShowroomComponentSectionConfig,
   ReactShowroomSectionConfig,
-  GetEditUrlFunction,
 } from '@showroomjs/core/react';
 import path from 'path';
-import { logToStdout, yellow } from './log-to-stdout';
 import { paths, resolveShowroom } from './paths';
 
 let _nameIndex = 0;
@@ -147,9 +146,10 @@ export const generateSectionsAndImports = (
     path: string;
     name: string;
   }> = [];
-  const compVar: Array<{
+  const compVars: Array<{
     identifier: string;
     sourcePath: string;
+    id: string;
   }> = [];
 
   function collect(sectionList: Array<ReactShowroomSectionConfig>): string {
@@ -162,6 +162,9 @@ export const generateSectionsAndImports = (
             items: ${collect(section.items)},
             slug: addTrailingSlash('${section.slug}'),
             ${section.hideFromSidebar ? 'hideFromSidebar: true,' : ''}
+            collapsible: ${
+              section.collapsible ? `'${section.collapsible}'` : false
+            },
           }`;
         }
 
@@ -175,9 +178,10 @@ export const generateSectionsAndImports = (
             });
           }
 
-          compVar.push({
+          compVars.push({
             identifier: name,
             sourcePath: section.sourcePath,
+            id: section.id,
           });
 
           return `${name} ? {
@@ -308,10 +312,10 @@ export const generateSectionsAndImports = (
           : `import * as ${imp.name} from '${imp.path}';`
       )
       .join('\n')}
-    ${compVar
+    ${compVars
       .map(
         (varDef) =>
-          `const ${varDef.identifier} = allCompMetadata['${varDef.sourcePath}'];`
+          `const ${varDef.identifier} = allCompMetadata['${varDef.id}'];`
       )
       .join('\n')}
     export default ${result}`,
@@ -330,6 +334,7 @@ export const generateAllComponents = (
   const componentImports: Array<{
     name: string;
     sourcePath: string;
+    id: string;
     codeblockPath: string | null;
   }> = [];
 
@@ -344,6 +349,7 @@ export const generateAllComponents = (
         componentImports.push({
           name,
           sourcePath: section.sourcePath,
+          id: section.id,
           codeblockPath:
             section.docPath && `${section.docPath}?showroomRemarkCodeblocks`,
         });
@@ -361,7 +367,7 @@ export const generateAllComponents = (
   ${componentImports
     .map(
       (comp) => `const ${comp.name} = require('${comp.sourcePath}');
-  const _showroomMetadata_${comp.name} = allCompMetadata['${comp.sourcePath}'];
+  const _showroomMetadata_${comp.name} = allCompMetadata['${comp.id}'];
   ${
     comp.codeblockPath
       ? `import _code_${comp.name} from '${comp.codeblockPath}';`
@@ -407,7 +413,10 @@ export const generateAllComponentsPaths = (
 export const generateAllComponentsDocs = (
   sections: Array<ReactShowroomSectionConfig>
 ) => {
-  const componentPaths: Array<string> = [];
+  const componentPaths: Array<{
+    sourcePath: string;
+    id: string;
+  }> = [];
 
   function collect(sectionList: Array<ReactShowroomSectionConfig>): void {
     sectionList.forEach((section) => {
@@ -415,7 +424,7 @@ export const generateAllComponentsDocs = (
         collect(section.items);
       }
       if (section.type === 'component') {
-        componentPaths.push(section.sourcePath);
+        componentPaths.push(section);
       }
     });
   }
@@ -423,15 +432,18 @@ export const generateAllComponentsDocs = (
   collect(sections);
 
   return `${componentPaths
-    .map((path, index) => `import component${index} from '${path}?docgen';`)
+    .map(
+      ({ id, sourcePath }) =>
+        `import component${id} from '${sourcePath}?docgen';`
+    )
     .join('\n')}
 
   const allComponentDocs = {};
 
   ${componentPaths
     .map(
-      (_, index) => `if (component${index}) {
-    allComponentDocs[component${index}.filePath] = component${index};
+      ({ id }) => `if (component${id}) {
+    allComponentDocs['${id}'] = component${id};
   }`
     )
     .join('\n')}
@@ -465,9 +477,10 @@ export const generateSearchIndex = (
   sections: Array<ReactShowroomSectionConfig>,
   includeHeadingsInIndex: boolean
 ) => {
-  const compVar: Array<{
+  const compVars: Array<{
     identifier: string;
     sourcePath: string;
+    id: string;
   }> = [];
 
   const imports: Array<ImportDefinition> = [];
@@ -475,7 +488,7 @@ export const generateSearchIndex = (
   function collect(sectionList: Array<ReactShowroomSectionConfig>): string {
     return `[${sectionList
       .map((section) => {
-        if (section.hideFromSidebar) {
+        if (section.hideFromSidebar || section.hideFromSearch) {
           return 'undefined';
         }
 
@@ -486,9 +499,10 @@ export const generateSearchIndex = (
         if (section.type === 'component') {
           const name = getName('component');
 
-          compVar.push({
+          compVars.push({
             identifier: name,
             sourcePath: section.sourcePath,
+            id: section.id,
           });
 
           const shouldIndexDoc = includeHeadingsInIndex && !!section.docPath;
@@ -566,65 +580,10 @@ ${imports
       : `import * as ${imp.name} from '${imp.path}';`
   )
   .join('\n')}
-${compVar
+${compVars
   .map(
-    (varDef) =>
-      `const ${varDef.identifier} = allCompMetadata['${varDef.sourcePath}'];`
+    (varDef) => `const ${varDef.identifier} = allCompMetadata['${varDef.id}'];`
   )
   .join('\n')}
 export default ${result};`;
-};
-
-export const generateReactEntryCompat = (): string => {
-  const ReactDomPath = require.resolve('react-dom', {
-    paths: [paths.appPath],
-  });
-
-  const ReactDOM = require(ReactDomPath);
-
-  const reactMajorVer = Number(ReactDOM.version.split('.')[0]);
-
-  logToStdout(`Using React version ${yellow(reactMajorVer)}`);
-
-  if (reactMajorVer <= 17) {
-    return `import * as ReactDOM from 'react-dom';
-    
-    export const render = (ui, target) => {
-      ReactDOM.render(ui, target);
-
-      return function unmount() {
-        ReactDOM.unmountComponentAtNode(target);
-      }
-    };
-
-    export const hydrate = (ui, target) => {
-      ReactDOM.hydrate(ui, target);
-
-      return function unmount() {
-        ReactDOM.unmountComponentAtNode(target);
-      };
-    };
-`;
-  } else {
-    return `import { createRoot, hydrateRoot } from 'react-dom/client';
-    
-    export const render = (ui, target) => {
-      const root = createRoot(target);
-
-      root.render(ui);
-
-      return function unmount() {
-        root.unmount();
-      }
-    };
-
-    export const hydrate = (ui, target) => {
-      const root = hydrateRoot(target, ui);
-
-      return function unmount() {
-        root.unmount();
-      };
-    };
-`;
-  }
 };

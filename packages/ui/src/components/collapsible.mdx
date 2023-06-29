@@ -1,0 +1,20 @@
+```tsx
+const Demo = () => {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <Collapsible.Button className="flex items-center gap-1">
+        <Collapsible.ToggleIcon />
+        Toggle
+      </Collapsible.Button>
+      <Collapsible.Content animate>
+        <div>
+          <p>Some hidden content</p>
+        </div>
+      </Collapsible.Content>
+    </Collapsible>
+  );
+};
+
+<Demo />;
+```

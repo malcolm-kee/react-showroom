@@ -1,6 +1,6 @@
 import Editor, { EditorProps } from '@monaco-editor/react';
 import { CompileResult, omit } from '@showroomjs/core';
-import { styled, useStableCallback } from '@showroomjs/ui';
+import { useStableCallback } from '@showroomjs/ui';
 import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { Language } from 'prism-react-renderer';
 import * as React from 'react';
@@ -32,7 +32,7 @@ const languageExtension: { [key in Language]?: string } = {
   javascript: 'js',
 };
 
-export const CodeAdvancedEditor = styled(function CodeAdvancedEditor({
+export function CodeAdvancedEditor({
   value,
   onChange,
   language,
@@ -101,7 +101,7 @@ export const CodeAdvancedEditor = styled(function CodeAdvancedEditor({
       className={className}
     />
   );
-});
+}
 
 const isAndroid = process.env.SSR
   ? false
@@ -118,7 +118,7 @@ const editorOptions: EditorProps['options'] = {
   acceptSuggestionOnCommitCharacter: !isAndroid,
   acceptSuggestionOnEnter: !isAndroid ? 'on' : 'off',
   inlayHints: {
-    enabled: true,
+    enabled: 'on',
   },
   scrollBeyondLastLine: false,
   lineNumbers: 'off',

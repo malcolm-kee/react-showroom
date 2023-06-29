@@ -1,9 +1,6 @@
 import { QueryClientProvider } from '@showroomjs/bundles/query';
-import {
-  hydrate as hydrateFn,
-  render as renderFn,
-} from 'react-showroom-compat';
 import * as React from 'react';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import { basename, isPrerender } from '../lib/config';
 import { createQueryClient } from '../lib/create-query-client';
 import { BrowserRouter as Router } from '../lib/routing';
@@ -11,7 +8,13 @@ import { PreviewApp } from './preview-app';
 
 const queryClient = createQueryClient();
 
-const render = isPrerender ? hydrateFn : renderFn;
+const render = isPrerender
+  ? function hydrate(ui: React.ReactElement, target: HTMLElement) {
+      hydrateRoot(target, ui);
+    }
+  : function render(ui: React.ReactElement, target: HTMLElement) {
+      createRoot(target).render(ui);
+    };
 
 render(
   <Router basename={`${basename}/_preview`}>
@@ -19,5 +22,5 @@ render(
       <PreviewApp />
     </QueryClientProvider>
   </Router>,
-  document.getElementById('preview')
+  document.getElementById('preview')!
 );

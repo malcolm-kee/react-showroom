@@ -1,5 +1,4 @@
-import { Alert, styled, useIsClient } from '@showroomjs/ui';
-import * as React from 'react';
+import { Alert, tw, useIsClient } from '@showroomjs/ui';
 import { GenericLink } from './generic-link';
 
 export interface DocPlaceholderProps {
@@ -7,53 +6,45 @@ export interface DocPlaceholderProps {
   className?: string;
 }
 
-export const DocPlaceholder = styled(
-  function DocPlaceholder(props: DocPlaceholderProps) {
-    const isClient = useIsClient();
+export function DocPlaceholder(props: DocPlaceholderProps) {
+  const isClient = useIsClient();
 
-    return isClient ? (
-      <div className={props.className}>
-        <Alert variant="info">
-          <div>
-            <P>There is no documentation/example for this component.</P>
-            {process.env.NODE_ENV === 'development' && (
-              <>
-                <P>
-                  Create a file at the following location to start adding
-                  documentation/example:
-                </P>
-                <P>
-                  <code>
-                    {props.componentFilePath.replace(
-                      /(\.(js|ts|jsx|tsx))$/,
-                      '.mdx'
-                    )}
-                  </code>
-                </P>
-                <p>
-                  To learn more about creating documentation/example for your
-                  component, visit{' '}
-                  <Link href="https://react-showroom.js.org/getting-started/documenting-components#show-usages-with-markdown">
-                    this page
-                  </Link>
-                  .
-                </p>
-              </>
-            )}
-          </div>
-        </Alert>
-      </div>
-    ) : null;
-  },
-  {
-    marginY: '$4',
-  }
-);
-
-const Link = styled(GenericLink, {
-  textDecoration: 'underline',
-});
-
-const P = styled('p', {
-  marginBottom: '$2',
-});
+  return isClient ? (
+    <div className={tw(['my-4'], [props.className])}>
+      <Alert variant="info">
+        <div>
+          <p className={tw(['mb-2'])}>
+            There is no documentation/example for this component.
+          </p>
+          {process.env.NODE_ENV === 'development' && (
+            <>
+              <p className={tw(['mb-2'])}>
+                Create a file at the following location to start adding
+                documentation/example:
+              </p>
+              <p className={tw(['mb-2'])}>
+                <code>
+                  {props.componentFilePath.replace(
+                    /(\.(js|ts|jsx|tsx))$/,
+                    '.mdx'
+                  )}
+                </code>
+              </p>
+              <p>
+                To learn more about creating documentation/example for your
+                component, visit{' '}
+                <GenericLink
+                  href="https://react-showroom.js.org/getting-started/documenting-components#show-usages-with-markdown"
+                  className={tw(['underline'])}
+                >
+                  this page
+                </GenericLink>
+                .
+              </p>
+            </>
+          )}
+        </div>
+      </Alert>
+    </div>
+  ) : null;
+}

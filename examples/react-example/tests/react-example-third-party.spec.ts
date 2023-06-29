@@ -8,9 +8,9 @@ test.describe('react example third party integration', () => {
       try {
         await page.click('button:has-text("Fetch Data")');
 
-        await expect(
-          page.locator('text=Result intercepted by msw!')
-        ).toBeVisible({ timeout: 3000 });
+        await expect(page.getByText('Result intercepted by msw!')).toBeVisible({
+          timeout: 3000,
+        });
       } catch (error) {
         if (retryCount <= 3) {
           console.log(error);

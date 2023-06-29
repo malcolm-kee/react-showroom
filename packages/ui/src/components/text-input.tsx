@@ -1,17 +1,14 @@
 import * as React from 'react';
 import { callAll } from '../lib';
-import { styled } from '../stitches.config';
+import { tw } from '../lib/tw';
 
 export interface TextInputProps
   extends React.ComponentPropsWithoutRef<'input'> {
   onValue?: (value: string) => void;
 }
 
-export const TextInput = styled(
-  React.forwardRef<HTMLInputElement, TextInputProps>(function TextInput(
-    { onValue, ...props },
-    ref
-  ) {
+export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
+  function TextInput({ onValue, ...props }, ref) {
     return (
       <input
         {...props}
@@ -19,32 +16,14 @@ export const TextInput = styled(
           props.onChange,
           onValue && ((ev) => onValue(ev.target.value))
         )}
+        className={tw(
+          [
+            'form-input w-full sm:text-sm text-zinc-900 disabled:text-zinc-500 border-zinc-300 rounded',
+          ],
+          [props.className]
+        )}
         ref={ref}
       />
     );
-  }),
-  {
-    borderRadius: '$base',
-    border: '1px solid $gray-300',
-    width: '100%',
-    minWidth: 'none',
-    px: '$3',
-    py: '$1',
-    fontSize: '$lg',
-    fontFamily: 'inherit',
-    lineHeight: '$lg',
-    color: 'Black',
-    backgroundColor: 'White',
-    '@md': {
-      fontSize: '$base',
-      lineHeight: '$base',
-    },
-    '&:focus': {
-      outline: 'none',
-      borderColor: '$primary-300',
-    },
-    '&::placeholder': {
-      color: '$gray-400',
-    },
   }
 );

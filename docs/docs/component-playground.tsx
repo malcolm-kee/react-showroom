@@ -32,7 +32,14 @@ import { useSetCompilationCaches } from './set-compilation-caches';
 
 const allMetadata = Object.values(allComponentsMetadata);
 
-const buttonData = allMetadata.find((m) => m.displayName === 'Button')!;
+const buttonData = allMetadata.find((m) => m.displayName === 'Button');
+
+if (!buttonData) {
+  throw new Error(
+    'buttonData not defined in component playground source code.'
+  );
+}
+
 const { pre: Pre, code: Code } = mdxComponents;
 
 const mockLoadDts = () => Promise.resolve({ default: {} });
@@ -44,6 +51,7 @@ const playgroundContent = {
   codeblocks: playgroundCodeBlocks,
   Component: Button,
   loadDts: mockLoadDts,
+  editUrl: null,
 };
 
 export const PlaygroundSource = () => {
@@ -81,6 +89,7 @@ const playgroundContent2 = {
   codeblocks: playgroundCodeBlocks2,
   Component: Button,
   loadDts: mockLoadDts,
+  editUrl: null,
 };
 
 export const PlaygroundSource2 = () => {
@@ -113,6 +122,7 @@ const controlOptionsContent = {
   codeblocks: controlOptionsCodeBlocks,
   Component: Button,
   loadDts: mockLoadDts,
+  editUrl: null,
 };
 
 export const ControlOptionsSource = () => {
@@ -153,9 +163,7 @@ export const NumberInputDemo = () => {
     <NumberInput
       value={value}
       onValue={setValue}
-      css={{
-        maxWidth: '20rem',
-      }}
+      className="max-w-xs"
       allowNegative
     />
   );
@@ -177,16 +185,7 @@ export const SelectDemo = () => {
 
   return (
     <>
-      <Select
-        value={value}
-        onValue={setValue}
-        css={{
-          maxWidth: '36rem',
-          '@lg': {
-            display: 'none',
-          },
-        }}
-      >
+      <Select value={value} onValue={setValue} className="max-w-xl lg:hidden">
         {options.map((opt) => (
           <option value={opt.value} key={opt.value}>
             {opt.label}

@@ -1,13 +1,17 @@
 import { QueryClientProvider } from '@showroomjs/bundles/query';
 import { StaticRouter } from '@showroomjs/bundles/routing';
-import { flattenArray, isDefined, NestedArray, Ssr } from '@showroomjs/core';
+import {
+  flattenArray,
+  isDefined,
+  type NestedArray,
+  type Ssr,
+} from '@showroomjs/core';
 import {
   ReactShowroomComponentSection,
   ReactShowroomMarkdownSection,
   ReactShowroomSection,
 } from '@showroomjs/core/react';
 import { getCssText } from '@showroomjs/ui';
-import * as React from 'react';
 import * as ReactDOMServer from 'react-dom/server';
 import { Helmet } from 'react-helmet';
 import sections from 'react-showroom-sections';
@@ -25,10 +29,7 @@ export const ssr: Ssr = {
     const queryClient = createQueryClient();
 
     const result = ReactDOMServer.renderToString(
-      <StaticRouter
-        location={{ pathname }}
-        basename={`${process.env.BASE_PATH}/_preview`}
-      >
+      <StaticRouter location={{ pathname }}>
         <QueryClientProvider client={queryClient}>
           <PreviewApp />
         </QueryClientProvider>
@@ -62,7 +63,9 @@ export const ssr: Ssr = {
           .filter(isDefined);
 
         if (codeHashes.length > 0) {
-          result.push(codeHashes.map((hash) => `${hash}/${section.id}/`));
+          result.push(
+            codeHashes.map((hash) => `${hash}/${section.metadata.id}/`)
+          );
         }
       }
 

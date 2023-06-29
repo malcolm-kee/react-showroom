@@ -1,6 +1,6 @@
 import { isFunction, isNumber, SupportedLanguage } from '@showroomjs/core';
-import { css, styled, useConstant, useQueryParams } from '@showroomjs/ui';
-import { Enable as ResizeEnable, Resizable } from 're-resizable';
+import { tw, useConstant, useQueryParams } from '@showroomjs/ui';
+import { Resizable, Enable as ResizeEnable } from 're-resizable';
 import * as React from 'react';
 import { useCodeFrameContext } from '../lib/code-frame-context';
 import { safeCompress, safeDecompress } from '../lib/compress';
@@ -130,9 +130,9 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
     }
   }, [props.a11yHighlightData]);
 
-  const codeFrameSetttings = useCodeFrameContext();
+  const codeFrameSettings = useCodeFrameContext();
 
-  const visibleFrames = codeFrameSetttings.frameDimensions.filter(
+  const visibleFrames = codeFrameSettings.frameDimensions.filter(
     (f) => !props.hiddenSizes.some(([w, h]) => w === f.width && h === f.height)
   );
 
@@ -166,18 +166,25 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
         onResultChange={(result) => setResult(dimension.name, result)}
         key={dimension.name}
       >
-        <ScreenWrapper isCommenting={props.isCommenting}>
+        <div
+          className={tw([
+            'group/wrapper mb-6',
+            props.isCommenting && 'pointer-events-none',
+          ])}
+        >
           <DeviceFrame dimension={dimension} showFrame={props.showFrame}>
-            <Screen
-              css={
+            <div
+              className={tw([
+                'h-full overflow-hidden transition-shadow bg-white shadow-sm',
+                'group-hover/wrapper:shadow-lg',
+              ])}
+              style={
                 props.showFrame
                   ? {
                       width: '100%',
-                      height: '100%',
                     }
                   : {
                       width: `${dimension.width}px`,
-                      height: '100%',
                     }
               }
             >
@@ -185,9 +192,9 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
                 code={props.code}
                 lang={props.lang}
                 codeHash={props.codeHash}
-                css={{
+                className={tw(['h-full'])}
+                style={{
                   width: `${dimension.width}px`,
-                  height: '100%',
                 }}
                 imperativeRef={(ref) => {
                   if (ref) {
@@ -259,11 +266,15 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
                 }}
                 data-frame-id={getFrameId(dimension)}
               />
-            </Screen>
+            </div>
           </DeviceFrame>
-          <ScreenSize>
-            <ScreenSizeText
-              css={
+          <div className={tw(['px-2 py-1'])}>
+            <span
+              className={tw([
+                'inline-flex flex-col items-start text-sm',
+                'text-zinc-500 group-hover/wrapper:text-black',
+              ])}
+              style={
                 shouldAdjustZoom
                   ? {
                       transform: `scale(${100 / zoomValue})`,
@@ -276,17 +287,31 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
               <A11ySummary
                 onClick={() => props.onA11ySummaryClick(dimension.name)}
               />
-            </ScreenSizeText>
-          </ScreenSize>
-        </ScreenWrapper>
+            </span>
+          </div>
+        </div>
       </A11yResultContextProvider>
     );
   });
 
   const rootProps = {
-    className: resizeStyle({
-      isCommenting: props.isCommenting,
-    }),
+    className: tw([
+      'relative pt-3 pb-6 px-3 bg-zinc-200 overflow-x-auto overflow-y-hidden',
+      props.isCommenting && 'text-zinc-300',
+      screenListSize ? 'flex-none' : 'flex-1',
+    ]),
+    style: {
+      ...(props.isCommenting
+        ? {
+            cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z' /%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 11a3 3 0 11-6 0 3 3 0 016 0z' /%3E%3C/svg%3E"), auto`,
+          }
+        : {}),
+      ...(screenListSize
+        ? {
+            height: screenListSize.height + 36,
+          }
+        : {}),
+    },
     onClick: props.isCommenting
       ? (ev: React.MouseEvent<HTMLElement, MouseEvent>) => {
           props.onClickCommentPoint({
@@ -298,20 +323,9 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
   };
 
   return props.fitHeight ? (
-    <Root
-      {...rootProps}
-      css={
-        screenListSize
-          ? {
-              height: screenListSize.height + 36,
-              flex: 'none',
-            }
-          : {}
-      }
-      ref={forwardedRef}
-    >
+    <div {...rootProps} ref={forwardedRef}>
       <ScreenList
-        css={
+        style={
           shouldAdjustZoom
             ? {
                 transform: `scale(${zoomValue / 100})`,
@@ -330,7 +344,7 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
         {content}
       </ScreenList>
       {props.children}
-    </Root>
+    </div>
   ) : (
     <Resizable
       enable={resizeEnable}
@@ -353,7 +367,7 @@ export const StandaloneCodeLiveEditorPreviewList = React.forwardRef<
       {...rootProps}
     >
       <ScreenList
-        css={
+        style={
           shouldAdjustZoom
             ? {
                 transform: `scale(${zoomValue / 100})`,
@@ -387,79 +401,17 @@ const resizeEnable: ResizeEnable = {
   topLeft: false,
 };
 
-const Root = styled('div', {
-  flex: 1,
-});
-
-const ScreenList = styled('div', {
-  display: 'flex',
-  gap: '$6',
-  variants: {
-    wrap: {
-      true: {
-        flexWrap: 'wrap',
-      },
-    },
-  },
-});
-
-const resizeStyle = css({
-  overflowX: 'auto',
-  overflowY: 'hidden',
-  paddingTop: '$3',
-  paddingBottom: '$6',
-  px: '$3',
-  backgroundColor: '$gray-200',
-  position: 'relative',
-  variants: {
-    isCommenting: {
-      true: {
-        color: '$gray-300',
-        cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z' /%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 11a3 3 0 11-6 0 3 3 0 016 0z' /%3E%3C/svg%3E"), auto`,
-      },
-    },
-  },
-});
-
-const ScreenSize = styled('div', {
-  gap: '$1',
-  px: '$2',
-  py: '$1',
-});
-
-const ScreenSizeText = styled('span', {
-  display: 'inline-flex',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
-  fontSize: '$sm',
-  lineHeight: '$sm',
-  color: '$gray-500',
-});
-
-const Screen = styled('div', {
-  shadow: 'sm',
-  backgroundColor: 'White',
-  transition: 'box-shadow 100ms ease-in-out',
-  height: '100%',
-  overflow: 'hidden',
-});
-
-const ScreenWrapper = styled('div', {
-  [`&:hover ${ScreenSize}`]: {
-    color: 'Black',
-    fontWeight: '500',
-  },
-  [`&:hover ${Screen}`]: {
-    shadow: 'lg',
-  },
-  marginBottom: '$6',
-  variants: {
-    isCommenting: {
-      true: {
-        pointerEvents: 'none',
-      },
-    },
-  },
+const ScreenList = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<'div'> & { wrap?: boolean }
+>(function ScreenList({ wrap, className, ...props }, forwardedRef) {
+  return (
+    <div
+      {...props}
+      ref={forwardedRef}
+      className={tw(['flex gap-6', wrap && 'flex-wrap'], [className])}
+    />
+  );
 });
 
 const serializeStateMaps = (stateMaps: StateMaps): string => {
@@ -479,9 +431,9 @@ const serializeStateMaps = (stateMaps: StateMaps): string => {
 
 const deserializeStateMap = (string: string): StateMaps | null => {
   try {
-    const decomp = safeDecompress(string, '');
-    if (decomp) {
-      const mapObj = JSON.parse(decomp) as Record<string, string>;
+    const stateString = safeDecompress(string, '');
+    if (stateString) {
+      const mapObj = JSON.parse(stateString) as Record<string, string>;
 
       const result: StateMaps = new Map();
 
@@ -491,6 +443,8 @@ const deserializeStateMap = (string: string): StateMaps | null => {
 
       return result;
     }
-  } catch (err) {}
+  } catch (err) {
+    return null;
+  }
   return null;
 };

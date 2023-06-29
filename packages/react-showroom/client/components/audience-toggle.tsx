@@ -1,12 +1,10 @@
-import { styled, Switch, useId, DropdownMenu } from '@showroomjs/ui';
-import * as React from 'react';
-import { CheckIcon } from '@heroicons/react/solid';
+import { CheckIcon } from '@heroicons/react/20/solid';
+import { DropdownMenu, Switch, tw, useId } from '@showroomjs/ui';
 import {
+  Audience,
   useTargetAudience,
   useTargetAudienceDispatch,
-  Audience,
 } from '../lib/use-target-audience';
-import { Div } from './base';
 
 export const AudienceToggle = () => {
   const targetAudience = useTargetAudience();
@@ -14,18 +12,13 @@ export const AudienceToggle = () => {
   const id = useId();
 
   return (
-    <Div
-      css={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '$3',
-        px: '$3',
-        py: '$3',
-      }}
-    >
-      <Label htmlFor={id}>
+    <div className={tw(['inline-flex items-center gap-3 p-3'])}>
+      <label
+        htmlFor={id}
+        className={tw(['block w-14 text-sm uppercase text-zinc-500'])}
+      >
         {targetAudience === 'developer' ? 'Code' : 'Design'}
-      </Label>
+      </label>
       <Switch
         checked={targetAudience === 'developer'}
         onCheckedChange={(checked) =>
@@ -35,7 +28,7 @@ export const AudienceToggle = () => {
       >
         <Switch.Thumb />
       </Switch>
-    </Div>
+    </div>
   );
 };
 
@@ -54,38 +47,35 @@ export const AudienceDropdownGroup = () => {
         <DropdownMenu.RadioItem value="designer">
           Designer
           <DropdownMenu.ItemIndicator
-            css={{
+            className={tw(['left-auto right-2'])}
+            style={{
               left: 'auto',
               right: 8,
             }}
           >
-            <Icon width={20} height={20} />
+            <CheckIcon
+              width={20}
+              height={20}
+              className={tw(['text-primary-500'])}
+            />
           </DropdownMenu.ItemIndicator>
         </DropdownMenu.RadioItem>
         <DropdownMenu.RadioItem value="developer">
           Engineer
           <DropdownMenu.ItemIndicator
-            css={{
+            style={{
               left: 'auto',
               right: 8,
             }}
           >
-            <Icon width={20} height={20} />
+            <CheckIcon
+              width={20}
+              height={20}
+              className={tw(['text-primary-500'])}
+            />
           </DropdownMenu.ItemIndicator>
         </DropdownMenu.RadioItem>
       </DropdownMenu.RadioGroup>
     </>
   );
 };
-
-const Label = styled('label', {
-  width: 56,
-  display: 'block',
-  color: '$gray-500',
-  fontSize: '$sm',
-  textTransform: 'uppercase',
-});
-
-const Icon = styled(CheckIcon, {
-  color: '$primary-500',
-});

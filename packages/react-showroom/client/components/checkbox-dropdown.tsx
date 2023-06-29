@@ -1,5 +1,5 @@
-import { CheckIcon } from '@heroicons/react/outline';
-import { DropdownMenu } from '@showroomjs/ui';
+import { CheckIcon } from '@heroicons/react/20/solid';
+import { DropdownMenu, tw } from '@showroomjs/ui';
 import * as React from 'react';
 
 const CheckboxDropdownItem = (props: {
@@ -10,13 +10,10 @@ const CheckboxDropdownItem = (props: {
   <DropdownMenu.CheckboxItem
     checked={props.checked}
     onCheckedChange={props.onCheckedChange}
-    css={{
-      paddingLeft: '$8',
-      '@md': {
-        fontSize: '$sm',
-        lineHeight: '$sm',
-      },
+    style={{
+      paddingLeft: '2rem',
     }}
+    className={tw(['md:text-sm'])}
   >
     <DropdownMenu.ItemIndicator>
       <CheckIcon width={20} height={20} />

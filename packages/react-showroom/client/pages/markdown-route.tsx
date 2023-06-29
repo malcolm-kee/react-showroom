@@ -3,7 +3,6 @@ import {
   ReactShowroomMarkdownContent,
   ReactShowroomMarkdownSection,
 } from '@showroomjs/core/react';
-import * as React from 'react';
 import { DetailsPageContainer } from '../components/details-page-container';
 import { MarkdownArticle } from '../components/markdown-article';
 import { MarkdownDataProvider } from '../components/markdown-data-provider';

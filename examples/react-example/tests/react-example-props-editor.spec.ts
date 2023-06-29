@@ -15,11 +15,11 @@ test.describe('props editor', () => {
 
     await expect(firstFrame.locator('button')).toHaveText('Hello');
 
-    await page.fill('text=children', 'Hello Whurt');
+    await page.getByLabel('children').fill('Hello Whurt');
 
     await expect(firstFrame.locator('button')).toHaveText('Hello Whurt');
 
-    await page.fill('text=className', 'w-full');
+    await page.getByLabel('className').fill('w-full');
 
     await expect(firstFrame.locator('button')).toHaveClass(/w-full/);
   });
@@ -33,7 +33,7 @@ test.describe('props editor', () => {
 
     await firstFrame.waitForLoadState('domcontentloaded');
 
-    await page.click('button:has-text("(file)")');
+    await page.getByRole('button', { name: '(file)' }).click();
 
     await page.setInputFiles(
       'input[type="file"]',

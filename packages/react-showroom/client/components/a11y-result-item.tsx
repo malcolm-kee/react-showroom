@@ -2,9 +2,9 @@ import {
   CheckCircleIcon,
   QuestionMarkCircleIcon,
   XCircleIcon,
-} from '@heroicons/react/solid';
-import { isDefined, dedupeArray } from '@showroomjs/core';
-import { Collapsible, styled, Checkbox } from '@showroomjs/ui';
+} from '@heroicons/react/20/solid';
+import { dedupeArray, isDefined } from '@showroomjs/core';
+import { Checkbox, Collapsible, tw } from '@showroomjs/ui';
 import type { CheckResult, NodeResult, Result } from 'axe-core';
 import * as React from 'react';
 
@@ -15,7 +15,7 @@ export const A11yResultItem = (props: {
   setHighlightedItems: React.Dispatch<React.SetStateAction<string[]>>;
   toggleItem: (selector: string) => void;
 }) => {
-  const Icon = iconByType[props.type];
+  const icon = iconByType[props.type];
 
   const [showDetails, setShowDetails] = React.useState(false);
 
@@ -39,27 +39,18 @@ export const A11yResultItem = (props: {
 
   return (
     <Root>
-      <Collapsible.Root open={showDetails} onOpenChange={setShowDetails}>
-        <ResultTitle>
+      <Collapsible open={showDetails} onOpenChange={setShowDetails}>
+        <div className={tw(['flex items-center py-1 pl-1 pr-4'])}>
           <Collapsible.Button
-            css={{
-              display: 'flex',
-              alignItems: 'center',
-              textAlign: 'left',
-              gap: '$1',
-              fontSize: '$sm',
-              lineHeight: '$sm',
-              color: '$gray-800',
-              flex: 1,
-            }}
+            className={tw([
+              'flex-1 flex items-center gap-1 text-left text-zinc-900',
+            ])}
           >
             <Collapsible.ToggleIcon
               direction={showDetails ? 'down' : 'right'}
-              width={16}
-              height={16}
             />
-            {result.help}
-            <Icon width={16} height={16} />
+            <span className={tw(['font-normal'])}>{result.help}</span>
+            {icon}
           </Collapsible.Button>
           <Checkbox
             checked={checkStatus}
@@ -75,20 +66,21 @@ export const A11yResultItem = (props: {
               }
             }}
           />
-        </ResultTitle>
+        </div>
         <Collapsible.Content animate>
-          <ItemDetails>
-            <Text>{result.description}</Text>
+          <div className={tw(['pl-7 pr-2 pb-4 text-sm text-zinc-500'])}>
             <Text>
-              <ItemLink
+              {result.description}{' '}
+              <a
                 href={result.helpUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                className={tw(['text-primary-800 underline'])}
               >
                 Learn more
-              </ItemLink>
+              </a>
             </Text>
-            <ElementList>
+            <ol className={tw(['flex flex-col gap-2 list-decimal mt-3'])}>
               {result.nodes.map((n, i) => (
                 <li key={i}>
                   <Element
@@ -104,86 +96,47 @@ export const A11yResultItem = (props: {
                   />
                 </li>
               ))}
-            </ElementList>
-          </ItemDetails>
+            </ol>
+          </div>
         </Collapsible.Content>
-      </Collapsible.Root>
+      </Collapsible>
     </Root>
   );
 };
 
-const Text = styled('p', {
-  margin: 0,
-  padding: 0,
-});
+const Text = (props: React.ComponentPropsWithoutRef<'p'>) => (
+  <p {...props} className={tw(['p-0 m-0'], [props.className])} />
+);
 
-const ResultTitle = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  paddingRight: '$4',
-});
-
-export const Root = styled('li', {
-  py: '$1',
-  borderBottom: '1px solid $gray-200',
-  '&:last-child': {
-    borderBottom: 0,
-  },
-});
-
-const ItemDetails = styled('div', {
-  px: '$2',
-  py: '$2',
-  fontSize: '$sm',
-  lineHeight: '$sm',
-  color: '$gray-800',
-});
-
-const ItemLink = styled('a', {
-  color: '$blue-800',
-  textDecoration: 'none',
-  '&:hover': {
-    textDecoration: 'underline',
-  },
-});
-
-const ElementList = styled('ol', {
-  listStyleType: 'decimal',
-  paddingLeft: '$6',
-  marginTop: '$3',
-  '& li': {
-    marginBottom: '$2',
-  },
-  '& li:last-child': {
-    marginBottom: 0,
-  },
-});
-
-const SuccessIcon = styled(CheckCircleIcon, {
-  color: '$green-500',
-  width: 16,
-  height: 16,
-  flexShrink: 0,
-});
-
-const DangerIcon = styled(XCircleIcon, {
-  color: '$red-500',
-  width: 16,
-  height: 16,
-  flexShrink: 0,
-});
-
-const UnknownIcon = styled(QuestionMarkCircleIcon, {
-  color: '$yellow-500',
-  width: 16,
-  height: 16,
-  flexShrink: 0,
-});
+export const Root = (props: React.ComponentPropsWithoutRef<'li'>) => (
+  <li
+    {...props}
+    className={tw(['py-1 border-b border-zinc-200 last:border-b-0'])}
+  />
+);
 
 const iconByType = {
-  pass: SuccessIcon,
-  violation: DangerIcon,
-  incomplete: UnknownIcon,
+  pass: (
+    <CheckCircleIcon
+      className={tw(['text-green-500 w-4 h-4 flex-shrink-0'])}
+      width={16}
+      height={16}
+    />
+  ),
+  violation: (
+    <XCircleIcon
+      className={tw(['text-red-500 w-4 h-4 flex-shrink-0'])}
+      width={16}
+      height={16}
+    />
+  ),
+  incomplete: (
+    <QuestionMarkCircleIcon
+      className={tw(['text-yellow-500 w-4 h-4 flex-shrink-0'])}
+      width={16}
+      height={16}
+    />
+  ),
 };
 
 const Element = (props: {
@@ -196,56 +149,30 @@ const Element = (props: {
 
   return (
     <div>
-      <ElementTitle>
-        <ElementText>{props.element.target[0]}</ElementText>{' '}
-        <ElementCheckbox>
+      <div className={tw(['flex justify-between items-center pr-2'])}>
+        <p className={tw(['flex-1 m-0 p-0 font-mono truncate'])}>
+          {props.element.target[0]}
+        </p>
+        <div className={tw(['flex-shrink-0'])}>
           <Checkbox
             checked={props.highlighted}
             onCheckedChange={props.toggleHighlight}
           />
-        </ElementCheckbox>
-      </ElementTitle>
+        </div>
+      </div>
       <Rules rules={rules} />
     </div>
   );
 };
 
-const ElementTitle = styled('div', {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  fontWeight: '500',
-  borderBottom: '1px solid $gray-300',
-  paddingRight: '$2',
-});
-
-const ElementText = styled('p', {
-  flex: 1,
-  margin: 0,
-  padding: 0,
-  overflow: 'hidden',
-  whiteSpace: 'nowrap',
-  textOverflow: 'ellipsis',
-});
-
-const ElementCheckbox = styled('div', {
-  flexShrink: 0,
-});
-
 const Rules = (props: { rules: Array<CheckResult> }) => {
   return (
-    <RulesRoot>
+    <ul className={tw(['list-none m-0 p-0'])}>
       {props.rules.map((r) => (
         <li key={r.id}>
           [{r.impact}] {r.message}
         </li>
       ))}
-    </RulesRoot>
+    </ul>
   );
 };
-
-const RulesRoot = styled('ul', {
-  listStyle: 'none',
-  margin: 0,
-  padding: 0,
-});

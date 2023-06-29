@@ -3,19 +3,21 @@ import { expect, test } from '@playwright/test';
 test.describe('subpath example', () => {
   test('visit home page', async ({ page }) => {
     await page.goto('/');
-    await page.click('text=Prerender');
-    const title = page.locator('text=React Showroom Subpath Example');
-    await expect(title).toBeVisible();
-
-    await page.goto('/');
-    await page.click('text=Without prerender');
-    const secondTitle = page.locator('text=React Showroom Without Prerender');
-    await expect(secondTitle).toBeVisible();
-
-    await page.goto('/');
-    await page.click('text=Subpath by arguments');
+    await page.getByText('Prerender', { exact: true }).click();
     await expect(
-      page.locator('text=React Showroom Subpath Example')
+      page.getByText('React Showroom Subpath Example')
+    ).toBeVisible();
+
+    await page.goto('/');
+    await page.getByText('Without prerender').click();
+    await expect(
+      page.getByText('React Showroom Without Prerender')
+    ).toBeVisible();
+
+    await page.goto('/');
+    await page.getByText('Subpath by arguments').click();
+    await expect(
+      page.getByText('React Showroom Subpath Example')
     ).toBeVisible();
   });
 
@@ -26,18 +28,19 @@ test.describe('subpath example', () => {
       consoleMessages.push(msg.text());
     });
     await page.goto('/');
-    await page.click('text=Prerender');
-    await page.click('text=Button');
+    await page.getByText('Prerender', { exact: true }).click();
+    await page.getByText('Button').click();
 
-    const image = page.locator('[alt="Icon"]');
-    await expect(image).toBeVisible();
+    await expect(page.getByAltText('Icon')).toBeVisible();
 
     await new Promise<void>(function ensureMswSetup(fulfill) {
       if (consoleMessages.some((msg) => msg.includes(mswMsg))) {
         return fulfill();
       }
 
-      return page.waitForEvent('console', (msg) => msg.text().includes(mswMsg));
+      return page
+        .waitForEvent('console', (msg) => msg.text().includes(mswMsg))
+        .then(() => fulfill());
     });
 
     await page.evaluate(() => {

@@ -1,5 +1,5 @@
 import { SupportedLanguage } from '@showroomjs/core';
-import { Collapsible, Tabs } from '@showroomjs/ui';
+import { Collapsible, Tabs, tw } from '@showroomjs/ui';
 import * as React from 'react';
 import { useCodeBlocks } from '../lib/codeblocks-context';
 import { useHighlights } from '../lib/use-highlights';
@@ -8,7 +8,6 @@ import { PropsEditorProvider } from '../lib/use-props-editor';
 import { useTargetAudience } from '../lib/use-target-audience';
 import { A11yResultPanel } from './a11y-result-panel';
 import { A11ySummary } from './a11y-summary';
-import { Div } from './base';
 import {
   CodePreviewIframe,
   CodePreviewIframeImperative,
@@ -82,22 +81,13 @@ export const CodePlayground = ({
       codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
     >
       <PreviewConsoleProvider>
-        <Div
-          css={{
-            position: 'relative',
-            roundedT: '$base',
-            ...(frame
-              ? {
-                  backgroundColor: '$gray-400',
-                  borderBottomRightRadius: '$base',
-                  width: '100%',
-                }
-              : {
-                  minHeight: 48,
-                  border: '1px solid',
-                  borderColor: '$gray-300',
-                }),
-          }}
+        <div
+          className={tw([
+            'relative rounded-t',
+            frame
+              ? 'w-full bg-zinc-400 rounded-br'
+              : 'min-h-[48px] border border-zinc-300',
+          ])}
         >
           {frame ? (
             <CodePreviewIframe
@@ -123,49 +113,27 @@ export const CodePlayground = ({
           ) : (
             <CodePreviewShowroomFrame code={props.code} lang={props.lang} />
           )}
-        </Div>
+        </div>
         <ConsolePanel />
       </PreviewConsoleProvider>
-      <Collapsible.Root open={showDetails} onOpenChange={setShowDetails}>
-        <Div
-          css={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            py: '$1',
-          }}
-        >
+      <Collapsible open={showDetails} onOpenChange={setShowDetails}>
+        <div className={tw(['flex justify-between py-1'])}>
           <Collapsible.Button
-            css={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '$1',
-              fontSize: '$sm',
-              lineHeight: '$sm',
-            }}
+            className={tw(['flex items-center gap-1 text-sm'])}
           >
             <Collapsible.ToggleIcon
-              hide={showDetails}
+              direction={showDetails ? 'up' : 'down'}
               aria-label={showDetails ? 'Hide Details' : 'View Details'}
-              width="16"
-              height="16"
             />
             Details
           </Collapsible.Button>
-          <Div
-            css={{
-              display: 'inline-flex',
-              gap: '$1',
-            }}
-          >
+          <div className={tw(['inline-flex gap-1'])}>
             <A11ySummary
               onClick={() => {
                 setShowDetails(true);
                 setActiveTab('a11y');
               }}
-              css={{
-                px: '$2',
-                borderRight: '1px solid $gray-300',
-              }}
+              className={tw(['px-2 border-r border-r-zinc-300'])}
             />
             {frame && (
               <>
@@ -189,17 +157,13 @@ export const CodePlayground = ({
               codeHash={matchedCodeData && matchedCodeData.initialCodeHash}
               isDesigner={targetAudience === 'designer'}
             />
-          </Div>
-        </Div>
+          </div>
+        </div>
         <Collapsible.Content animate>
           {hasPropsEditor ? (
-            <Div
-              css={{
-                backgroundColor: '$gray-200',
-              }}
-            >
+            <div className={tw(['bg-zinc-200'])}>
               <A11yResultPanel highlightItems={highlightFrameItems} />
-            </Div>
+            </div>
           ) : (
             <Tabs.Root
               value={activeTab}
@@ -223,7 +187,7 @@ export const CodePlayground = ({
             </Tabs.Root>
           )}
         </Collapsible.Content>
-      </Collapsible.Root>
+      </Collapsible>
     </PropsEditorProvider>
   );
 };

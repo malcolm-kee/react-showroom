@@ -1,6 +1,6 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { rest, setupWorker } from 'msw';
 import * as React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 
 declare const tailwind: any;
 

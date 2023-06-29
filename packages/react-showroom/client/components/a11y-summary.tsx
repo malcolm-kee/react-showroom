@@ -2,15 +2,12 @@ import {
   CheckCircleIcon,
   QuestionMarkCircleIcon,
   XCircleIcon,
-} from '@heroicons/react/solid';
-import { pulse, styled, TextTooltip } from '@showroomjs/ui';
+} from '@heroicons/react/20/solid';
+import { TextTooltip, tw } from '@showroomjs/ui';
 import * as React from 'react';
 import { useA11yResult } from '../lib/use-a11y-result';
-import { Span } from './base';
 
-export const A11ySummary = styled(function A11ySummary(
-  props: React.ComponentPropsWithoutRef<'button'>
-) {
+export function A11ySummary(props: React.ComponentPropsWithoutRef<'button'>) {
   const { result, status } = useA11yResult();
 
   return (
@@ -21,7 +18,8 @@ export const A11ySummary = styled(function A11ySummary(
           : 'Loading...'
       }
     >
-      <Root
+      <button
+        type="button"
         {...props}
         {...(result
           ? {
@@ -29,94 +27,59 @@ export const A11ySummary = styled(function A11ySummary(
                 result.violations.length === 0 ? 'success' : 'failure',
             }
           : {})}
+        className={tw(
+          [
+            'inline-flex items-center text-sm text-zinc-500 bg-inherit cursor-pointer border-0',
+          ],
+          [props.className]
+        )}
       >
-        <Span
-          css={{
-            paddingRight: '$1',
-          }}
+        <span className={tw(['pr-1'])}>
+          <span className={tw(['sr-only sm:not-sr-only'])}>Accessibility</span>
+          <span className={tw(['sm:hidden'])}>♿️</span>
+        </span>
+        <span
+          className={tw([
+            'inline-flex items-center gap-1',
+            status === 'loading' && 'animate-pulse',
+          ])}
         >
-          <Span
-            css={{
-              srOnly: true,
-              '@sm': {
-                srOnly: false,
-              },
-            }}
-          >
-            Accessibility
-          </Span>
-          <Span
-            css={{
-              '@sm': {
-                display: 'none',
-              },
-            }}
-          >
-            ♿️
-          </Span>
-        </Span>
-        <SummaryText loading={status === 'loading'}>
           <SummaryTextItem>
             {result ? result.violations.length : '?'}{' '}
-            <DangerIcon aria-label="violations" width={16} height={16} />
+            <XCircleIcon
+              aria-label="violations"
+              width={16}
+              height={16}
+              className={tw(['text-red-500 w-4 h-4'])}
+            />
           </SummaryTextItem>
           <SummaryTextItem>
             {result ? result.passes.length : '?'}{' '}
-            <SuccessIcon aria-label="passes" width={16} height={16} />
+            <CheckCircleIcon
+              aria-label="passes"
+              width={16}
+              height={16}
+              className={tw(['text-green-500 w-4 h-4'])}
+            />
           </SummaryTextItem>
           <SummaryTextItem>
             {result ? result.incomplete.length : '?'}{' '}
-            <UnknownIcon aria-label="incompletes" width={16} height={16} />
+            <QuestionMarkCircleIcon
+              aria-label="incompletes"
+              width={16}
+              height={16}
+              className={tw(['text-yellow-500 w-4 h-4'])}
+            />
           </SummaryTextItem>
-        </SummaryText>
-      </Root>
+        </span>
+      </button>
     </TextTooltip>
   );
-});
+}
 
-const Root = styled('button', {
-  all: 'unset',
-  cursor: 'pointer',
-  display: 'inline-flex',
-  alignItems: 'center',
-  color: '$gray-500',
-  fontSize: '$sm',
-  lineHeight: '$sm',
-  border: 0,
-});
-
-const SummaryText = styled('span', {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '$1',
-  variants: {
-    loading: {
-      true: {
-        animation: `${pulse} 2s cubic-bezier(0.4, 0, 0.6, 1) infinite`,
-      },
-    },
-  },
-});
-
-const SummaryTextItem = styled('span', {
-  display: 'inline-flex',
-  alignItems: 'center',
-});
-
-const SuccessIcon = styled(CheckCircleIcon, {
-  color: '$green-500',
-  width: 16,
-  height: 16,
-});
-
-const DangerIcon = styled(XCircleIcon, {
-  color: '$red-500',
-  width: 16,
-  height: 16,
-});
-
-const UnknownIcon = styled(QuestionMarkCircleIcon, {
-  color: '$yellow-500',
-  width: 16,
-  height: 16,
-});
+const SummaryTextItem = (props: React.ComponentPropsWithoutRef<'span'>) => (
+  <span
+    {...props}
+    className={tw(['inline-flex items-center'], [props.className])}
+  />
+);

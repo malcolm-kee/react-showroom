@@ -1,29 +1,30 @@
 import {
-  AdjustmentsIcon,
-  AnnotationIcon,
-  CodeIcon,
-  TemplateIcon,
-  TerminalIcon,
-  ZoomInIcon,
-} from '@heroicons/react/outline';
+  AdjustmentsVerticalIcon,
+  ChatBubbleOvalLeftEllipsisIcon as ChatIcon,
+  CodeBracketIcon,
+  RectangleGroupIcon,
+  CommandLineIcon,
+  MagnifyingGlassPlusIcon,
+} from '@heroicons/react/24/outline';
 import {
-  AnnotationIcon as FilledAnnotationIcon,
-  LocationMarkerIcon,
-} from '@heroicons/react/solid';
+  ChatBubbleOvalLeftEllipsisIcon as FilledChatIcon,
+  MapPinIcon,
+} from '@heroicons/react/20/solid';
 import {
   CompileResult,
-  isEqualArray,
   SupportedLanguage,
+  isEqualArray,
 } from '@showroomjs/core';
 import {
-  css,
   DropdownMenu,
   EditorBottomIcon,
   EditorRightIcon,
   IconButton,
-  styled,
   TextTooltip,
   ToggleButton,
+  css,
+  styled,
+  tw,
   useDebounce,
   usePersistedState,
   useQueryParams,
@@ -33,7 +34,7 @@ import * as React from 'react';
 import { useCodeFrameContext } from '../lib/code-frame-context';
 import { useCodeTheme } from '../lib/code-theme-context';
 import { safeCompress, safeDecompress } from '../lib/compress';
-import { lazy, Suspense } from '../lib/lazy';
+import { Suspense, lazy } from '../lib/lazy';
 import { getScrollFn } from '../lib/scroll-into-view';
 import { A11yResultByFrameContextProvider } from '../lib/use-a11y-result';
 import { useCodeCompilationCache } from '../lib/use-code-compilation';
@@ -56,10 +57,7 @@ import { PropsEditorPanel } from './props-editor-panel';
 import { RadioDropdown } from './radio-dropdown';
 import { CommentList } from './standalone-code-live-editor-comment';
 import { StandaloneCodeLiveEditorCommentPopover } from './standalone-code-live-editor-comment-popover';
-import {
-  BtnText,
-  StandaloneCodeLiveEditorCopyButton,
-} from './standalone-code-live-editor-copy-button';
+import { StandaloneCodeLiveEditorCopyButton } from './standalone-code-live-editor-copy-button';
 import { StandaloneCodeLiveEditorPreviewList } from './standalone-code-live-editor-preview';
 
 const CodeAdvancedEditor = lazy(() =>
@@ -268,7 +266,7 @@ export const StandaloneCodeLiveEditor = ({
     frameDimensions.length > 0 ? frameDimensions[0].name : ''
   );
 
-  const [higlightedEls, setHighlightedEls] = React.useState<
+  const [highlightedEls, setHighlightedEls] = React.useState<
     { frameName: string; selectors: string[]; color: string } | undefined
   >(undefined);
   const resetHighlights = () =>
@@ -286,26 +284,18 @@ export const StandaloneCodeLiveEditor = ({
   return (
     <PreviewConsoleProvider>
       <A11yResultByFrameContextProvider>
-        <Div css={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div className={tw(['flex flex-col h-full'])}>
           <Toolbar
             style={{
               top: 'var(--header-height, 0px)',
             }}
             ref={toolbarRef}
           >
-            <Div
-              css={{
-                display: 'flex',
-              }}
-            >
-              <Div
-                css={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '$2',
-                  paddingRight: '$2',
-                  borderRight: '1px solid $gray-200',
-                }}
+            <div className={tw(['flex'])}>
+              <div
+                className={tw([
+                  'flex items-center gap-2 pr-2 border-r border-zinc-200',
+                ])}
               >
                 <TextTooltip label="Comment">
                   <PrimaryToggleButton
@@ -313,7 +303,11 @@ export const StandaloneCodeLiveEditor = ({
                     onPressedChange={setIsCommenting}
                     data-testid="comment-toggle"
                   >
-                    {isCommenting ? <CommentOnIcon /> : <CommentIcon />}
+                    {isCommenting ? (
+                      <FilledChatIcon className={tw(['w-5 h-5 text-white'])} />
+                    ) : (
+                      <ChatIcon className={tw(['w-5 h-5 text-zinc-400'])} />
+                    )}
                   </PrimaryToggleButton>
                 </TextTooltip>
                 {showMultipleScreens && (
@@ -321,7 +315,11 @@ export const StandaloneCodeLiveEditor = ({
                     <DropdownMenu>
                       <DropdownMenu.Trigger asChild>
                         <MenuButton data-testid="setting-menu">
-                          <ScreensIcon width={20} height={20} />
+                          <AdjustmentsVerticalIcon
+                            width={20}
+                            height={20}
+                            className={tw(['w-5 h-5 text-zinc-400'])}
+                          />
                         </MenuButton>
                       </DropdownMenu.Trigger>
                       <CheckboxDropdown>
@@ -406,8 +404,14 @@ export const StandaloneCodeLiveEditor = ({
                     <DropdownMenu>
                       <DropdownMenu.Trigger asChild>
                         <MenuButton>
-                          <BtnText>{zoomLevel}% </BtnText>
-                          <ZoomIcon width={20} height={20} />
+                          <span className={tw(['sr-only sm:not-sr-only'])}>
+                            {zoomLevel}%{' '}
+                          </span>
+                          <MagnifyingGlassPlusIcon
+                            width={20}
+                            height={20}
+                            className={tw(['w-5 h-5 text-zinc-400'])}
+                          />
                         </MenuButton>
                       </DropdownMenu.Trigger>
                       <RadioDropdown
@@ -425,36 +429,29 @@ export const StandaloneCodeLiveEditor = ({
                     </DropdownMenu>
                   </>
                 )}
-              </Div>
+              </div>
               {!isCommenting && (
-                <Div
-                  css={{
-                    px: '$1',
-                  }}
-                >
+                <div className={tw(['px-1'])}>
                   <TextTooltip label="Measure">
                     <PrimaryToggleButton
                       pressed={isMeasuring}
                       onPressedChange={setIsMeasuring}
                       data-testid="measure-toggle"
                     >
-                      <MeasureIcon
-                        active={isMeasuring}
+                      <RectangleGroupIcon
                         width={20}
                         height={20}
+                        className={tw([
+                          'w-5 h-5 text-zinc-400',
+                          isMeasuring && 'text-white',
+                        ])}
                       />
                     </PrimaryToggleButton>
                   </TextTooltip>
-                </Div>
+                </div>
               )}
-            </Div>
-            <Div
-              css={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '$1',
-              }}
-            >
+            </div>
+            <div className={tw(['inline-flex items-center gap-1'])}>
               <StandaloneCodeLiveEditorCopyButton
                 getTextToCopy={() => {
                   if (window) {
@@ -463,7 +460,7 @@ export const StandaloneCodeLiveEditor = ({
                   return '';
                 }}
               />
-            </Div>
+            </div>
           </Toolbar>
           <PropsEditorProvider codeHash={props.codeHash} serializeToParam>
             <Div
@@ -533,7 +530,7 @@ export const StandaloneCodeLiveEditor = ({
                     syncState={syncState}
                     syncScroll={syncScroll}
                     onA11ySummaryClick={setA11yTab}
-                    a11yHighlightData={higlightedEls}
+                    a11yHighlightData={highlightedEls}
                     wrapContent={!isCommenting && wrapPreview}
                   >
                     {isCommenting && targetCoord ? (
@@ -557,7 +554,7 @@ export const StandaloneCodeLiveEditor = ({
                         }}
                       >
                         <Marker
-                          css={{
+                          style={{
                             position: 'absolute',
                             top: targetCoord.y,
                             left: targetCoord.x,
@@ -586,14 +583,17 @@ export const StandaloneCodeLiveEditor = ({
                               open={isActive}
                               label={comment.text}
                               side="top"
-                              className={commentPopover()}
+                              className={tw(['whitespace-pre-wrap'])}
                             >
-                              <MarkerButton
+                              <button
                                 onClick={(ev) => {
                                   ev.stopPropagation();
                                   setActiveComment(isActive ? '' : comment.id);
                                 }}
                                 type="button"
+                                className={tw([
+                                  'flex justify-center items-center m-[-10px] w-10 h-10 rounded-lg',
+                                ])}
                               >
                                 <Marker
                                   iconClass={iconClass({
@@ -601,22 +601,17 @@ export const StandaloneCodeLiveEditor = ({
                                   })}
                                   data-active-comment={isActive ? true : null}
                                 />
-                              </MarkerButton>
+                              </button>
                             </TextTooltip>
                           </Div>
                         );
                       })}
                     {isCommenting && (
-                      <Div
+                      <div
                         onClick={(ev) => ev.stopPropagation()}
-                        css={{
-                          position: 'absolute',
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          height: 12,
-                          pointerEvents: 'auto',
-                        }}
+                        className={tw([
+                          'absolute bottom-0 inset-x-0 h-3 pointer-events-auto',
+                        ])}
                       />
                     )}
                   </StandaloneCodeLiveEditorPreviewList>
@@ -660,22 +655,19 @@ export const StandaloneCodeLiveEditor = ({
                       : {}),
                   }}
                 >
-                  {!isCommenting && isPropsEditor && <PropsEditorPanel />}
+                  {!isCommenting && isPropsEditor && (
+                    <PropsEditorPanel className={tw(['flex-1'])} />
+                  )}
                   {codeEditorShouldDisplay &&
                     (useAdvancedEditor ? (
                       isCodeParsed && (
-                        <Div
-                          css={{
-                            flex: 1,
-                            overflow: 'hidden',
+                        <div
+                          className={tw([
+                            'flex-1 overflow-hidden',
+                            isDockToRight && 'md:!h-full',
+                          ])}
+                          style={{
                             height: `${code.split(/\r\n|\r|\n/).length + 3}rem`,
-                            ...(isDockToRight
-                              ? {
-                                  '@md': {
-                                    height: '100%',
-                                  },
-                                }
-                              : {}),
                           }}
                         >
                           <AdvancedEditor
@@ -685,7 +677,7 @@ export const StandaloneCodeLiveEditor = ({
                             initialResult={initialCompilation.data}
                             key={isDockToRight ? 0 : 1}
                           />
-                        </Div>
+                        </div>
                       )
                     ) : (
                       <CodeEditor
@@ -693,8 +685,8 @@ export const StandaloneCodeLiveEditor = ({
                         onChange={setCode}
                         language={props.lang as Language}
                         theme={theme}
-                        className={editor()}
-                        wrapperClass={editorWrapper()}
+                        className={tw(['rounded'])}
+                        wrapperClass={tw(['flex-1 overflow-auto'])}
                       />
                     ))}
                   {!isCommenting && (
@@ -702,23 +694,17 @@ export const StandaloneCodeLiveEditor = ({
                       activeTab={a11yTab}
                       setActiveTab={setA11yTab}
                       onHighlightItems={setHighlightedEls}
-                      resetHiglights={resetHighlights}
+                      resetHighlights={resetHighlights}
                       scrollToFrameWhenSelect={isDockToRight}
                     />
                   )}
                 </Div>
                 {isCommenting && (
                   <Div
-                    css={{
-                      width: '100%',
-                      backgroundColor: '$gray-100',
-                      height: 200,
-                      '@md': isDockToRight
-                        ? {
-                            height: '100%',
-                          }
-                        : {},
-                    }}
+                    className={tw([
+                      'w-full h-[200px] bg-zinc-100',
+                      isDockToRight && 'md:h-full',
+                    ])}
                   >
                     {commentState.items.length > 0 ? (
                       <CommentList>
@@ -749,23 +735,23 @@ export const StandaloneCodeLiveEditor = ({
                         ))}
                       </CommentList>
                     ) : (
-                      <NoCommentMsg>
+                      <p
+                        className={tw([
+                          'text-sm m-1 p-2 max-w-xs mx-auto text-zinc-600',
+                        ])}
+                      >
                         No comment added.
                         <br />
-                        Click on any point of the preview
-                        <br /> to start adding comment.
-                      </NoCommentMsg>
+                        Click on any point of the preview to start adding
+                        comment.
+                      </p>
                     )}
                   </Div>
                 )}
-                <Div
-                  css={{
-                    display: 'flex',
-                    flexFlow: 'column',
-                    gap: '$2',
-                    padding: '$2',
-                    borderLeft: '1px solid $gray-200',
-                  }}
+                <div
+                  className={tw([
+                    'flex flex-col gap-2 p-2 border-l border-zinc-200',
+                  ])}
                 >
                   <TextTooltip
                     label={isDockToRight ? 'Dock to right' : 'Dock to bottom'}
@@ -777,12 +763,8 @@ export const StandaloneCodeLiveEditor = ({
                           editorPosition === 'bottom' ? 'right' : 'bottom'
                         )
                       }
-                      css={{
-                        display: 'none',
-                        '@md': {
-                          display: 'inline-flex',
-                        },
-                      }}
+                      className={tw(['!hidden md:!inline-flex'])}
+                      flat
                     >
                       {isDockToRight ? (
                         <EditorRightIcon />
@@ -798,20 +780,15 @@ export const StandaloneCodeLiveEditor = ({
                         onPressedChange={(show) =>
                           setShowEditor(show, show ? undefined : 'true')
                         }
-                        css={
+                        className={tw([
+                          'rounded-full',
                           showEditor
-                            ? {
-                                color: '$gray-600',
-                                backgroundColor: '$gray-100',
-                                shadow: 'inner',
-                              }
-                            : {
-                                color: '$gray-400',
-                              }
-                        }
+                            ? 'text-zinc-600 bg-zinc-100 shadow-inner'
+                            : 'text-zinc-400',
+                        ])}
                         data-testid="editor-toggle"
                       >
-                        <CodeIcon width={24} height={24} />
+                        <CodeBracketIcon width={24} height={24} />
                       </ToggleButton>
                     </TextTooltip>
                   )}
@@ -838,51 +815,34 @@ export const StandaloneCodeLiveEditor = ({
                           }}
                           data-testid="advanced-editor-toggle"
                         >
-                          <TerminalIcon width={24} height={24} />
+                          <CommandLineIcon width={24} height={24} />
                         </ToggleButton>
                       </TextTooltip>
                     )}
-                </Div>
+                </div>
               </Div>
             </Div>
           </PropsEditorProvider>
-        </Div>
+        </div>
       </A11yResultByFrameContextProvider>
     </PreviewConsoleProvider>
   );
 };
 
-const NoCommentMsg = styled('p', {
-  margin: '$1',
-  padding: '$2',
-  color: '$gray-500',
-  textAlign: 'center',
-});
-
 const A11yPanel = (props: A11yResultPanelForFramesProps) => (
-  <A11yPanelRoot>
-    <A11yPanelTitle>Accessibility</A11yPanelTitle>
+  <section
+    className={tw(['px-2 pb-3 min-h-[200px] max-h-[40vh] overflow-y-auto'])}
+  >
+    <div
+      className={tw([
+        'text-lg px-2 pt-2 pb-1 border-t border-zinc-200 font-medium',
+      ])}
+    >
+      Accessibility
+    </div>
     <A11yResultPanelForFrames {...props} />
-  </A11yPanelRoot>
+  </section>
 );
-
-const A11yPanelRoot = styled('section', {
-  px: '$2',
-  paddingBottom: '$3',
-  minHeight: 200,
-  maxHeight: '40vh',
-  overflowY: 'auto',
-});
-
-const A11yPanelTitle = styled('div', {
-  fontSize: '$lg',
-  lineHeight: '$lg',
-  fontWeight: '500',
-  px: '$2',
-  paddingBottom: '$1',
-  paddingTop: '$2',
-  borderTop: '1px solid $gray-200',
-});
 
 interface AdvancedEditorProps {
   value: string;
@@ -942,47 +902,40 @@ const zoomDropdown = css({
   minWidth: '80px !important',
 });
 
-const MarkerInner = styled(LocationMarkerIcon, {
-  width: 20,
-  height: 20,
-  color: '$gray-500',
-});
-
-interface MarkerSpanProps extends React.ComponentPropsWithoutRef<'span'> {
+interface MarkerProps extends React.ComponentPropsWithoutRef<'span'> {
   iconClass?: string;
 }
 
-const MarkerSpan = React.forwardRef<HTMLSpanElement, MarkerSpanProps>(
-  function MarkerSpan({ iconClass, ...props }, forwardedRef) {
-    return (
-      <span {...props} ref={forwardedRef}>
-        <MarkerInner width={20} height={20} className={iconClass} />
-      </span>
-    );
-  }
-);
-
-const PrimaryToggleButton = styled(ToggleButton, {
-  '&[aria-pressed="true"]': {
-    backgroundColor: '$primary-700',
-  },
+const Marker = React.forwardRef<HTMLSpanElement, MarkerProps>(function Marker(
+  { iconClass, ...props },
+  forwardedRef
+) {
+  return (
+    <span
+      {...props}
+      className={tw(['inline-block w-5 h-5'], [props.className])}
+      ref={forwardedRef}
+    >
+      <MapPinIcon
+        width={20}
+        height={20}
+        className={tw(['w-5 h-5 text-zinc-500'], [iconClass])}
+      />
+    </span>
+  );
 });
 
-const Marker = styled(MarkerSpan, {
-  display: 'inline-block',
-  width: 20,
-  height: 20,
-});
-
-const MarkerButton = styled('button', {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  margin: '-10px',
-  width: 40,
-  height: 40,
-  outlineRing: '',
-  borderRadius: '$lg',
+const PrimaryToggleButton = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentPropsWithoutRef<typeof ToggleButton>
+>(function PrimaryToggleButton(props, forwardedRef) {
+  return (
+    <ToggleButton
+      {...props}
+      className={tw(['aria-pressed:bg-primary-700'], [props.className])}
+      ref={forwardedRef}
+    />
+  );
 });
 
 const Toolbar = styled('div', {
@@ -992,47 +945,8 @@ const Toolbar = styled('div', {
   px: '$3',
   backgroundColor: 'White',
   borderBottom: '1px solid $gray-200',
-  '@lg': {
-    position: 'sticky',
-    zIndex: 10,
-  },
-});
-
-const CommentIcon = styled(AnnotationIcon, {
-  width: 20,
-  height: 20,
-  color: '$gray-400',
-});
-
-const CommentOnIcon = styled(FilledAnnotationIcon, {
-  width: 20,
-  height: 20,
-  color: 'White',
-});
-
-const MeasureIcon = styled(TemplateIcon, {
-  width: 20,
-  height: 20,
-  color: '$gray-400',
-  variants: {
-    active: {
-      true: {
-        color: 'White',
-      },
-    },
-  },
-});
-
-const ZoomIcon = styled(ZoomInIcon, {
-  width: 20,
-  height: 20,
-  color: '$gray-400',
-});
-
-const ScreensIcon = styled(AdjustmentsIcon, {
-  width: 20,
-  height: 20,
-  color: '$gray-400',
+  position: 'sticky',
+  zIndex: 1,
 });
 
 const MenuButton = styled('button', {
@@ -1045,19 +959,6 @@ const MenuButton = styled('button', {
   py: '$1',
   borderRadius: '$sm',
   outlineRing: '$primary-200',
-});
-
-const editorWrapper = css({
-  flex: 1,
-  overflow: 'auto',
-});
-
-const editor = css({
-  borderRadius: '$base',
-});
-
-const commentPopover = css({
-  whiteSpace: 'pre-wrap',
 });
 
 const iconClass = css({

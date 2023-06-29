@@ -1,10 +1,10 @@
-import { ArrowLeftIcon } from '@heroicons/react/outline';
+import { ArrowLeftIcon } from '@heroicons/react/20/solid';
 import { useQuery } from '@showroomjs/bundles/query';
-import { Option, SearchDialog, styled } from '@showroomjs/ui';
+import { Option, SearchDialog, tw } from '@showroomjs/ui';
 import * as React from 'react';
 import { Link, useLocation, useNavigate } from '../lib/routing';
 import { loadCodeAtPath } from '../route-mapping';
-import { colorTheme, THEME } from '../theme';
+import { THEME, colorTheme } from '../theme';
 import { GenericLink } from './generic-link';
 
 const navbarOptions = THEME.navbar;
@@ -34,23 +34,44 @@ export const Header = React.forwardRef<HTMLElement, HeaderProps>(
     );
 
     return (
-      <HeaderRoot ref={forwardedRef}>
-        <HeaderInner>
-          <TitleWrapper>
+      <header
+        className={tw([
+          'sticky top-0 bg-primary-800 text-white shadow-lg z-20',
+        ])}
+        ref={forwardedRef}
+      >
+        <div
+          className={tw([
+            'flex justify-between items-center px-4 py-2 md:py-3',
+          ])}
+        >
+          <div className={tw(['flex items-center gap-2'])}>
             {props.backUrl && (
               <HeaderLink href={props.backUrl}>
                 <ArrowLeftIcon aria-label="Back" width={20} height={20} />
               </HeaderLink>
             )}
-            {navbarOptions.logo && <Logo {...navbarOptions.logo} />}
-            <Title to="/">
+            {navbarOptions.logo && (
+              <img
+                className={tw(['max-h-10 w-auto'])}
+                {...navbarOptions.logo}
+              />
+            )}
+            <Link
+              to="/"
+              className={tw([
+                'px-2 text-inherit no-underline md:text-xl focus-visible:outline-primary-200',
+              ])}
+            >
               {THEME.title}{' '}
               {navbarOptions.version && (
-                <Version>v{navbarOptions.version}</Version>
+                <small className={tw(['text-sm'])}>
+                  v{navbarOptions.version}
+                </small>
               )}
-            </Title>
-          </TitleWrapper>
-          <ItemWrapper>
+            </Link>
+          </div>
+          <div className={tw(['flex items-center gap-4'])}>
             {navbarOptions.items &&
               navbarOptions.items.map((item, i) => (
                 <HeaderLink href={item.to} key={i}>
@@ -67,7 +88,7 @@ export const Header = React.forwardRef<HTMLElement, HeaderProps>(
                   )
                 }
               >
-                <SearchText>Search</SearchText>
+                <span className={tw(['sr-only md:not-sr-only'])}>Search</span>
               </SearchDialog.Trigger>
               <SearchDialog
                 options={options || []}
@@ -87,81 +108,21 @@ export const Header = React.forwardRef<HTMLElement, HeaderProps>(
                 isLoading={isLoading}
               />
             </SearchDialog.Root>
-          </ItemWrapper>
-        </HeaderInner>
-      </HeaderRoot>
+          </div>
+        </div>
+      </header>
     );
   }
 );
 
-const Logo = styled('img', {
-  maxHeight: '40px',
-  width: 'auto',
-});
-
-const TitleWrapper = styled('div', {
-  display: 'flex',
-  gap: '$2',
-  alignItems: 'center',
-});
-
-const SearchText = styled('span', {
-  srOnly: true,
-  '@md': {
-    srOnly: false,
-  },
-});
-
-const Version = styled('small', {
-  fontSize: '$sm',
-  lineHeight: '$sm',
-});
-
-const ItemWrapper = styled('div', {
-  display: 'flex',
-  gap: '$4',
-  alignItems: 'center',
-});
-
-const HeaderRoot = styled('header', {
-  position: 'sticky',
-  top: 0,
-  backgroundColor: '$primary-800',
-  color: 'White',
-  boxShadow: 'rgba(0, 0, 0, 0.1) 0px 1px 2px 0px',
-  zIndex: 20,
-});
-
-const HeaderInner = styled('div', {
-  px: '$4',
-  py: '$2',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  '@md': {
-    py: '$3',
-  },
-});
-
-const HeaderLink = styled(GenericLink, {
-  px: '$2',
-  '&:focus': {
-    outlineColor: '$primary-200',
-  },
-  display: 'none',
-  '@md': {
-    display: 'block',
-  },
-});
-
-const Title = styled(Link, {
-  color: 'inherit',
-  textDecoration: 'none',
-  px: '$2',
-  '&:focus': {
-    outlineColor: '$primary-200',
-  },
-  '@md': {
-    fontSize: '$xl',
-  },
-});
+const HeaderLink = (
+  props: React.ComponentPropsWithoutRef<typeof GenericLink>
+) => (
+  <GenericLink
+    {...props}
+    className={tw(
+      ['px-2 hidden md:block focus-visible:outline-primary-200'],
+      [props.className]
+    )}
+  />
+);

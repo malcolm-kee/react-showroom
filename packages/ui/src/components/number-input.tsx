@@ -1,7 +1,8 @@
-import { MinusIcon, PlusIcon } from '@heroicons/react/solid';
+import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { callAll, isDefined, isNumber, noop } from '@showroomjs/core';
 import { useRifm } from 'rifm';
 import { formatMoney } from '../lib/number';
+import { tw } from '../lib/tw';
 import { styled } from '../stitches.config';
 import { IconButton } from './icon-button';
 import { TextInput, TextInputProps } from './text-input';
@@ -92,11 +93,8 @@ const NumberInputImpl = styled(function NumberInput({
         }
         type="button"
         aria-label="decrement"
-        css={{
-          flexShrink: 0,
-          width: 34,
-          height: 34,
-        }}
+        className={tw(['flex-shrink-0'])}
+        sizeClass={tw(['w-[34px] h-[34px]'])}
         disabled={inputProps.disabled}
       >
         <MinusIcon width={16} height={16} aria-hidden />
@@ -124,7 +122,8 @@ const NumberInputImpl = styled(function NumberInput({
         }
         type="button"
         aria-label="increment"
-        css={{ flexShrink: 0, width: 34, height: 34 }}
+        className={tw(['flex-shrink-0'])}
+        sizeClass={tw(['w-[34px] h-[34px]'])}
         disabled={inputProps.disabled}
       >
         <PlusIcon width={16} height={16} aria-hidden />

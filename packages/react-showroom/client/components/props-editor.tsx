@@ -5,14 +5,12 @@ import {
   ColorInput,
   FileInput,
   NumberInput,
-  Popover,
   Select,
-  styled,
-  Textarea,
   TextInput,
+  Textarea,
+  tw,
 } from '@showroomjs/ui';
 import * as React from 'react';
-import { HexColorPicker } from 'react-colorful';
 import stringifyObject from 'stringify-object';
 import {
   PropsEditorControlData,
@@ -27,30 +25,23 @@ export interface PropsEditorProps
 
 export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
   return (
-    <Root {...rootProps}>
+    <div
+      {...rootProps}
+      className={tw(
+        [
+          'grid items-center [grid-template-columns:max-content_1fr] gap-x-2 sm:gap-2 py-1',
+        ],
+        [rootProps.className]
+      )}
+    >
       {editor.controls.map((ctrl) => {
         if (ctrl.type === 'checkbox') {
           return (
             <React.Fragment key={ctrl.key}>
-              <Label
-                htmlFor={ctrl.key}
-                css={{
-                  marginBottom: '$4',
-                  '@sm': {
-                    marginBottom: 0,
-                  },
-                }}
-              >
+              <Label htmlFor={ctrl.key} className={tw(['mb-4 sm:mb-0'])}>
                 {ctrl.label}
               </Label>
-              <ControlWrapper
-                css={{
-                  marginBottom: '$4',
-                  '@sm': {
-                    marginBottom: 0,
-                  },
-                }}
-              >
+              <ControlWrapper className={tw(['mb-4 sm:mb-0'])}>
                 <Checkbox
                   checked={isDefined(ctrl.value) ? ctrl.value : 'indeterminate'}
                   onCheckedChange={ctrl.setValue}
@@ -70,22 +61,13 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
             <React.Fragment key={ctrl.key}>
               <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
               <ControlWrapper
-                css={{
-                  gridColumn: '1 / -1',
-                  marginBottom: '$4',
-                  '@sm': {
-                    gridColumn: 'auto',
-                    marginBottom: 0,
-                  },
-                }}
+                className={tw(['col-span-full sm:col-span-1 mb-4 sm:mb-0'])}
               >
                 <TextInput
                   id={ctrl.key}
                   value={ctrl.value || ''}
                   onValue={ctrl.setValue}
-                  css={{
-                    maxWidth: '36rem',
-                  }}
+                  className={tw(['max-w-xl'])}
                 />
               </ControlWrapper>
             </React.Fragment>
@@ -97,23 +79,14 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
             <React.Fragment key={ctrl.key}>
               <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
               <ControlWrapper
-                css={{
-                  gridColumn: '1 / -1',
-                  marginBottom: '$4',
-                  '@sm': {
-                    gridColumn: 'auto',
-                    marginBottom: 0,
-                  },
-                }}
+                className={tw(['col-span-full sm:col-span-1 mb-4 sm:mb-0'])}
               >
                 <NumberInput
                   id={ctrl.key}
                   value={ctrl.value || ''}
                   onValue={ctrl.setValue}
                   allowNegative
-                  css={{
-                    maxWidth: '20rem',
-                  }}
+                  className={tw(['max-w-xs'])}
                 />
               </ControlWrapper>
             </React.Fragment>
@@ -125,14 +98,7 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
             <React.Fragment key={ctrl.key}>
               <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
               <ControlWrapper
-                css={{
-                  gridColumn: '1 / -1',
-                  marginBottom: '$4',
-                  '@sm': {
-                    gridColumn: 'auto',
-                    marginBottom: 0,
-                  },
-                }}
+                className={tw(['col-span-full sm:col-span-1 mb-4 sm:mb-0'])}
               >
                 <ObjectValueEditor
                   id={ctrl.key}
@@ -149,14 +115,7 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
             <React.Fragment key={ctrl.key}>
               <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
               <ControlWrapper
-                css={{
-                  gridColumn: '1 / -1',
-                  marginBottom: '$4',
-                  '@sm': {
-                    gridColumn: 'auto',
-                    marginBottom: 0,
-                  },
-                }}
+                className={tw(['col-span-full sm:col-span-1 mb-4 sm:mb-0'])}
               >
                 <FileInput
                   id={ctrl.key}
@@ -173,14 +132,7 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
             <React.Fragment key={ctrl.key}>
               <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
               <ControlWrapper
-                css={{
-                  gridColumn: '1 / -1',
-                  marginBottom: '$4',
-                  '@sm': {
-                    gridColumn: 'auto',
-                    marginBottom: 0,
-                  },
-                }}
+                className={tw(['col-span-full sm:col-span-1 mb-4 sm:mb-0'])}
               >
                 <TextInput
                   type="date"
@@ -198,9 +150,9 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
             <React.Fragment key={ctrl.key}>
               <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
               <ControlWrapper>
-                <ColorControl
+                <ColorInput
                   value={ctrl.value}
-                  onChange={ctrl.setValue}
+                  onValue={ctrl.setValue}
                   id={ctrl.key}
                 />
               </ControlWrapper>
@@ -210,33 +162,7 @@ export const PropsEditor = ({ editor, ...rootProps }: PropsEditorProps) => {
 
         return null;
       })}
-    </Root>
-  );
-};
-
-export const ColorControl = (props: {
-  value: string;
-  id?: string;
-  onChange: (color: string) => void;
-}) => {
-  const [showPopover, setShowPopover] = React.useState(false);
-  return (
-    <Popover onOpenChange={setShowPopover} open={showPopover}>
-      <Popover.Trigger asChild>
-        <ColorInput
-          id={props.id}
-          value={props.value || ''}
-          onValue={props.onChange}
-          css={{
-            maxWidth: '10rem',
-          }}
-          placeholder="#rrggbb"
-        />
-      </Popover.Trigger>
-      <Popover.Content>
-        <HexColorPicker color={props.value} onChange={props.onChange} />
-      </Popover.Content>
-    </Popover>
+    </div>
   );
 };
 
@@ -275,14 +201,7 @@ const PropsSelectControl = (props: {
     <React.Fragment>
       <Label htmlFor={ctrl.key}>{ctrl.label}</Label>
       <ControlWrapper
-        css={{
-          gridColumn: '1 / -1',
-          marginBottom: '$4',
-          '@sm': {
-            gridColumn: 'auto',
-            marginBottom: 0,
-          },
-        }}
+        className={tw(['col-span-full sm:col-span-1 mb-4 sm:mb-0'])}
       >
         <Select
           id={ctrl.key}
@@ -292,12 +211,7 @@ const PropsSelectControl = (props: {
 
             handleSelectOption(ctrl.options[valueIndex], valueIndex);
           }}
-          css={{
-            maxWidth: '36rem',
-            '@lg': {
-              display: 'none',
-            },
-          }}
+          className={tw(['max-w-xl lg:hidden'])}
         >
           {ctrl.options.map((opt, i) => (
             <option value={i} key={i}>
@@ -348,9 +262,7 @@ const PropsSelectControl = (props: {
                     <TextInput
                       value={ctrl.value || ''}
                       onValue={ctrl.setValue}
-                      css={{
-                        maxWidth: '36rem',
-                      }}
+                      className={tw(['max-w-xl'])}
                     />
                   );
 
@@ -367,9 +279,7 @@ const PropsSelectControl = (props: {
                     <NumberInput
                       value={ctrl.value || ''}
                       onValue={ctrl.setValue}
-                      css={{
-                        maxWidth: '20rem',
-                      }}
+                      className={tw(['max-w-xs'])}
                       allowNegative
                     />
                   );
@@ -385,45 +295,37 @@ const PropsSelectControl = (props: {
   );
 };
 
-const Root = styled('div', {
-  display: 'grid',
-  alignItems: 'center',
-  py: '$1',
-  gridTemplateColumns: 'max-content 1fr',
-  columnGap: '$2',
-  '@sm': {
-    gap: '$2',
-  },
-});
+const Label = (props: React.ComponentPropsWithoutRef<'label'>) => (
+  <label
+    {...props}
+    className={tw(
+      ['text-zinc-600 font-mono sm:px-2 sm:py-1'],
+      [props.className]
+    )}
+  />
+);
 
-const Label = styled('label', {
-  color: '$gray-600',
-  fontFamily: '$mono',
-  '@sm': {
-    px: '$2',
-    py: '$1',
-  },
-});
+type DivProps = React.ComponentPropsWithoutRef<'div'>;
 
-const ControlWrapper = styled('div', {
-  '@sm': {
-    px: '$2',
-    py: '$1',
-  },
-});
+const ControlWrapper = (props: DivProps) => (
+  <div {...props} className={tw(['sm:px-2 sm:py-1'], [props.className])} />
+);
 
-export const ToggleGroup = styled('div', {
-  display: 'none',
-  '@lg': {
-    display: 'flex',
-    gap: '$2',
-    flexWrap: 'wrap',
-  },
-});
+export const ToggleGroup = (props: DivProps) => (
+  <div
+    {...props}
+    className={tw(
+      [
+        'hidden lg:inline-flex lg:p-0.5 lg:gap-0.5 lg:flex-wrap border border-zinc-300 rounded-lg bg-zinc-100',
+      ],
+      [props.className]
+    )}
+  />
+);
 
-const SelectSubControlDiv = styled('div', {
-  marginTop: '$1',
-});
+const SelectSubControlDiv = (props: DivProps) => (
+  <div {...props} className={tw(['mt-1'], [props.className])} />
+);
 
 const emptyValue = `{
 
@@ -463,13 +365,7 @@ export const ObjectValueEditor = (props: {
         }
       }}
       id={props.id}
-      css={
-        isValid
-          ? undefined
-          : {
-              borderColor: '$red-400',
-            }
-      }
+      isError={!isValid}
     />
   );
 };
@@ -487,18 +383,22 @@ const isValidJson = (val: string) => {
   }
 };
 
-export const SelectButton = styled(Button, {
-  px: '$3',
-  py: '$1',
-  color: '$gray-600',
-  backgroundColor: '$gray-100',
-  cursor: 'pointer',
-  variants: {
-    selected: {
-      true: {
-        backgroundColor: '$primary-700',
-        color: 'White',
-      },
-    },
-  },
-});
+export const SelectButton = ({
+  selected,
+  ...props
+}: React.ComponentPropsWithoutRef<'button'> & { selected?: boolean }) => {
+  return (
+    <Button
+      {...props}
+      className={tw(
+        [
+          'px-3 text-base sm:text-sm rounded-lg transition-colors border-transparent',
+          selected
+            ? 'bg-white text-zinc-900 shadow-sm'
+            : 'text-zinc-700 hover:text-zinc-900',
+        ],
+        [props.className]
+      )}
+    />
+  );
+};

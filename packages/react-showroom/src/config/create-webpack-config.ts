@@ -20,7 +20,6 @@ import {
   generateAllComponentsPaths,
   generateCodeblocksData,
   generateDocPlaceHolder,
-  generateReactEntryCompat,
   generateSearchIndex,
   generateSectionsAndImports,
   generateWrapper,
@@ -45,6 +44,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const WebpackMessages = require('webpack-messages');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+
+const showRoomCss = resolveShowroom('client-dist/react-showroom.css');
 
 export const createClientWebpackConfig = (
   mode: Environment,
@@ -81,9 +82,10 @@ export const createClientWebpackConfig = (
 
   const isProd = mode === 'production';
 
-  const clientEntry = resolveShowroom(
-    'client-dist/app/showroom-client-entry.js'
-  );
+  const clientEntry = [
+    showRoomCss,
+    resolveShowroom('client-dist/app/showroom-client-entry.js'),
+  ];
   const previewEntry = resolveShowroom(
     'client-dist/app/preview-client-entry.js'
   );
@@ -322,8 +324,6 @@ const createBaseWebpackConfig = (
       generateDocPlaceHolder(exampleConfig.placeholder),
     [resolveShowroom('node_modules/react-showroom-index.js')]:
       generateSearchIndex(sections, search.includeHeadings),
-    [resolveShowroom('node_modules/react-showroom-compat.js')]:
-      generateReactEntryCompat(),
   });
 
   const babelPreset = createBabelPreset(mode);
@@ -576,11 +576,14 @@ const createBaseWebpackConfig = (
         },
         {
           test: /\.css$/,
-          // if app don't need CSS, we still need to handle css in @showroomjs/device-frames
+          // if app don't need CSS, we still need to handle css in @showroomjs/device-frames and @showroomjs/ui
           ...(css.enabled
             ? {}
             : {
-                include: [/node_modules\/@showroomjs\/device-frames/],
+                include: [
+                  /node_modules\/@showroomjs\/device-frames/,
+                  showRoomCss,
+                ],
               }),
           sideEffects: true,
           use: [
@@ -732,9 +735,11 @@ const createBaseWebpackConfig = (
             '...', // keep existing minimizer
             new CssMinimizerPlugin(),
           ],
-      splitChunks: {
-        chunks: 'all',
-      },
+      splitChunks: options.ssr
+        ? false
+        : {
+            chunks: 'all',
+          },
     },
     performance: {
       hints: false,

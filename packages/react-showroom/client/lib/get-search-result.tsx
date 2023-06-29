@@ -1,9 +1,9 @@
 import {
   DocumentIcon,
-  ExternalLinkIcon,
-  PuzzleIcon,
-} from '@heroicons/react/outline';
-import { HashtagIcon } from '@heroicons/react/solid';
+  ArrowTopRightOnSquareIcon as ExternalLinkIcon,
+  PuzzlePieceIcon,
+} from '@heroicons/react/24/outline';
+import { HashtagIcon } from '@heroicons/react/20/solid';
 import { isString } from '@showroomjs/core';
 import type { Option } from '@showroomjs/ui';
 import { styled } from '@showroomjs/ui';
@@ -54,7 +54,7 @@ const Hashtag = styled(HashtagIcon, {
   color: 'inherit',
 });
 
-const Puzzle = styled(PuzzleIcon, {
+const Puzzle = styled(PuzzlePieceIcon, {
   width: 20,
   height: 20,
   color: 'inherit',

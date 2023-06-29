@@ -4,7 +4,11 @@ const libPackageJson = require('react-showroom/package.json');
 
 module.exports = defineConfig({
   url: 'https://react-showroom.js.org',
-  require: ['tailwindcss/tailwind.css', './docs/styles.css'],
+  require: [
+    'tailwindcss/tailwind.css',
+    '@showroomjs/ui/dist/index.css',
+    './docs/styles.css',
+  ],
   items: [
     {
       type: 'content',
@@ -121,6 +125,21 @@ module.exports = defineConfig({
           title: 'Subpath Example',
         },
       ],
+    },
+    {
+      type: 'group',
+      title: 'Internal API',
+      collapsible: 'collapse-by-default',
+      items: [
+        {
+          type: 'components',
+          title: '@showroomjs/ui',
+          path: 'internal/components',
+          components: './node_modules/@showroomjs/ui/src/components/*.tsx',
+          collapsible: 'expand-by-default',
+        },
+      ],
+      hideFromSearch: true,
     },
   ],
   theme: {

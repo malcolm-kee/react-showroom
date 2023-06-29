@@ -1,4 +1,4 @@
-import { UploadIcon } from '@heroicons/react/outline';
+import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { useId } from '@radix-ui/react-id';
 import * as React from 'react';
 import { styled } from '../stitches.config';
@@ -88,7 +88,7 @@ const Input = styled('input', {
   srOnly: true,
 });
 
-const Icon = styled(UploadIcon, {
+const Icon = styled(ArrowUpTrayIcon, {
   display: 'inline-block',
   width: 48,
   height: 48,

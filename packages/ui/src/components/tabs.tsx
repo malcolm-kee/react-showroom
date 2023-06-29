@@ -1,42 +1,48 @@
 import * as TabsPrimitive from '@radix-ui/react-tabs';
-import { styled } from '../stitches.config';
+import { tw } from '../lib/tw';
+import * as React from 'react';
 
 export const Tabs = Object.assign({}, TabsPrimitive, {
-  List: styled(TabsPrimitive.List, {
-    position: 'relative',
-    top: 1,
-    overflowX: 'auto',
-  }),
-  Trigger: styled(TabsPrimitive.Trigger, {
-    all: 'unset',
-    cursor: 'pointer',
-    fontSize: '$sm',
-    lineHeight: '$sm',
-    px: '$2',
-    py: '$1',
-    backgroundColor: 'inherit',
-    borderTop: '1px solid',
-    borderLeft: '1px solid',
-    borderRight: '1px solid',
-    borderColor: 'transparent',
-    borderBottom: '1px solid $gray-300',
-    borderTopLeftRadius: '$base',
-    borderTopRightRadius: '$base',
-    outlineRing: '',
-    '&[data-state="active"]': {
-      backgroundColor: '$gray-200',
-      color: '$primary-800',
-      borderColor: '$gray-300',
-      borderBottomColor: 'transparent',
-    },
-  }),
-  Content: styled(TabsPrimitive.Content, {
-    backgroundColor: '$gray-200',
-    border: '1px solid $gray-300',
-    borderTopRightRadius: '$base',
-    borderBottomRightRadius: '$base',
-    borderBottomLeftRadius: '$base',
-  }),
+  List: React.forwardRef<HTMLDivElement, TabsPrimitive.TabsListProps>(
+    function TabList(props, forwardedRef) {
+      return (
+        <TabsPrimitive.List
+          {...props}
+          className={tw(['relative top-px overflow-x-auto'], [props.className])}
+          ref={forwardedRef}
+        />
+      );
+    }
+  ),
+  Trigger: React.forwardRef<HTMLButtonElement, TabsPrimitive.TabsTriggerProps>(
+    function TabTrigger(props, forwardedRef) {
+      return (
+        <TabsPrimitive.Trigger
+          {...props}
+          className={tw(
+            [
+              'text-sm px-3 py-1',
+              'bg-inherit cursor-pointer rounded-t',
+              'data-[state=active]:bg-zinc-100 data-[state=active]:text-primary-800 data-[state=active]:border-b-transparent',
+            ],
+            [props.className]
+          )}
+          ref={forwardedRef}
+        />
+      );
+    }
+  ),
+  Content: React.forwardRef<HTMLDivElement, TabsPrimitive.TabsContentProps>(
+    function TabContent(props, forwardedRef) {
+      return (
+        <TabsPrimitive.Content
+          {...props}
+          className={tw(['bg-zinc-100 rounded-b'], [props.className])}
+          ref={forwardedRef}
+        />
+      );
+    }
+  ),
   RawList: TabsPrimitive.List,
   RawTrigger: TabsPrimitive.Trigger,
   RawContent: TabsPrimitive.Content,

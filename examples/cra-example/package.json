@@ -10,7 +10,7 @@
     "@types/node": "^18.0.1",
     "@types/react": "^18.0.16",
     "@types/react-dom": "^18.0.6",
-    "classnames": "^2.3.1",
+    "classnames": "^2.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
@@ -23,7 +23,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "doc": "react-showroom dev",
-    "build-showroom": "react-showroom build"
+    "build-showroom": "react-showroom build",
+    "preview": "http-server ./showroom -p 18975"
   },
   "eslintConfig": {
     "extends": [
@@ -46,7 +47,7 @@
   "devDependencies": {
     "@types/testing-library__jest-dom": "^5.14.5",
     "react-showroom": "workspace:*",
-    "sass": "^1.54.3",
+    "sass": "^1.62.1",
     "tailwindcss": "^3.1.8"
   }
 }

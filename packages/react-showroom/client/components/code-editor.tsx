@@ -1,8 +1,7 @@
 import Editor from '@showroomjs/bundles/react-simple-code-editor';
+import { tw } from '@showroomjs/ui';
 import { Language, PrismTheme } from 'prism-react-renderer';
-import * as React from 'react';
 import { CSSProperties, useEffect, useState } from 'react';
-import { Div } from './base';
 import { CodeHighlight } from './code-highlight';
 import { LanguageTag } from './language-tag';
 
@@ -55,13 +54,7 @@ export const CodeEditor = ({
   const baseTheme = theme && typeof theme.plain === 'object' ? theme.plain : {};
 
   return (
-    <Div
-      css={{
-        position: 'relative',
-        lineHeight: 1.5,
-      }}
-      className={wrapperClass}
-    >
+    <div className={tw(['relative leading-normal'], [wrapperClass])}>
       <Editor
         value={state.code}
         padding={10}
@@ -77,6 +70,6 @@ export const CodeEditor = ({
         {...rest}
       />
       {language && <LanguageTag language={language} />}
-    </Div>
+    </div>
   );
 };

@@ -1,5 +1,4 @@
 import Highlight, { Language, Prism, PrismTheme } from 'prism-react-renderer';
-import * as React from 'react';
 import { Fragment } from 'react';
 
 export const CodeHighlight = (props: {

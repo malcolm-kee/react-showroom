@@ -9,39 +9,28 @@ jobs:
     strategy:
       matrix:
         node-version: [16]
-        react-version: [17, 18]
+        react-version: [18]
 
     steps:
       - name: Branch Name
         run: echo Running on branch ${GITHUB_REF##*/}
 
       - name: Begin CI...
-        uses: actions/checkout@v2
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Cache pnpm modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-node${{ matrix.node-version }}-react${{ matrix.react-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+        uses: actions/checkout@v3
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.0.1
+        uses: pnpm/action-setup@v2
         with:
-          version: 7
-          run_install: true
+          version: 8
 
-      - name: Install React ${{ matrix.react-version }} at Root
-        if: matrix.react-version != 18
-        run: pnpm -w -D add react@^${{ matrix.react-version }} react-dom@^${{ matrix.react-version }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
 
-      - name: Install React ${{ matrix.react-version }} at Examples
-        if: matrix.react-version != 18
-        run: pnpm --filter="./examples/**" --filter="react-showroom-docs" add react@^${{ matrix.react-version }} react-dom@^${{ matrix.react-version }} @testing-library/react@^12 @testing-library/user-event@^13
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Install Playwright
         run: npx playwright install --with-deps

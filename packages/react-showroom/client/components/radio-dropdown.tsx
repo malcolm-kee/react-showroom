@@ -1,6 +1,5 @@
-import { CheckIcon } from '@heroicons/react/outline';
-import { DropdownMenu, DropdownMenuContentProps } from '@showroomjs/ui';
-import * as React from 'react';
+import { CheckIcon } from '@heroicons/react/20/solid';
+import { DropdownMenu, DropdownMenuContentProps, tw } from '@showroomjs/ui';
 
 export interface RadioDropdownProps<Value extends string>
   extends DropdownMenuContentProps {
@@ -28,13 +27,7 @@ export const RadioDropdown = <Value extends string>({
         {options.map((option, i) => (
           <DropdownMenu.RadioItem
             value={option.value}
-            css={{
-              paddingLeft: '$8',
-              '@md': {
-                fontSize: '$sm',
-                lineHeight: '$sm',
-              },
-            }}
+            className={tw(['!pl-8 md:!text-sm'])}
             key={i}
           >
             <DropdownMenu.ItemIndicator>

@@ -2,7 +2,7 @@ import { Button } from './button';
 
 ```jsx frame initialHeight=46 initialWidth=375
 import { usePropsEditor } from 'react-showroom/client';
-import { PencilIcon, PlusIcon } from '@heroicons/react/solid';
+import { PencilIcon, PlusIcon } from '@heroicons/react/20/solid';
 
 const EditIcon = <PencilIcon width={20} height={20} />;
 
@@ -138,19 +138,17 @@ render(<Example />);
 `react-query` relies on `ReactQueryClientProvider` being rendered in at root of the application using `wrapper`.
 
 ```jsx
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 const Example = () => {
   const [enabled, setEnabled] = React.useState(false);
 
-  const { data: result } = useQuery(
-    'hello',
-    () => fetch('/hello').then((res) => res.json()),
-    {
-      select: (data) => data.message,
-      enabled,
-    }
-  );
+  const { data: result } = useQuery({
+    queryKey: 'hello',
+    queryFn: () => fetch('/hello').then((res) => res.json()),
+    select: (data) => data.message,
+    enabled,
+  });
 
   return (
     <div>

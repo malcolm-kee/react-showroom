@@ -1,13 +1,11 @@
-import { SearchIcon as PlainSearchIcon } from '@heroicons/react/outline';
+import { MagnifyingGlassIcon as SearchIcon } from '@heroicons/react/20/solid';
 import { isDefined } from '@showroomjs/core';
-import cx from 'classnames';
 import { useCombobox } from 'downshift';
 import * as React from 'react';
-import { SpinIcon } from './icons';
-import { spinAnimation } from './animations';
+import { tw } from '../lib/tw';
 import { useStableCallback } from '../lib/use-stable-callback';
-import { css, styled } from '../stitches.config';
 import { Dialog } from './dialog';
+import { SpinIcon } from './icons';
 import { ShortcutKey } from './shortcut-key';
 import { TextHighlight } from './text-highlight';
 import { TextInput } from './text-input';
@@ -98,122 +96,127 @@ const SearchDialogInternal = function SearchDialog<T>(
   });
 
   return (
-    <SearchMenuRoot
+    <div
       {...getComboboxProps({
-        className: props.className,
+        className: tw(['flex flex-col h-full'], [props.className]),
       })}
     >
-      <InputWrapper>
-        <SearchIcon width={24} height={24} />
+      <div className={tw(['relative bg-white'])}>
+        <SearchIcon
+          width={24}
+          height={24}
+          className={tw([
+            'absolute left-3 top-1/2 -translate-y-1/2 text-primary-300',
+          ])}
+        />
         <TextInput
           onValue={setInputValue}
-          css={{
-            paddingLeft: '$12',
-            py: '$3',
-          }}
+          className={tw(['pl-12 py-3'])}
           {...getInputProps({
             placeholder: props.placeholder,
           })}
         />
         {props.isLoading && (
-          <LoadingWrapper>
+          <div
+            className={tw([
+              'absolute top-1/2 -translate-y-1/2 right-3 md:right-14',
+            ])}
+          >
             <SpinIcon
+              className={tw(['text-zinc-500 animate-spin'])}
               aria-label="Updating..."
-              css={{
-                color: '$gray-500',
-                animation: `${spinAnimation} 1s linear infinite`,
-              }}
             />
-          </LoadingWrapper>
+          </div>
         )}
         <Dialog.Close asChild>
           <ShortcutKey
-            css={{
-              position: 'absolute',
-              right: '$3',
-              top: '$4',
-              display: 'none',
-              '@md': {
-                display: 'block',
-              },
-            }}
-            as="button"
+            className={tw([
+              'hidden md:block absolute top-1/2 -translate-y-1/2 right-3 hover:text-zinc-500',
+            ])}
+            render={(props) => <button type="button" {...props} />}
           >
-            <kbd>
-              <Abbr title="Escape">esc</Abbr>
-            </kbd>
+            <Kbd>
+              <abbr title="Escape" className={tw(['no-underline'])}>
+                esc
+              </abbr>
+            </Kbd>
           </ShortcutKey>
         </Dialog.Close>
-      </InputWrapper>
+      </div>
       {isResultsShown && options.length === 0 && (
-        <NoResult>No results found.</NoResult>
+        <div className={tw(['text-sm py-6 text-center text-zinc-600'])}>
+          No results found.
+        </div>
       )}
-      <Menu {...getMenuProps()}>
+      <ul
+        {...getMenuProps({
+          className: tw([
+            'flex-1 m-0 p-0 list-none max-h-[70vh] overflow-y-auto',
+          ]),
+        })}
+      >
         {isResultsShown &&
           options.map((option, i) => {
             const highlighted = i === highlightedIndex;
 
             return (
-              <Item key={i}>
-                <OptionItem
+              <li className={tw(['m-0 p-0 w-full'])} key={i}>
+                <div
                   {...getItemProps({
                     item: option,
                     index: i,
+                    className: tw([
+                      'group/option flex items-center gap-2 px-3 py-2 cursor-pointer',
+                      highlighted
+                        ? 'bg-primary-700 text-white'
+                        : 'text-zinc-900',
+                    ]),
                   })}
-                  highlighted={highlighted}
+                  data-highlighted={highlighted}
                 >
-                  {option.icon && <OptionIcon>{option.icon}</OptionIcon>}
-                  <OptionText>
-                    <div>
+                  {option.icon && (
+                    <div
+                      className={tw([
+                        'flex-shrink-0 text-zinc-400 group-data-[highlighted=true]/option:text-zinc-200',
+                      ])}
+                    >
+                      {option.icon}
+                    </div>
+                  )}
+                  <div className={tw(['flex-1 min-w-0'])}>
+                    <div className={tw(['sm:text-sm'])}>
                       <TextHighlight
                         textToHighlight={option.label}
                         searchWords={[trimmedInput]}
                         highlightClassName={
-                          highlighted ? underline().className : undefined
+                          highlighted ? underlineClass : undefined
                         }
                       />
                     </div>
                     {option.description && (
-                      <Description>
+                      <div
+                        className={tw([
+                          'text-xs text-zinc-500 truncate group-data-[highlighted=true]/option:text-zinc-200',
+                        ])}
+                      >
                         <TextHighlight
                           textToHighlight={option.description}
                           searchWords={[trimmedInput]}
                           highlightClassName={
-                            highlighted ? underline().className : undefined
+                            highlighted ? underlineClass : undefined
                           }
                         />
-                      </Description>
+                      </div>
                     )}
-                  </OptionText>
-                </OptionItem>
-              </Item>
+                  </div>
+                </div>
+              </li>
             );
           })}
-      </Menu>
-    </SearchMenuRoot>
+      </ul>
+    </div>
   );
 };
-
-const SearchMenuRoot = styled('div', {
-  display: 'flex',
-  flexFlow: 'column',
-  height: '100%',
-});
-
-const Menu = styled('ul', {
-  flex: 1,
-  margin: '0',
-  padding: '0',
-  listStyle: 'none',
-  maxHeight: '70vh',
-  overflowY: 'auto',
-});
-
-const Item = styled('li', {
-  margin: 0,
-  padding: 0,
-  width: '100%',
-});
 
 type Dismiss = () => void;
 
@@ -223,7 +226,7 @@ const DismissContext = React.createContext<Dismiss>(() => {
 
 const SearchDialogRoot = ({ children }: { children: React.ReactNode }) => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const dismisss = React.useCallback(() => setIsOpen(false), []);
+  const dismiss = React.useCallback(() => setIsOpen(false), []);
 
   React.useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -245,7 +248,7 @@ const SearchDialogRoot = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <DismissContext.Provider value={dismisss}>
+    <DismissContext.Provider value={dismiss}>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         {children}
       </Dialog>
@@ -261,41 +264,28 @@ export const SearchDialog = Object.assign(SearchDialogImpl, {
   }: { children: React.ReactNode } & React.ComponentPropsWithoutRef<'button'>) {
     return (
       <Dialog.Trigger asChild>
-        <TextInput
-          as="button"
-          className={cx(triggerInput({}), className)}
-          css={{
-            color: '$gray-400',
-            height: 38,
-            width: 38,
-            borderRadius: '$full',
-            px: '$1',
-            justifyContent: 'center',
-            '@md': {
-              width: 'auto',
-              borderRadius: '$base',
-              px: '$3',
-              justifyContent: 'start',
-            },
-          }}
+        <button
+          type="button"
+          className={tw(
+            [
+              'form-input flex justify-center items-center gap-2 w-[38px] h-[38px] text-zinc-400 rounded-full px-1',
+              'md:justify-start md:w-auto md:rounded md:px-3',
+            ],
+            [className]
+          )}
           {...props}
         >
-          <PlainSearchIcon width={16} height={16} />
+          <SearchIcon width={16} height={16} />
           {children}
-          <ShortcutKey
-            css={{
-              display: 'none',
-              '@md': {
-                display: 'block',
-              },
-            }}
-          >
+          <ShortcutKey className={tw(['hidden md:block'])}>
             <Kbd>
-              <Abbr title="Command">⌘</Abbr>
+              <abbr title="Command" className={tw(['no-underline'])}>
+                ⌘
+              </abbr>
             </Kbd>
             <Kbd>K</Kbd>
           </ShortcutKey>
-        </TextInput>
+        </button>
       </Dialog.Trigger>
     );
   },
@@ -310,102 +300,8 @@ export interface Option<T> {
   icon?: React.ReactNode;
 }
 
-const InputWrapper = styled('div', {
-  position: 'relative',
-  backgroundColor: 'White',
-});
+const Kbd = (props: { children: React.ReactNode }) => (
+  <kbd {...props} className={tw(['font-sans'])} />
+);
 
-const SearchIcon = styled(PlainSearchIcon, {
-  position: 'absolute',
-  left: '$3',
-  top: 14,
-  color: '$primary-300',
-  '@md': {
-    top: '$3',
-  },
-});
-
-const OptionIcon = styled('div', {
-  flexShrink: 0,
-  color: '$gray-400',
-});
-
-const OptionText = styled('div', {
-  flex: 1,
-  minWidth: 0,
-});
-
-const Kbd = styled('kbd', {
-  fontFamily: '$sans',
-});
-
-const Description = styled('div', {
-  color: '$gray-500',
-  fontSize: '$sm',
-  lineHeight: '$sm',
-  overflow: 'hidden',
-  whiteSpace: 'nowrap',
-  textOverflow: 'ellipsis',
-});
-
-const OptionItem = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '$2',
-  px: '$3',
-  py: '$2',
-  color: 'Black',
-  cursor: 'pointer',
-  variants: {
-    highlighted: {
-      true: {
-        backgroundColor: '$primary-700',
-        color: 'White',
-        [`& ${Description}`]: {
-          color: '$gray-200',
-        },
-        [`& ${OptionIcon}`]: {
-          color: '$gray-200',
-        },
-      },
-    },
-  },
-});
-
-const NoResult = styled('div', {
-  color: '$gray-600',
-  py: '$6',
-  textAlign: 'center',
-});
-
-const Abbr = styled('abbr', {
-  textDecoration: 'none',
-});
-
-const triggerInput = css({
-  position: 'relative',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '$2',
-  '&:focus-visible svg': {
-    color: '$primary-400',
-  },
-  [`&:focus-visible ${Kbd}`]: {
-    color: '$primary-400',
-  },
-});
-
-const LoadingWrapper = styled('div', {
-  position: 'absolute',
-  top: 13,
-  right: '$3',
-  '@md': {
-    right: '$14',
-  },
-});
-
-const underline = css({
-  textDecoration: 'underline',
-  backgroundColor: 'inherit',
-  color: 'inherit',
-});
+const underlineClass = tw(['underline bg-inherit text-inherit']);

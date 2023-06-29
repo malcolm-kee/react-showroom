@@ -1,6 +1,5 @@
-import { TemplateIcon } from '@heroicons/react/outline';
+import { RectangleGroupIcon } from '@heroicons/react/24/outline';
 import { TextTooltip, ToggleButton } from '@showroomjs/ui';
-import * as React from 'react';
 
 export const MeasuringButton = (props: {
   isActive: boolean;
@@ -26,7 +25,7 @@ export const MeasuringButton = (props: {
       }}
       aria-label="Measure"
     >
-      <TemplateIcon width={20} height={20} />
+      <RectangleGroupIcon width={20} height={20} />
     </ToggleButton>
   </TextTooltip>
 );

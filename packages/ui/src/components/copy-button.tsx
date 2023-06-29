@@ -1,9 +1,8 @@
 import { callAll, noop } from '@showroomjs/core';
 import * as React from 'react';
 import { copyText } from '../lib/copy';
+import { tw } from '../lib/tw';
 import { useTransientState } from '../lib/use-transient-state';
-import { styled } from '../stitches.config';
-import { buttonBase } from './base';
 
 export interface CopyButtonProps
   extends React.ComponentPropsWithoutRef<'button'> {
@@ -30,7 +29,7 @@ export const CopyButton = React.forwardRef<HTMLButtonElement, CopyButtonProps>(
     const [copied, setCopied] = useTransientState(false);
 
     return (
-      <Button
+      <button
         type="button"
         onClick={callAll(onClick, () =>
           copyText(getTextToCopy()).then(() => {
@@ -38,18 +37,12 @@ export const CopyButton = React.forwardRef<HTMLButtonElement, CopyButtonProps>(
             onCopy();
           })
         )}
-        className={className}
+        className={tw(['text-sm'], [className])}
         {...btnProps}
         ref={forwardedRef}
       >
         {copied ? successLabel : label}
-      </Button>
+      </button>
     );
   }
 );
-
-const Button = styled('button', {
-  ...buttonBase,
-  fontSize: '$sm',
-  lineHeight: '$sm',
-});

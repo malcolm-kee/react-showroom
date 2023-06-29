@@ -1,5 +1,5 @@
-import { MenuIcon } from '@heroicons/react/outline';
-import { Collapsible, Dialog, styled } from '@showroomjs/ui';
+import { Bars3Icon as MenuIcon, MinusIcon } from '@heroicons/react/20/solid';
+import { Collapsible, Dialog, tw } from '@showroomjs/ui';
 import * as React from 'react';
 import { ErrorBound } from './error-fallback';
 
@@ -25,86 +25,89 @@ export const BrowserWindow = ({
   const [showDialog, setShowDialog] = React.useState(false);
 
   return (
-    <BrowserWindowWrapper style={{ minHeight }} {...props}>
+    <div
+      style={{ minHeight }}
+      {...props}
+      className={tw(
+        ['border-[3px] border-zinc-500 rounded-md shadow'],
+        [props.className]
+      )}
+    >
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <Collapsible.Root open={show} onOpenChange={setShow}>
-          <BrowserWindowHeader>
-            <Buttons>
-              <Dot style={{ background: '#f25f58' }} />
+        <Collapsible open={show} onOpenChange={setShow}>
+          <div className={tw(['flex items-center bg-zinc-500 py-2 px-4'])}>
+            <div
+              className={tw([
+                'group/winControls flex items-center whitespace-nowrap',
+              ])}
+            >
+              <span style={{ background: '#f25f58' }} className={dotClass} />
               <Collapsible.Button asChild>
-                <Dot
-                  as="button"
-                  style={{ background: '#fbbe3c' }}
+                <button
+                  style={{ background: '#fbbe3c', padding: 0 }}
                   aria-label={show ? 'Show' : 'Collapse'}
-                />
+                  className={dotClass}
+                >
+                  <MinusIcon
+                    width={12}
+                    height={12}
+                    className={tw([
+                      'text-yellow-800 invisible group-hover/winControls:visible group-focus-visible/dot:visible',
+                    ])}
+                  />
+                </button>
               </Collapsible.Button>
               <Dialog.Trigger asChild>
-                <Dot
-                  as="button"
-                  style={{ background: '#58cb42' }}
+                <button
+                  style={{ background: '#58cb42', padding: 0 }}
                   aria-label="Open focus view"
-                />
+                  className={dotClass}
+                >
+                  <svg
+                    width={12}
+                    height={12}
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    className={tw([
+                      'text-green-700 invisible group-hover/winControls:visible group-focus-visible/dot:visible',
+                    ])}
+                  >
+                    <polygon points="5,5 5,13 13,5" fill="currentColor" />
+                    <polygon points="15,15 15,7 7,15" fill="currentColor" />
+                  </svg>
+                </button>
               </Dialog.Trigger>
-            </Buttons>
-            <BrowserWindowAddressBar>{url}</BrowserWindowAddressBar>
-            <div>
-              <BrowserMenu width={20} height={20} />
             </div>
-          </BrowserWindowHeader>
-          <Collapsible.Content>
+            <div
+              className={tw([
+                'flex-grow flex-shrink-0 bg-white ml-4 mr-2 py-[5px] px-[15px] text-zinc-800 rounded-[12.5px] select-none truncate',
+              ])}
+              style={{
+                font: '400 13px Arial',
+              }}
+            >
+              {url}
+            </div>
+            <div>
+              <MenuIcon
+                width={20}
+                height={20}
+                className={tw(['text-zinc-300'])}
+              />
+            </div>
+          </div>
+          <Collapsible.Content animate>
             <ErrorBound>{children}</ErrorBound>
           </Collapsible.Content>
-        </Collapsible.Root>
+        </Collapsible>
         <Dialog.Content fullWidth>
           <ErrorBound>{children}</ErrorBound>
         </Dialog.Content>
       </Dialog>
-    </BrowserWindowWrapper>
+    </div>
   );
 };
 
-const BrowserMenu = styled(MenuIcon, {
-  color: '$gray-300',
-});
-
-const BrowserWindowWrapper = styled('div', {
-  border: '3px solid $gray-500',
-  borderRadius: '$md',
-  boxShadow: 'rgba(0, 0, 0, 0.1) 0px 1px 2px 0px',
-});
-
-const BrowserWindowHeader = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  backgroundColor: '$gray-500',
-  padding: '0.5rem 1rem',
-});
-
-const Buttons = styled('div', {
-  whiteSpace: 'nowrap',
-  display: 'flex',
-  alignItems: 'center',
-});
-
-const Dot = styled('span', {
-  display: 'inline-block',
-  height: 12,
-  width: 12,
-  marginRight: 6,
-  backgroundColor: '#bbb',
-  borderRadius: '50%',
-});
-
-const BrowserWindowAddressBar = styled('div', {
-  flex: '1 0',
-  margin: '0 1rem 0 0.5rem',
-  borderRadius: '12.5px',
-  backgroundColor: '#fff',
-  color: '$gray-800',
-  padding: '5px 15px',
-  font: '400 13px Arial',
-  userSelect: 'none',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-});
+const dotClass = tw([
+  'group/dot inline-flex justify-center items-center h-3 w-3 mr-[6px] bg-[#bbb] rounded-full',
+]);

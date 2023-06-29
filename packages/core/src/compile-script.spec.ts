@@ -39,9 +39,7 @@ describe('compileScript', () => {
     expect(result.code).toMatchInlineSnapshot(`
       "const {Button} = imports['components'];
 
-      /* @__PURE__ */ React.createElement(Button, {
-        className: \\"bg\\"
-      }, \\"Hello\\");
+      /* @__PURE__ */ React.createElement(Button, { className: \\"bg\\" }, \\"Hello\\");
       "
     `);
   });

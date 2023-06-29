@@ -1,73 +1,32 @@
-import { ExclamationCircleIcon } from '@heroicons/react/outline';
-import { styled } from '@showroomjs/ui';
-import * as React from 'react';
-import { Div, H1 } from '../components/base';
+import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { tw } from '@showroomjs/ui';
+import { H1 } from '../components/base';
 import { Seo } from '../components/seo';
 
 export const OfflinePage = () => {
   return (
-    <Div
-      css={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        maxWidth: '100%',
-      }}
-    >
+    <div className={tw(['flex-1 flex flex-col max-w-full'])}>
       <Seo title="Offline" />
-      <Div css={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        <Div
-          as="main"
-          css={{
-            flex: '1',
-            overflowY: 'auto',
-            paddingTop: '10vh',
-          }}
-        >
-          <Div
-            css={{
-              maxWidth: '$screenXl',
-              marginX: 'auto',
-              padding: '$6',
-            }}
-          >
-            <H1
-              css={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: '$4',
-              }}
-            >
-              <OfflineIcon width={56} height={56} aria-hidden />
+      <div className={tw(['flex flex-1 overflow-hidden'])}>
+        <main className={tw(['flex-1 overflow-y-auto pt-[10vh]'])}>
+          <div className={tw(['max-w-xl mx-auto p-6'])}>
+            <H1 className={tw(['flex justify-center items-center gap-4'])}>
+              <ExclamationCircleIcon
+                width={56}
+                height={56}
+                aria-hidden
+                className={tw([
+                  'w-10 h-10 inline-block text-zinc-400 sm:w-14 sm:h-14',
+                ])}
+              />
               Offline
             </H1>
-            <Div
-              as="p"
-              css={{
-                textAlign: 'center',
-                '@sm': {
-                  fontSize: '$xl',
-                  lineHeight: '$xl',
-                },
-              }}
-            >
+            <p className={tw(['text-center sm:text-xl'])}>
               Please try again later.
-            </Div>
-          </Div>
-        </Div>
-      </Div>
-    </Div>
+            </p>
+          </div>
+        </main>
+      </div>
+    </div>
   );
 };
-
-const OfflineIcon = styled(ExclamationCircleIcon, {
-  width: 40,
-  height: 40,
-  display: 'inline-block',
-  color: '$gray-400',
-  '@sm': {
-    width: 56,
-    height: 56,
-  },
-});

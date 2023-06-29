@@ -1,6 +1,5 @@
-import { ArrowsExpandIcon } from '@heroicons/react/outline';
-import { icons, styled, TextTooltip } from '@showroomjs/ui';
-import * as React from 'react';
+import { ArrowsPointingOutIcon } from '@heroicons/react/20/solid';
+import { iconClass, TextTooltip, tw } from '@showroomjs/ui';
 import { Link } from '../lib/routing';
 
 export const LinkToStandaloneView = (props: {
@@ -8,26 +7,18 @@ export const LinkToStandaloneView = (props: {
   isDesigner: boolean;
 }) => {
   return props.codeHash ? (
-    <TextTooltip label="Standalone">
-      <StyledLink
+    <TextTooltip label="Full page">
+      <Link
         to={`_standalone/${props.codeHash}/${
           props.isDesigner ? '?commentMode=true' : ''
         }`}
         data-testid="standalone-link"
+        className={tw([
+          'inline-flex items-center gap-1 text-sm text-zinc-500 no-underline px-1 hover:text-zinc-700 hover:bg-zinc-100',
+        ])}
       >
-        <ArrowsExpandIcon width={20} height={20} className={icons()} />
-      </StyledLink>
+        <ArrowsPointingOutIcon width={20} height={20} className={iconClass} />
+      </Link>
     </TextTooltip>
   ) : null;
 };
-
-const StyledLink = styled(Link, {
-  display: 'inline-flex',
-  alignItems: 'center',
-  textDecoration: 'none',
-  px: '$1',
-  gap: '$1',
-  fontSize: '$sm',
-  color: '$gray-500',
-  outlineRing: '',
-});

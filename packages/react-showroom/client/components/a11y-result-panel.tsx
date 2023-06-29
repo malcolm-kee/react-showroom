@@ -1,5 +1,5 @@
 import { dedupeArray, flattenArray, isDefined } from '@showroomjs/core';
-import { Checkbox, Collapsible, pulse, styled, Tabs } from '@showroomjs/ui';
+import { Checkbox, Collapsible, Tabs, tw } from '@showroomjs/ui';
 import * as React from 'react';
 import { A11yResult, useA11yResult } from '../lib/use-a11y-result';
 import { A11yResultItem, Root as ItemRoot } from './a11y-result-item';
@@ -79,19 +79,34 @@ export const A11yResultPanel = (props: {
         setHighlightedItems([]);
       }}
     >
-      <TabNav>
+      <div
+        className={tw(['flex justify-between items-center gap-4 flex-wrap'])}
+      >
         <Tabs.RawList>
-          <TabTrigger value="violations">
-            Violations <Count>{result ? result.violations.length : '?'}</Count>
+          <TabTrigger
+            value="violations"
+            disabled={result && result.violations.length === 0}
+          >
+            VIOLATIONS <Count>{result ? result.violations.length : '?'}</Count>
           </TabTrigger>
-          <TabTrigger value="passes">
-            Passes <Count>{result ? result.passes.length : '?'}</Count>
+          <TabTrigger
+            value="passes"
+            disabled={result && result.passes.length === 0}
+          >
+            PASSES <Count>{result ? result.passes.length : '?'}</Count>
           </TabTrigger>
-          <TabTrigger value="incompletes">
-            Incomplete <Count>{result ? result.incomplete.length : '?'}</Count>
+          <TabTrigger
+            value="incompletes"
+            disabled={result && result.incomplete.length === 0}
+          >
+            INCOMPLETE <Count>{result ? result.incomplete.length : '?'}</Count>
           </TabTrigger>
         </Tabs.RawList>
-        <CheckboxLabel>
+        <label
+          className={tw([
+            'flex-1 flex justify-end items-center gap-2 px-4 text-sm text-zinc-500',
+          ])}
+        >
           <span>Highlight</span>
           <Checkbox
             checked={checkStatus}
@@ -100,8 +115,8 @@ export const A11yResultPanel = (props: {
             }}
             disabled={allSelectors.length === 0}
           />
-        </CheckboxLabel>
-      </TabNav>
+        </label>
+      </div>
       {result ? (
         <>
           <TabContent value="violations">
@@ -167,68 +182,44 @@ export const A11yResultPanel = (props: {
 };
 
 const LoadingPlaceholderList = () => (
-  <ResultItemList
-    css={{
-      backgroundColor: 'White',
-      animation: `${pulse} 2s cubic-bezier(0.4, 0, 0.6, 1) infinite`,
-    }}
-  >
+  <ResultItemList className={tw(['bg-white animate-pulse'])}>
     <PlaceholderItem width="60%" />
     <PlaceholderItem width="70%" />
     <PlaceholderItem width="50%" />
   </ResultItemList>
 );
 
-const ResultItemList = styled('ul', {
-  listStyle: 'none',
-  margin: 0,
-  padding: 0,
-});
-
-const LoadingLabel = styled('div', {
-  backgroundColor: '$gray-300',
-  height: '1.25rem',
-});
-
-const PlaceholderItemInner = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  paddingRight: '$4',
-  paddingLeft: '$1',
-});
+const ResultItemList = (props: React.ComponentPropsWithoutRef<'ul'>) => (
+  <ul {...props} className={tw(['list-none p-0 m-0'], [props.className])} />
+);
 
 const PlaceholderItem = ({ width }: { width: string }) => (
   <ItemRoot>
-    <PlaceholderItemInner>
-      <Collapsible.ToggleIcon
-        direction="right"
-        width={16}
-        height={16}
-        css={{
-          marginRight: '$1',
-        }}
-      />
-      <LoadingLabel
-        css={{
+    <div className={tw(['flex items-center pr-4 pl-1'])}>
+      <Collapsible.ToggleIcon direction="right" className={tw(['mr-1'])} />
+      <div
+        className={tw(['h-5 bg-zinc-300'])}
+        style={{
           width,
         }}
       />
-    </PlaceholderItemInner>
+    </div>
   </ItemRoot>
 );
 
-const Count = styled('span', {
-  display: 'inline-flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  borderRadius: '$full',
-  fontSize: '$xs',
-  lineHeight: 1,
-  width: 14,
-  height: 14,
-  backgroundColor: '$gray-500',
-  color: 'White',
-});
+const Count = (props: React.ComponentPropsWithoutRef<'span'>) => (
+  <span
+    {...props}
+    className={tw(
+      [
+        'inline-flex justify-center items-center',
+        'text-xs w-[14px] h-[14px]',
+        'bg-zinc-500 text-white rounded-full',
+      ],
+      [props.className]
+    )}
+  />
+);
 
 const getDefaultTab = (result: A11yResult) => {
   if (result.violations.length > 0) {
@@ -248,49 +239,31 @@ const colorByType: Record<string, string> = {
   incompletes: '#F59E0B',
 };
 
-const TabTrigger = styled(Tabs.RawTrigger, {
-  display: 'inline-flex',
-  alignItems: 'center',
-  px: '$2',
-  py: '$1',
-  fontSize: '$sm',
-  lineHeight: '$sm',
-  gap: '$1',
-  border: 0,
-  cursor: 'pointer',
-  borderBottom: '2px solid transparent',
-  backgroundColor: 'inherit',
-  outlineRing: '',
-  '&[data-state="active"]': {
-    borderColor: '$primary-800',
-  },
-});
+const TabTrigger = (
+  props: React.ComponentPropsWithoutRef<typeof Tabs['RawTrigger']>
+) => (
+  <Tabs.RawTrigger
+    {...props}
+    className={tw(
+      [
+        'inline-flex items-center gap-1 px-2 py-1 text-xs border-0 text-zinc-500 font-semibold tracking-wide cursor-pointer',
+        'border-b-2 border-transparent data-[state=active]:border-primary-600 data-[state=active]:text-primary-700',
+        'disabled:opacity-50 disabled:cursor-default',
+      ],
+      [props.className]
+    )}
+  />
+);
 
-const CheckboxLabel = styled('label', {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '$2',
-  fontSize: '$sm',
-  lineHeight: '$sm',
-  color: '$gray-700',
-  px: '$4',
-});
+const TabContent = (
+  props: React.ComponentPropsWithoutRef<typeof Tabs.RawContent>
+) => (
+  <Tabs.RawContent {...props} className={tw(['bg-white'], [props.className])} />
+);
 
-const TabNav = styled('div', {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-});
-
-const TabContent = styled(Tabs.RawContent, {
-  backgroundColor: 'White',
-});
-
-const NoItemMsg = styled('p', {
-  px: '$2',
-  py: '$1',
-  margin: 0,
-  color: '$gray-600',
-  fontSize: '$sm',
-  lineHeight: '$sm',
-});
+const NoItemMsg = (props: React.ComponentPropsWithoutRef<'p'>) => (
+  <p
+    {...props}
+    className={tw(['text-zinc-500 px-2 py-2'], [props.className])}
+  />
+);

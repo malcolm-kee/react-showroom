@@ -1,5 +1,4 @@
 import { Tabs, callAll } from '@showroomjs/ui';
-import * as React from 'react';
 import { useCodeFrameContext } from '../lib/code-frame-context';
 import { getFrameId } from '../lib/get-frame-id';
 import { getScrollFn } from '../lib/scroll-into-view';
@@ -17,7 +16,7 @@ export interface A11yResultPanelForFramesProps {
     selectors: Array<string>;
     color: string;
   }) => void;
-  resetHiglights: () => void;
+  resetHighlights: () => void;
   scrollToFrameWhenSelect?: boolean;
 }
 
@@ -78,7 +77,7 @@ export const A11yResultPanelForFrames = (
               }
             }
           : undefined,
-        props.resetHiglights
+        props.resetHighlights
       )}
     >
       <Tabs.List>

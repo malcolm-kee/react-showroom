@@ -1,6 +1,6 @@
 import { Link } from '@showroomjs/bundles/routing';
 import * as React from 'react';
-import { styled } from '../stitches.config';
+import { tw } from '../lib/tw';
 
 export interface BreadcrumbsProps {
   items: Array<{
@@ -12,79 +12,42 @@ export interface BreadcrumbsProps {
 export const Breadcrumbs = React.forwardRef<HTMLElement, BreadcrumbsProps>(
   function Breadcrumbs(props, forwardedRef) {
     return (
-      <Root aria-label="Breadcrumb" ref={forwardedRef}>
-        <Ol role="list">
+      <nav
+        aria-label="Breadcrumb"
+        ref={forwardedRef}
+        className={tw(['flex bg-white border-b border-b-zinc-200'])}
+      >
+        <ol className={tw(['flex gap-4 w-full list-none m-0'])}>
           {props.items.map((item, i) => (
-            <Item key={i}>
+            <li className={tw(['flex items-center'])} key={i}>
               {i > 0 && (
-                <Svg
+                <svg
                   viewBox="0 0 24 44"
                   preserveAspectRatio="none"
                   fill="currentColor"
                   aria-hidden="true"
+                  width={24}
+                  className={tw(['h-full flex-shrink-0 text-zinc-200'])}
                 >
                   <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
-                </Svg>
+                </svg>
               )}
               {item.url ? (
-                <Text
-                  as={Link}
+                <Link
                   to={item.url}
-                  css={{
-                    '&:hover': {
-                      borderBottomColor: '$gray-300',
-                    },
-                  }}
+                  className={`${textClass} ${tw(['hover:text-zinc-700'])}`}
                 >
                   {item.label}
-                </Text>
+                </Link>
               ) : (
-                <Text>{item.label}</Text>
+                <span className={textClass}>{item.label}</span>
               )}
-            </Item>
+            </li>
           ))}
-        </Ol>
-      </Root>
+        </ol>
+      </nav>
     );
   }
 );
 
-const Root = styled('nav', {
-  background: 'White',
-  display: 'flex',
-  borderBottom: '1px solid $gray-200',
-});
-
-const Ol = styled('ol', {
-  display: 'flex',
-  gap: '4',
-  width: '100%',
-  listStyleType: 'none',
-  margin: 0,
-});
-
-const Item = styled('li', {
-  display: 'flex',
-  alignItems: 'center',
-});
-
-const Svg = styled('svg', {
-  width: 24,
-  height: '100%',
-  flexShrink: 0,
-  color: '$gray-200',
-});
-
-const Text = styled('span', {
-  marginLeft: '$4',
-  paddingLeft: '$2',
-  paddingRight: '$2',
-  fontSize: '$sm',
-  lineHeight: '$sm',
-  color: '$gray-500',
-  textDecoration: 'none',
-  borderBlock: '1px solid transparent',
-  '&:hover': {
-    color: '$gray-700',
-  },
-});
+const textClass = tw(['text-sm ml-4 px-2 text-gray-500 no-underline']);

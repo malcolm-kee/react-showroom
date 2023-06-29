@@ -1,7 +1,8 @@
-import { XIcon } from '@heroicons/react/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import * as React from 'react';
-import { icons, styled, keyframes } from '../stitches.config';
+import { iconClass } from '../shared-styles';
+import { keyframes, styled } from '../stitches.config';
 
 const overlayShow = keyframes({
   '0%': { opacity: 0 },
@@ -60,12 +61,14 @@ export interface DialogProps extends DialogPrimitive.DialogProps {
   children: React.ReactNode;
 }
 
-export const DialogImpl = ({ children, ...props }: DialogProps) => (
-  <DialogPrimitive.Root {...props}>
-    <Overlay />
-    {children}
-  </DialogPrimitive.Root>
-);
+const DialogImpl = function Dialog({ children, ...props }: DialogProps) {
+  return (
+    <DialogPrimitive.Root {...props}>
+      <Overlay />
+      {children}
+    </DialogPrimitive.Root>
+  );
+};
 
 export interface DialogContentProps extends DialogPrimitive.DialogContentProps {
   children: React.ReactNode;
@@ -83,7 +86,7 @@ const DialogContent = styled(
         {children}
         {showCloseBtn && (
           <Close>
-            <XIcon width={24} height={24} className={icons()} />
+            <XMarkIcon width={24} height={24} className={iconClass} />
           </Close>
         )}
       </Content>
