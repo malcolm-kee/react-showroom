@@ -611,7 +611,7 @@ const createBaseRspackConfig = (
         AUDIENCE_TOGGLE: theme.audienceToggle,
         COMPONENTS_ENTRY_NAME: (componentsEntry && componentsEntry.name) || '',
         COMPILER_OPTIONS: compilerOptions,
-        USE_SW: theme.serviceWorker,
+        USE_SW: false, // theme.serviceWorker
       }),
       virtualModules,
       isServe
