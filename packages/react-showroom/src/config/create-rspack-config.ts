@@ -306,7 +306,7 @@ const createBaseRspackConfig = (
       ),
       ['react-showroom-compat']: generateReactEntryCompat(),
     },
-    resolveShowroom('node_modules/.virtual-modules/')
+    (hash) => resolveShowroom(`node_modules/.virtual-modules-${hash}/`)
   );
 
   const babelPreset = createBabelPreset(mode);
