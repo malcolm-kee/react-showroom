@@ -1,6 +1,8 @@
 import type { NormalizedReactShowroomConfiguration } from '@showroomjs/core/react';
-import webpack from 'webpack';
-import { createSsrWebpackConfig } from '../config/create-webpack-config';
+// import webpack from 'webpack';
+// import { createSsrWebpackConfig } from '../config/create-webpack-config';
+import { rspack } from '@rspack/core';
+import { createSsrRspackConfig } from '../config/create-rspack-config';
 
 export async function outputSSrBundle(
   config: NormalizedReactShowroomConfiguration,
@@ -8,13 +10,13 @@ export async function outputSSrBundle(
   profile = false,
   measure = false
 ) {
-  const webpackConfig = createSsrWebpackConfig('production', config, {
+  const webpackConfig = createSsrRspackConfig('production', config, {
     outDir: tmpDir,
     profileWebpack: profile,
     measure,
   });
 
-  const compiler = webpack(webpackConfig);
+  const compiler = rspack(webpackConfig);
 
   await new Promise<void>((fulfill, reject) => {
     compiler.run((err, stats) => {
