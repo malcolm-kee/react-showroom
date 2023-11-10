@@ -37,7 +37,12 @@ export async function startDevServer(
   const HOST = '0.0.0.0';
   const PORT = Number(port ?? process.env.PORT ?? devServerPort);
 
-  const server = createDevServer(config, { measure, host: HOST, port: PORT });
+  const server = createDevServer(config, {
+    measure,
+    host: HOST,
+    port: PORT,
+    rspack: true,
+  });
 
   await server.start();
 

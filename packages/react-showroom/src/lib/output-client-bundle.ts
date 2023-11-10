@@ -2,8 +2,10 @@ import { omit } from '@showroomjs/core';
 import type { NormalizedReactShowroomConfiguration } from '@showroomjs/core/react';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import webpack from 'webpack';
-import { createClientWebpackConfig } from '../config/create-webpack-config';
+// import webpack from 'webpack';
+// import { createClientWebpackConfig } from '../config/create-webpack-config';
+import { rspack } from '@rspack/core';
+import { createClientRspackConfig } from '../config/create-rspack-config';
 import { resolveApp } from './paths';
 
 export async function outputClientBundle(
@@ -11,14 +13,14 @@ export async function outputClientBundle(
   profile = false,
   measure = false
 ) {
-  const webpackConfig = createClientWebpackConfig('production', config, {
+  const webpackConfig = createClientRspackConfig('production', config, {
     outDir: config.outDir,
     profileWebpack: profile,
     measure,
     operation: 'build',
   });
 
-  const compiler = webpack(webpackConfig);
+  const compiler = rspack(webpackConfig);
 
   try {
     await new Promise<void>((fulfill, reject) => {

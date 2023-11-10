@@ -50,7 +50,7 @@ const loadRemotePackage = (
     return onDone(cached);
   }
 
-  import(/* webpackIgnore: true */ `https://cdn.skypack.dev/${pkgName}`).then(
+  (eval(`import("https://cdn.skypack.dev/${pkgName}")`) as Promise<any>).then(
     (result) => {
       remotePackageMap.set(pkgName, result);
       onDone(result);
