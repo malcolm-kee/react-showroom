@@ -638,7 +638,7 @@ const createBaseRspackConfig = (
           ],
       splitChunks: {
         chunks: 'all',
-        minSize: isProd ? 1000 : undefined,
+        // minSize: isProd ? 1000 : undefined, // FIXME this + html plugin caused build fail
       },
     },
     infrastructureLogging: {
@@ -652,16 +652,3 @@ const createBaseRspackConfig = (
     },
   };
 };
-
-// function stringifyValues(o: Record<string, any>): Record<string, string> {
-//   return Object.fromEntries(
-//     Object.entries(o).map(([k, v]) => [
-//       k,
-//       v === undefined
-//         ? 'undefined'
-//         : typeof v === 'string'
-//         ? v
-//         : JSON.stringify(v),
-//     ])
-//   );
-// }
