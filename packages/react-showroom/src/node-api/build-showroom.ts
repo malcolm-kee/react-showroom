@@ -9,7 +9,7 @@ import { green, logToStdout } from '../lib/log-to-stdout';
 import { outputClientBundle } from '../lib/output-client-bundle';
 import { outputSSrBundle } from '../lib/output-ssr-bundle';
 import { resolveApp, resolveShowroom } from '../lib/paths';
-// import { prerenderPreview, prerenderSite } from '../lib/prerender';
+import { prerenderPreview, prerenderSite } from '../lib/prerender';
 
 export async function buildShowroom(
   userConfig?: ReactShowroomConfiguration,
@@ -48,14 +48,14 @@ export async function buildShowroom(
         outputClientBundle(config, profile, measure),
         outputSSrBundle(config, ssrDir, profile, measure),
       ]);
-      // logToStdout('Prerendering...');
-      // const [sitePageCount, previewPageCount] = await Promise.all([
-      //   prerenderSite(config, ssrDir),
-      //   prerenderPreview(config, ssrDir),
-      // ]);
-      // logToStdout(
-      //   green(`Prerendered ${sitePageCount + previewPageCount} pages.`)
-      // );
+      logToStdout('Prerendering...');
+      const [sitePageCount, previewPageCount] = await Promise.all([
+        prerenderSite(config, ssrDir),
+        prerenderPreview(config, ssrDir),
+      ]);
+      logToStdout(
+        green(`Prerendered ${sitePageCount + previewPageCount} pages.`)
+      );
       logToStdout(`Generated showroom at`);
       logToStdout(`  -  ${green(resolveApp(config.outDir))}`);
     }
