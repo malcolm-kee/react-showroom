@@ -212,12 +212,13 @@ export const createSsrRspackConfig = (
       output: {
         path: resolveApp(`${outDir}/server`),
         filename: '[name].js',
+        chunkFilename: '[name].js',
         library: {
           type: 'commonjs',
         },
       },
       externalsPresets: { node: true },
-      target: 'node14.17',
+      target: 'node',
       plugins: measure
         ? [] // don't prettify output message when measuring to avoid important info get cleared
         : [
@@ -226,6 +227,9 @@ export const createSsrRspackConfig = (
               logger: logToStdout,
             }),
           ],
+      optimization: {
+        runtimeChunk: 'single',
+      },
     }),
     config.webpackConfig,
     mode
